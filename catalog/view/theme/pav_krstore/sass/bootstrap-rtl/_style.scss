@@ -1,0 +1,41 @@
+.rtl {
+    body {
+        text-align: right;
+    }
+
+    /* Carousel style element */
+
+        .carousel-style {
+            .left {
+                .rtl {
+                    display: inline-block;
+                }
+                .ltr {
+                    display: none;
+                }
+            }
+            .right {
+                .rtl {
+                    display: inline-block;
+                }
+                .ltr {
+                    display: none;
+                }
+            }
+        }
+
+    /***** Product Detail Page *****/
+
+    .zoomWindow {
+        right: 416px !important;
+    }
+    .addthis_default_style .addthis_separator, .addthis_default_style .at4-icon,
+    .addthis_default_style .at300b, .addthis_default_style .at300bo,
+    .addthis_default_style .at300bs, .addthis_default_style .at300m {
+        float: right;
+    }
+
+    .box-newsletter {
+        background: url("#{$image-theme-path}bg-footer-arab.jpg") no-repeat;
+    }
+}

@@ -1,0 +1,26 @@
+//
+// Breadcrumbs
+// --------------------------------------------------
+
+.breadcrumb {
+  padding: $breadcrumb-padding-vertical $breadcrumb-padding-horizontal;
+  position: relative;
+  a {
+    font-size: 13px;
+    color: $breadcrumb-color;
+    &:hover {
+      color: $link-hover-color;
+    }
+  }
+  > li {
+    display: inline-block;
+    + li:before {
+      content: "/"; // Unicode space added since inline-block means non-collapsing white-space
+      padding: 0 5px;
+      color: #cccccc;
+    }
+  }
+  > .active {
+    color: $breadcrumb-active-color;
+  }
+}

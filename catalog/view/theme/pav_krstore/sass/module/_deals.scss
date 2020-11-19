@@ -1,0 +1,99 @@
+.tabs-deal {
+    ul {
+        padding: 0px;
+        border: 1px solid #ededed;
+        display: inline-block;
+        margin-bottom: 30px;
+        margin-top: 30px;
+    }
+    h4 {
+        font-size: 14px;
+        text-transform: uppercase;
+        display: block;
+        padding: 15px 30px;
+        cursor: pointer;
+        color: #999999;
+        &:hover {
+            color: $theme-color;
+        }
+    }
+    li {
+        @include rtl-float-left();
+        &:first-child {
+            @include rtl-border-right(1px solid $border-color);
+        }
+        &.active {
+            h4 {
+                color: #222222;
+            }
+        }
+    }
+}
+.footer-deals {
+    background: #ff5215;
+    color: $white;
+    .item-countdown {
+        width: 160px;
+        margin: 0 auto;
+        @include rtl-padding-left(20px);
+        padding-top: 9px;
+        padding-bottom: 9px;
+    }
+    ul {
+        margin: 0px;
+        position: relative;
+        &:before {
+            content: "\f017";
+            font-family: FontAwesome;
+            position: absolute;
+            @include rtl-left(-20px);
+            bottom: 0px;
+        }
+    }
+    li {
+        width: 25%;
+        position: relative;
+        line-height: 1;
+        span {
+            display: none;
+        }
+        .countdown_num {
+            font-family: $font-family-base;
+            span {
+                display: inline-block;
+            }
+        }
+        &:after {
+            content: ":";
+            position: absolute;
+            right: 1px;
+            bottom: 0px;
+            font-size: 18px;
+        }
+        &:last-child {
+            &:after {
+                display: none;
+            }
+        }
+    }
+}
+.product-deals {
+    .sale-exist {
+        display: none;
+    }
+}
+.product-list {
+    .product-deals {
+        width: 100% !important;
+        .product-block {
+            position: relative;
+            margin-bottom: 60px;
+        }
+        .product-meta {
+            margin-top: -45px;
+        }
+    }
+    .footer-deals {
+        width: 270px;
+    }
+}

@@ -1,0 +1,93 @@
+/* Tiles */
+.tile {
+	margin-bottom: 15px;
+	border-radius: 3px;
+	color: #FFFFFF;
+	transition: all 0.7s;
+	border-style: solid;
+	border-width: 1px;
+}
+/* .tile:hover { */
+	/* opacity: 0.9; */
+/* } */
+
+.tile-active {
+	background-color: #ccefb9;
+	border-color: #6fb249;
+}
+
+.tile-login {
+	background-color: #b8e1ef;
+	border-color: #4897b1;
+}
+
+.tile-logout {
+	background-color: #d4d4d4;
+	border-color: #7d7d7d;
+}
+
+/* .tile a { */
+	/* color: #FFFFFF; */
+/* } */
+/* .tile-heading { */
+	/* padding: 5px 8px; */
+	/* text-transform: uppercase; */
+	/* background-color: #64a93d; */
+	/* color: #FFF; */
+/* } */
+/* .tile .tile-heading { */
+	/* transition: all 0.7s; */
+	/* opacity: 0.7; */
+/* } */
+/* .tile:hover .tile-heading{ */
+	/* opacity: 1; */
+/* } */
+.tile-body {
+	padding: 5px;
+	color: #FFFFFF;
+	line-height: 48px;
+	text-align: center;
+}
+.tile .tile-body img{
+	font-size: 16px;
+	opacity: 0.7;
+	transition: all 0.5s;
+}
+.tile:hover .tile-body img{
+	opacity: 1;
+}
+.tile-body .text-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+/*.tile .tile-body h2 {
+	font-size: 42px;
+}
+ .tile-footer {
+	padding: 5px 8px;
+	background-color: #3DA9E3;
+}
+ */
+.form-control {
+  display: block;
+  padding: 13px 15px;
+  height: 50px;
+  border: 1px solid #ededed;
+}
+.form-control:focus {
+  border-color: #66afe9;
+  outline: 0;
+}
+.btn {
+	padding: 13px 40px;
+}
+
+.fixed-alert {
+	position: fixed;
+	top: 0;
+	left: 5%;
+	right: 5%;
+	font-size: 18px;
+}

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<theme>
+	<header>
+		<title>Icon box on header</title>
+		<description></description>
+		<module>
+	 	 	<title>Icon box</title>
+	 	 	<field>
+	 	 		<name>icon_box_header</name>
+	 	 		<label>Content</label>
+	 	 		<type>textarea</type>
+	 	 		<lang>1</lang>
+	 	 		<default>
+				<![CDATA[
+					<div class="feature-box clearfix feature-box-v1 feature-box-left ">
+						<div class="fbox-icon">
+							<i class="fa fa fa-paper-plane-o"></i>
+						</div>
+						<div class="fbox-body">
+							<h4>FREE SHIPPING</h4>
+							<p>Oder Over $29.00</p>
+						</div>
+					</div>
+	 	 		]]>
+				</default>
+	 		</field>
+	 	</module>
+	</header>
+	<footercenter>
+		<title>Footer center</title>
+		<description></description>
+		<module>
+	 	 	<title>Social network</title>
+	 	 	<field>
+	 	 		<name>widget_social_network</name>
+	 	 		<label>Content</label>
+	 	 		<type>textarea</type>
+	 	 		<lang>1</lang>
+	 	 		<default>
+					<![CDATA[
+						<ul class="list-inline social-icon-list">
+							<li><a href="#"><i class="bo-social-outline-light radius-x fa fa-facebook"></i></a></li>
+							<li><a href="#"><i class="bo-social-outline-light radius-x fa fa-twitter"></i></a></li>
+							<li><a href="#"><i class="bo-social-outline-light radius-x fa fa-google-plus"></i></a></li>
+							<li><a href="#"><i class="bo-social-outline-light radius-x fa fa-linkedin"></i></a></li>
+						</ul>
+					]]>
+				</default>
+	 		</field>
+		</module>
+	</footercenter>
+	<footer>
+		 <title>Footer bottom</title>
+		 <description></description>
+	 	 <module>
+	 	 	<title>About us</title>
+	 	 	<field>
+	 	 		<name>widget_about_us</name>
+	 	 		<label>Content</label>
+	 	 		<type>textarea</type>
+	 	 		<lang>1</lang>
+	 	 		<default>
+					<![CDATA[
+						<div class="panel-heading">
+							<h4 class="panel-title">CONTACT US</h4>
+						</div>
+						<ul class="list-unstyled">
+							<li>PO Box 1612 Collins Street NYC</li>
+							<li>+801 123 456 78</li>
+							<li><a href="mainto: contact@domail.com" class="textbox">contact@domain.com</a></li>
+						</ul>
+					]]>
+				</default>
+	 		</field>
+		</module>
+		<module>
+	 	 	<title>Business hours</title>
+	 	 	<field>
+	 	 		<name>widget_business_hours</name>
+	 	 		<label>Content</label>
+	 	 		<type>textarea</type>
+	 	 		<lang>1</lang>
+	 	 		<default>
+					<![CDATA[
+						<div class="panel-heading">
+							<h4 class="panel-title">OPENING TIME</h4>
+						</div>
+						<ul class="list-unstyled">
+							<li>Mon - Fri: ------------- 8am - 5pm</li>
+							<li>Sat - Sun: ------------- 8am - 11am</li>
+						</ul>
+					]]>
+				</default>
+	 		</field>
+	 	 </module>
+	</footer>
+</theme>

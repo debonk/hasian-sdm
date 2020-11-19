@@ -1,0 +1,348 @@
+@media (min-width: 992px) and (max-width: 1024px) {
+
+}
+
+/* Ipad Portrait */
+
+@media (max-width: $screen-sm-max) {
+
+	/***** Responsive Base *****/
+
+	.tparrows {
+		opacity: 1 !important;
+	}
+	.widget-images {
+		.img-responsive {
+			width: 100%;
+		}
+	}
+	.img-responsive {
+		width: 100%;
+	}
+
+	/***** Header *****/
+
+	.header-v1 .container {
+		padding-top: 15px;
+		padding-bottom: 10px;
+	}
+	#group-menu {
+		padding: 10px 0px;
+	}
+	#setting {
+		@include rtl-right(57px);
+	}
+	.search {
+        width: 32px !important;
+        height: 32px;
+        line-height: 32px;
+        @include rtl-right(20px);
+        top: -2px;
+        margin-top: 0px;
+		.input-group {
+			input {
+				width: 200px;
+				background: #ededed !important;
+				text-indent: 0;
+	            padding: 0px;
+	            @include rtl-padding-right(34px);
+	            @include rtl-padding-left(20px);
+		        height: 32px;
+		        line-height: 32px;
+	    	}
+	        .btn-default {
+				color: $theme-color;
+				@include size(34px,34px);
+	        }
+		}
+	}
+
+	/***** Home *****/
+
+	.carousel-controls-v2 {
+		display: block;
+	}
+	.product-tabs .product-block {
+		padding:15px;
+	}
+
+	/***** Product *****/
+
+	.action div {
+		margin: 0px;
+		.btn-action {
+			background: $theme-color;
+			color: #ffffff;
+		}
+	}
+
+	/***** footer *****/
+
+	.box-newsletter {
+		height: 300px;
+		padding-top: 20px;
+		.formNewLestter {
+			padding: 0px 100px;
+			.newsletter button {
+				background: #222222;
+				color: #ffffff;
+			}
+			.valid {
+				width: calc(100% - 200px);
+			}
+		}
+		.space-top-35 {
+			margin-top: 25px;
+		}
+		.social-icon-list {
+			margin-top: 25px;
+		}
+	}
+
+	/***** Product detail page *****/
+
+		/* Image detail */
+
+		.image-container {
+			.carousel-controls {
+				display: block;
+			}
+			.owl-item {
+				width: 100px !important;
+			}
+		}
+		.zoomContainer {
+			display: none;
+		}
+
+}
+
+/* Iphone 5 landscape  */
+
+@media (max-width: $screen-xs-max) {
+
+	/***** Responsive Base *****/
+
+		.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3,
+		.col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6,
+		.col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9,
+		.col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+		    padding-left: 9px;
+		    padding-right: 9px;
+		}
+		.container {
+		    padding-left: 9px;
+		    padding-right: 9px;
+		}
+		.row {
+		    margin-left: -9px;
+		    margin-right: -9px;
+		}
+		.form-horizontal {
+			.form-group {
+			    margin-left: -9px;
+			    margin-right: -9px;
+			}
+		}
+	    #offcanvasmenu {
+	    	.megamenu li a {
+	    		@include rtl-padding(0px, 35px, 0px, 10px)
+	    	}
+	    	.dropdown-menu {
+		    	.dropdown-menu-inner {
+		    		@include rtl-padding-left(20px);
+			    	.dropdown-menu-inner {
+			    		padding: 0px !important;
+			    	}
+			    }
+			}
+	    }
+
+	/***** Header *****/
+
+		#logo {
+			@include rtl-text-align-left();
+			a {
+				transform: scale(0.8);
+				display: block;
+			}
+		}
+		.header-v1 .container {
+			padding-top: 10px;
+			padding-bottom: 10px;
+		}
+		#setting {
+			@include rtl-right(67px);
+			margin-top: 8px;
+		}
+		#cart-top {
+			@include rtl-right(25px);
+			margin-top: 8px;
+		}
+		.search {
+			.input-group {
+				input {
+					width: 150px;
+		    	}
+			}
+		}
+
+	/***** Home *****/
+
+		.product-tabs {
+			.bg-panel {
+				background: none;
+			}
+			.nav li {
+				width: 100%;
+				display: block;
+				&:after {
+					display: none;
+				}
+			}
+			.carousel-controls-v2 {
+				text-align: center;
+				margin-bottom: 15px;
+				.carousel-control {
+					position: static;
+				}
+			}
+		}
+
+	/***** Footer *****/
+		.box-newsletter {
+			height: 250px;
+			.formNewLestter {
+				padding: 0px 15px;
+				h4 {
+					font-style: normal;
+					font-size: 20px;
+				}
+				.description {
+					font-size: 25px;
+				}
+				.space-top-35 {
+				    margin-top: 20px;
+				}
+				.social-icon-list {
+				    margin-bottom: 20px;
+				}
+				.valid {
+				    width: calc(100% - 30px);
+				}
+			}
+		}
+		footer {
+			.footer-bottom {
+				padding-top: 10px;
+				.col-right {
+					@include rtl-padding(0px, 10px, 0px, 10px);
+				}
+			}
+		}
+
+	/***** Contact US Page *****/
+
+		.content-contact {
+			h3 {
+			    font-size: 20px;
+			    margin-bottom: 15px;
+			    margin-top: 0;
+			}
+	        .fa-2x {
+	            font-size: 22px;
+	        }
+	        .btn-v1 {
+	        	padding: 8px 20px;
+	        	margin-top: 5px;
+	        }
+	        fieldset:last-child {
+	        	margin-top: 15px;
+	        }
+		}
+		.form-horizontal .form-group {
+		    margin-left: -9px;
+		    margin-right: -9px;
+		}
+
+	/***** Product detail page *****/
+
+		.breadcrumb.detail {
+			margin-bottom: 20px;
+		}
+
+		/* Image detail */
+
+		.image-container {
+			.thumbs-preview {
+				height: 113px;
+			}
+			.carousel-controls {
+				display: block;
+				margin-top: -70px;
+				a {
+					background: $theme-color;
+					border-color: $theme-color;
+					color: $white;
+				}
+			}
+			.owl-item {
+				width: 100px !important;
+			}
+		}
+		.zoomContainer {
+			display: none;
+		}
+
+		/* Container detail */
+
+		.detail-container {
+			h1 {
+				font-size: 18px;
+				line-height: 1.5;
+				margin-bottom: 15px;
+				margin-top: 30px;
+			}
+			#product {
+				h3{
+				   	font-size: 16px;
+				    margin-bottom: 10px;
+				    padding-top: 15px;
+				}
+			}
+			.form-group, .product-buttons-wrap {
+				width: 100% !important;
+			}
+		}
+
+	/***** Back-to-top *****/
+
+		#back-to-top .scrollup {
+			bottom: 20px;
+		}
+
+	/***** Offcanvas *****/
+
+	 	.row-offcanvas-right .sidebar-offcanvas {
+	   		@include rtl-right(-80%);
+	 	}
+	  	.row-offcanvas-left .sidebar-offcanvas {
+	    	@include rtl-left(-80%);
+		}
+	  	.row-offcanvas-right.active {
+	    	@include rtl-right(80%);
+	  	}
+	  	.row-offcanvas-left.active {
+	    	@include rtl-left(80%);
+	  	}
+	  	.sidebar-offcanvas {
+	    	width: 80%;
+	  	}
+
+	/***** Custom tab Product detail *****/
+
+	.tab-v88 .nav-tabs a {
+		padding: 15px 10px;
+		font-size: 10px;
+	}
+}
