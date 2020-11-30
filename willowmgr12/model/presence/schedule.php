@@ -244,19 +244,21 @@ class ModelPresenceSchedule extends Model {
 				'bg_class'			=> 'primary'
 			);
 
-			$schedules_data[$exchange_info['date_from']] = array(
-				'applied'			=> 'exchange',
-				'schedule_type_id'	=> 0,
-				'schedule_type'		=> 'X-',
-				'time_in'			=> '0000-00-00 00:00:00',
-				'time_out'			=> '0000-00-00 00:00:00',
-				'note'				=> $exchange_info['description'],
-				'bg_class'			=> 'primary'
-			);
+			if (!isset($schedules_data[$exchange_info['date_from']])) {
+				$schedules_data[$exchange_info['date_from']] = array(
+					'applied'			=> 'exchange',
+					'schedule_type_id'	=> 0,
+					'schedule_type'		=> 'X-',
+					'time_in'			=> '0000-00-00 00:00:00',
+					'time_out'			=> '0000-00-00 00:00:00',
+					'note'				=> $exchange_info['description'],
+					'bg_class'			=> 'primary'
+				);
+			}
 		}
-
+			
 		$schedules_info = $this->getSchedules($customer_id, $range_date);
-
+			
 		foreach ($schedules_info as $schedule_info) {
 			if ($schedule_info['schedule_type_id'] == 0) {
 				$time_in = '0000-00-00 00:00:00';
@@ -323,8 +325,8 @@ class ModelPresenceSchedule extends Model {
 		foreach ($logs_info as $log_info) {
 			if ($log_info['time_in'] != '0000-00-00 00:00:00') {
 				$logs_data = array(
-					'time_in'	=> $log_info['time_in'],
-					'time_out'	=> $log_info['time_out'],
+					'time_in'		=> $log_info['time_in'],
+					'time_out'		=> $log_info['time_out'],
 					'time_login'	=> $log_info['time_login'],
 					'time_logout'	=> $log_info['time_logout']
 				);
@@ -376,8 +378,8 @@ class ModelPresenceSchedule extends Model {
 				'time_login'		=> $time_login,
 				'time_logout'		=> $time_logout,
 				'presence_code'		=> $presence_code,
-				'presence_status_id'=> $presence_statuses_data[$presence_code]['presence_status_id'],
-				'presence_status'	=> $presence_statuses_data[$presence_code]['name'],
+				'presence_status_id'=> isset($presence_statuses_data[$presence_code]) ? $presence_statuses_data[$presence_code]['presence_status_id'] : '-',
+				'presence_status'	=> isset($presence_statuses_data[$presence_code]) ? $presence_statuses_data[$presence_code]['name'] : '-',
 				'note'				=> $schedule_data['note'],
 				'bg_class'			=> $schedule_data['bg_class']
 			);
@@ -403,11 +405,23 @@ class ModelPresenceSchedule extends Model {
 				);
 			}
 
+			if (!isset($schedules_data[$absence_info['date']])) {
+				$schedules_data[$absence_info['date']] = array(
+					'applied'			=> 'schedule',
+					'schedule_type_id'	=> 0,
+					'schedule_type'		=> '',
+					'time_in'			=> '0000-00-00 00:00:00',
+					'time_out'			=> '0000-00-00 00:00:00',
+					'time_login'		=> '0000-00-00 00:00:00',
+					'time_logout'		=> '0000-00-00 00:00:00',
+				);
+			}
+
 			$schedules_data[$absence_info['date']] = array_merge($schedules_data[$absence_info['date']],$absences_data);
 		}
 		
 		ksort($schedules_data);
-		
+					
 		return $schedules_data;
 	}
 

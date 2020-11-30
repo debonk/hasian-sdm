@@ -746,10 +746,6 @@ class ControllerPresenceSchedule extends Controller {
 		$this->load->model('overtime/overtime');
 		
 		$schedules_data = $this->model_presence_schedule->getFinalSchedules($customer_id, $range_date);
-// foreach ($schedules_data as $x_data) {
-// print_r($x_data);
-// print_r('<br>');
-// }
 
 		$period_pending_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'pending');
 		$period_processing_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'processing');
@@ -799,7 +795,8 @@ class ControllerPresenceSchedule extends Controller {
 						$presence_status = $schedules_data[$key_date]['presence_status'];
 						$time_login = ($schedules_data[$key_date]['time_login'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_data[$key_date]['time_login'])) : '...';
 						$time_logout = ($schedules_data[$key_date]['time_logout'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_data[$key_date]['time_logout'])) : '...';
-						$bg_class = !empty($schedules_data[$key_date]['bg_class']) ? $schedules_data[$key_date]['bg_class'] : 'info';;
+						$bg_class = !empty($schedules_data[$key_date]['bg_class']) ? $schedules_data[$key_date]['bg_class'] : 'info';
+						$note = !empty($schedules_data[$key_date]['note']) ? $schedules_data[$key_date]['note'] : '';
 
 					} else {
 						$schedule_type_id = 0;
@@ -825,6 +822,7 @@ class ControllerPresenceSchedule extends Controller {
 						'time_login'		=> $time_login,
 						'time_logout'		=> $time_logout,
 						'bg_class'			=> $bg_class,
+						'note'				=> $note,
 						'locked'			=> $locked
 					);
 				}

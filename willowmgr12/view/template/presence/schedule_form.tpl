@@ -135,7 +135,7 @@
 						    <?php if ($calendar[$week . $day]['locked']) { ?>
 							  <div class="text-center">
 							  <p><i class="fa fa-clock-o"></i> <?php echo $calendar[$week . $day]['schedule_type_code']; ?></p>
-							  <p class="bg-<?php echo $calendar[$week . $day]['bg_class']; ?>">
+							  <p class="bg-<?php echo $calendar[$week . $day]['bg_class']; ?>" data-toggle="tooltip" title="<?php echo $calendar[$week . $day]['note']; ?>">
 							  <i class="fa fa-sign-in"></i> <?php echo $calendar[$week . $day]['time_login'] . ' - ' . $calendar[$week . $day]['time_logout']; ?></br>
 							  <?php echo $calendar[$week . $day]['presence_status']; ?>
 							  </p>

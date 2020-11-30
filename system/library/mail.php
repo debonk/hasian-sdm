@@ -176,7 +176,7 @@ class Mail {
 				$post = array(
 					'from' => $api_from,
 					'fromName' => $this->sender,
-					'apikey' => '463724df-de0d-4a40-b1e3-498d1b36efa7',
+					'apikey' => $this->parameter,
 					'subject' => $this->subject,
 					'to' => $to,
 					'charset' => 'utf-8',
@@ -196,8 +196,6 @@ class Mail {
 				
 				$result=curl_exec ($ch);
 				curl_close ($ch);
-				
-			//	echo $result;			
 			}
 			catch(Exception $ex){
 				echo $ex->getMessage();
