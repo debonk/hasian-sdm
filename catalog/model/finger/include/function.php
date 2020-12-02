@@ -63,7 +63,7 @@
 	
 	function addLog($conn, $customer_id, $schedule_date, $datetime, $action) {
 		if ($action == 'login') {
-			$sql = "INSERT INTO oc_presence_log SET customer_id = '" . (int)$customer_id . "', date = '" . $schedule_date . "', time_login = '" . $datetime . "', time_logout = '0000-00-00 00:00:00'";
+			$sql = "UPDATE oc_presence_log SET time_login = '" . $datetime . "' WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $schedule_date . "'";
 		} elseif ($action == 'logout') {
 			$sql = "UPDATE oc_presence_log SET time_logout = '" . $datetime . "' WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $schedule_date . "'";
 		}

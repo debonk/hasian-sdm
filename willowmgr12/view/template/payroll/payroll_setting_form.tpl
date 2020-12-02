@@ -90,6 +90,12 @@
                 </div>
               </div>
               <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-logout-date"><span data-toggle="tooltip" title="<?php echo $help_logout_date; ?>"><?php echo $entry_logout_date; ?></span></label>
+                <div class="col-sm-10">
+                  <input type="text" name="payroll_setting_logout_date" value="<?php echo $payroll_setting_logout_date; ?>" class="form-control" id="input-logout-date" />
+                </div>
+              </div>
+              <div class="form-group">
                 <label class="col-sm-2 control-label" for="input-login-start"><span data-toggle="tooltip" title="<?php echo $help_login_start; ?>"><?php echo $entry_login_start; ?></span></label>
                 <div class="col-sm-10">
                   <input type="text" name="payroll_setting_login_start" value="<?php echo $payroll_setting_login_start; ?>" class="form-control" id="input-login-start" />

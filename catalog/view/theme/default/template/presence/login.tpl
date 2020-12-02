@@ -76,7 +76,7 @@ $('select[id=\'input-location\']').on('change', function() {
 	location = url;
 });
 //--></script> 
-  <script type="text/javascript"><!--
+  <script type="text/javascript">
 var log_ct = 1;
 var click_ct = 1;
 var alert_fade_out;
@@ -134,26 +134,26 @@ function processVerification(customer_id, action) {
 
 	log_status = 0;
 	
-	<!-- try	{ -->
-		<!-- timer_register.stop(); -->
-	<!-- } -->
-	<!-- catch(err) { -->
-		<!-- console.log('Verification timer has been init'); -->
-	<!-- } -->
+	// try	{
+	// 	timer_register.stop();
+	// }
+	// catch(err) {
+	// 	console.log('Verification timer has been init');
+	// }
 	
 	var limit = 22;
 	var ct = 1;
 	var timeout = 500;
 	
 	timer_register = $.timer(timeout, function() {
-		<!-- console.log('Verification checking... ' + ct); -->
+		// console.log('Verification checking... ' + ct);
 		
 		getLogStatus(customer_id, action);
-		<!-- console.log('Log status = ' + log_status); -->
+		// console.log('Log status = ' + log_status);
 		
 		if (ct >= limit || log_status == 1) {
 			timer_register.stop();
-			<!-- console.log('Verification checking end'); -->
+			// console.log('Verification checking end');
 			
 			if (ct >= limit && log_status == 0) {
 				$('#fixed-alert').html('<div class="alert fixed-alert alert-danger"><?php echo $error_verification; ?><button type="button" class="close" data-dismiss="alert">&times;</button></div>');
@@ -198,6 +198,6 @@ function getLogStatus(customer_id, action) {
 		}
 	});
 }
-//--></script> 
+</script> 
 </div>
 <?php echo $footer; ?>

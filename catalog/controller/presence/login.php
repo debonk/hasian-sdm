@@ -1,7 +1,5 @@
 <?php
 class ControllerPresenceLogin extends Controller {
-	private $error = array();
-
 	public function index() {
 		$this->load->language('presence/login');
 
@@ -27,9 +25,15 @@ class ControllerPresenceLogin extends Controller {
 		if (isset($this->request->get['action']) && $this->request->get['action'] == 'logout') {
 			$action = 'logout';
 			$data['text_list'] = $this->language->get('text_logout');
+			
+			$schedule_date = date('Y-m-d', strtotime($this->config->get('payroll_setting_logout_date') . ' hours'));
+
 		} else {
 			$action = 'login';
 			$data['text_list'] = $this->language->get('text_login');
+
+			$login_start = $this->config->get('payroll_setting_login_start');
+			$schedule_date = date('Y-m-d', strtotime('+' . $login_start . ' minutes'));
 		}
 		
 		$url = '';
@@ -56,9 +60,6 @@ class ControllerPresenceLogin extends Controller {
 
 		$data['customers'] = array();
 		
-		$login_start = $this->config->get('payroll_setting_login_start');
-		$schedule_date = date('Y-m-d', strtotime('+' . $login_start . ' minutes'));
-		
 		$filter_data = array(
 			'filter_location_id'       => $location_id
 		);
@@ -79,10 +80,12 @@ class ControllerPresenceLogin extends Controller {
 			$log_info = $this->model_presence_presence->getLog($result['customer_id'], $schedule_date);
 			
 			if ($log_info) {
-				if ($log_info['time_logout'] == '0000-00-00 00:00:00') {
+				if ($log_info['time_logout'] != '0000-00-00 00:00:00') {
+					$log_class = 'logout';
+				} elseif ($log_info['time_login'] != '0000-00-00 00:00:00') {
 					$log_class = 'login';
 				} else {
-					$log_class = 'logout';
+					$log_class = 'active';
 				}
 			} else {
 				$log_class = 'active';
@@ -148,7 +151,7 @@ class ControllerPresenceLogin extends Controller {
 		}
 
 		if (isset($this->request->get['action']) && $this->request->get['action'] == 'logout') {
-			$schedule_date = date('Y-m-d', strtotime('-13 hours'));//penentuan tgl jadwal
+			$schedule_date = date('Y-m-d', strtotime($this->config->get('payroll_setting_logout_date') . ' hours')); //penentuan tgl jadwal
 			
 			$action = 'logout';
 		} else {
@@ -180,7 +183,7 @@ class ControllerPresenceLogin extends Controller {
 		}
 
 		if (isset($this->request->post['action']) && $this->request->post['action'] == 'logout') {
-			$schedule_date = date('Y-m-d', strtotime('-13 hours'));
+			$schedule_date = date('Y-m-d', strtotime($this->config->get('payroll_setting_logout_date') . ' hours'));
 			
 			$action = 'logout';
 		} else {
@@ -192,106 +195,117 @@ class ControllerPresenceLogin extends Controller {
 
 		$this->load->model('presence/presence');
 		
-		$check = 0;
-		$counter = 1;
+		switch ($json) {
+			case false:
+				$customer_info = $this->model_presence_presence->getCustomer($customer_id);
+				
+				if (!$customer_info) {//Cek apakah karyawan msh aktif
+					$json['error'] = $this->language->get('error_customer_not_found');
+				
+				break;
+				}
 
-		while($check < 1) {
-			switch ($counter) {
-				case '1':
-					$customer_info = $this->model_presence_presence->getCustomer($customer_id);
-					
-					if (!$customer_info) {//Cek apakah karyawan msh aktif
-						$check = 1;
-						$json['error'] = $this->language->get('error_customer_not_found');
-					}
 
-					break;
-					
-				case '2':
-					$use_fingerprint = $this->config->get('payroll_setting_use_fingerprint');
+				$use_fingerprint = $this->config->get('payroll_setting_use_fingerprint');
 		
-					$finger_count = $this->model_presence_presence->getFingersCount($customer_id);
+				$finger_count = $this->model_presence_presence->getFingersCount($customer_id);
+				
+				if ($use_fingerprint && !$finger_count) {//Cek apakah sudah rekam sidik jari
+					$json['error'] = $this->language->get('error_finger_not_found');
 					
-					if($use_fingerprint && !$finger_count) {//Cek apakah sudah rekam sidik jari
-						$check = 1;
-						$json['error'] = $this->language->get('error_finger_not_found');
-					}
+				break;
+				}
+						
+				$schedule_check = $this->config->get('payroll_setting_schedule_check');
+					
+				if ($schedule_check) {
+					$schedule_info = $this->model_presence_presence->getAppliedSchedule($customer_id, $schedule_date);
+					
+					if (!$schedule_info || !$schedule_info['schedule_type_id']) { //Cek ga ada jadwal
+						$json['error'] = $this->language->get('error_absence');
 
 					break;
+					}
+	
+					$time_in = $schedule_date . ' ' . $schedule_info['time_in'];
+					$time_out = $schedule_date . ' ' . $schedule_info['time_out'];
+	
+					if ($time_in >= $time_out) {
+						$time_out = date('Y-m-d H:i:s', strtotime('+1 day', strtotime($time_out)));
+					}
+
+				} else {
+					$time_in = '0000-00-00 00:00:00';
+					$time_out = '0000-00-00 00:00:00';
+				}
+
+				$log_info = $this->model_presence_presence->getLog($customer_id, $schedule_date);
+
+				if ($log_info) {
+					if ($log_info['time_logout'] != '0000-00-00 00:00:00') {//Cek ternyata sudah logout
+						$json['error'] = $this->language->get('error_logout');
+
+					break;
+					}
 					
-				case '3':
-					$schedule_check = $this->config->get('payroll_setting_schedule_check');
+					if ($action == 'login' && $log_info['time_login'] != '0000-00-00 00:00:00') {//Cek sudah login
+						$json['error'] = $this->language->get('error_login');
+
+					break;
+					}
+
+					if ($action == 'logout' && $log_info['time_login'] == '0000-00-00 00:00:00') {//Cek belum login
+						$json['error'] = $this->language->get('error_not_login');
+
+					break;
+					}
 					
-					if ($schedule_check) {
-						$schedule_info = $this->model_presence_presence->getAppliedSchedule($customer_id, $schedule_date);
-						
-						if (!$schedule_info || !$schedule_info['schedule_type_id']) {//Cek ga ada jadwal
-							$check = 1;
-							$json['error'] = $this->language->get('error_absence');
+				} else {
+					if ($action == 'logout') {//Cek belum login
+						$json['error'] = $this->language->get('error_not_login');
+
+					break;
+					}
+				}
+					
+				if ($schedule_check) {
+					if ($action == 'logout') {
+						$logout_start = $this->config->get('payroll_setting_logout_start');
+						$datetime_logout = date('Y-m-d H:i:s', strtotime('+' . $logout_start . ' minutes'));
+		
+						if ($logout_start && strtotime($datetime_logout) < strtotime($time_out)) { //Cek login sebelum waktu start yang diizinkan
+							$json['error'] = $this->language->get('error_logout_start');
+	
+						break;
 						}
+					} else {
+						$login_start = $this->config->get('payroll_setting_login_start');
+						$date_login_start = date('Y-m-d H:i:s', strtotime('+' . $login_start . ' minutes'));
+						
+						$login_end = $this->config->get('payroll_setting_login_end');
+						$date_login_end = date('Y-m-d H:i:s', strtotime('-' . $login_end . ' minutes'));
+						
+						if ($login_start && strtotime($date_login_start) < strtotime($time_in)) {//Cek login sebelum waktu start yang diizinkan
+							$json['error'] = $this->language->get('error_login_start');
+							
+						break;
+						} elseif ($login_end && strtotime($date_login_end) > strtotime($time_in)) {//Cek login setelah waktu akhir yang diizinkan
+							$json['error'] = $this->language->get('error_login_end');
 
 						break;
-					}
-					
-				case '4':
-					$log_info = $this->model_presence_presence->getLog($customer_id, $schedule_date);
-					
-					if ($log_info) {
-						if ($log_info['time_logout'] != '0000-00-00 00:00:00') {//Cek ternyata sudah logout
-							$check = 1;
-							$json['error'] = $this->language->get('error_logout');
-							
-						} elseif ($action == 'login') {//Cek sudah login
-							$check = 1;
-							$json['error'] = $this->language->get('error_login');
-							
-						} elseif ($schedule_check) {
-							$logout_start = $this->config->get('payroll_setting_logout_start');
-							$datetime_logout = date('Y-m-d H:i:s', strtotime('+' . $logout_start . ' minutes'));
-							
-							if ($logout_start && strtotime($datetime_logout) < strtotime($schedule_date . ' ' . $schedule_info['time_out'])) {//Cek login sebelum waktu start yang diizinkan
-								$check = 1;
-								$json['error'] = $this->language->get('error_logout_start');
-							}
-						}
-						
-					} else {
-						if ($action == 'logout') {
-							$check = 1;
-							$json['error'] = $this->language->get('error_not_login');
-						
-						} elseif ($schedule_check) {
-							$login_start = $this->config->get('payroll_setting_login_start');
-							$date_login_start = date('Y-m-d H:i:s', strtotime('+' . $login_start . ' minutes'));
-							
-							$login_end = $this->config->get('payroll_setting_login_end');
-							$date_login_end = date('Y-m-d H:i:s', strtotime('-' . $login_end . ' minutes'));
-							
-							if ($login_start && strtotime($date_login_start) < strtotime($schedule_date . ' ' . $schedule_info['time_in'])) {//Cek login sebelum waktu start yang diizinkan
-								$check = 1;
-								$json['error'] = $this->language->get('error_login_start');
-								
-							} elseif ($login_end && strtotime($date_login_end) > strtotime($schedule_date . ' ' . $schedule_info['time_in'])) {//Cek login setelah waktu akhir yang diizinkan
-								$check = 1;
-								$json['error'] = $this->language->get('error_login_end');
-							}
 						}
 					}
+				}		
 
-					break;
+				$this->model_presence_presence->addScheduleTime($customer_id, $schedule_date, $action, $time_in, $time_out);
+
+				if (!$use_fingerprint) {
+					$this->model_presence_presence->addLog($customer_id, $schedule_date, $action);
+				}
 					
-				default:
-					if (!$this->config->get('payroll_setting_use_fingerprint')) {
-						$this->load->model('presence/presence');
-						
-						$this->model_presence_presence->addLog($customer_id, $schedule_date, $action);
-					}
-					
-					$check = 1;
-					$json['process_verification'] = 1;
-			}
-			
-			$counter++;
+				$json['process_verification'] = 1;
+
+			default:
 		}
 
 		$this->response->addHeader('Content-Type: application/json');
@@ -310,7 +324,7 @@ class ControllerPresenceLogin extends Controller {
 		}
 		
 		if (isset($this->request->get['action']) && $this->request->get['action'] == 'logout') {
-			$schedule_date = date('Y-m-d', strtotime('-13 hours'));
+			$schedule_date = date('Y-m-d', strtotime($this->config->get('payroll_setting_logout_date') . ' hours'));
 			
 			$action = 'logout';
 		} else {
@@ -324,7 +338,7 @@ class ControllerPresenceLogin extends Controller {
 		$log_info = $this->model_presence_presence->getLog($customer_id, $schedule_date);
 		
 		if ($log_info) {
-			if ($action == 'login' && $log_info['time_logout'] == '0000-00-00 00:00:00') {
+			if ($action == 'login' && $log_info['time_login'] != '0000-00-00 00:00:00') {
 				$json['success'] = sprintf($this->language->get('text_success_login'), date('j M Y H:i:s', strtotime($log_info['time_login'])));
 			} elseif ($action == 'logout' && $log_info['time_logout'] != '0000-00-00 00:00:00') {
 				$json['success'] = sprintf($this->language->get('text_success_logout'), date('j M Y H:i:s', strtotime($log_info['time_logout'])));
