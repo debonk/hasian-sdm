@@ -214,15 +214,19 @@ class ModelPresenceSchedule extends Model {
 
 	public function getFinalSchedules($customer_id, $range_date) {
 		$customer_info = $this->model_common_payroll->getCustomer($customer_id);
-			
+		
+		$schedules_data = array();
+
 		$range_date['start'] = max($range_date['start'], $customer_info['date_start']);
 		
 		if ($customer_info['date_end']) {
 			$range_date['end'] = min($range_date['end'], $customer_info['date_end']);
 		}
-	
-		$schedules_data = array();
 
+		if ($range_date['start'] > $range_date['end']) {
+			return $schedules_data;
+		}
+	
 		// Apply Exchange
 		$exchanges_info = $this->model_presence_exchange->getExchangesByCustomerDate($customer_id, $range_date);
 

@@ -805,6 +805,7 @@ class ControllerPresenceSchedule extends Controller {
 						$time_login = '';
 						$time_logout = '';
 						$bg_class = '';
+						$note = '';
 					}
 					
 					if ($locked_all || strtotime($key_date) <= strtotime('today') || (isset($schedules_data[$key_date]) && $schedules_data[$key_date]['applied'] != 'schedule')) {

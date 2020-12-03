@@ -214,14 +214,6 @@ class ModelPresencePresence extends Model {
 	}
 
 	public function getFinalPresences($customer_id, $range_date) {
-		// $customer_info = $this->model_common_payroll->getCustomer($customer_id);
-			
-		// $range_date['start'] = max($range_date['start'], $customer_info['date_start']);
-		
-		// if ($customer_info['date_end']) {
-			// $range_date['end'] = min($range_date['end'], $customer_info['date_end']);
-		// }
-	
 		$presences_info = $this->getPresences($customer_id, $range_date);
 		
 		$presences_data = array();

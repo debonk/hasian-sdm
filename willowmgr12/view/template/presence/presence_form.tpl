@@ -113,9 +113,9 @@
 				      <?php for ($day = 0; $day < 7; $day++) { ?>
 				        <?php if (isset($calendar[$week . $day])) { ?>
 			  		      <td class="text-right calendar-day"><h4><?php echo $calendar[$week . $day]['text']; ?></h4>
-						    <div class="text-center">
-							  <p class="bg-info"><?php echo $calendar[$week . $day]['schedule_type']; ?></br>
-							  <?php echo $calendar[$week . $day]['time_login'] . ' - ' . $calendar[$week . $day]['time_logout']; ?></p>
+						    <div class="text-center" data-toggle="tooltip" title="<?php echo $calendar[$week . $day]['note']; ?>">
+							  <p class="bg-<?php echo $calendar[$week . $day]['bg_class']; ?>"><i class="fa fa-clock-o"></i> <?php echo $calendar[$week . $day]['schedule_type']; ?></br>
+							  <i class="fa fa-sign-in"></i> <?php echo $calendar[$week . $day]['time_login'] . ' - ' . $calendar[$week . $day]['time_logout']; ?></p>
 							</div>
 						    <select name="<?php echo 'detail' . $calendar[$week . $day]['date']; ?>" id="" class="form-control">
 						    <?php if ($calendar[$week . $day]['locked']) { ?>
@@ -148,7 +148,7 @@
     </div>
   </div>
 </div>
-<script type="text/javascript"><!--
+<script type="text/javascript">
 $('#period-info').load('index.php?route=common/period_info&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
 
 $('#customer-info').load('index.php?route=common/customer_info&token=<?php echo $token; ?>&customer_id=<?php echo $customer_id; ?>');
@@ -187,6 +187,6 @@ $('#absence-info').on('click', 'button[id^=\'button-action\']', function(e) {
 		});
 	}
 });
-//--></script>
+</script>
 </div>
 <?php echo $footer; ?>

@@ -596,6 +596,7 @@ class ControllerPresencePresence extends Controller {
 			'text_hke',
 			'text_confirm',
 			'text_no_results',
+			'text_off',
 			'column_hke',
 			'column_h',
 			'column_s',
@@ -712,7 +713,7 @@ class ControllerPresencePresence extends Controller {
 		$this->load->model('presence/schedule');
 		$this->load->model('overtime/overtime');
 		$schedules_info = $this->model_presence_schedule->getFinalSchedules($customer_id, $range_date);
-		
+					
 		//Form Calendar
 		$data['list_days'] = explode(' ',$this->language->get('text_days'));
 
@@ -759,9 +760,11 @@ class ControllerPresencePresence extends Controller {
 						'presence_status_id'=> $presence_status_id,
 						'presence_status'	=> $presence_status,
 						'locked'			=> $locked,
-						'schedule_type'		=> isset($schedules_info[$date_text]['schedule_type']) ? $schedules_info[$date_text]['schedule_type'] : '-',
-						'time_login'		=> !empty($schedules_info[$date_text]['time_login']) ? date('H:i', strtotime($schedules_info[$date_text]['time_login'])) : '',
-						'time_logout'		=> !empty($schedules_info[$date_text]['time_logout']) && $schedules_info[$date_text]['time_logout'] != '0000-00-00 00:00:00' ? date('H:i', strtotime($schedules_info[$date_text]['time_logout'])) : ''
+						'schedule_type'		=> $schedules_info[$date_text]['time_in'] != '0000-00-00 00:00:00' ? ($schedules_info[$date_text]['schedule_type'] . ' (' . date('H:i', strtotime($schedules_info[$date_text]['time_in'])) . '-' . date('H:i', strtotime($schedules_info[$date_text]['time_out'])) . ')') : $data['text_off'],
+						'time_login'		=> ($schedules_info[$date_text]['time_login'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_info[$date_text]['time_login'])) : '...',
+						'time_logout'		=> ($schedules_info[$date_text]['time_logout'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_info[$date_text]['time_logout'])) : '...',
+						'bg_class'			=> !empty($schedules_info[$date_text]['bg_class']) ? $schedules_info[$date_text]['bg_class'] : 'info',
+						'note'				=> !empty($schedules_info[$date_text]['note']) ? $schedules_info[$date_text]['note'] : ''
 					);
 				}
 				$counter++;

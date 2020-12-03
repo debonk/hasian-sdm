@@ -20,6 +20,7 @@ $_['text_date_end']				= 'Tanggal Akhir :';
 $_['text_payroll_status']		= 'Status :';
 $_['text_sum_presence']			= 'Ringkasan Kehadiran';
 $_['text_total']				= 'Total';
+$_['text_off']				    = 'Off';
 
 //Code
 $_['code_full_overtime']		= 'LH';
