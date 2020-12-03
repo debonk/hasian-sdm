@@ -804,7 +804,7 @@ class ControllerPresenceSchedule extends Controller {
 						$presence_status = '-';
 						$time_login = '';
 						$time_logout = '';
-						$bg_class = '';
+						$bg_class = 'warning';
 						$note = '';
 					}
 					
