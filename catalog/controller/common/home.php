@@ -58,8 +58,8 @@ class ControllerCommonHome extends Controller {
 		//Bonk02:End
 		
 		//Temporary sebelum buat modul display
-		$data['main_image'] = $server . 'image/catalog/u_img/willow_main.jpg';
-		// $data['main_image'] = $server . 'image/main_image.jpg'; //sdm.grahakartini
+		// $data['main_image'] = $server . 'image/catalog/u_img/willow_main.jpg';
+		$data['main_image'] = $server . 'image/main_image.jpg'; //sdm.grahakartini
 		$data['main_url'] = $this->url->link('presence/login', '', true);
 		$data['info'] = 'Klik untuk Login';
 		//End Temporary
