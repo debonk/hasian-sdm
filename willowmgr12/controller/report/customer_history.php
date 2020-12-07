@@ -152,13 +152,11 @@ class ControllerReportCustomerHistory extends Controller {
 			$comment = vsprintf($this->language->get('text_' . $result['key']), json_decode($result['data'], true));
 
 			$find = array(
-				'customer_id=',
-				// 'order_id='
+				'customer_id='
 			);
 
 			$replace = array(
-				$this->url->link('report/customer/view', 'token=' . $this->session->data['token'] . '&customer_id=', true),
-				// $this->url->link('sale/order/info', 'token=' . $this->session->data['token'] . '&order_id=', true)
+				$this->url->link('report/customer/view', 'token=' . $this->session->data['token'] . '&customer_id=', true)
 			);
 
 			$data['histories'][] = array(

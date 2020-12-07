@@ -97,7 +97,7 @@ class ModelCommonPayroll extends Model {
 	}
 
 	public function getCustomer($customer_id) {
-		$query = $this->db->query("SELECT DISTINCT customer_id, store_id, firstname, lastname, nip, date_start, c.image, payroll_include, full_overtime, skip_trial_status, health_insurance, employment_insurance, email, c.telephone, acc_no, date_end, status, c.customer_group_id, c.location_id, c.address_id, cgd.name AS customer_group, l.name AS location, pm.name AS payroll_method FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE c.customer_id = '" . (int)$customer_id . "'");
+		$query = $this->db->query("SELECT DISTINCT customer_id, store_id, firstname, lastname, nip, nik, date_start, c.image, payroll_include, full_overtime, skip_trial_status, health_insurance, employment_insurance, email, c.telephone, acc_no, date_end, status, c.customer_department_id, c.customer_group_id, c.location_id, c.address_id, cdd.name AS customer_department, cgd.name AS customer_group, l.name AS location, pm.name AS payroll_method FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (cdd.customer_department_id = c.customer_department_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE c.customer_id = '" . (int)$customer_id . "'");
 								   
 		return $query->row;
 	}
@@ -106,6 +106,12 @@ class ModelCommonPayroll extends Model {
 		$query = $this->db->query("SELECT DISTINCT customer_id FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "'");
 
 		return $query->row;
+	}
+
+	public function getCustomerDepartment($customer_department_id) {
+		$query = $this->db->query("SELECT DISTINCT name FROM " . DB_PREFIX . "customer_department cd LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (cd.customer_department_id = cdd.customer_department_id) WHERE cd.customer_department_id = '" . (int)$customer_department_id . "' AND cdd.language_id = '" . (int)$this->config->get('config_language_id') . "'");
+
+		return $query->row['name'];
 	}
 
 	public function getCustomerGroup($customer_group_id) {

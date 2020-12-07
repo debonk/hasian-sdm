@@ -838,23 +838,7 @@ class ControllerPresenceSchedule extends Controller {
 		$customer_info = $this->model_common_payroll->getCustomer($customer_id);
 
 		$this->load->model('presence/schedule_type');
-		// $data['schedule_types'] = $this->model_presence_schedule_type->getScheduleTypesByLocationGroup($customer_info['location_id'], $customer_info['customer_group_id']);
-		$schedule_types = $this->model_presence_schedule_type->getScheduleTypesByLocationGroup($customer_info['location_id'], $customer_info['customer_group_id']);
-
-		$data['schedule_types'] = array();
-		
-		foreach ($schedule_types as $schedule_type) {
-			$time_start = date('H:i', strtotime($schedule_type['time_start']));
-			$time_end = date('H:i', strtotime($schedule_type['time_end']));
-
-			$data['schedule_types'][] = array(
-				'schedule_type_id'	=> $schedule_type['schedule_type_id'],
-				'code'				=> $schedule_type['code'],
-				'time_start'		=> $time_start,
-				'time_end'			=> $time_end,
-				'text'				=> $schedule_type['code'] . ' (' . $time_start . '-' . $time_end . ')'
-			);
-		}
+		$data['schedule_types'] = $this->model_presence_schedule_type->getScheduleTypesByLocationGroup($customer_info['location_id'], $customer_info['customer_group_id']);
 		//End Legend
 		
 		$data['presence_period_id'] = $presence_period_id;

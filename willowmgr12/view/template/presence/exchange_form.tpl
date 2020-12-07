@@ -81,9 +81,9 @@
 				<option value="0"><?php echo $text_select ?></option>
 				<?php foreach ($schedule_types as $schedule_type) { ?>
 				  <?php if ($schedule_type['schedule_type_id'] == $schedule_type_id) { ?>
-					<option value="<?php echo $schedule_type['schedule_type_id']; ?>" selected="selected"><?php echo $schedule_type['code']; ?></option>
+					<option value="<?php echo $schedule_type['schedule_type_id']; ?>" selected="selected"><?php echo $schedule_type['text']; ?></option>
 				  <?php } else { ?>
-					<option value="<?php echo $schedule_type['schedule_type_id']; ?>"><?php echo $schedule_type['code']; ?></option>
+					<option value="<?php echo $schedule_type['schedule_type_id']; ?>"><?php echo $schedule_type['text']; ?></option>
 				  <?php } ?>
 				<?php } ?>
 			  </select>
@@ -132,7 +132,7 @@ $('select[name=\'customer_id\']').on('change', function() {
 
 			if (json && json != '') {
 				for (i = 0; i < json.length; i++) {
-					html += '<option value="' + json[i]['schedule_type_id'] + '">' + json[i]['code'] + '</option>';
+					html += '<option value="' + json[i]['schedule_type_id'] + '">' + json[i]['text'] + '</option>';
 				}
 			}
 

@@ -140,6 +140,21 @@ class ModelPresenceScheduleType extends Model {
 
 		$query = $this->db->query($sql);
 
-		return $query->rows;
+		$schedule_types_data = array();
+
+		foreach ($query->rows as $schedule_type) {
+			$time_start = date('H:i', strtotime($schedule_type['time_start']));
+			$time_end = date('H:i', strtotime($schedule_type['time_end']));
+
+			$schedule_types_data[] = array(
+				'schedule_type_id'	=> $schedule_type['schedule_type_id'],
+				'code'				=> $schedule_type['code'],
+				'time_start'		=> $time_start,
+				'time_end'			=> $time_end,
+				'text'				=> $schedule_type['code'] . ' (' . $time_start . '-' . $time_end . ')'
+			);
+		}
+
+		return $schedule_types_data;
 	}
 }

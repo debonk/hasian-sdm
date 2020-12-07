@@ -9,6 +9,7 @@ class ControllerCommonCustomerInfo extends Controller {
 			'text_customer_detail',
 			'text_additional_info',
 			'text_customer',
+			'text_customer_department',
 			'text_customer_group',
 			'text_location',
 			'text_employment_period',
@@ -48,6 +49,7 @@ class ControllerCommonCustomerInfo extends Controller {
 			}
 			$data['employment_period'] = $date_start . ' - ' . $date_end;
 
+			$data['customer_department'] = $customer_info['customer_department'];
 			$data['customer_group'] = $customer_info['customer_group'];
 			$data['location'] = $customer_info['location'];
 			$data['email'] = $customer_info['email'];

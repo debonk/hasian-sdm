@@ -94,9 +94,9 @@
 				<option value="0"><?php echo $text_select ?></option>
 				<?php foreach ($schedule_types as $schedule_type) { ?>
 				  <?php if ($schedule_type['schedule_type_id'] == $schedule_type_id) { ?>
-					<option value="<?php echo $schedule_type['schedule_type_id']; ?>" selected="selected"><?php echo $schedule_type['code']; ?></option>
+					<option value="<?php echo $schedule_type['schedule_type_id']; ?>" selected="selected"><?php echo $schedule_type['text']; ?></option>
 				  <?php } else { ?>
-					<option value="<?php echo $schedule_type['schedule_type_id']; ?>"><?php echo $schedule_type['code']; ?></option>
+					<option value="<?php echo $schedule_type['schedule_type_id']; ?>"><?php echo $schedule_type['text']; ?></option>
 				  <?php } ?>
 				<?php } ?>
 			  </select>
@@ -125,18 +125,12 @@ $('select[name=\'customer_id\']').on('change', function() {
 	$.ajax({
 		url: 'index.php?route=overtime/overtime/scheduleTypesByLocationGroup&token=<?php echo $token; ?>&customer_id=' + $('select[name=\'customer_id\']').val(),
 		dataType: 'json',
-		// beforeSend: function() {
-			// $('select[name=\'customer_id\']').after(' <i class="fa fa-circle-o-notch fa-spin"></i>');
-		// },
-		// complete: function() {
-			// $('.fa-spin').remove();
-		// },
 		success: function(json) {
 			html = '	<option value="0"><?php echo $text_select ?></option>';
 
 			if (json && json != '') {
 				for (i = 0; i < json.length; i++) {
-					html += '<option value="' + json[i]['schedule_type_id'] + '">' + json[i]['code'] + '</option>';
+					html += '<option value="' + json[i]['schedule_type_id'] + '">' + json[i]['text'] + '</option>';
 				}
 			}
 

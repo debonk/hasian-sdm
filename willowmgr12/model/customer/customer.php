@@ -14,7 +14,7 @@ class ModelCustomerCustomer extends Model {
 
 		$nip = $nip_prefix . $nip_no . mt_rand(0,9);
 
-		$this->db->query("INSERT INTO " . DB_PREFIX . "customer SET customer_group_id = '" . (int)$data['customer_group_id'] . "', location_id = '" . (int)$data['location_id'] . "', nip = '" . $this->db->escape($nip) . "', nip_no = '" . (int)$nip_no . "', nik = '" . $this->db->escape($data['nik']) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', date_start = STR_TO_DATE('" . $this->db->escape($data['date_start']) . "', '%e %b %Y'), image = '" . $this->db->escape($data['image']) . "', skip_trial_status = '" . (int)$data['skip_trial_status'] . "', payroll_include = '" . (int)$data['payroll_include'] . "', acc_no = '" . $this->db->escape($data['acc_no']) . "', payroll_method_id = '" . (int)$data['payroll_method_id'] . "', health_insurance = '" . (int)$data['health_insurance'] . "', employment_insurance = '" . (int)$data['employment_insurance'] . "', full_overtime = '" . (int)$data['full_overtime'] . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "', salt = '" . $this->db->escape($salt = token(9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "', status = '" . (int)$data['status'] . "', date_added = NOW()");
+		$this->db->query("INSERT INTO " . DB_PREFIX . "customer SET customer_department_id = '" . (int)$data['customer_department_id'] . "', customer_group_id = '" . (int)$data['customer_group_id'] . "', location_id = '" . (int)$data['location_id'] . "', nip = '" . $this->db->escape($nip) . "', nip_no = '" . (int)$nip_no . "', nik = '" . $this->db->escape($data['nik']) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', date_start = STR_TO_DATE('" . $this->db->escape($data['date_start']) . "', '%e %b %Y'), image = '" . $this->db->escape($data['image']) . "', skip_trial_status = '" . (int)$data['skip_trial_status'] . "', payroll_include = '" . (int)$data['payroll_include'] . "', acc_no = '" . $this->db->escape($data['acc_no']) . "', payroll_method_id = '" . (int)$data['payroll_method_id'] . "', health_insurance = '" . (int)$data['health_insurance'] . "', employment_insurance = '" . (int)$data['employment_insurance'] . "', full_overtime = '" . (int)$data['full_overtime'] . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "', salt = '" . $this->db->escape($salt = token(9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "', status = '" . (int)$data['status'] . "', date_added = NOW()");
 
 		$customer_id = $this->db->getLastId();
 
@@ -60,31 +60,10 @@ class ModelCustomerCustomer extends Model {
 			$data['custom_field'] = array();
 		}
 
-		$sql = "UPDATE " . DB_PREFIX . "customer SET customer_group_id = '" . (int)$data['customer_group_id'] . "', location_id = '" . (int)$data['location_id'] . "', nik = '" . $this->db->escape($data['nik']) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', image = '" . $this->db->escape($data['image']) . "', payroll_include = '" . (int)$data['payroll_include'] . "', acc_no = '" . $this->db->escape($data['acc_no']) . "', payroll_method_id = '" . (int)$data['payroll_method_id'] . "', health_insurance = '" . (int)$data['health_insurance'] . "', employment_insurance = '" . (int)$data['employment_insurance'] . "', full_overtime = '" . (int)$data['full_overtime'] . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "', status = '" . (int)$data['status'] . "' WHERE customer_id = '" . (int)$customer_id . "'";
+		$sql = "UPDATE " . DB_PREFIX . "customer SET customer_department_id = '" . (int)$data['customer_department_id'] . "', customer_group_id = '" . (int)$data['customer_group_id'] . "', location_id = '" . (int)$data['location_id'] . "', nik = '" . $this->db->escape($data['nik']) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', image = '" . $this->db->escape($data['image']) . "', payroll_include = '" . (int)$data['payroll_include'] . "', acc_no = '" . $this->db->escape($data['acc_no']) . "', payroll_method_id = '" . (int)$data['payroll_method_id'] . "', health_insurance = '" . (int)$data['health_insurance'] . "', employment_insurance = '" . (int)$data['employment_insurance'] . "', full_overtime = '" . (int)$data['full_overtime'] . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "', status = '" . (int)$data['status'] . "' WHERE customer_id = '" . (int)$customer_id . "'";
 
 		$this->db->query($sql);
 		
-		if (isset($data['date_start']) && $data['date_start']) {
-			$this->db->query("UPDATE " . DB_PREFIX . "customer SET date_start = STR_TO_DATE('" . $this->db->escape($data['date_start']) . "', '%e %b %Y') WHERE customer_id = '" . (int)$customer_id . "'");
-
-			//Sistem penomoran NIP
-			$company_code = $this->config->get('config_nip_prefix'); //5:DSP, 7:WMA, 8:GK
-			$nip_prefix = $company_code . date('y', strtotime($data['date_start']));
-			
-			$nip_no = $this->getNipNoMax($nip_prefix);
-			
-			if ($nip_no) {
-				$nip_no++;
-			} else {
-				$nip_no = 100 + 1;
-			}
-
-			$nip = $nip_prefix . $nip_no . mt_rand(0,9);
-			
-			$this->db->query("UPDATE " . DB_PREFIX . "customer SET nip = '" . $this->db->escape($nip) . "', nip_no = '" . (int)$nip_no . "' WHERE customer_id = '" . (int)$customer_id . "'");
-			
-		}
-
 		if (isset($data['skip_trial_status'])) {
 			$this->db->query("UPDATE " . DB_PREFIX . "customer SET skip_trial_status = '" . (int)$data['skip_trial_status'] . "' WHERE customer_id = '" . (int)$customer_id . "'");
 		}
@@ -152,7 +131,7 @@ class ModelCustomerCustomer extends Model {
 	}
 
 	public function getCustomers($data = array()) { //Used by: dashboard/recent
-		$sql = "SELECT c.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+		$sql = "SELECT c.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cdd.name AS customer_department, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (c.customer_department_id = cdd.customer_department_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
 
 		$implode = array();
 
@@ -162,6 +141,10 @@ class ModelCustomerCustomer extends Model {
 
 		if (!empty($data['filter_email'])) {
 			$implode[] = "c.email LIKE '%" . $this->db->escape($data['filter_email']) . "%'";
+		}
+
+		if (!empty($data['filter_customer_department_id'])) {
+			$implode[] = "c.customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
 		}
 
 		if (!empty($data['filter_customer_group_id'])) {
@@ -195,6 +178,7 @@ class ModelCustomerCustomer extends Model {
 		$sort_data = array(
 			'c.nip',
 			'name',
+			'customer_department',
 			'customer_group',
 			'location',
 			'c.email',
@@ -318,6 +302,10 @@ class ModelCustomerCustomer extends Model {
 			$implode[] = "email LIKE '%" . $this->db->escape($data['filter_email']) . "%'";
 		}
 
+		if (!empty($data['filter_customer_department_id'])) {
+			$implode[] = "customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
+		}
+
 		if (!empty($data['filter_customer_group_id'])) {
 			$implode[] = "customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
 		}
@@ -387,7 +375,13 @@ class ModelCustomerCustomer extends Model {
 		return $query->row['total'];
 	}
 
-	public function getTotalCustomersByCustomerGroupId($customer_group_id) { //used by localisation/customer_group
+	public function getTotalCustomersByCustomerDepartmentId($customer_department_id) { //used by customer/customer_department
+		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer WHERE customer_department_id = '" . (int)$customer_department_id . "'");
+
+		return $query->row['total'];
+	}
+
+	public function getTotalCustomersByCustomerGroupId($customer_group_id) { //used by customer/customer_group
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer WHERE customer_group_id = '" . (int)$customer_group_id . "'");
 
 		return $query->row['total'];

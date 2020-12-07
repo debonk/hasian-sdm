@@ -15,6 +15,7 @@ class ControllerCommonMenu extends Controller {
 			'text_document',
 			'text_finger',
 			'text_customer_group',
+			'text_customer_department',
 			'text_document_type',
 			'text_custom_field',
 			'text_gender',
@@ -96,6 +97,7 @@ class ControllerCommonMenu extends Controller {
 		$data['document'] = $this->url->link('customer/document', 'token=' . $this->session->data['token'], true);
 		$data['finger'] = $this->url->link('customer/finger', 'token=' . $this->session->data['token'], true);
 		$data['customer_group'] = $this->url->link('customer/customer_group', 'token=' . $this->session->data['token'], true);
+		$data['customer_department'] = $this->url->link('customer/customer_department', 'token=' . $this->session->data['token'], true);
 		$data['document_type'] = $this->url->link('customer/document_type', 'token=' . $this->session->data['token'], true);
 		$data['custom_field'] = $this->url->link('customer/custom_field', 'token=' . $this->session->data['token'], true);
 		$data['gender'] = $this->url->link('localisation/gender', 'token=' . $this->session->data['token'], true);

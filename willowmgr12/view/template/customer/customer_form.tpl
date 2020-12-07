@@ -110,6 +110,20 @@
                         </div>
                       </div>
                       <div class="form-group">
+                        <label class="col-sm-3 control-label" for="input-customer-department"><?php echo $entry_customer_department; ?></label>
+                        <div class="col-sm-9">
+                          <select name="customer_department_id" id="input-customer-department" class="form-control">
+                            <?php foreach ($customer_departments as $customer_department) { ?>
+                            <?php if ($customer_department['customer_department_id'] == $customer_department_id) { ?>
+                            <option value="<?php echo $customer_department['customer_department_id']; ?>" selected="selected"><?php echo $customer_department['name']; ?></option>
+                            <?php } else { ?>
+                            <option value="<?php echo $customer_department['customer_department_id']; ?>"><?php echo $customer_department['name']; ?></option>
+                            <?php } ?>
+                            <?php } ?>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="form-group">
                         <label class="col-sm-3 control-label" for="input-customer-group"><?php echo $entry_customer_group; ?></label>
                         <div class="col-sm-9">
                           <select name="customer_group_id" id="input-customer-group" class="form-control">

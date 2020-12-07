@@ -477,11 +477,9 @@ class ControllerPresenceExchange extends Controller {
 		if (!isset($this->request->get['exchange_id'])) {
 			$data['action'] = $this->url->link('presence/exchange/add', 'token=' . $this->session->data['token'] . $url, true);
 			$data['disabled'] = '';
-			// $data['exchange_id'] = 0;
 		} else {
 			$data['action'] = $this->url->link('presence/exchange/edit', 'token=' . $this->session->data['token'] . '&exchange_id=' . $this->request->get['exchange_id'] . $url, true);
 			$data['disabled'] = 'disabled';
-			// $data['exchange_id'] = $this->request->get['exchange_id'];
 		}
 
 		$data['breadcrumbs'][] = array(

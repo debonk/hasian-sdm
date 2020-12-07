@@ -27,14 +27,15 @@ class ControllerCustomerCustomer extends Controller {
 			$this->load->model('common/payroll');
 			
 			$history_data = array(
-				'date' 			=> $this->request->post['date_start'],
-				'customer_id' 	=> $customer_id,
-				'name'        	=> $this->request->post['firstname'] . ' [' . $this->request->post['lastname'] . ']',
-				'customer_group'=> $this->model_common_payroll->getCustomerGroup($this->request->post['customer_group_id']),
-				'location'		=> $this->model_common_payroll->getLocation($this->request->post['location_id'])
+				'date' 					=> $this->request->post['date_start'],
+				'customer_id' 			=> $customer_id,
+				'name'        			=> $this->request->post['firstname'] . ' [' . $this->request->post['lastname'] . ']',
+				'customer_group'		=> $this->model_common_payroll->getCustomerGroup($this->request->post['customer_group_id']),
+				'customer_department'	=> $this->model_common_payroll->getCustomerDepartment($this->request->post['customer_department_id']),
+				'location'				=> $this->model_common_payroll->getLocation($this->request->post['location_id'])
 			);
 			
-			$this->model_customer_history->addHistory('register', $history_data);
+			$this->model_customer_history->addHistory('register2', $history_data);
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
@@ -42,6 +43,10 @@ class ControllerCustomerCustomer extends Controller {
 
 			if (isset($this->request->get['filter_name'])) {
 				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
+			}
+
+			if (isset($this->request->get['filter_customer_department_id'])) {
+				$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
 			}
 
 			if (isset($this->request->get['filter_customer_group_id'])) {
@@ -100,6 +105,10 @@ class ControllerCustomerCustomer extends Controller {
 
 			if (isset($this->request->get['filter_name'])) {
 				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
+			}
+
+			if (isset($this->request->get['filter_customer_department_id'])) {
+				$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
 			}
 
 			if (isset($this->request->get['filter_customer_group_id'])) {
@@ -171,6 +180,10 @@ class ControllerCustomerCustomer extends Controller {
 				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 			}
 
+			if (isset($this->request->get['filter_customer_department_id'])) {
+				$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+			}
+
 			if (isset($this->request->get['filter_customer_group_id'])) {
 				$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
 			}
@@ -213,43 +226,52 @@ class ControllerCustomerCustomer extends Controller {
 		$this->load->model('customer/history');
 		$this->load->model('common/payroll');
 		
-		$customer_group = '';
-		$location = '';
+		$history_data = array(
+			'date' 					=> '',
+			'customer_id' 			=> $this->request->get['customer_id'],
+			'name'        			=> $this->request->post['firstname'] . ' [' . $this->request->post['lastname'] . ']'
+		);
 		
 		if (isset($this->request->post['date_end']) && $this->request->post['date_end']) {
-			$date = $this->request->post['date_end'];
+			$history_data['date'] = $this->request->post['date_end'];
+
 			$key = 'date_end';
-		}
+		} elseif (isset($this->request->post['date_start'])) {
+			$history_data['date'] = $this->request->post['date_start'];
+			
+			$key = 'reactivate2';
+			
+			$additional_data = [
+				'customer_group' 		=> $this->model_common_payroll->getCustomerGroup($this->request->post['customer_group_id']),
+				'customer_department' 	=> $this->model_common_payroll->getCustomerDepartment($this->request->post['customer_department_id']),
+				'location' 				=> $this->model_common_payroll->getLocation($this->request->post['location_id'])
+			];
 
-		if (isset($this->request->post['date_start'])) {
-			$key = 'reactivate';
-				
-			$date = $this->request->post['date_start'];
-			$customer_group = $this->model_common_payroll->getCustomerGroup($this->request->post['customer_group_id']);
-			$location = $this->model_common_payroll->getLocation($this->request->post['location_id']);
-		}
+			$history_data = array_merge($history_data, $additional_data);
 
-		if (!isset($date)) {
-			$date = date($this->language->get('date_format_jMY'));
+		} elseif (!isset($date)) {
+			$history_data['date'] = date($this->language->get('date_format_jMY'));
 			
 			$customer_info = $this->model_common_payroll->getCustomer($this->request->get['customer_id']);
 			
-			if ($this->request->post['customer_group_id'] != $customer_info['customer_group_id'] || $this->request->post['location_id'] != $customer_info['location_id']) {
-				$key = 'mutation';
-				$customer_group = $this->model_common_payroll->getCustomerGroup($this->request->post['customer_group_id']);
-				$location = $this->model_common_payroll->getLocation($this->request->post['location_id']);
+			if ($this->request->post['customer_department_id'] != $customer_info['customer_department_id'] || $this->request->post['customer_group_id'] != $customer_info['customer_group_id'] || $this->request->post['location_id'] != $customer_info['location_id']) {
+				$key = 'mutation2';
+				
+				$additional_data = [
+					'customer_group_from' 		=> $customer_info['customer_group'],
+					'customer_department_from' 	=> $customer_info['customer_department'],
+					'location_from' 			=> $customer_info['location'],
+					'customer_group_to' 		=> $this->model_common_payroll->getCustomerGroup($this->request->post['customer_group_id']),
+					'customer_department_to' 	=> $this->model_common_payroll->getCustomerDepartment($this->request->post['customer_department_id']),
+					'location_to' 				=> $this->model_common_payroll->getLocation($this->request->post['location_id'])
+				];
+
+				$history_data = array_merge($history_data, $additional_data);
+
 			} else {
 				$key = 'edit';
 			}
 		}
-
-		$history_data = array(
-			'date' 			=> $date,
-			'customer_id' 	=> $this->request->get['customer_id'],
-			'name'        	=> $this->request->post['firstname'] . ' [' . $this->request->post['lastname'] . ']',
-			'customer_group'=> $customer_group,
-			'location'		=> $location
-		);
 		
 		$this->model_customer_history->addHistory($key, $history_data);
 	}
@@ -272,6 +294,10 @@ class ControllerCustomerCustomer extends Controller {
 				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 			}
 
+			if (isset($this->request->get['filter_customer_department_id'])) {
+				$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+			}
+	
 			if (isset($this->request->get['filter_customer_group_id'])) {
 				$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
 			}
@@ -315,6 +341,12 @@ class ControllerCustomerCustomer extends Controller {
 			$filter_name = $this->request->get['filter_name'];
 		} else {
 			$filter_name = null;
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$filter_customer_department_id = $this->request->get['filter_customer_department_id'];
+		} else {
+			$filter_customer_department_id = null;
 		}
 
 		if (isset($this->request->get['filter_customer_group_id'])) {
@@ -371,6 +403,10 @@ class ControllerCustomerCustomer extends Controller {
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 		}
 
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+		}
+
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
 		}
@@ -421,16 +457,17 @@ class ControllerCustomerCustomer extends Controller {
 		$data['customers'] = array();
 
 		$filter_data = array(
-			'filter_name'              => $filter_name,
-			'filter_customer_group_id' => $filter_customer_group_id,
-			'filter_location_id'       => $filter_location_id,
-			'filter_status'            => $filter_status,
-			'filter_date_start'        => $filter_date_start,
-			'filter_active'            => $filter_active,
-			'sort'                     => $sort,
-			'order'                    => $order,
-			'start'                    => ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit'                    => $this->config->get('config_limit_admin')
+			'filter_name'              		=> $filter_name,
+			'filter_customer_department_id' => $filter_customer_department_id,
+			'filter_customer_group_id' 		=> $filter_customer_group_id,
+			'filter_location_id'       		=> $filter_location_id,
+			'filter_status'            		=> $filter_status,
+			'filter_date_start'        		=> $filter_date_start,
+			'filter_active'            		=> $filter_active,
+			'sort'                     		=> $sort,
+			'order'                    		=> $order,
+			'start'                    		=> ($page - 1) * $this->config->get('config_limit_admin'),
+			'limit'                    		=> $this->config->get('config_limit_admin')
 		);
 
 		$customer_total = $this->model_customer_customer->getTotalCustomers($filter_data);
@@ -447,22 +484,24 @@ class ControllerCustomerCustomer extends Controller {
 			}
 
 			$data['customers'][] = array(
-				'customer_id'    => $result['customer_id'],
-				'nip'            => $result['nip'],
-				'name'           => $result['name'],
-				'customer_group' => $result['customer_group'],
-				'location'       => $result['location'],
-				'date_start'     => date($this->language->get('date_format_jMY'), strtotime($result['date_start'])),
-				'date_end'     	 => empty($result['date_end']) ? '-' : date($this->language->get('date_format_jMY'), strtotime($result['date_end'])),
-				'unlock'         => $unlock,
-				'edit'           => $this->url->link('customer/customer/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
-				'view'           => $this->url->link('report/customer/view', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'], true)
+				'customer_id'    		=> $result['customer_id'],
+				'nip'            		=> $result['nip'],
+				'name'           		=> $result['name'],
+				'customer_department'	=> $result['customer_department'],
+				'customer_group' 		=> $result['customer_group'],
+				'location'       		=> $result['location'],
+				'date_start'     		=> date($this->language->get('date_format_jMY'), strtotime($result['date_start'])),
+				'date_end'     	 		=> empty($result['date_end']) ? '-' : date($this->language->get('date_format_jMY'), strtotime($result['date_end'])),
+				'unlock'         		=> $unlock,
+				'edit'           		=> $this->url->link('customer/customer/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
+				'view'           		=> $this->url->link('report/customer/view', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'], true)
 			);
 		}
 
 		$language_items = array(
 			'heading_title',
 			'text_list',
+			'text_all',
 			'text_enabled',
 			'text_disabled',
 			'text_yes',
@@ -474,6 +513,7 @@ class ControllerCustomerCustomer extends Controller {
 			'text_inactive',
 			'entry_name',
 			'entry_email',
+			'entry_customer_department',
 			'entry_customer_group',
 			'entry_location',
 			'entry_status',
@@ -481,6 +521,7 @@ class ControllerCustomerCustomer extends Controller {
 			'entry_active',
 			'column_nip',
 			'column_name',
+			'column_customer_department',
 			'column_customer_group',
 			'column_location',
 			'column_date_start',
@@ -527,6 +568,10 @@ class ControllerCustomerCustomer extends Controller {
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 		}
 
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+		}
+
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
 		}
@@ -559,6 +604,7 @@ class ControllerCustomerCustomer extends Controller {
 
 		$data['sort_nip'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=c.nip' . $url, true);
 		$data['sort_name'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=name' . $url, true);
+		$data['sort_customer_department'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=customer_department' . $url, true);
 		$data['sort_customer_group'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
 		$data['sort_location'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
 		$data['sort_date_start'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=c.date_start' . $url, true);
@@ -568,6 +614,10 @@ class ControllerCustomerCustomer extends Controller {
 
 		if (isset($this->request->get['filter_name'])) {
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
 		}
 
 		if (isset($this->request->get['filter_customer_group_id'])) {
@@ -609,11 +659,15 @@ class ControllerCustomerCustomer extends Controller {
 		$data['results'] = sprintf($this->language->get('text_pagination'), ($customer_total) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($customer_total - $this->config->get('config_limit_admin'))) ? $customer_total : ((($page - 1) * $this->config->get('config_limit_admin')) + $this->config->get('config_limit_admin')), $customer_total, ceil($customer_total / $this->config->get('config_limit_admin')));
 
 		$data['filter_name'] = $filter_name;
+		$data['filter_customer_department_id'] = $filter_customer_department_id;
 		$data['filter_customer_group_id'] = $filter_customer_group_id;
 		$data['filter_status'] = $filter_status;
 		$data['filter_location_id'] = $filter_location_id;
 		$data['filter_date_start'] = $filter_date_start;
 		$data['filter_active'] = $filter_active;
+
+		$this->load->model('customer/customer_department');
+		$data['customer_departments'] = $this->model_customer_customer_department->getCustomerDepartments();
 
 		$this->load->model('customer/customer_group');
 		$data['customer_groups'] = $this->model_customer_customer_group->getCustomerGroups();
@@ -648,7 +702,7 @@ class ControllerCustomerCustomer extends Controller {
 			'text_loading',
 			'text_add_ban_ip',
 			'text_remove_ban_ip',
-
+			'entry_customer_department',
 			'entry_customer_group',
 			'entry_location',
 			'entry_payroll_method',
@@ -682,13 +736,11 @@ class ControllerCustomerCustomer extends Controller {
 			'entry_zone',
 			'entry_country',
 			'entry_default',
-
 			'help_lastname',
 			'help_skip_trial_status',
 			'help_health_insurance',
 			'help_employment_insurance',
 			'help_npwp_address',
-
 			'button_save',
 			'button_cancel',
 			'button_address_add',
@@ -750,6 +802,10 @@ class ControllerCustomerCustomer extends Controller {
 
 		if (isset($this->request->get['filter_name'])) {
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
 		}
 
 		if (isset($this->request->get['filter_customer_group_id'])) {
@@ -839,6 +895,18 @@ class ControllerCustomerCustomer extends Controller {
 
 		$data['placeholder'] = $this->model_tool_image->resize('no_image.png', 200, 200);
 
+		$this->load->model('customer/customer_department');
+
+		$data['customer_departments'] = $this->model_customer_customer_department->getCustomerDepartments();
+
+		if (isset($this->request->post['customer_department_id'])) {
+			$data['customer_department_id'] = $this->request->post['customer_department_id'];
+		} elseif (!empty($customer_info)) {
+			$data['customer_department_id'] = $customer_info['customer_department_id'];
+		} else {
+			$data['customer_department_id'] = 0;
+		}
+
 		$this->load->model('customer/customer_group');
 
 		$data['customer_groups'] = $this->model_customer_customer_group->getCustomerGroups();
@@ -923,18 +991,12 @@ class ControllerCustomerCustomer extends Controller {
 			$data['lastname'] = '';
 		}
 
-		// if (isset($this->request->post['skip_trial_status'])) {
-			// $data['skip_trial_status'] = $this->request->post['skip_trial_status'];
-		// } else {
-			// $data['skip_trial_status'] = $customer_info['skip_trial_status'];
-		// }
-
 		if (isset($this->request->post['skip_trial_status'])) {
 			$data['skip_trial_status'] = $this->request->post['skip_trial_status'];
 		} elseif (!empty($customer_info)) {
 			$data['skip_trial_status'] = $customer_info['skip_trial_status'];
 		} else {
-			$data['skip_trial_status'] = 0;
+			$data['skip_trial_status'] = 1;
 		}
 
 		if (isset($this->request->post['date_start'])) {
@@ -1030,7 +1092,7 @@ class ControllerCustomerCustomer extends Controller {
 		} elseif (!empty($customer_info)) {
 			$data['employment_insurance'] = $customer_info['employment_insurance'];
 		} else {
-			$data['employment_insurance'] = 0;
+			$data['employment_insurance'] = 1;
 		}
 
 		// Custom Fields
@@ -1237,18 +1299,6 @@ class ControllerCustomerCustomer extends Controller {
 					$this->error['address'][$key]['address_1'] = $this->language->get('error_address_1');
 				}
 
-/*				if ((utf8_strlen($value['city']) < 2) || (utf8_strlen($value['city']) > 128)) {
-					$this->error['address'][$key]['city'] = $this->language->get('error_city');
-				}
-*/
-				$this->load->model('localisation/country');
-
-				$country_info = $this->model_localisation_country->getCountry($value['country_id']);
-
-/*				if ($country_info && $country_info['postcode_required'] && (utf8_strlen($value['postcode']) < 2 || utf8_strlen($value['postcode']) > 10)) {
-					$this->error['address'][$key]['postcode'] = $this->language->get('error_postcode');
-				}
-*/
 				if ($value['country_id'] == '') {
 					$this->error['address'][$key]['country'] = $this->language->get('error_country');
 				}
@@ -1257,7 +1307,6 @@ class ControllerCustomerCustomer extends Controller {
 					$this->error['address'][$key]['zone'] = $this->language->get('error_zone');
 				}
 
-				// Bonk
 				if (!isset($value['city']) || $value['city'] == '') {
 					$this->error['address'][$key]['city'] = $this->language->get('error_city');
 				}
@@ -1430,17 +1479,19 @@ class ControllerCustomerCustomer extends Controller {
 
 			foreach ($results as $result) {
 				$json[] = array(
-					'customer_id'       => $result['customer_id'],
-					'customer_group_id' => $result['customer_group_id'],
-					'name'              => strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8')),
-					'customer_group'    => $result['customer_group'],
-					'nip'          		=> $result['nip'],
-					'firstname'         => $result['firstname'],
-					'lastname'          => $result['lastname'],
-					'email'             => $result['email'],
-					'telephone'         => $result['telephone'],
-					'custom_field'      => json_decode($result['custom_field'], true),
-					'address'           => $this->model_customer_customer->getAddresses($result['customer_id'])
+					'customer_id'       		=> $result['customer_id'],
+					'customer_department_id'	=> $result['customer_department_id'],
+					'customer_group_id' 		=> $result['customer_group_id'],
+					'name'              		=> strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8')),
+					'customer_department'    	=> $result['customer_department'],
+					'customer_group'    		=> $result['customer_group'],
+					'nip'          				=> $result['nip'],
+					'firstname'         		=> $result['firstname'],
+					'lastname'          		=> $result['lastname'],
+					'email'             		=> $result['email'],
+					'telephone'         		=> $result['telephone'],
+					'custom_field'      		=> json_decode($result['custom_field'], true),
+					'address'           		=> $this->model_customer_customer->getAddresses($result['customer_id'])
 				);
 			}
 		}
