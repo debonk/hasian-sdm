@@ -8,7 +8,7 @@ $_['text_list']				= 'Daftar Karyawan';
 $_['text_add']				= 'Add Karyawan';
 $_['text_edit']				= 'Edit Karyawan';
 $_['text_customer']			= 'Nama Karyawan';
-$_['text_customer_department']	= 'Departemen';
+$_['text_customer_department']	= 'Divisi';
 $_['text_customer_group']	= 'Jabatan';
 $_['text_location']			= 'Lokasi Kerja';
 $_['text_employment_period']= 'Bekerja Sejak';
@@ -22,7 +22,7 @@ $_['text_inactive']			= 'Berhenti Bekerja';
 // Column
 $_['column_nip']			= 'NIP';
 $_['column_name']			= 'Nama Karyawan';
-$_['column_customer_department'] = 'Departemen';
+$_['column_customer_department'] = 'Divisi';
 $_['column_customer_group'] = 'Jabatan';
 $_['column_location']		= 'Lokasi Kerja';
 $_['column_full_overtime']	= '12 Jam';
@@ -37,7 +37,7 @@ $_['column_tunj_pph']		= 'Tunjangan PPH';
 $_['column_uang_makan']		= 'Uang Makan';
 
 // Entry
-$_['entry_customer_department']		= 'Departemen';
+$_['entry_customer_department']		= 'Divisi';
 $_['entry_customer_group']			= 'Jabatan';
 $_['entry_location']				= 'Lokasi Kerja';
 $_['entry_payroll_method']			= 'Metode Penggajian';

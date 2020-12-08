@@ -2,7 +2,7 @@
 $_['text_customer_detail']		= 'Data Karyawan'; 
 $_['text_additional_info']		= 'Informasi Tambahan'; 
 $_['text_customer']				= 'Nama Karyawan'; 
-$_['text_customer_department']	= 'Departemen'; 
+$_['text_customer_department']	= 'Divisi'; 
 $_['text_customer_group']		= 'Jabatan'; 
 $_['text_location']				= 'Lokasi Kerja'; 
 $_['text_employment_period']	= 'Bekerja Sejak'; 

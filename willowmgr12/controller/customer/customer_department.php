@@ -226,8 +226,8 @@ class ControllerCustomerCustomerDepartment extends Controller {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 
-		$data['sort_name'] = $this->url->link('customer/customer_department', 'token=' . $this->session->data['token'] . '&sort=cgd.name' . $url, true);
-		$data['sort_sort_order'] = $this->url->link('customer/customer_department', 'token=' . $this->session->data['token'] . '&sort=cg.sort_order' . $url, true);
+		$data['sort_name'] = $this->url->link('customer/customer_department', 'token=' . $this->session->data['token'] . '&sort=cdd.name' . $url, true);
+		$data['sort_order'] = $this->url->link('customer/customer_department', 'token=' . $this->session->data['token'] . '&sort=cd.sort_order' . $url, true);
 
 		$url = '';
 
