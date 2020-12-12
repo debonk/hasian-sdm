@@ -1,20 +1,22 @@
 <?php
-class ControllerOvertimeOvertime extends Controller {
+class ControllerOvertimeOvertime extends Controller
+{
 	private $error = array();
 
-	public function index() {
+	public function index()
+	{
 		$this->load->language('overtime/overtime');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('common/payroll');
 		$this->load->model('overtime/overtime');
-		
+
 		$this->getList();
-		
 	}
 
-	public function add() {
+	public function add()
+	{
 		$this->load->language('overtime/overtime');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -63,7 +65,8 @@ class ControllerOvertimeOvertime extends Controller {
 		$this->getForm();
 	}
 
-	public function edit() {
+	public function edit()
+	{
 		$this->load->language('overtime/overtime');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -112,7 +115,8 @@ class ControllerOvertimeOvertime extends Controller {
 		$this->getForm();
 	}
 
-	public function delete() {
+	public function delete()
+	{
 		$this->load->language('overtime/overtime');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -163,7 +167,8 @@ class ControllerOvertimeOvertime extends Controller {
 		$this->getList();
 	}
 
-	protected function getList() {
+	protected function getList()
+	{
 		if (isset($this->request->get['filter_name'])) {
 			$filter_name = $this->request->get['filter_name'];
 		} else {
@@ -267,16 +272,16 @@ class ControllerOvertimeOvertime extends Controller {
 		$results = $this->model_overtime_overtime->getOvertimes($filter_data);
 
 		$this->load->model('overtime/overtime_type');
-		
+
 		foreach ($results as $result) {
 			if ($result['presence_period_id']) {
 				$payment = date($this->language->get('date_format_m_y'), strtotime($result['period']));
 			} else {
 				$payment = '';
 			}
-			
+
 			$payment_status = $this->model_overtime_overtime->getOvertimePaidStatus($result['overtime_id']);
-			
+
 			$data['overtimes'][] = array(
 				'overtime_id' 		=> $result['overtime_id'],
 				'date' 				=> date($this->language->get('date_format_jMY'), strtotime($result['date'])),
@@ -291,13 +296,13 @@ class ControllerOvertimeOvertime extends Controller {
 				'edit'          	=> $this->url->link('overtime/overtime/edit', 'token=' . $this->session->data['token'] . '&overtime_id=' . $result['overtime_id'] . $url, true),
 			);
 		}
-		
+
 		$overtime_count = $this->model_overtime_overtime->getOvertimesCount($filter_data);
-		
+
 		$overtime_total = $this->model_overtime_overtime->getOvertimesTotal($filter_data);
 
 		$data['grandtotal'] = sprintf($this->language->get('text_grandtotal'), $this->currency->format($overtime_total, $this->config->get('config_currency')));
-		
+
 		$language_items = array(
 			'heading_title',
 			'text_list',
@@ -439,7 +444,8 @@ class ControllerOvertimeOvertime extends Controller {
 		$this->response->setOutput($this->load->view('overtime/overtime_list', $data));
 	}
 
-	protected function getForm() {
+	protected function getForm()
+	{
 		$data['text_form'] = !isset($this->request->get['overtime_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
 
 		$language_items = array(
@@ -463,12 +469,12 @@ class ControllerOvertimeOvertime extends Controller {
 		$data['customers'] = array();
 
 		$this->load->model('presence/presence');
-		$results = $this->model_presence_presence->getCustomers();
-			
+		$results = $this->model_presence_presence->getCustomers(['filter_customer_department_id' => $this->user->getCustomerDepartmentId()]);
+
 		foreach ($results as $result) {
 			$data['customers'][] = array(
 				'customer_id' 	=> $result['customer_id'],
-				'text' 			=> $result['name'] . ' - ' . $result['customer_group']
+				'text' 			=> $result['name'] . ' - ' . $result['customer_group'] . '/' . $result['customer_department'] . ' - ' . $result['location']
 			);
 		}
 
@@ -486,7 +492,7 @@ class ControllerOvertimeOvertime extends Controller {
 				$data['error_' . $error] = '';
 			}
 		}
-		
+
 		$url = '';
 
 		if (isset($this->request->get['filter_name'])) {
@@ -551,13 +557,13 @@ class ControllerOvertimeOvertime extends Controller {
 		//Text User Modify
 		if (!empty($overtime_info)) {
 			$username = $overtime_info['username'];
-			$date_modified = date($this->language->get('date_format_jMY'), strtotime($overtime_info['date_modified']));
+			$date_modified = date($this->language->get('datetime_format_jMY'), strtotime($overtime_info['date_modified']));
 		} else {
 			$username = $this->user->getUserName();
-			$date_modified = date($this->language->get('date_format_jMY'));
+			$date_modified = date($this->language->get('datetime_format_jMY'));
 		}
 		$data['text_modified'] = sprintf($this->language->get('text_modified'), $username, $date_modified);
-		
+
 		if (isset($this->request->post['customer_id'])) {
 			$data['customer_id'] = $this->request->post['customer_id'];
 		} elseif (!empty($overtime_info)) {
@@ -602,15 +608,15 @@ class ControllerOvertimeOvertime extends Controller {
 		$data['overtime_types'] = $this->model_overtime_overtime_type->getOvertimeTypes();
 
 		$customer_info = $this->model_common_payroll->getCustomer($data['customer_id']);
-		
+
 		if ($customer_info && $customer_info['location_id'] && $customer_info['customer_group_id']) {
 			$this->load->model('presence/schedule_type');
-			
+
 			$data['schedule_types'] = $this->model_presence_schedule_type->getScheduleTypesByLocationGroup($customer_info['location_id'], $customer_info['customer_group_id']);
 		} else {
 			$data['schedule_types'] = array();
 		}
-		
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -618,7 +624,8 @@ class ControllerOvertimeOvertime extends Controller {
 		$this->response->setOutput($this->load->view('overtime/overtime_form', $data));
 	}
 
-	protected function validateForm() {
+	protected function validateForm()
+	{
 		if (!$this->user->hasPermission('modify', 'overtime/overtime')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
@@ -630,7 +637,7 @@ class ControllerOvertimeOvertime extends Controller {
 		if (empty($this->request->post['overtime_type_id'])) {
 			$this->error['overtime_type'] = $this->language->get('error_overtime_type');
 		}
-		
+
 		if ((utf8_strlen($this->request->post['description']) < 5) || (utf8_strlen(trim($this->request->post['description'])) > 255)) {
 			$this->error['description'] = $this->language->get('error_description');
 		}
@@ -638,37 +645,44 @@ class ControllerOvertimeOvertime extends Controller {
 		if (empty($this->request->post['schedule_type_id'])) {
 			$this->error['schedule_type'] = $this->language->get('error_schedule_type');
 		}
-		
+
 		if (empty($this->request->post['date'])) {
 			$this->error['date'] = $this->language->get('error_date');
 		}
-		
+
 		if (!$this->error) {
 			$period_info = $this->model_common_payroll->getPeriodByDate(date('Y-m-d', strtotime($this->request->post['date'])));
-			
+
 			if ($this->user->hasPermission('bypass', 'overtime/overtime')) {
-				if ($period_info && $this->model_common_payroll->checkPeriodStatus($period_info['presence_period_id'], 'approved, released, completed')) {//Check period status
+				if ($period_info && $this->model_common_payroll->checkPeriodStatus($period_info['presence_period_id'], 'approved, released, completed')) { //Check period status
 					$this->error['date'] = $this->language->get('error_status');
 				}
 			} else {
-				if ($period_info && $this->model_common_payroll->checkPeriodStatus($period_info['presence_period_id'], 'submitted, generated, approved, released, completed')) {//Check period status
+				if ($period_info && $this->model_common_payroll->checkPeriodStatus($period_info['presence_period_id'], 'submitted, generated, approved, released, completed')) { //Check period status
 					$this->error['date'] = $this->language->get('error_status');
 				}
-				
+
 				if (isset($this->request->get['overtime_id'])) {
 					$overtime_info = $this->model_overtime_overtime->getOvertime($this->request->get['overtime_id']);
-				
+
 					$customer_id = $overtime_info['customer_id'];
 					$date_check = $overtime_info['date'];
-
 				} else {
 					$customer_id = $this->request->post['customer_id'];
 					$date_check = '';
 				}
-				
+
+				if ($this->user->getCustomerDepartmentId()) {
+					$customer_info = $this->model_common_payroll->getCustomer($customer_id);
+
+					if ($this->user->getCustomerDepartmentId() != $customer_info['customer_department_id']) {
+						$this->error['warning'] = $this->language->get('error_customer_department');
+					}
+				}
+
 				$schedule_info = $this->model_common_payroll->getAppliedSchedule($customer_id, $this->request->post['date']);
-				
-				if ($schedule_info && ($schedule_info['applied'] == 'absence' || ($schedule_info['applied'] == 'overtime' && strtotime($date_check) != strtotime($this->request->post['date'])))) {//Check date used
+
+				if ($schedule_info && ($schedule_info['applied'] == 'absence' || ($schedule_info['applied'] == 'overtime' && strtotime($date_check) != strtotime($this->request->post['date'])))) { //Check date used
 					$this->error['date'] = $this->language->get('error_date_used');
 				}
 			}
@@ -680,38 +694,50 @@ class ControllerOvertimeOvertime extends Controller {
 
 		return !$this->error;
 	}
-	
-	protected function validateDelete() {
+
+	protected function validateDelete()
+	{
 		if (!$this->user->hasPermission('modify', 'overtime/overtime')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
 		$this->load->model('common/payroll');
-		
+
 		foreach ($this->request->post['selected'] as $overtime_id) {
 			$overtime_info = $this->model_overtime_overtime->getOvertime($overtime_id);
 
 			$period_info = $this->model_common_payroll->getPeriodByDate($overtime_info['date']);
-			
+
 			if ($this->user->hasPermission('bypass', 'overtime/overtime')) {
 				if ($period_info && $this->model_common_payroll->checkPeriodStatus($period_info['presence_period_id'], 'approved, released, completed')) {
 					$this->error['warning'] = $this->language->get('error_status');
-					
+
 					break;
 				}
 			} else {
 				if ($period_info && $this->model_common_payroll->checkPeriodStatus($period_info['presence_period_id'], 'submitted, generated, approved, released, completed')) {
 					$this->error['warning'] = $this->language->get('error_status');
-					
+
 					break;
+				}
+
+				if ($this->user->getCustomerDepartmentId()) {
+					$customer_info = $this->model_common_payroll->getCustomer($overtime_info['customer_id']);
+
+					if ($this->user->getCustomerDepartmentId() != $customer_info['customer_department_id']) {
+						$this->error['warning'] = $this->language->get('error_customer_department');
+
+						break;
+					}
 				}
 			}
 		}
 
 		return !$this->error;
 	}
-	
-	public function scheduleTypesByLocationGroup() {
+
+	public function scheduleTypesByLocationGroup()
+	{
 		$json = array();
 
 		if (isset($this->request->get['customer_id'])) {
@@ -722,35 +748,36 @@ class ControllerOvertimeOvertime extends Controller {
 
 		$this->load->model('common/payroll');
 		$customer_info = $this->model_common_payroll->getCustomer($customer_id);
-		
+
 		if ($customer_info && $customer_info['location_id']) {
 			$this->load->model('presence/schedule_type');
 
 			$json = $this->model_presence_schedule_type->getScheduleTypesByLocationGroup($customer_info['location_id'], $customer_info['customer_group_id']);
 		}
-		
+
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
-	}	
+	}
 
-	public function approval() {
+	public function approval()
+	{
 		$this->load->language('overtime/overtime');
 
 		$json = array();
 
-		if (!$this->user->hasPermission('modify', 'common/absence_info')) {//Common_Absence_info user yg bisa approve
+		if (!$this->user->hasPermission('modify', 'common/absence_info')) { //Common_Absence_info user yg bisa approve
 			$json['error'] = $this->language->get('error_permission');
 		} else {
 			$this->load->model('overtime/overtime');
 			$overtime_info = $this->model_overtime_overtime->getOvertime($this->request->get['overtime_id']);
-			
+
 			$this->load->model('common/payroll');
 			$period_info = $this->model_common_payroll->getPeriodByDate($overtime_info['date']);
 			$period_status_check = $this->model_common_payroll->checkPeriodStatus($period_info['presence_period_id'], 'approved, released, completed');
-			
+
 			if (!$overtime_info) {
 				$json['error'] = $this->language->get('error_not_found');
-			} elseif ($period_status_check) {//Check period status
+			} elseif ($period_status_check) { //Check period status
 				$json['error'] = $this->language->get('error_status');
 			} else {
 				if ($overtime_info['approved']) {

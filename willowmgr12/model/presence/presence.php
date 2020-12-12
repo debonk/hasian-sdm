@@ -1,7 +1,7 @@
 <?php
 class ModelPresencePresence extends Model {
-	public function getCustomers($data = array()) { //Used by: dashboard/customer, payroll, report payroll insurance, payroll_basic, schedule, allowance
-		$sql = "SELECT c.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_added, c.customer_group_id, cgd.name AS customer_group, c.location_id, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN (" . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND status = 1";
+	public function getCustomers($data = array()) {
+		$sql = "SELECT c.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_added, c.customer_department_id, cdd.name AS customer_department, c.customer_group_id, cgd.name AS customer_group, c.location_id, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN (" . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (cdd.customer_department_id = c.customer_department_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND status = 1";
 
 		$implode = array();
 
@@ -9,6 +9,10 @@ class ModelPresencePresence extends Model {
 			$implode[] = "CONCAT(c.firstname, ' [', c.lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
 		}
 
+		if (!empty($data['filter_customer_department_id'])) {
+			$implode[] = "c.customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
+		}
+		
 		if (!empty($data['filter_customer_group_id'])) {
 			$implode[] = "c.customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
 		}
@@ -85,6 +89,10 @@ class ModelPresencePresence extends Model {
 			$implode[] = "CONCAT(firstname, ' [', lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
 		}
 
+		if (!empty($data['filter_customer_department_id'])) {
+			$implode[] = "customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
+		}
+		
 		if (!empty($data['filter_customer_group_id'])) {
 			$implode[] = "customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
 		}

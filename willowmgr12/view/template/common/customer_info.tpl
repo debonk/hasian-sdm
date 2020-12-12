@@ -15,8 +15,8 @@
 			<?php } ?></td>
 		</tr>
 		<tr>
-		  <td><button data-toggle="tooltip" title="<?php echo $text_customer_group . ' - ' . $text_customer_department; ?>" class="btn btn-info btn-xs"><i class="fa fa-group fa-fw"></i></button></td>
-		  <td><?php echo $customer_group . ' - ' . $customer_department; ?></td>
+		  <td><button data-toggle="tooltip" title="<?php echo $text_customer_group . '/' . $text_customer_department; ?>" class="btn btn-info btn-xs"><i class="fa fa-group fa-fw"></i></button></td>
+		  <td><?php echo $customer_group . '/' . $customer_department; ?></td>
 		</tr>
 		<tr>
 		  <td><button data-toggle="tooltip" title="<?php echo $text_location; ?>" class="btn btn-info btn-xs"><i class="fa fa-building fa-fw"></i></button></td>

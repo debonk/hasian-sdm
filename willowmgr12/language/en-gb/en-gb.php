@@ -11,6 +11,7 @@ $_['decimal_point']                 = '.';
 $_['thousand_point']                = ',';
 $_['date_format_jMY']              	= 'j M Y';
 $_['date_format_m_y']              	= 'M y';
+$_['datetime_format_jMY']           = 'j M Y H:i:s';
 
 
 // Text

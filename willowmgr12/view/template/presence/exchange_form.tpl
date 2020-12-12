@@ -130,7 +130,7 @@ $('select[name=\'customer_id\']').on('change', function() {
 		success: function(json) {
 			html = '	<option value="0"><?php echo $text_select ?></option>';
 
-			if (json && json != '') {
+			if (json) {
 				for (i = 0; i < json.length; i++) {
 					html += '<option value="' + json[i]['schedule_type_id'] + '">' + json[i]['text'] + '</option>';
 				}

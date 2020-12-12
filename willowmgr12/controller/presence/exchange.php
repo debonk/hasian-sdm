@@ -1,27 +1,29 @@
 <?php
-class ControllerPresenceExchange extends Controller {
+class ControllerPresenceExchange extends Controller
+{
 	private $error = array();
 
-	public function index() {
+	public function index()
+	{
 		$this->load->language('presence/exchange');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('presence/exchange');
 		$this->load->model('common/payroll');
-		
+
 		$this->getList();
-		
 	}
 
-	public function add() {
+	public function add()
+	{
 		$this->load->language('presence/exchange');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('presence/exchange');
 		$this->load->model('common/payroll');
-			
+
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
 			$this->model_presence_exchange->addExchange($this->request->post);
@@ -60,7 +62,8 @@ class ControllerPresenceExchange extends Controller {
 		$this->getForm();
 	}
 
-	public function edit() {
+	public function edit()
+	{
 		$this->load->language('presence/exchange');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -105,7 +108,8 @@ class ControllerPresenceExchange extends Controller {
 		$this->getForm();
 	}
 
-	public function delete() {
+	public function delete()
+	{
 		$this->load->language('presence/exchange');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -152,7 +156,8 @@ class ControllerPresenceExchange extends Controller {
 		$this->getList();
 	}
 
-	protected function getList() {
+	protected function getList()
+	{
 		if (isset($this->request->get['filter_name'])) {
 			$filter_name = $this->request->get['filter_name'];
 		} else {
@@ -256,9 +261,9 @@ class ControllerPresenceExchange extends Controller {
 				'edit'          	=> $this->url->link('presence/exchange/edit', 'token=' . $this->session->data['token'] . '&exchange_id=' . $result['exchange_id'] . $url, true),
 			);
 		}
-		
+
 		$exchanges_count = $this->model_presence_exchange->getExchangesCount($filter_data);
-		
+
 		$language_items = array(
 			'heading_title',
 			'text_list',
@@ -383,7 +388,8 @@ class ControllerPresenceExchange extends Controller {
 		$this->response->setOutput($this->load->view('presence/exchange_list', $data));
 	}
 
-	protected function getForm() {
+	protected function getForm()
+	{
 		$data['text_form'] = !isset($this->request->get['exchange_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
 
 		$language_items = array(
@@ -408,8 +414,8 @@ class ControllerPresenceExchange extends Controller {
 		$data['customers'] = array();
 
 		$this->load->model('presence/presence');
-		$results = $this->model_presence_presence->getCustomers();
-			
+		$results = $this->model_presence_presence->getCustomers(['filter_customer_department_id' => $this->user->getCustomerDepartmentId()]);
+
 		foreach ($results as $result) {
 			$data['customers'][] = array(
 				'customer_id' 	=> $result['customer_id'],
@@ -431,7 +437,7 @@ class ControllerPresenceExchange extends Controller {
 				$data['error_' . $error] = '';
 			}
 		}
-		
+
 		$url = '';
 
 		if (isset($this->request->get['filter_name'])) {
@@ -496,13 +502,13 @@ class ControllerPresenceExchange extends Controller {
 		//Text User Modify
 		if (!empty($exchange_info)) {
 			$username = $exchange_info['username'];
-			$date_modified = date($this->language->get('date_format_jMY'), strtotime($exchange_info['date_modified']));
+			$date_modified = date($this->language->get('datetime_format_jMY'), strtotime($exchange_info['date_modified']));
 		} else {
 			$username = $this->user->getUserName();
-			$date_modified = date($this->language->get('date_format_jMY'));
+			$date_modified = date($this->language->get('datetime_format_jMY'));
 		}
 		$data['text_modified'] = sprintf($this->language->get('text_modified'), $username, $date_modified);
-		
+
 		if (isset($this->request->post['customer_id'])) {
 			$data['customer_id'] = $this->request->post['customer_id'];
 		} elseif (!empty($exchange_info)) {
@@ -510,7 +516,7 @@ class ControllerPresenceExchange extends Controller {
 		} else {
 			$data['customer_id'] = 0;
 		}
-		
+
 		if (isset($this->request->post['date_from'])) {
 			$data['date_from'] = $this->request->post['date_from'];
 		} elseif (!empty($exchange_info)) {
@@ -518,7 +524,7 @@ class ControllerPresenceExchange extends Controller {
 		} else {
 			$data['date_from'] = '';
 		}
-		
+
 		if (isset($this->request->post['date_to'])) {
 			$data['date_to'] = $this->request->post['date_to'];
 		} elseif (!empty($exchange_info)) {
@@ -526,7 +532,7 @@ class ControllerPresenceExchange extends Controller {
 		} else {
 			$data['date_to'] = '';
 		}
-		
+
 		if (isset($this->request->post['schedule_type_id'])) {
 			$data['schedule_type_id'] = $this->request->post['schedule_type_id'];
 		} elseif (!empty($exchange_info)) {
@@ -534,7 +540,7 @@ class ControllerPresenceExchange extends Controller {
 		} else {
 			$data['schedule_type_id'] = 0;
 		}
-		
+
 		if (isset($this->request->post['description'])) {
 			$data['description'] = $this->request->post['description'];
 		} elseif (!empty($exchange_info)) {
@@ -542,17 +548,17 @@ class ControllerPresenceExchange extends Controller {
 		} else {
 			$data['description'] = '';
 		}
-		
+
 		$customer_info = $this->model_common_payroll->getCustomer($data['customer_id']);
-		
+
 		if ($customer_info && $customer_info['location_id'] && $customer_info['customer_group_id']) {
 			$this->load->model('presence/schedule_type');
-			
+
 			$data['schedule_types'] = $this->model_presence_schedule_type->getScheduleTypesByLocationGroup($customer_info['location_id'], $customer_info['customer_group_id']);
 		} else {
 			$data['schedule_types'] = array();
 		}
-		
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -560,7 +566,8 @@ class ControllerPresenceExchange extends Controller {
 		$this->response->setOutput($this->load->view('presence/exchange_form', $data));
 	}
 
-	protected function validateForm() {
+	protected function validateForm()
+	{
 		if (!$this->user->hasPermission('modify', 'presence/exchange')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
@@ -576,7 +583,7 @@ class ControllerPresenceExchange extends Controller {
 		if (empty($this->request->post['schedule_type_id'])) {
 			$this->error['schedule_type'] = $this->language->get('error_schedule_type');
 		}
-		
+
 		if (empty($this->request->post['date_from'])) {
 			$this->error['date_from'] = $this->language->get('error_date_from');
 		}
@@ -588,39 +595,38 @@ class ControllerPresenceExchange extends Controller {
 		if (!$this->error) {
 			$date_from = date('Y-m-d', strtotime($this->request->post['date_from']));
 			$period_from_info = $this->model_common_payroll->getPeriodByDate($date_from);
-			
+
 			$date_to = date('Y-m-d', strtotime($this->request->post['date_to']));
 			$period_to_info = $this->model_common_payroll->getPeriodByDate($date_to);
 
 			if ($this->user->hasPermission('bypass', 'presence/exchange')) {
-				if ($period_from_info && $this->model_common_payroll->checkPeriodStatus($period_from_info['presence_period_id'], 'approved, released, completed')) {//Check period status
+				if ($period_from_info && $this->model_common_payroll->checkPeriodStatus($period_from_info['presence_period_id'], 'approved, released, completed')) { //Check period status
 					$this->error['date_from'] = $this->language->get('error_status');
 				}
-				
-				if ($period_to_info && $this->model_common_payroll->checkPeriodStatus($period_to_info['presence_period_id'], 'approved, released, completed')) {//Check period status
+
+				if ($period_to_info && $this->model_common_payroll->checkPeriodStatus($period_to_info['presence_period_id'], 'approved, released, completed')) { //Check period status
 					$this->error['date_to'] = $this->language->get('error_status');
 				}
-				
 			} else {
-				if ($period_from_info && $this->model_common_payroll->checkPeriodStatus($period_from_info['presence_period_id'], 'submitted, generated, approved, released, completed')) {//Check period status
+				if ($period_from_info && $this->model_common_payroll->checkPeriodStatus($period_from_info['presence_period_id'], 'submitted, generated, approved, released, completed')) { //Check period status
 					$this->error['date_from'] = $this->language->get('error_status');
 				}
-				
-				if ($period_to_info && $this->model_common_payroll->checkPeriodStatus($period_to_info['presence_period_id'], 'submitted, generated, approved, released, completed')) {//Check period status
+
+				if ($period_to_info && $this->model_common_payroll->checkPeriodStatus($period_to_info['presence_period_id'], 'submitted, generated, approved, released, completed')) { //Check period status
 					$this->error['date_to'] = $this->language->get('error_status');
 				}
-				
+
 				if (strtotime($this->request->post['date_from']) < strtotime('today')) {
 					$this->error['date_from'] = $this->language->get('error_date_past');
 				}
-				
+
 				if (strtotime($this->request->post['date_to']) < strtotime('today')) {
 					$this->error['date_to'] = $this->language->get('error_date_past');
 				}
-				
+
 				if (isset($this->request->get['exchange_id'])) {
 					$exchange_info = $this->model_presence_exchange->getExchange($this->request->get['exchange_id']);
-				
+
 					$customer_id = $exchange_info['customer_id'];
 					$date_from_check = $exchange_info['date_from'];
 					$date_to_check = $exchange_info['date_to'];
@@ -629,18 +635,26 @@ class ControllerPresenceExchange extends Controller {
 					$date_from_check = '';
 					$date_to_check = '';
 				}
-				
+
+				if ($this->user->getCustomerDepartmentId()) {
+					$customer_info = $this->model_common_payroll->getCustomer($customer_id);
+
+					if ($this->user->getCustomerDepartmentId() != $customer_info['customer_department_id']) {
+						$this->error['warning'] = $this->language->get('error_customer_department');
+					}
+				}
+
 				$schedule_from_info = $this->model_common_payroll->getAppliedSchedule($customer_id, $date_from);
 				$schedule_to_info = $this->model_common_payroll->getAppliedSchedule($customer_id, $date_to);
-			
-				if (empty($schedule_from_info) || empty($schedule_from_info['schedule_type_id'])) {//Check schedule hrs ada
+
+				if (empty($schedule_from_info) || empty($schedule_from_info['schedule_type_id'])) { //Check schedule hrs ada
 					$this->error['date_from'] = $this->language->get('error_schedule_from');
-				} elseif ($schedule_from_info['applied'] == 'overtime' || $schedule_from_info['applied'] == 'absence' || ($schedule_from_info['applied'] == 'exchange' && strtotime($date_from_check) != strtotime($date_from))) {//Check date used
+				} elseif ($schedule_from_info['applied'] == 'overtime' || $schedule_from_info['applied'] == 'absence' || ($schedule_from_info['applied'] == 'exchange' && strtotime($date_from_check) != strtotime($date_from))) { //Check date used
 					$this->error['date_from'] = $this->language->get('error_date_used');
 				}
-				
+
 				if ($schedule_to_info) {
-					if ($schedule_to_info['applied'] == 'overtime' || $schedule_to_info['applied'] == 'absence' || ($schedule_to_info['applied'] == 'exchange' && strtotime($date_to_check) != strtotime($date_to))) {//Check date used
+					if ($schedule_to_info['applied'] == 'overtime' || $schedule_to_info['applied'] == 'absence' || ($schedule_to_info['applied'] == 'exchange' && strtotime($date_to_check) != strtotime($date_to))) { //Check date used
 						$this->error['date_to'] = $this->language->get('error_date_used');
 					}
 				}
@@ -653,46 +667,57 @@ class ControllerPresenceExchange extends Controller {
 
 		return !$this->error;
 	}
-	
-	protected function validateDelete() {
+
+	protected function validateDelete()
+	{
 		if (!$this->user->hasPermission('modify', 'presence/exchange')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
 		foreach ($this->request->post['selected'] as $exchange_id) {
 			$exchange_info = $this->model_presence_exchange->getExchange($exchange_id);
-			
+
 			$period_from_info = $this->model_common_payroll->getPeriodByDate($exchange_info['date_from']);
 			$period_to_info = $this->model_common_payroll->getPeriodByDate($exchange_info['date_to']);
 
 			if ($this->user->hasPermission('bypass', 'presence/exchange')) {
-				if ($period_from_info && $this->model_common_payroll->checkPeriodStatus($period_from_info['presence_period_id'], 'approved, released, completed')) {//Check period status
+				if ($period_from_info && $this->model_common_payroll->checkPeriodStatus($period_from_info['presence_period_id'], 'approved, released, completed')) { //Check period status
 					$this->error['warning'] = $this->language->get('error_status');
-					
+
 					break;
 				}
-				
-				if ($period_to_info && $this->model_common_payroll->checkPeriodStatus($period_to_info['presence_period_id'], 'approved, released, completed')) {//Check period status
+
+				if ($period_to_info && $this->model_common_payroll->checkPeriodStatus($period_to_info['presence_period_id'], 'approved, released, completed')) { //Check period status
 					$this->error['warning'] = $this->language->get('error_status');
-					
+
 					break;
 				}
 			} else {
-				if ($period_from_info && $this->model_common_payroll->checkPeriodStatus($period_from_info['presence_period_id'], 'submitted, generated, approved, released, completed')) {//Check period status
+				if ($this->user->getCustomerDepartmentId()) {
+					$customer_info = $this->model_common_payroll->getCustomer($exchange_info['customer_id']);
+	
+					if ($this->user->getCustomerDepartmentId() != $customer_info['customer_department_id']) {
+						$this->error['warning'] = $this->language->get('error_customer_department');
+	
+						break;
+					}
+				}
+	
+				if ($period_from_info && $this->model_common_payroll->checkPeriodStatus($period_from_info['presence_period_id'], 'submitted, generated, approved, released, completed')) { //Check period status
 					$this->error['warning'] = $this->language->get('error_status');
-					
+
 					break;
 				}
-				
-				if ($period_to_info && $this->model_common_payroll->checkPeriodStatus($period_to_info['presence_period_id'], 'submitted, generated, approved, released, completed')) {//Check period status
+
+				if ($period_to_info && $this->model_common_payroll->checkPeriodStatus($period_to_info['presence_period_id'], 'submitted, generated, approved, released, completed')) { //Check period status
 					$this->error['warning'] = $this->language->get('error_status');
-					
+
 					break;
 				}
-				
+
 				if (strtotime($exchange_info['date_from']) < strtotime('today') || strtotime($exchange_info['date_to']) < strtotime('today')) {
 					$this->error['warning'] = $this->language->get('error_exchange_status');
-					
+
 					break;
 				}
 			}
@@ -701,7 +726,8 @@ class ControllerPresenceExchange extends Controller {
 		return !$this->error;
 	}
 
-	public function scheduleTypesByLocationGroup() {
+	public function scheduleTypesByLocationGroup()
+	{
 		$json = array();
 
 		if (isset($this->request->get['customer_id'])) {
@@ -712,15 +738,14 @@ class ControllerPresenceExchange extends Controller {
 
 		$this->load->model('common/payroll');
 		$customer_info = $this->model_common_payroll->getCustomer($customer_id);
-		
+
 		if ($customer_info && $customer_info['location_id']) {
 			$this->load->model('presence/schedule_type');
 
 			$json = $this->model_presence_schedule_type->getScheduleTypesByLocationGroup($customer_info['location_id'], $customer_info['customer_group_id']);
 		}
-		
+
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
-	}	
-
+	}
 }

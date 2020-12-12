@@ -64,7 +64,7 @@ $_['button_recap']    			= 'Summarize Presence';
 
 
 // Error
-// $_['error_permission']			 = 'Warning: You do not have permission to modify schedules!';
+$_['error_customer_department']	 = 'Warning: You do not have permission to modify other division!';
 $_['error_status']				 = 'Warning: Wrong Status! Could not complete this action!';
 $_['error_not_found']			 = 'Warning: Data Jadwal Karyawan tidak ditemukan!';
 $_['error_date_end']			 = 'Warning: Periode ini belum berakhir!';

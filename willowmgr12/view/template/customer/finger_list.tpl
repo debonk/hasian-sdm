@@ -212,7 +212,8 @@ $('input[name=\'filter_name\']').autocomplete({
 $('button[id^=\'button-register\']').on('click', function(e) {
 	var node = this;
 	$(node).button('loading');
-	
+  $('.alert').remove();
+  	
 	url = 'index.php?route=customer/finger/register&token=<?php echo $token; ?>&customer_id=' + $(node).val();
 	location = url;
 	
@@ -282,6 +283,7 @@ function getRegisterStatus(customer_id) {
 $('td').on('click', 'button[id^=\'button-verification\']', function(e) {
 	var node = this;
 	$(node).button('loading');
+  $('.alert').remove();
 	
 	url = 'index.php?route=customer/finger/verification&token=<?php echo $token; ?>&customer_id=' + $(node).val();
 	location = url;

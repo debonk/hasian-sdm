@@ -36,6 +36,7 @@ $_['button_add_note']			 = 'Tambah Catatan';
 $_['button_ask_approval']		 = 'Minta Persetujuan';
 
 // Error
+$_['error_customer_department']	 = 'Warning: You do not have permission to modify other division!';
 $_['error_customer_id']			 = 'Warning: Pilih karyawan terlebih dahulu!';
 $_['error_date_empty']			 = 'Tentukan Tanggal Absen.';
 $_['error_date']				 = 'Untuk Status Absen "%s", Tanggal yang diizinkan adalah %s atau setelahnya.';

@@ -9,6 +9,7 @@ $_['text_add']          = 'Add User';
 $_['text_edit']         = 'Edit User';
 
 // Column
+$_['column_user_group'] = 'User Group';
 $_['column_username']   = 'Username';
 $_['column_status']     = 'Status';
 $_['column_date_added'] = 'Date Added';
@@ -17,6 +18,7 @@ $_['column_action']     = 'Action';
 // Entry
 $_['entry_username']   	= 'Username';
 $_['entry_user_group'] 	= 'User Group';
+$_['entry_customer_department'] = 'Division';
 $_['entry_password']   	= 'Password';
 $_['entry_confirm']    	= 'Confirm';
 $_['entry_firstname']  	= 'First Name';

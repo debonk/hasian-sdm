@@ -27,6 +27,7 @@ $_['entry_description']     	= 'Alasan';
 $_['entry_period']				= 'Periode';
 
 // Error
+$_['error_customer_department']	= 'Warning: You do not have permission to modify other division!';
 $_['error_customer_id']			= 'Warning: Pilih karyawan terlebih dahulu!';
 $_['error_description']			= 'Alasan Tukar Jadwal harus diisi antara 3 hingga 255 huruf!';
 $_['error_schedule_type']		= 'Tentukan Jadwal pengganti!';

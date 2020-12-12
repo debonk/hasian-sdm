@@ -27,6 +27,7 @@ $_['entry_location']		 	 = 'Lokasi Kerja';
 $_['entry_status']      	 	 = 'Status Karyawan';
 
 // Error
+$_['error_customer_department']	 = 'Warning: You do not have permission to modify other division!';
 $_['error_template_exist']       = 'Warning: Data sidik jari sudah ada sebelumnya!';
 $_['error_not_found']       	 = 'Warning: Data sidik jari tidak ditemukan!';
 $_['error_register']       	 	 = 'Warning: Proses registrasi gagal!';

@@ -69,6 +69,7 @@ class ControllerCommonCustomerInfo extends Controller {
 			$data['nip'] = '-';
 			$data['name'] = '-';
 			$data['customer'] = '';
+			$data['customer_department'] = '-';
 			$data['customer_group'] = '-';
 			$data['location'] = '-';
 			$data['email'] = '-';

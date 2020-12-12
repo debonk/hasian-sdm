@@ -1,8 +1,10 @@
 <?php
-class ControllerPresenceSchedule extends Controller {
+class ControllerPresenceSchedule extends Controller
+{
 	private $error = array();
 
-	public function index() {
+	public function index()
+	{
 		$this->load->language('presence/schedule');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -13,7 +15,8 @@ class ControllerPresenceSchedule extends Controller {
 		$this->getList();
 	}
 
-	public function edit() {
+	public function edit()
+	{
 		$this->load->language('presence/schedule');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -26,7 +29,7 @@ class ControllerPresenceSchedule extends Controller {
 		}
 
 		if (isset($this->request->get['customer_id'])) {
-			$customer_info = $this->model_common_payroll->getCustomer($this->request->get['customer_id']);
+			$customer_info = $this->model_common_payroll->checkCustomer($this->request->get['customer_id']);
 		}
 
 		if (!empty($period_info) && !empty($customer_info)) {
@@ -75,14 +78,15 @@ class ControllerPresenceSchedule extends Controller {
 		}
 	}
 
-	public function delete() {
+	public function delete()
+	{
 		$this->load->language('presence/schedule');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('common/payroll');
 		$this->load->model('presence/schedule');
-		
+
 		if (isset($this->request->get['presence_period_id']) && $this->validateDelete()) {
 			foreach ($this->request->post['selected'] as $customer_id) {
 				$this->model_presence_schedule->deleteSchedules($this->request->get['presence_period_id'], $customer_id);
@@ -127,7 +131,8 @@ class ControllerPresenceSchedule extends Controller {
 		$this->getList();
 	}
 
-	public function recap() {
+	public function recap()
+	{
 		$this->load->language('presence/schedule');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -135,7 +140,7 @@ class ControllerPresenceSchedule extends Controller {
 		$this->load->model('common/payroll');
 		$this->load->model('presence/schedule');
 		$this->load->model('presence/presence');
-		
+
 		if (isset($this->request->get['presence_period_id']) && $this->validateRecap()) {
 			foreach ($this->request->post['selected'] as $customer_id) {
 				$this->model_presence_schedule->recapPresenceSummary($this->request->get['presence_period_id'], $customer_id);
@@ -180,7 +185,8 @@ class ControllerPresenceSchedule extends Controller {
 		$this->getList();
 	}
 
-	public function report() {
+	public function report()
+	{
 		$this->load->language('presence/schedule');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -192,13 +198,14 @@ class ControllerPresenceSchedule extends Controller {
 		$this->listReport();
 	}
 
-	protected function getList() {
+	protected function getList()
+	{
 		if (isset($this->request->get['presence_period_id'])) {
 			$presence_period_id = $this->request->get['presence_period_id'];
 		} else {
 			$presence_period_id = 0;
 		}
-		
+
 		$this->load->model('presence/presence_period');
 		$period_info = $this->model_presence_presence_period->getPresencePeriod($presence_period_id); //get current presence_period_id
 		$presence_period_id = $period_info['presence_period_id'];
@@ -271,7 +278,7 @@ class ControllerPresenceSchedule extends Controller {
 		$data['information'] = '';
 		if ($period_pending_check || $period_processing_check) {
 			$empty_schedule_count = $this->model_presence_schedule->getEmptySchedulesCount($presence_period_id);
-			
+
 			if ($empty_schedule_count) {
 				$data['information'] = sprintf($this->language->get('info_no_data'), $empty_schedule_count);
 			}
@@ -305,7 +312,7 @@ class ControllerPresenceSchedule extends Controller {
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
 		}
-		
+
 		$data['token'] = $this->session->data['token'];
 
 		if (isset($this->error['warning'])) {
@@ -332,7 +339,7 @@ class ControllerPresenceSchedule extends Controller {
 
 		$data['period_pending_check'] = $period_pending_check; //for button check
 		$data['period_processing_check'] = $period_processing_check; //for button check
-		
+
 		$data['presence_period_id'] = $presence_period_id;
 		$data['filter_name'] = $filter_name;
 		$data['filter_customer_group_id'] = $filter_customer_group_id;
@@ -347,7 +354,8 @@ class ControllerPresenceSchedule extends Controller {
 		$this->response->setOutput($this->load->view('presence/schedule_list', $data));
 	}
 
-	protected function listReport() {
+	protected function listReport()
+	{
 		$language_items = array(
 			'text_no_results',
 			'text_off',
@@ -365,7 +373,7 @@ class ControllerPresenceSchedule extends Controller {
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
 		}
-		
+
 		if (isset($this->request->get['presence_period_id'])) {
 			$presence_period_id = $this->request->get['presence_period_id'];
 		} else {
@@ -465,7 +473,7 @@ class ControllerPresenceSchedule extends Controller {
 			'start'                => ($page - 1) * $this->config->get('config_limit_admin'),
 			'limit'                => $this->config->get('config_limit_admin')
 		);
-		
+
 		$range_date = array(
 			'start'	=> $schedule_start,
 			'end' 	=> date('Y-m-d', strtotime('+6 days', strtotime($schedule_start)))
@@ -474,7 +482,7 @@ class ControllerPresenceSchedule extends Controller {
 		$data['date_titles'] = $this->model_presence_schedule->getScheduleDateTitles($range_date);
 
 		$period_status_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'pending, processing');
-		
+
 		if ($period_status_check) {
 			$results = $this->model_presence_presence->getCustomers($filter_data);
 			$customer_total = $this->model_presence_presence->getTotalCustomers($filter_data);
@@ -482,16 +490,16 @@ class ControllerPresenceSchedule extends Controller {
 			$results = $this->model_presence_schedule->getScheduleCustomers($presence_period_id, $filter_data);
 			$customer_total = $this->model_presence_schedule->getScheduleCustomersCount($presence_period_id, $filter_data);
 		}
-		
+
 		$this->load->model('presence/absence');
 		$this->load->model('presence/exchange');
 		$this->load->model('overtime/overtime');
-	
+
 		foreach ($results as $result) {
 			$schedules_data = array();
 
 			$schedules = $this->model_presence_schedule->getFinalSchedules($result['customer_id'], $range_date);
-			
+
 			foreach ($schedules as $key => $schedule) {
 				$schedules_data[$key] = array(
 					'schedule_type_id' 	=> $schedule['schedule_type_id'],
@@ -500,9 +508,8 @@ class ControllerPresenceSchedule extends Controller {
 					'note'				=> $schedule['note'],
 					'bg_class'			=> $schedule['bg_class']
 				);
-				
 			}
-	
+
 			$data['customers'][] = array(
 				'customer_id' 		=> $result['customer_id'],
 				'nip' 				=> $result['nip'],
@@ -619,7 +626,7 @@ class ControllerPresenceSchedule extends Controller {
 		if (isset($this->request->get['page'])) {
 			$url .= '&page=' . $this->request->get['page'];
 		}
-		
+
 		$schedule_next = date('Y-m-d', min(strtotime('+7 day', strtotime($schedule_start)), strtotime('-6 day', strtotime($period_info['date_end']))));
 		$schedule_prev = date('Y-m-d', max(strtotime('-7 day', strtotime($schedule_start)), strtotime('-2 day', strtotime($period_info['date_start']))));
 
@@ -632,7 +639,8 @@ class ControllerPresenceSchedule extends Controller {
 		$this->response->setOutput($this->load->view('presence/schedule_report', $data));
 	}
 
-	protected function getForm() {
+	protected function getForm()
+	{
 		$data['text_form'] = $this->language->get('text_edit');
 
 		$language_items = array(
@@ -675,7 +683,7 @@ class ControllerPresenceSchedule extends Controller {
 
 		$presence_period_id = $this->request->get['presence_period_id'];
 		$customer_id = $this->request->get['customer_id'];
-		
+
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
 		} else {
@@ -744,43 +752,43 @@ class ControllerPresenceSchedule extends Controller {
 		$this->load->model('presence/absence');
 		$this->load->model('presence/exchange');
 		$this->load->model('overtime/overtime');
-		
+
 		$schedules_data = $this->model_presence_schedule->getFinalSchedules($customer_id, $range_date);
 
 		$period_pending_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'pending');
 		$period_processing_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'processing');
 		// $period_pending_check = 0;
 		// $period_processing_check = 0;
-		
- 		if ($period_pending_check || ($period_processing_check && empty($schedules_data))) {
+
+		if ($period_pending_check || ($period_processing_check && empty($schedules_data))) {
 			$locked_all = 0;
 		} else {
 			$locked_all = $this->config->get('payroll_setting_schedule_lock');
 		}
-			
-		//Draw Calendar
-		$data['list_days'] = explode(' ',$this->language->get('text_days'));
 
-		$date_diff = date_diff(date_create($period_info['date_start']),date_create($period_info['date_end']));
+		//Draw Calendar
+		$data['list_days'] = explode(' ', $this->language->get('text_days'));
+
+		$date_diff = date_diff(date_create($period_info['date_start']), date_create($period_info['date_end']));
 		$date_start = strtotime($period_info['date_start']);
-		
-		$week_day_start = date('w',$date_start);
+
+		$week_day_start = date('w', $date_start);
 
 		$days_in_month = $date_diff->format('%a');
-		
-		$data['total_week'] = ceil(($days_in_month + $week_day_start + 1)/7);
+
+		$data['total_week'] = ceil(($days_in_month + $week_day_start + 1) / 7);
 
 		$data['calendar'] = array();
-	
+
 		// array "blank" days until the first of the current week //
 
 		$counter = -$week_day_start;
 
-		for($week = 0; $week < $data['total_week']; $week++) {
-			for($day = 0; $day < 7; $day++) {
+		for ($week = 0; $week < $data['total_week']; $week++) {
+			for ($day = 0; $day < 7; $day++) {
 				if ($counter >= 0 && $counter <= $days_in_month) {
 					$key_date = date('Y-m-d', strtotime('+' . $counter . ' day', $date_start));
-					
+
 					if (isset($this->request->post['schedule' . $key_date])) {
 						$schedule_type_id = $this->request->post['schedule' . $key_date];
 						$schedule_type_code = '-';
@@ -788,7 +796,6 @@ class ControllerPresenceSchedule extends Controller {
 						$time_login = '';
 						$time_logout = '';
 						$bg_class = '';
-						
 					} elseif (!empty($schedules_data[$key_date])) {
 						$schedule_type_id = $schedules_data[$key_date]['schedule_type_id'];
 						$schedule_type_code = $schedules_data[$key_date]['schedule_type'] . ($schedules_data[$key_date]['time_in'] != '0000-00-00 00:00:00' ? ' (' . date('H:i', strtotime($schedules_data[$key_date]['time_in'])) . '-' . date('H:i', strtotime($schedules_data[$key_date]['time_out'])) . ')' : $data['text_off']);
@@ -797,7 +804,6 @@ class ControllerPresenceSchedule extends Controller {
 						$time_logout = ($schedules_data[$key_date]['time_logout'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_data[$key_date]['time_logout'])) : '...';
 						$bg_class = !empty($schedules_data[$key_date]['bg_class']) ? $schedules_data[$key_date]['bg_class'] : 'info';
 						$note = !empty($schedules_data[$key_date]['note']) ? $schedules_data[$key_date]['note'] : '';
-
 					} else {
 						$schedule_type_id = 0;
 						$schedule_type_code = '-';
@@ -807,7 +813,7 @@ class ControllerPresenceSchedule extends Controller {
 						$bg_class = 'warning';
 						$note = '';
 					}
-					
+
 					if ($locked_all || strtotime($key_date) <= strtotime('today') || (isset($schedules_data[$key_date]) && $schedules_data[$key_date]['applied'] != 'schedule')) {
 						$locked = 1;
 					} else {
@@ -818,7 +824,7 @@ class ControllerPresenceSchedule extends Controller {
 						'date'				=> $key_date,
 						'text'				=> date('j M', strtotime($key_date)),
 						'schedule_type_id' 	=> $schedule_type_id,
-						'schedule_type_code'=> $schedule_type_code,
+						'schedule_type_code' => $schedule_type_code,
 						'presence_status'	=> $presence_status,
 						'time_login'		=> $time_login,
 						'time_logout'		=> $time_logout,
@@ -830,7 +836,7 @@ class ControllerPresenceSchedule extends Controller {
 				$counter++;
 			}
 		}
-		
+
 		//Presence Summary
 		$data['presence_summary'] = $this->model_presence_schedule->calculatePresenceSummary($presence_period_id, $customer_id, $schedules_data);
 
@@ -840,10 +846,10 @@ class ControllerPresenceSchedule extends Controller {
 		$this->load->model('presence/schedule_type');
 		$data['schedule_types'] = $this->model_presence_schedule_type->getScheduleTypesByLocationGroup($customer_info['location_id'], $customer_info['customer_group_id']);
 		//End Legend
-		
+
 		$data['presence_period_id'] = $presence_period_id;
 		$data['customer_id'] = $customer_id;
-		
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -851,11 +857,18 @@ class ControllerPresenceSchedule extends Controller {
 		$this->response->setOutput($this->load->view('presence/schedule_form', $data));
 	}
 
-	protected function validateForm() {
+	protected function validateForm()
+	{
 		if (!$this->user->hasPermission('modify', 'presence/schedule')) {
 			$this->error['warning'] = $this->language->get('error_permission');
+		} elseif ($this->user->getCustomerDepartmentId()) {
+			$customer_info = $this->model_common_payroll->getCustomer($this->request->get['customer_id']);
+
+			if ($this->user->getCustomerDepartmentId() != $customer_info['customer_department_id']) {
+				$this->error['warning'] = $this->language->get('error_customer_department');
+			}
 		}
-		
+
 		if (!$this->model_common_payroll->checkPeriodStatus($this->request->get['presence_period_id'], 'pending, processing')) {
 			$this->error['warning'] = $this->language->get('error_status');
 		}
@@ -863,9 +876,16 @@ class ControllerPresenceSchedule extends Controller {
 		return !$this->error;
 	}
 
-	protected function validateDelete() {
+	protected function validateDelete()
+	{
 		if (!$this->user->hasPermission('modify', 'presence/schedule')) {
 			$this->error['warning'] = $this->language->get('error_permission');
+		} elseif ($this->user->getCustomerDepartmentId()) {
+			$customer_info = $this->model_common_payroll->getCustomer($this->request->get['customer_id']);
+
+			if ($this->user->getCustomerDepartmentId() != $customer_info['customer_department_id']) {
+				$this->error['warning'] = $this->language->get('error_customer_department');
+			}
 		}
 
 		if (!$this->model_common_payroll->checkPeriodStatus($this->request->get['presence_period_id'], 'pending')) {
@@ -884,7 +904,8 @@ class ControllerPresenceSchedule extends Controller {
 		return !$this->error;
 	}
 
-	protected function validateRecap() {
+	protected function validateRecap()
+	{
 		if (!$this->user->hasPermission('modify', 'presence/schedule')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
@@ -900,7 +921,7 @@ class ControllerPresenceSchedule extends Controller {
 		// Validasi jika periode belum berakhir
 		// $period_info = $this->model_common_payroll->getPeriod($this->request->get['presence_period_id']);
 		// if (strtotime('today') < strtotime($period_info['date_end'])) {
-			// $this->error['warning'] = $this->language->get('error_date_end');
+		// $this->error['warning'] = $this->language->get('error_date_end');
 		// }
 
 		if (!isset($this->request->post['selected'])) {
@@ -910,7 +931,8 @@ class ControllerPresenceSchedule extends Controller {
 		return !$this->error;
 	}
 
-	public function autocomplete() {
+	public function autocomplete()
+	{
 		$json = array();
 
 		if (isset($this->request->get['filter_name'])) {
@@ -950,7 +972,8 @@ class ControllerPresenceSchedule extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
-	public function applySchedule() {
+	public function applySchedule()
+	{
 		$this->load->language('presence/schedule');
 
 		$json = array();
@@ -973,7 +996,7 @@ class ControllerPresenceSchedule extends Controller {
 			if (!$schedule_customer_count) {
 				$json['error'] = $this->language->get('error_not_found');
 			} elseif (!$period_status_check) {
-				$json['error'] = $this->language->get('error_status');				
+				$json['error'] = $this->language->get('error_status');
 			} else {
 				$this->model_common_payroll->setPeriodStatus($presence_period_id, 'processing');
 

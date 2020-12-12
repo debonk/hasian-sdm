@@ -48,6 +48,21 @@
               </select>
             </div>
           </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-customer-department"><?php echo $entry_customer_department; ?></label>
+            <div class="col-sm-10">
+              <select name="customer_department_id" id="input-customer-department" class="form-control">
+                <option value="0"><?php echo $text_all; ?></option>
+                <?php foreach ($customer_departments as $customer_department) { ?>
+                <?php if ($customer_department['customer_department_id'] == $customer_department_id) { ?>
+                <option value="<?php echo $customer_department['customer_department_id']; ?>" selected="selected"><?php echo $customer_department['name']; ?></option>
+                <?php } else { ?>
+                <option value="<?php echo $customer_department['customer_department_id']; ?>"><?php echo $customer_department['name']; ?></option>
+                <?php } ?>
+                <?php } ?>
+              </select>
+            </div>
+          </div>
           <div class="form-group required">
             <label class="col-sm-2 control-label" for="input-firstname"><?php echo $entry_firstname; ?></label>
             <div class="col-sm-10">

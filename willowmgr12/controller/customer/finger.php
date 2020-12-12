@@ -101,14 +101,15 @@ class ControllerCustomerFinger extends Controller {
 		);
 
 		$filter_data = array(
-			'filter_name'	   	   => $filter_name,
-			'filter_customer_group_id' => $filter_customer_group_id,
-			'filter_location_id'   => $filter_location_id,
-			'filter_status' 	   => $filter_status,
-			'sort'                 => $sort,
-			'order'                => $order,
-			'start'                => ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit'                => $this->config->get('config_limit_admin')
+			// 'filter_customer_department_id'	=> $this->user->getCustomerDepartmentId(),
+			'filter_name'	   	   			=> $filter_name,
+			'filter_customer_group_id'		=> $filter_customer_group_id,
+			'filter_location_id'   			=> $filter_location_id,
+			'filter_status' 	   			=> $filter_status,
+			'sort'                 			=> $sort,
+			'order'                			=> $order,
+			'start'                			=> ($page - 1) * $this->config->get('config_limit_admin'),
+			'limit'                			=> $this->config->get('config_limit_admin')
 		);
 
 		$data['customers'] = array();
@@ -283,6 +284,8 @@ class ControllerCustomerFinger extends Controller {
 	}
 
 	public function register() {
+		$this->load->language('customer/finger');
+
 		if (isset($this->request->get['customer_id'])) {
 			$customer_id = $this->request->get['customer_id'];
 		} else {
@@ -299,9 +302,13 @@ class ControllerCustomerFinger extends Controller {
 
 			$this->response->redirect($register);
 		}
+
+		$this->index();
 	}
 
 	public function verification() {
+		$this->load->language('customer/finger');
+
 		if (isset($this->request->get['customer_id'])) {
 			$customer_id = $this->request->get['customer_id'];
 		} else {
@@ -318,18 +325,14 @@ class ControllerCustomerFinger extends Controller {
 
 			$this->response->redirect($verification);
 		}
+
+		$this->index();
 	}
 
 	public function getRegisterStatus() {
 		$this->load->language('customer/finger');
 
 		$json = array();
-		
-		if (isset($this->request->get['customer_id'])) {
-			$customer_id = $this->request->get['customer_id'];
-		} else {
-			$customer_id = 0;
-		}
 		
 		$this->load->model('customer/finger');
 		$finger_info = $this->model_customer_finger->getFingerByCustomerId($this->request->get['customer_id']);
@@ -349,12 +352,6 @@ class ControllerCustomerFinger extends Controller {
 
 		$json = array();
 		
-		if (isset($this->request->get['customer_id'])) {
-			$customer_id = $this->request->get['customer_id'];
-		} else {
-			$customer_id = 0;
-		}
-		
 		$this->load->model('customer/finger');
 		$finger_info = $this->model_customer_finger->getFingerByCustomerId($this->request->get['customer_id']);
 		
@@ -371,6 +368,13 @@ class ControllerCustomerFinger extends Controller {
 	protected function validateRegister() {
 		if (!$this->user->hasPermission('modify', 'customer/finger')) {
 			$this->error['warning'] = $this->language->get('error_permission');
+		} elseif ($this->user->getCustomerDepartmentId()) {
+			$this->load->model('common/payroll');
+			$customer_info = $this->model_common_payroll->getCustomer($this->request->get['customer_id']);
+
+			if ($this->user->getCustomerDepartmentId() != $customer_info['customer_department_id']) {
+				$this->error['warning'] = $this->language->get('error_customer_department');
+			}
 		}
 		
 		$this->load->model('customer/finger');
@@ -386,6 +390,13 @@ class ControllerCustomerFinger extends Controller {
 	protected function validateVerification() {
 		if (!$this->user->hasPermission('modify', 'customer/finger')) {
 			$this->error['warning'] = $this->language->get('error_permission');
+		} elseif ($this->user->getCustomerDepartmentId()) {
+			$this->load->model('common/payroll');
+			$customer_info = $this->model_common_payroll->getCustomer($this->request->get['customer_id']);
+
+			if ($this->user->getCustomerDepartmentId() != $customer_info['customer_department_id']) {
+				$this->error['warning'] = $this->language->get('error_customer_department');
+			}
 		}
 		
 		$this->load->model('customer/finger');
@@ -414,13 +425,7 @@ class ControllerCustomerFinger extends Controller {
 		if ($this->validateDelete()) {
 			$this->load->model('customer/finger');
 
-			if (isset($this->request->post['customer_id'])) {
-				$customer_id = $this->request->post['customer_id'];
-			} else {
-				$customer_id = 0;
-			}
-
-			$this->model_customer_finger->deleteFingerByCustomerId($customer_id);
+			$this->model_customer_finger->deleteFingerByCustomerId($this->request->post['customer_id']);
 
 			$json['success'] = $this->language->get('text_success');
 			

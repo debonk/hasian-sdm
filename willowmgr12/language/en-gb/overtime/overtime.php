@@ -30,6 +30,7 @@ $_['entry_schedule_type']     	= 'Jadwal Lembur';
 $_['entry_status']				= 'Status Lembur';
 
 // Error
+$_['error_customer_department']	= 'Warning: You do not have permission to modify other division!';
 $_['error_customer_id']			= 'Warning: Pilih karyawan terlebih dahulu!';
 $_['error_date']				= 'Pilih Tanggal Lembur!';
 $_['error_date_used']			= 'Tanggal telah digunakan untuk lembur maupun absen!';

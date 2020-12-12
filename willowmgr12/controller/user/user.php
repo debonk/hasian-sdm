@@ -170,11 +170,14 @@ class ControllerUserUser extends Controller {
 		$user_total = $this->model_user_user->getTotalUsers();
 
 		$results = $this->model_user_user->getUsers($filter_data);
+		// var_dump($results);die;
+
 
 		foreach ($results as $result) {
 			$data['users'][] = array(
 				'user_id'    => $result['user_id'],
 				'username'   => $result['username'],
+				'user_group' => $result['user_group'],
 				'status'     => ($result['status'] ? $this->language->get('text_enabled') : $this->language->get('text_disabled')),
 				'date_added' => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
 				'edit'       => $this->url->link('user/user/edit', 'token=' . $this->session->data['token'] . '&user_id=' . $result['user_id'] . $url, true)
@@ -188,6 +191,7 @@ class ControllerUserUser extends Controller {
 		$data['text_confirm'] = $this->language->get('text_confirm');
 
 		$data['column_username'] = $this->language->get('column_username');
+		$data['column_user_group'] = $this->language->get('column_user_group');
 		$data['column_status'] = $this->language->get('column_status');
 		$data['column_date_added'] = $this->language->get('column_date_added');
 		$data['column_action'] = $this->language->get('column_action');
@@ -268,9 +272,11 @@ class ControllerUserUser extends Controller {
 		$data['text_form'] = !isset($this->request->get['user_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
 		$data['text_enabled'] = $this->language->get('text_enabled');
 		$data['text_disabled'] = $this->language->get('text_disabled');
-
+		$data['text_all'] = $this->language->get('text_all');
+		
 		$data['entry_username'] = $this->language->get('entry_username');
 		$data['entry_user_group'] = $this->language->get('entry_user_group');
+		$data['entry_customer_department'] = $this->language->get('entry_customer_department');
 		$data['entry_password'] = $this->language->get('entry_password');
 		$data['entry_confirm'] = $this->language->get('entry_confirm');
 		$data['entry_firstname'] = $this->language->get('entry_firstname');
@@ -372,9 +378,13 @@ class ControllerUserUser extends Controller {
 			$data['user_group_id'] = '';
 		}
 
-		$this->load->model('user/user_group');
-
-		$data['user_groups'] = $this->model_user_user_group->getUserGroups();
+		if (isset($this->request->post['customer_department_id'])) {
+			$data['customer_department_id'] = $this->request->post['customer_department_id'];
+		} elseif (!empty($user_info)) {
+			$data['customer_department_id'] = $user_info['customer_department_id'];
+		} else {
+			$data['customer_department_id'] = '';
+		}
 
 		if (isset($this->request->post['password'])) {
 			$data['password'] = $this->request->post['password'];
@@ -439,6 +449,12 @@ class ControllerUserUser extends Controller {
 		} else {
 			$data['status'] = 0;
 		}
+
+		$this->load->model('user/user_group');
+		$data['user_groups'] = $this->model_user_user_group->getUserGroups();
+
+		$this->load->model('customer/customer_department');
+		$data['customer_departments'] = $this->model_customer_customer_department->getCustomerDepartments();
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
