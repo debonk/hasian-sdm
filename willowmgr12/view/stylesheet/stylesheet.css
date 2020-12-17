@@ -244,6 +244,12 @@ span.hidden-xs, span.hidden-sm, span.hidden-md, span.hidden-lg {
 #menu li.active li a {
 	color: #C4C4C4;
 }
+#menu li ul li a.bypass {
+	color: #c48787;
+}
+#menu li ul li a.modify {
+	color: #1cc75e;
+}
 #menu li li.active > a:last-child {
 	color: #FFFFFF;
 }
@@ -743,3 +749,5 @@ td.calendar-day, td.calendar-day-np {
 .btn {
 	line-height:1.4;
 }
+
+/* Memberi warna menu sesuai hak akses */

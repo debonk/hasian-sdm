@@ -7,8 +7,8 @@ class Customer {
 	private $customer_group_id;
 	private $email;
 	private $telephone;
-	private $fax;
-	private $newsletter;
+	// private $fax;
+	// private $newsletter;
 	private $address_id;
 
 	public function __construct($registry) {

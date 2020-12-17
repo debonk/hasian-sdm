@@ -68,7 +68,9 @@ class User {
 
 		$this->user_id = '';
 		$this->username = '';
-	}
+		$this->user_group_id = '';
+		$this->customer_department_id = '';
+}
 
 	public function hasPermission($key, $value) {
 		if (isset($this->permission[$key])) {
@@ -88,6 +90,10 @@ class User {
 
 	public function getUserName() {
 		return $this->username;
+	}
+
+	public function getPermission() {
+		return $this->permission;
 	}
 
 	public function getGroupId() {

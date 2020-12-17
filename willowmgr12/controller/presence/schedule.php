@@ -906,7 +906,7 @@ class ControllerPresenceSchedule extends Controller
 
 	protected function validateRecap()
 	{
-		if (!$this->user->hasPermission('modify', 'presence/schedule')) {
+		if (!$this->user->hasPermission('modify', 'presence/schedule') || $this->user->getCustomerDepartmentId()) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
@@ -978,7 +978,7 @@ class ControllerPresenceSchedule extends Controller
 
 		$json = array();
 
-		if (!$this->user->hasPermission('modify', 'presence/schedule')) {
+		if (!$this->user->hasPermission('modify', 'presence/schedule') || $this->user->getCustomerDepartmentId()) {
 			$json['error'] = $this->language->get('error_permission');
 		} else {
 			if (isset($this->request->get['presence_period_id'])) {
