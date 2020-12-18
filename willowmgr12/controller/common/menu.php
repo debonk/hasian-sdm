@@ -1,7 +1,31 @@
 <?php
-class ControllerCommonMenu extends Controller {
-	public function index() {
+class ControllerCommonMenu extends Controller
+{
+	public function index()
+	{
 		$this->load->language('common/menu');
+
+		$language_items = array(
+			'text_catalog',
+			'text_customer',
+			'text_presence',
+			'text_payroll',
+			'text_payroll_release',
+			'text_extension',
+			'text_dashboard',
+			'text_localisation',
+			'text_report',
+			'text_system',
+			'text_tool',
+			'text_component',
+			'text_user',
+			'text_themecontrol'
+		);
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
+
+		$data['home'] = $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], true);
 
 		$data['menu_groups'] = [];
 
@@ -25,14 +49,14 @@ class ControllerCommonMenu extends Controller {
 			'user'	 					=> ['user', 'user_permission', 'api'],
 			'tool'	 					=> ['sysinfo', 'upload', 'backup', 'error_log']
 		];
-		
+
 		$permissions = $this->user->getPermission();
 
 		foreach ($permissions as $authority => $permission) {
 			foreach ($permission as $value) {
 				//Sementara, akibat key: customer menjadi dobel
 				if ($value == 'report/customer') {
-					$key ='report_customer';
+					$key = 'report_customer';
 				} else {
 					$key = explode('/', $value)[1];
 				}
@@ -44,7 +68,6 @@ class ControllerCommonMenu extends Controller {
 				];
 			}
 		}
-		
 
 		foreach ($menu_groups as $menu_group => $menu_items) {
 			foreach ($menu_items as $menu_item) {
@@ -54,26 +77,7 @@ class ControllerCommonMenu extends Controller {
 				}
 			}
 		}
-		$language_items = array(
-			'text_catalog',
-			'text_customer',
-			'text_presence',
-			'text_payroll',
-			'text_payroll_release',
-			'text_extension',
-			'text_dashboard',
-			'text_localisation',
-			'text_report',
-			'text_system',
-			'text_tool',
-			'text_component',
-			'text_user',
-			'text_themecontrol'
-		);
-		foreach ($language_items as $language_item) {
-			$data[$language_item] = $this->language->get($language_item);
-		}
-		
+
 		return $this->load->view('common/menu', $data);
 	}
 }
