@@ -34,10 +34,6 @@ class ControllerCommonHeader extends Controller {
 		$data['text_affiliate'] = $this->language->get('text_affiliate');
 		$data['text_store'] = $this->language->get('text_store');
 		$data['text_front'] = $this->language->get('text_front');
-		$data['text_help'] = $this->language->get('text_help');
-		$data['text_homepage'] = $this->language->get('text_homepage');
-		$data['text_documentation'] = $this->language->get('text_documentation');
-		$data['text_support'] = $this->language->get('text_support');
 		$data['text_logged'] = sprintf($this->language->get('text_logged'), $this->user->getUserName());
 		$data['text_logout'] = $this->language->get('text_logout');
 

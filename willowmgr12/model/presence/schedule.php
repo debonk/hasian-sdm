@@ -29,7 +29,7 @@ class ModelPresenceSchedule extends Model {
 	}
 
 	public function getSchedules($customer_id, $range_date) {
-		$sql = "SELECT s.*, st.code, st.time_start, st.time_end FROM " . DB_PREFIX . "schedule s LEFT JOIN " . DB_PREFIX . "schedule_type st ON (st.schedule_type_id = s.schedule_type_id) WHERE s.customer_id = '" . (int)$customer_id . "' AND s.date >= '" . $this->db->escape($range_date['start']) . "' AND s.date <= '" . $this->db->escape($range_date['end']) . "' ORDER BY s.date ASC";
+		$sql = "SELECT s.*, st.code, st.time_start, st.time_end, st.bg_idx FROM " . DB_PREFIX . "schedule s LEFT JOIN " . DB_PREFIX . "schedule_type st ON (st.schedule_type_id = s.schedule_type_id) WHERE s.customer_id = '" . (int)$customer_id . "' AND s.date >= '" . $this->db->escape($range_date['start']) . "' AND s.date <= '" . $this->db->escape($range_date['end']) . "' ORDER BY s.date ASC";
 
 		$query = $this->db->query($sql);
 
@@ -45,7 +45,7 @@ class ModelPresenceSchedule extends Model {
 	}
 
 	public function getScheduleCustomers($presence_period_id, $data = array()) {
-		$sql = "SELECT DISTINCT s.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_end, c.date_added, c.customer_group_id, cgd.name AS customer_group, c.location_id, l.name AS location FROM " . DB_PREFIX . "schedule s LEFT JOIN (" . DB_PREFIX . "customer c, " . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (c.customer_id = s.customer_id AND cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND s.presence_period_id = '" . (int)$presence_period_id . "'";
+		$sql = "SELECT DISTINCT s.customer_id, c.nip, c.firstname, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_end, c.date_added, c.customer_department_id, c.customer_group_id, cgd.name AS customer_group, c.location_id, c.payroll_include, l.name AS location FROM " . DB_PREFIX . "schedule s LEFT JOIN (" . DB_PREFIX . "customer c, " . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (c.customer_id = s.customer_id AND cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND s.presence_period_id = '" . (int)$presence_period_id . "'";
 
 		$implode = array();
 
@@ -61,6 +61,10 @@ class ModelPresenceSchedule extends Model {
 			$implode[] = "c.location_id = '" . (int)$data['filter_location_id'] . "'";
 		}
 
+		if (!empty($data['filter_customer_department_id'])) {
+			$implode[] = "c.customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
+		}
+
 		if ($implode) {
 			$sql .= " AND " . implode(" AND ", $implode);
 		}
@@ -70,6 +74,7 @@ class ModelPresenceSchedule extends Model {
 			'name',
 			'customer_group',
 			'location',
+			'customer_group DESC, name'
 		);
 
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
@@ -118,6 +123,10 @@ class ModelPresenceSchedule extends Model {
 			$implode[] = "c.location_id = '" . (int)$data['filter_location_id'] . "'";
 		}
 
+		if (!empty($data['filter_customer_department_id'])) {
+			$implode[] = "c.customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
+		}
+
 		if ($implode) {
 			$sql .= " AND " . implode(" AND ", $implode);
 		}
@@ -144,9 +153,10 @@ class ModelPresenceSchedule extends Model {
 		for($x = 0; $x <= $date_diff; $x++) {
 			$date_key = strtotime('+' . $x . ' day', $date_start);
 			$date_titles[$x] = array(
-				'date'	=> date('Y-m-d', $date_key),
-				'day'	=> date('D', $date_key),
-				'text'	=> date('j M', $date_key)
+				'date_only'	=> date('d', $date_key),
+				'date'		=> date('Y-m-d', $date_key),
+				'day'		=> date('D', $date_key),
+				'text'		=> date('j M', $date_key)
 			);
 		}
 
@@ -245,6 +255,7 @@ class ModelPresenceSchedule extends Model {
 				'time_in'			=> $time_in,
 				'time_out'			=> $time_out,
 				'note'				=> $exchange_info['description'],
+				'schedule_bg'		=> $exchange_info['bg_idx'],
 				'bg_class'			=> 'primary'
 			);
 
@@ -256,6 +267,7 @@ class ModelPresenceSchedule extends Model {
 					'time_in'			=> '0000-00-00 00:00:00',
 					'time_out'			=> '0000-00-00 00:00:00',
 					'note'				=> $exchange_info['description'],
+					'schedule_bg'		=> 0,
 					'bg_class'			=> 'primary'
 				);
 			}
@@ -267,6 +279,7 @@ class ModelPresenceSchedule extends Model {
 			if ($schedule_info['schedule_type_id'] == 0) {
 				$time_in = '0000-00-00 00:00:00';
 				$time_out = '0000-00-00 00:00:00';
+				$schedule_info['bg_idx'] = '0';
 			} else {
 				$time_in = $schedule_info['date'] . ' ' . $schedule_info['time_start'];
 				$time_out = $schedule_info['date'] . ' ' . $schedule_info['time_end'];
@@ -284,6 +297,7 @@ class ModelPresenceSchedule extends Model {
 					'time_in'			=> $time_in,
 					'time_out'			=> $time_out,
 					'note'				=> '',
+					'schedule_bg'		=> $schedule_info['bg_idx'],
 					'bg_class'			=> 'info'
 				);
 			}
@@ -313,6 +327,7 @@ class ModelPresenceSchedule extends Model {
 					'time_in'			=> $time_in,
 					'time_out'			=> $time_out,
 					'note'				=> $overtime_info['description'],
+					'schedule_bg'		=> $overtime_info['bg_idx'],
 					'bg_class'			=> 'primary'
 				);
 			} else {
@@ -385,6 +400,7 @@ class ModelPresenceSchedule extends Model {
 				'presence_status_id'=> isset($presence_statuses_data[$presence_code]) ? $presence_statuses_data[$presence_code]['presence_status_id'] : '-',
 				'presence_status'	=> isset($presence_statuses_data[$presence_code]) ? $presence_statuses_data[$presence_code]['name'] : '-',
 				'note'				=> $schedule_data['note'],
+				'schedule_bg'		=> $schedule_data['schedule_bg'],
 				'bg_class'			=> $schedule_data['bg_class']
 			);
 		}
@@ -418,6 +434,7 @@ class ModelPresenceSchedule extends Model {
 					'time_out'			=> '0000-00-00 00:00:00',
 					'time_login'		=> '0000-00-00 00:00:00',
 					'time_logout'		=> '0000-00-00 00:00:00',
+					'schedule_bg'		=> 0
 				);
 			}
 

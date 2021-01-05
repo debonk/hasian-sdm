@@ -1084,7 +1084,7 @@ class ControllerCustomerCustomer extends Controller {
 		} elseif (!empty($customer_info)) {
 			$data['health_insurance'] = $customer_info['health_insurance'];
 		} else {
-			$data['health_insurance'] = 0;
+			$data['health_insurance'] = 1;
 		}
 
 		if (isset($this->request->post['employment_insurance'])) {

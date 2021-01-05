@@ -289,6 +289,8 @@ class ControllerPresenceSchedule extends Controller
 		} else {
 			$data['action'] = $this->url->link('presence/schedule/recap', 'token=' . $this->session->data['token'] . $url, true);
 		}
+
+		$data['print'] = $this->url->link('presence/schedule/print', 'token=' . $this->session->data['token'] . $url, true);
 		$data['back'] = $this->url->link('presence/presence_period', 'token=' . $this->session->data['token'], true);
 
 		$language_items = array(
@@ -304,6 +306,7 @@ class ControllerPresenceSchedule extends Controller
 			'entry_location',
 			'entry_presence_period',
 			'button_filter',
+			'button_print',
 			'button_delete',
 			'button_back',
 			'button_apply_schedule',
@@ -352,6 +355,190 @@ class ControllerPresenceSchedule extends Controller
 		$data['footer'] = $this->load->controller('common/footer');
 
 		$this->response->setOutput($this->load->view('presence/schedule_list', $data));
+	}
+
+	public function print()
+	{
+		$this->load->language('presence/schedule');
+
+		$this->load->model('common/payroll');
+		$this->load->model('presence/schedule');
+
+		$language_items = array(
+			'heading_title',
+			'text_no_results',
+			'text_summary',
+			'text_schedule_summary',
+			'text_group_summary',
+			'column_name',
+			'column_schedule_type',
+			'column_customer_group'
+		);
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
+
+		if (isset($this->request->get['presence_period_id'])) {
+			$presence_period_id = $this->request->get['presence_period_id'];
+		} else {
+			$presence_period_id = 0;
+		}
+
+		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
+		$presence_period_id = $period_info['presence_period_id'];
+
+		if (isset($this->request->get['filter_name'])) {
+			$filter_name = $this->request->get['filter_name'];
+		} else {
+			$filter_name = '';
+		}
+
+		if (isset($this->request->get['filter_customer_group_id'])) {
+			$filter_customer_group_id = $this->request->get['filter_customer_group_id'];
+		} else {
+			$filter_customer_group_id = '';
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$filter_location_id = $this->request->get['filter_location_id'];
+		} else {
+			$filter_location_id = '';
+		}
+
+		$sort = 'customer_group DESC, name';
+
+		if (isset($this->request->get['order'])) {
+			$order = $this->request->get['order'];
+		} else {
+			$order = 'ASC';
+		}
+
+		if ($this->request->server['HTTPS']) {
+			$data['base'] = HTTPS_SERVER;
+		} else {
+			$data['base'] = HTTP_SERVER;
+		}
+
+		$data['direction'] = $this->language->get('direction');
+		$data['lang'] = $this->language->get('code');
+		$data['store_logo'] = HTTP_CATALOG . 'image/' . $this->config->get('config_logo');
+
+		$data['customers'] = array();
+		$schedule_groups = array(); // Rekap berdasarkan schedule_types
+		$data['schedule_groups'] = array(); // Rekap berdasarkan schedule_types
+		$data['customer_groups'] = array(); // Memisahkan customer_groups yang jumlahnya >= 15
+
+		$filter_customer_department_id = $this->user->getCustomerDepartmentId();
+
+		$filter_data = array(
+			'filter_customer_department_id'	=> $filter_customer_department_id,
+			'filter_name'	   	   			=> $filter_name,
+			'filter_customer_group_id' 		=> $filter_customer_group_id,
+			'filter_location_id'   			=> $filter_location_id,
+			'sort'                 			=> $sort,
+			'order'                			=> $order
+		);
+
+		$data['location'] = !empty($filter_location_id) ? $this->model_common_payroll->getLocation($filter_location_id) : $this->language->get('text_all_location');
+		$data['text_division'] = sprintf($this->language->get('text_department'), !empty($filter_customer_department_id) ? $this->model_common_payroll->getCustomerDepartment($filter_customer_department_id) : $this->language->get('text_all_customer_department'));
+		$data['text_period'] = sprintf($this->language->get('text_period'), date($this->language->get('date_format_jMY'), strtotime($period_info['date_start'])), date($this->language->get('date_format_jMY'), strtotime($period_info['date_end'])));
+		$data['text_user'] = sprintf($this->language->get('text_user'), $this->user->getUserName());
+
+		$range_date = array(
+			'start'	=> $period_info['date_start'],
+			'end' 	=> $period_info['date_end']
+		);
+
+		$data['date_titles'] = $this->model_presence_schedule->getScheduleDateTitles($range_date);
+
+		$period_status_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'pending, approved, released, completed');
+
+		if ($period_status_check) {
+			return new Action('error/not_found');
+		}
+
+		$results = $this->model_presence_schedule->getScheduleCustomers($presence_period_id, $filter_data);
+
+		// // Rekap berdasarkan customer_groups
+		$customer_groups = array_unique(array_column($results, 'customer_group'));
+
+		foreach ($customer_groups as $customer_group) {
+			$data['customer_groups'][$customer_group] = array_fill_keys(array_column($data['date_titles'], 'date'), 0);
+		}
+
+		// Memisahkan customer_groups yang jumlahnya >= 15
+		$customer_group_pages = array_count_values(array_column($results, 'customer_group'));
+
+		foreach ($customer_group_pages as $key => $value) {
+			if ($value < 15) {
+				$customer_group_pages[$key] = 0;
+			} else {
+				$customer_group_pages[$key] = $key;
+			}
+		}
+
+		$this->load->model('presence/absence');
+		$this->load->model('presence/exchange');
+		$this->load->model('overtime/overtime');
+
+		foreach ($results as $result) {
+			$schedules_data = array();
+
+			$schedules = $this->model_presence_schedule->getFinalSchedules($result['customer_id'], $range_date);
+
+			foreach ($schedules as $key => $schedule) {
+				$schedules_data[$key] = array(
+					'schedule_type_id' 	=> $schedule['schedule_type_id'],
+					'schedule_type'		=> !empty($schedule['schedule_type']) ? $schedule['schedule_type'] : '-',
+					'schedule_bg'		=> $schedule['schedule_bg'],
+					'bg_class'			=> $schedule['bg_class']
+				);
+
+				// Rekap berdasarkan schedule_types 
+				if (!isset($schedule_groups[$customer_group_pages[$result['customer_group']]][$schedule['schedule_type_id']][$key])) {
+					$schedule_groups[$customer_group_pages[$result['customer_group']]][$schedule['schedule_type_id']] = array_fill_keys(array_column($data['date_titles'], 'date'), 0);
+				}
+
+				$schedule_groups[$customer_group_pages[$result['customer_group']]][$schedule['schedule_type_id']][$key]++;
+
+				// Rekap berdasarkan customer_groups
+				if ($schedule['schedule_type_id']) {
+					$data['customer_groups'][$result['customer_group']][$key]++;
+				}
+			}
+
+			$data['customers'][$customer_group_pages[$result['customer_group']]][] = array(
+				'customer_id' 		=> $result['customer_id'],
+				'name' 				=> $result['firstname'],
+				'customer_group' 	=> $result['customer_group'],
+				'schedules_data' 	=> $schedules_data
+			);
+		}
+
+		$this->load->model('presence/schedule_type');
+
+		foreach ($schedule_groups as $customer_group_pages => $customer_group_data) {
+			ksort($customer_group_data);
+
+			foreach ($customer_group_data as $schedule_type_id => $schedule_group_data) {
+				if ($schedule_type_id) {
+					$schedule_type_info = $this->model_presence_schedule_type->getScheduleType($schedule_type_id);
+
+					$bg = $schedule_type_info['bg_idx'];
+					$text = sprintf($this->language->get('text_schedule_type'), $schedule_type_info['code'], date($this->language->get('time_format'), strtotime($schedule_type_info['time_start'])), date($this->language->get('time_format'), strtotime($schedule_type_info['time_end'])));
+				} else {
+					$text = $this->language->get('text_off');
+					$bg = 0;
+				}
+
+				$data['schedule_groups'][$customer_group_pages][] = [
+					'text'		=> $text,
+					'bg'		=> $bg,
+					'group_data' => $schedule_group_data
+				];
+			}
+		}
+		$this->response->setOutput($this->load->view('presence/schedule_print', $data));
 	}
 
 	protected function listReport()

@@ -3,22 +3,44 @@
   <div class="page-header">
     <div class="container-fluid">
       <div class="pull-right">
-		<?php if ($period_pending_check) { ?>
-		  <button type="button" id="button-apply-schedule" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-info"><i class="fa fa-clipboard"></i> <?php echo $button_apply_schedule; ?></button>
-          <button type="button" id="button-delete" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger" onclick="confirm('<?php echo $text_confirm; ?>') ? $('#form-schedule').submit() : false;"><i class="fa fa-trash-o"></i></button>
+        <?php if ($period_pending_check) { ?>
+        <button type="button" id="button-apply-schedule" data-loading-text="<?php echo $text_loading; ?>"
+          class="btn btn-info"><i class="fa fa-clipboard"></i>
+          <?php echo $button_apply_schedule; ?>
+        </button>
+        <button type="button" id="button-delete" data-toggle="tooltip" title="<?php echo $button_delete; ?>"
+          class="btn btn-danger"
+          onclick="confirm('<?php echo $text_confirm; ?>') ? $('#form-schedule').submit() : false;"><i
+            class="fa fa-trash-o"></i></button>
         <?php } elseif ($period_processing_check) { ?>
-          <button type="button" id="button-recap-presence" data-toggle="tooltip" title="<?php echo $button_recap; ?>" class="btn btn-warning" onclick="confirm('<?php echo $text_confirm_recap; ?>') ? $('#form-schedule').submit() : false;"><i class="fa fa-share-square-o"></i> <?php echo $button_recap; ?></button>
-          <button type="button" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger disabled"><i class="fa fa-trash-o"></i></button>
+        <button type="button" id="button-recap-presence" data-toggle="tooltip" title="<?php echo $button_recap; ?>"
+          class="btn btn-warning"
+          onclick="confirm('<?php echo $text_confirm_recap; ?>') ? $('#form-schedule').submit() : false;"><i
+            class="fa fa-share-square-o"></i>
+          <?php echo $button_recap; ?>
+        </button>
+        <button type="button" data-toggle="tooltip" title="<?php echo $button_delete; ?>"
+          class="btn btn-danger disabled"><i class="fa fa-trash-o"></i></button>
         <?php } else { ?>
-		  <button type="button" class="btn btn-warning disabled"><i class="fa fa-share-square-o"></i> <?php echo $button_recap; ?></button>
-          <button type="button" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger disabled"><i class="fa fa-trash-o"></i></button>
+        <button type="button" class="btn btn-warning disabled"><i class="fa fa-share-square-o"></i>
+          <?php echo $button_recap; ?>
+        </button>
+        <button type="button" data-toggle="tooltip" title="<?php echo $button_delete; ?>"
+          class="btn btn-danger disabled"><i class="fa fa-trash-o"></i></button>
         <?php } ?>
-		<a href="<?php echo $back; ?>" data-toggle="tooltip" title="<?php echo $button_back; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a>
-	  </div>
-      <h1><?php echo $heading_title; ?></h1>
+        <a href="<?php echo $print; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_print; ?>"
+          class="btn btn-info"><i class="fa fa-print"></i></a>
+        <a href="<?php echo $back; ?>" data-toggle="tooltip" title="<?php echo $button_back; ?>"
+          class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>
+        <?php echo $heading_title; ?>
+      </h1>
       <ul class="breadcrumb">
         <?php foreach ($breadcrumbs as $breadcrumb) { ?>
-        <li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
+        <li><a href="<?php echo $breadcrumb['href']; ?>">
+            <?php echo $breadcrumb['text']; ?>
+          </a></li>
         <?php } ?>
       </ul>
     </div>
@@ -108,7 +130,7 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript"><!--
+  <script type="text/javascript">
 $(document).keypress(function(e) {
         if(e.which == 13) {
 			$("#button-filter").click();
@@ -192,8 +214,8 @@ $('#button-apply-schedule').on('click', function(e) {
 		});
 	}
 });
-//--></script> 
-  <script type="text/javascript"><!--
+</script> 
+  <script type="text/javascript">
 $('input[name=\'filter_name\']').autocomplete({
 	'source': function(request, response) {
 		$.ajax({
@@ -213,6 +235,6 @@ $('input[name=\'filter_name\']').autocomplete({
 		$('input[name=\'filter_name\']').val(item['label']);
 	}	
 });
-//--></script> 
+</script> 
 </div>
 <?php echo $footer; ?> 

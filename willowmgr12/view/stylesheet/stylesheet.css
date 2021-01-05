@@ -715,17 +715,6 @@ td.calendar-day-np {
 * html div.calendar-day-np {
 	height:80px;
 }
-/* td.calendar-day-head { */
-	/* background-color:#ccc; */
-	/* font-weight:bold; */
-	/* text-align:center; */
-	/* width:14%; */
-	/* padding:5px; */
-	/* margin:0; */
-	/* border-bottom:1px solid #999; */
-	/* border-top:1px solid #999; */
-	/* border-right:1px solid #999; */
-}
 div.day-number {
 	background:#999;
 	padding:5px;
@@ -745,9 +734,44 @@ td.calendar-day, td.calendar-day-np {
 	border-right:1px solid #999;
 	margin:0;
 	}
+/* presence-color */
+.table td.schedule-bg-0 {
+	background-color: #ff9999 !important;
+}
+.table td.schedule-bg-1 {
+	background-color: #ffff99 !important;
+}
+.table td.schedule-bg-2 {
+	background-color: #99ff99 !important;
+}
+.table td.schedule-bg-3 {
+	background-color: #66ffff !important;
+}
+.table td.schedule-bg-4 {
+	background-color: #99ccff !important;
+}
+.table td.schedule-bg-5 {
+	background-color: #ff99ff !important;
+}
+.table td.schedule-bg-6 {
+	background-color: #ffcc99 !important;
+}
+.table td.schedule-bg-7 {
+	background-color: #ccff99 !important;
+}
+.table td.schedule-bg-8 {
+	background-color: #99ffcc !important;
+}
+.table td.schedule-bg-9 {
+	background-color: #66ccff !important;
+}
+.table td.schedule-bg-10 {
+	background-color: #cc99ff !important;
+}
+.table td.schedule-bg-11 {
+	background-color: #ff99cc !important;
+}
 
 .btn {
 	line-height:1.4;
 }
-
-/* Memberi warna menu sesuai hak akses */

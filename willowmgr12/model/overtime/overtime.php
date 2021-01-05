@@ -213,7 +213,7 @@ class ModelOvertimeOvertime extends Model {
 	}
 
 	public function getOvertimesByCustomerDate($customer_id, $date = array()) {//Used by: schedule
-		$sql = "SELECT o.*, ot.duration as duration, st.code, st.time_start, st.time_end FROM " . DB_PREFIX . "overtime o LEFT JOIN " . DB_PREFIX . "overtime_type ot ON (ot.overtime_type_id = o.overtime_type_id) LEFT JOIN " . DB_PREFIX . "schedule_type st ON (st.schedule_type_id = o.schedule_type_id) WHERE customer_id = '" . (int)$customer_id . "' AND o.date >= '" . $this->db->escape($date['start']) . "' AND o.date <= '" . $this->db->escape($date['end']) . "' ORDER BY o.date ASC";
+		$sql = "SELECT o.*, ot.duration as duration, st.code, st.time_start, st.time_end, st.bg_idx FROM " . DB_PREFIX . "overtime o LEFT JOIN " . DB_PREFIX . "overtime_type ot ON (ot.overtime_type_id = o.overtime_type_id) LEFT JOIN " . DB_PREFIX . "schedule_type st ON (st.schedule_type_id = o.schedule_type_id) WHERE customer_id = '" . (int)$customer_id . "' AND o.date >= '" . $this->db->escape($date['start']) . "' AND o.date <= '" . $this->db->escape($date['end']) . "' ORDER BY o.date ASC";
 
 		$query = $this->db->query($sql);
 

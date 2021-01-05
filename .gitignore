@@ -18,6 +18,10 @@ system/storage/
 catalog/view/theme/*/image/
 willowmgr12/view/image/
 
+### OpenCart ###
+system/composer.*
+system/vendor/
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db

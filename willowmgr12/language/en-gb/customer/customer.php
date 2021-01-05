@@ -78,8 +78,8 @@ $_['entry_active']					= 'Status Karyawan';
 // Help
 $_['help_lastname']					= 'Sesuai KTP';
 $_['help_skip_trial_status']		= 'Centang untuk menentukan karyawan tidak perlu masa percobaan lagi. Hanya diisi sekali saat pendaftaran atau reaktivasi karyawan.';
-$_['help_health_insurance']			= 'BPJS Kesehatan mulai berlaku setelah memasuki PKWT II (15 bulan masa kerja)';
-$_['help_employment_insurance']		= 'BPJS Ketenagakerjaan mulai berlaku setelah memasuki PKWT III (27 bulan masa kerja)';
+$_['help_health_insurance']			= 'BPJS Kesehatan mulai berlaku setelah memasuki PKWT II (12 bulan masa kerja)';
+$_['help_employment_insurance']		= 'BPJS Ketenagakerjaan NON JHT berlaku sejak masuk dan JHT saat memasuki PKWT III (24 bulan masa kerja)';
 $_['help_npwp_address']				= 'Harus diisi jika telah memiliki NPWP';
 
 // Error
