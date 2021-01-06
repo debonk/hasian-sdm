@@ -450,6 +450,7 @@ class ControllerPresenceSchedule extends Controller
 		);
 
 		$data['date_titles'] = $this->model_presence_schedule->getScheduleDateTitles($range_date);
+		$date_keys = array_column($data['date_titles'], 'date');
 
 		$period_status_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'pending, approved, released, completed');
 
@@ -463,7 +464,7 @@ class ControllerPresenceSchedule extends Controller
 		$customer_groups = array_unique(array_column($results, 'customer_group'));
 
 		foreach ($customer_groups as $customer_group) {
-			$data['customer_groups'][$customer_group] = array_fill_keys(array_column($data['date_titles'], 'date'), 0);
+			$data['customer_groups'][$customer_group] = array_fill_keys($date_keys, 0);
 		}
 
 		// Memisahkan customer_groups yang jumlahnya >= 15
@@ -496,14 +497,17 @@ class ControllerPresenceSchedule extends Controller
 
 				// Rekap berdasarkan schedule_types 
 				if (!isset($schedule_groups[$customer_group_pages[$result['customer_group']]][$schedule['schedule_type_id']][$key])) {
-					$schedule_groups[$customer_group_pages[$result['customer_group']]][$schedule['schedule_type_id']] = array_fill_keys(array_column($data['date_titles'], 'date'), 0);
+					$schedule_groups[$customer_group_pages[$result['customer_group']]][$schedule['schedule_type_id']] = array_fill_keys($date_keys, 0);
 				}
 
-				$schedule_groups[$customer_group_pages[$result['customer_group']]][$schedule['schedule_type_id']][$key]++;
+				// Hitung hanya data dalam range_date 
+				if (in_array($key, $date_keys)) {
+					$schedule_groups[$customer_group_pages[$result['customer_group']]][$schedule['schedule_type_id']][$key]++;
 
-				// Rekap berdasarkan customer_groups
-				if ($schedule['schedule_type_id']) {
-					$data['customer_groups'][$result['customer_group']][$key]++;
+					// Rekap berdasarkan customer_groups
+					if ($schedule['schedule_type_id']) {
+						$data['customer_groups'][$result['customer_group']][$key]++;
+					}
 				}
 			}
 
