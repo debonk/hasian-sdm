@@ -24,6 +24,7 @@ $_['entry_location']		= 'Lokasi Kerja';
 $_['entry_customer_group']	= 'Jabatan';
 $_['entry_time_start']		= 'Jam Masuk';
 $_['entry_time_end']		= 'Jam Keluar';
+$_['entry_bg']		        = 'Warna Background';
 $_['entry_sort_order']		= 'Sort Order';
 $_['entry_status']			= 'Status';
 

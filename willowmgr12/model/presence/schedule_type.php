@@ -1,11 +1,11 @@
 <?php
 class ModelPresenceScheduleType extends Model {
 	public function addScheduleType($data) {
-		$this->db->query("INSERT INTO " . DB_PREFIX . "schedule_type SET name = '" . $this->db->escape($data['name']) . "', code = '" . $this->db->escape($data['code']) . "', location_ids = '" . $this->db->escape(json_encode($data['location_ids'])) . "', customer_group_ids = '" . $this->db->escape(json_encode($data['customer_group_ids'])) . "', time_start = STR_TO_DATE('" . $this->db->escape($data['time_start']) . "', '%H:%i'), time_end = STR_TO_DATE('" . $this->db->escape($data['time_end']) . "', '%H:%i'), sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "'");
+		$this->db->query("INSERT INTO " . DB_PREFIX . "schedule_type SET name = '" . $this->db->escape($data['name']) . "', code = '" . $this->db->escape($data['code']) . "', location_ids = '" . $this->db->escape(json_encode($data['location_ids'])) . "', customer_group_ids = '" . $this->db->escape(json_encode($data['customer_group_ids'])) . "', time_start = STR_TO_DATE('" . $this->db->escape($data['time_start']) . "', '%H:%i'), time_end = STR_TO_DATE('" . $this->db->escape($data['time_end']) . "', '%H:%i'), bg_idx = '" . (int)$data['bg_idx'] . "', sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "'");
 	}
 
 	public function editScheduleType($schedule_type_id, $data) {
-		$this->db->query("UPDATE " . DB_PREFIX . "schedule_type SET name = '" . $this->db->escape($data['name']) . "', code = '" . $this->db->escape($data['code']) . "', location_ids = '" . $this->db->escape(json_encode($data['location_ids'])) . "', customer_group_ids = '" . $this->db->escape(json_encode($data['customer_group_ids'])) . "', time_start = STR_TO_DATE('" . $this->db->escape($data['time_start']) . "', '%H:%i'), time_end = STR_TO_DATE('" . $this->db->escape($data['time_end']) . "', '%H:%i'), sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "' WHERE schedule_type_id = '" . (int)$schedule_type_id . "'");
+		$this->db->query("UPDATE " . DB_PREFIX . "schedule_type SET name = '" . $this->db->escape($data['name']) . "', code = '" . $this->db->escape($data['code']) . "', location_ids = '" . $this->db->escape(json_encode($data['location_ids'])) . "', customer_group_ids = '" . $this->db->escape(json_encode($data['customer_group_ids'])) . "', time_start = STR_TO_DATE('" . $this->db->escape($data['time_start']) . "', '%H:%i'), time_end = STR_TO_DATE('" . $this->db->escape($data['time_end']) . "', '%H:%i'), bg_idx = '" . (int)$data['bg_idx'] . "', sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "' WHERE schedule_type_id = '" . (int)$schedule_type_id . "'");
 	}
 
 	public function copyScheduleType($schedule_type_id) {
@@ -34,7 +34,6 @@ class ModelPresenceScheduleType extends Model {
 	}
 
 	public function getScheduleTypes($data = array()) {
-		// $sql = "SELECT st.*, l.name AS location FROM " . DB_PREFIX . "schedule_type st LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = st.location_id) WHERE status";
 		$sql = "SELECT * FROM " . DB_PREFIX . "schedule_type";
 
 		$implode = array();

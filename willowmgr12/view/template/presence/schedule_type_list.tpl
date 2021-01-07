@@ -111,7 +111,7 @@
                     <?php } else { ?>
                     <a href="<?php echo $sort_name; ?>"><?php echo $column_name; ?></a>
                     <?php } ?></td>
-                  <td class="text-left"><?php if ($sort == 'code') { ?>
+                  <td class="text-center"><?php if ($sort == 'code') { ?>
                     <a href="<?php echo $sort_code; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_code; ?></a>
                     <?php } else { ?>
                     <a href="<?php echo $sort_code; ?>"><?php echo $column_code; ?></a>
@@ -150,7 +150,7 @@
                     <input type="checkbox" name="selected[]" value="<?php echo $schedule_type['schedule_type_id']; ?>" />
                     <?php } ?></td>
                   <td class="text-left"><?php echo $schedule_type['name']; ?></td>
-                  <td class="text-left"><?php echo $schedule_type['code']; ?></td>
+                  <td class="text-center <?= 'schedule-bg-' . $schedule_type['bg_idx']; ?>"><?php echo $schedule_type['code']; ?></td>
                   <td class="text-left"><?php echo $schedule_type['location']; ?></td>
                   <td class="text-left"><?php echo $schedule_type['time_start']; ?></td>
                   <td class="text-left"><?php echo $schedule_type['time_end']; ?></td>
@@ -175,7 +175,7 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript"><!--
+  <script type="text/javascript">
 $(document).keypress(function(e) {
 	if(e.which == 13) {
 		$("#button-filter").click();
@@ -217,6 +217,6 @@ $('#button-filter').on('click', function() {
 	
 	location = url;
 });
-//--></script>   
+</script>   
 </div>
 <?php echo $footer; ?>

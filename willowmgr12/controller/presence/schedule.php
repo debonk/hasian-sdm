@@ -185,19 +185,6 @@ class ControllerPresenceSchedule extends Controller
 		$this->getList();
 	}
 
-	public function report()
-	{
-		$this->load->language('presence/schedule');
-
-		$this->document->setTitle($this->language->get('heading_title'));
-
-		$this->load->model('common/payroll');
-		$this->load->model('presence/schedule');
-		$this->load->model('presence/presence');
-
-		$this->listReport();
-	}
-
 	protected function getList()
 	{
 		if (isset($this->request->get['presence_period_id'])) {
@@ -206,8 +193,7 @@ class ControllerPresenceSchedule extends Controller
 			$presence_period_id = 0;
 		}
 
-		$this->load->model('presence/presence_period');
-		$period_info = $this->model_presence_presence_period->getPresencePeriod($presence_period_id); //get current presence_period_id
+		$period_info = $this->model_common_payroll->getPeriod($presence_period_id); //get current presence_period_id
 		$presence_period_id = $period_info['presence_period_id'];
 
 		if (isset($this->request->get['filter_name'])) {
@@ -332,6 +318,7 @@ class ControllerPresenceSchedule extends Controller
 			$data['success'] = '';
 		}
 
+		$this->load->model('presence/presence_period');
 		$data['presence_periods'] = $this->model_presence_presence_period->getPresencePeriods();
 
 		$this->load->model('customer/customer_group');
@@ -386,6 +373,12 @@ class ControllerPresenceSchedule extends Controller
 
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 		$presence_period_id = $period_info['presence_period_id'];
+
+		$period_status_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'pending, approved, released, completed');
+
+		if ($period_status_check || !$this->user->hasPermission('modify', 'presence/schedule')) {
+			return new Action('error/not_found');
+		}
 
 		if (isset($this->request->get['filter_name'])) {
 			$filter_name = $this->request->get['filter_name'];
@@ -451,12 +444,6 @@ class ControllerPresenceSchedule extends Controller
 
 		$data['date_titles'] = $this->model_presence_schedule->getScheduleDateTitles($range_date);
 		$date_keys = array_column($data['date_titles'], 'date');
-
-		$period_status_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'pending, approved, released, completed');
-
-		if ($period_status_check) {
-			return new Action('error/not_found');
-		}
 
 		$results = $this->model_presence_schedule->getScheduleCustomers($presence_period_id, $filter_data);
 
@@ -545,8 +532,16 @@ class ControllerPresenceSchedule extends Controller
 		$this->response->setOutput($this->load->view('presence/schedule_print', $data));
 	}
 
-	protected function listReport()
+	public function report()
 	{
+		$this->load->language('presence/schedule');
+
+		$this->document->setTitle($this->language->get('heading_title'));
+
+		$this->load->model('common/payroll');
+		$this->load->model('presence/schedule');
+		$this->load->model('presence/presence');
+
 		$language_items = array(
 			'text_no_results',
 			'text_off',

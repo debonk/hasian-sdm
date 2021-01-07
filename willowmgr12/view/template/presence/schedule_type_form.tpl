@@ -124,6 +124,24 @@
 		    </div>
 		  </div>
 		  <div class="form-group">
+		    <label class="col-sm-2 control-label" for="input-sort-order"><?php echo $entry_bg; ?></label>
+		    <div class="col-sm-10">
+			  <div class="btn-group" data-toggle="buttons">
+				<?php for ($i = 1; $i <= 11; $i++) { ?>
+				<?php if ($i == $bg_idx) { ?>
+				<label class="btn color-pick schedule-bg-<?= $i; ?> active">
+				  <input type="radio" name="bg_idx" value="<?= $i; ?>" checked>&nbsp;&nbsp;
+				</label>
+				<?php } else { ?>
+				<label class="btn color-pick schedule-bg-<?= $i; ?>">
+				  <input type="radio" name="bg_idx" value="<?= $i; ?>">&nbsp;&nbsp;
+				</label>
+				<?php } ?>
+				<?php } ?>
+			  </div>
+		    </div>
+		  </div>
+		  <div class="form-group">
 		    <label class="col-sm-2 control-label" for="input-sort-order"><?php echo $entry_sort_order; ?></label>
 		    <div class="col-sm-10">
 		  	  <input type="text" name="sort_order" value="<?php echo $sort_order; ?>" placeholder="<?php echo $entry_sort_order; ?>" id="input-sort-order" class="form-control" />
@@ -147,13 +165,13 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript"><!--
+  <script type="text/javascript">
 $('.time').datetimepicker({
 	pickDate: false,
 	pickTime: true,
 	format: 'HH:mm',
 	minuteStepping: 15
 });
-//--></script>
+  </script>
 </div>
 <?php echo $footer; ?>

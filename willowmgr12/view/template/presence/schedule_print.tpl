@@ -63,7 +63,7 @@
               <td class="nowrap">
                 <?php echo $customer['name']; ?>
               </td>
-              <td class="nowrap">
+              <td>
                 <?php echo $customer['customer_group']; ?>
               </td>
               <?php foreach ($date_titles as $date_title) { ?>

@@ -362,6 +362,7 @@ class ControllerPresenceScheduleType extends Controller {
 				'location'        => implode('<br />', $result_locations),
 				'time_start'      => date($this->language->get('time_format'), strtotime($result['time_start'])),
 				'time_end'        => date($this->language->get('time_format'), strtotime($result['time_end'])),
+				'bg_idx'      	  => $result['bg_idx'],
 				'sort_order'      => $result['sort_order'],
 				'status'      	  => $result['status'] ? $this->language->get('text_enabled') : $this->language->get('text_disabled'),
 				'edit'            => $this->url->link('presence/schedule_type/edit', 'token=' . $this->session->data['token'] . '&schedule_type_id=' . $result['schedule_type_id'] . $url, true)
@@ -540,6 +541,7 @@ class ControllerPresenceScheduleType extends Controller {
 			'entry_customer_group',
 			'entry_time_start',
 			'entry_time_end',
+			'entry_bg',
 			'entry_sort_order',
 			'entry_status',
 			'button_save',
@@ -643,7 +645,8 @@ class ControllerPresenceScheduleType extends Controller {
 		$schedule_type_items = array(
 			'name',
 			'code',
-			'location_id',
+			// 'location_id',
+			'bg_idx',
 			'sort_order',
 			'status'
 		);

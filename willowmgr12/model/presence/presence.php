@@ -30,13 +30,13 @@ class ModelPresencePresence extends Model {
 			$period_info = $this->model_common_payroll->getPeriod($data['presence_period_id']);
 			
 			$implode[] = "c.date_start <= '" . $this->db->escape($period_info['date_end']) . "'";
-			$implode[] = "(c.date_end IS NULL OR c.date_end = '0000-00-00' OR c.date_end > '" . $this->db->escape($period_info['date_start']) . "')";
+			$implode[] = "(c.date_end IS NULL OR c.date_end = '0000-00-00' OR c.date_end >= '" . $this->db->escape($period_info['date_start']) . "')";
 		} elseif (isset($data['filter_status']) && !is_null($data['filter_status'])) {
 			if (!empty($data['filter_status'])) {
 				$implode[] = "(c.date_end <> '0000-00-00' AND c.date_end <= CURDATE())";
 			}
 		} else {
-			$implode[] = "(c.date_end IS NULL OR c.date_end = '0000-00-00' OR c.date_end > CURDATE())";
+			$implode[] = "(c.date_end IS NULL OR c.date_end = '0000-00-00' OR c.date_end >= CURDATE())";
 		}
 
 		if ($implode) {
@@ -110,13 +110,13 @@ class ModelPresencePresence extends Model {
 			$period_info = $this->model_common_payroll->getPeriod($data['presence_period_id']);
 			
 			$implode[] = "date_start <= '" . $this->db->escape($period_info['date_end']) . "'";
-			$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end > '" . $this->db->escape($period_info['date_start']) . "')";
+			$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end >= '" . $this->db->escape($period_info['date_start']) . "')";
 		} elseif (isset($data['filter_status']) && !is_null($data['filter_status'])) {
 			if (!empty($data['filter_status'])) {
 				$implode[] = "(date_end <> '0000-00-00' AND date_end <= CURDATE())";
 			}
 		} else {
-			$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end > CURDATE())";
+			$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end >= CURDATE())";
 		}
 
 		if ($implode) {
