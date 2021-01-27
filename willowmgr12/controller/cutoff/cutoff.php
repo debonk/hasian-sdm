@@ -481,7 +481,7 @@ class ControllerCutoffCutoff extends Controller {
 					$this->error['date'] = $this->language->get('error_status');
 				}
 			} else {
-				if ($period_info && $this->model_common_payroll->checkPeriodStatus($period_info['presence_period_id'], 'submitted, generated, approved, released, completed')) {//Check period status
+				if ($period_info && $this->model_common_payroll->checkPeriodStatus($period_info['presence_period_id'], 'generated, approved, released, completed')) {//Check period status
 					$this->error['date'] = $this->language->get('error_status');
 				}
 			}
@@ -513,7 +513,7 @@ class ControllerCutoffCutoff extends Controller {
 					break;
 				}
 			} else {
-				if ($period_info && $this->model_common_payroll->checkPeriodStatus($period_info['presence_period_id'], 'submitted, generated, approved, released, completed')) {
+				if ($period_info && $this->model_common_payroll->checkPeriodStatus($period_info['presence_period_id'], 'generated, approved, released, completed')) {
 					$this->error['warning'] = $this->language->get('error_status');
 					
 					break;

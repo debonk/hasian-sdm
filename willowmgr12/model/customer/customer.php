@@ -60,14 +60,14 @@ class ModelCustomerCustomer extends Model {
 			$data['custom_field'] = array();
 		}
 
-		$sql = "UPDATE " . DB_PREFIX . "customer SET customer_department_id = '" . (int)$data['customer_department_id'] . "', customer_group_id = '" . (int)$data['customer_group_id'] . "', location_id = '" . (int)$data['location_id'] . "', nik = '" . $this->db->escape($data['nik']) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', image = '" . $this->db->escape($data['image']) . "', payroll_include = '" . (int)$data['payroll_include'] . "', acc_no = '" . $this->db->escape($data['acc_no']) . "', payroll_method_id = '" . (int)$data['payroll_method_id'] . "', health_insurance = '" . (int)$data['health_insurance'] . "', employment_insurance = '" . (int)$data['employment_insurance'] . "', full_overtime = '" . (int)$data['full_overtime'] . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "', status = '" . (int)$data['status'] . "' WHERE customer_id = '" . (int)$customer_id . "'";
+		if (!isset($data['skip_trial_status'])) {
+			$data['skip_trial_status'] = 0;
+		}
+
+		$sql = "UPDATE " . DB_PREFIX . "customer SET customer_department_id = '" . (int)$data['customer_department_id'] . "', customer_group_id = '" . (int)$data['customer_group_id'] . "', location_id = '" . (int)$data['location_id'] . "', nik = '" . $this->db->escape($data['nik']) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', image = '" . $this->db->escape($data['image']) . "', payroll_include = '" . (int)$data['payroll_include'] . "', acc_no = '" . $this->db->escape($data['acc_no']) . "', payroll_method_id = '" . (int)$data['payroll_method_id'] . "', health_insurance = '" . (int)$data['health_insurance'] . "', employment_insurance = '" . (int)$data['employment_insurance'] . "', full_overtime = '" . (int)$data['full_overtime'] . "', skip_trial_status = '" . (int)$data['skip_trial_status'] . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "', status = '" . (int)$data['status'] . "' WHERE customer_id = '" . (int)$customer_id . "'";
 
 		$this->db->query($sql);
 		
-		if (isset($data['skip_trial_status'])) {
-			$this->db->query("UPDATE " . DB_PREFIX . "customer SET skip_trial_status = '" . (int)$data['skip_trial_status'] . "' WHERE customer_id = '" . (int)$customer_id . "'");
-		}
-
 		if (isset($data['date_end'])) {
 			if ((!$data['date_end']) || $this->db->escape($data['date_end']) == '0000-00-00') {
 				$this->db->query("UPDATE " . DB_PREFIX . "customer SET date_end = NULL WHERE customer_id = '" . (int)$customer_id . "'");

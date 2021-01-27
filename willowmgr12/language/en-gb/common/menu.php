@@ -56,6 +56,7 @@ $_['text_customer_history']	           = 'Employee Histories';
 $_['text_payroll_insurance']	       = 'Payroll Insurance';
 $_['text_payroll_tax']	   	           = 'Payroll Tax';
 $_['text_setting']					   = 'Settings';
+$_['text_store']					   = 'Settings';
 $_['text_sysinfo']					   = 'System Information';
 $_['text_system']					   = 'System';
 $_['text_theme']					   = 'Themes';

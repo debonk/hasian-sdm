@@ -745,40 +745,40 @@ label.color-pick:hover, label.color-pick.active {
 	opacity: 1;
 }
 
-.table td.schedule-bg-0, .schedule-bg-0 {
+.table td.schedule-bg-0, label.schedule-bg-0 {
 	background-color: #ff9999 !important;
 }
-.table td.schedule-bg-1, .schedule-bg-1 {
+.table td.schedule-bg-1, label.schedule-bg-1 {
 	background-color: #ffff99 !important;
 }
-.table td.schedule-bg-2, .schedule-bg-2 {
+.table td.schedule-bg-2, label.schedule-bg-2 {
 	background-color: #99ff99 !important;
 }
-.table td.schedule-bg-3, .schedule-bg-3 {
+.table td.schedule-bg-3, label.schedule-bg-3 {
 	background-color: #66ffff !important;
 }
-.table td.schedule-bg-4, .schedule-bg-4 {
+.table td.schedule-bg-4, label.schedule-bg-4 {
 	background-color: #99ccff !important;
 }
-.table td.schedule-bg-5, .schedule-bg-5 {
+.table td.schedule-bg-5, label.schedule-bg-5 {
 	background-color: #ff99ff !important;
 }
-.table td.schedule-bg-6, .schedule-bg-6 {
+.table td.schedule-bg-6, label.schedule-bg-6 {
 	background-color: #ffcc99 !important;
 }
-.table td.schedule-bg-7, .schedule-bg-7 {
+.table td.schedule-bg-7, label.schedule-bg-7 {
 	background-color: #ccff99 !important;
 }
-.table td.schedule-bg-8, .schedule-bg-8 {
+.table td.schedule-bg-8, label.schedule-bg-8 {
 	background-color: #99ffcc !important;
 }
-.table td.schedule-bg-9, .schedule-bg-9 {
+.table td.schedule-bg-9, label.schedule-bg-9 {
 	background-color: #66ccff !important;
 }
-.table td.schedule-bg-10, .schedule-bg-10 {
+.table td.schedule-bg-10, label.schedule-bg-10 {
 	background-color: #cc99ff !important;
 }
-.table td.schedule-bg-11, .schedule-bg-11 {
+.table td.schedule-bg-11, label.schedule-bg-11 {
 	background-color: #ff99cc !important;
 }
 

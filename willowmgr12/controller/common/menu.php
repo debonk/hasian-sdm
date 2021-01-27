@@ -44,7 +44,7 @@ class ControllerCommonMenu extends Controller
 			'catalog'					=> ['information', 'download'],
 			'extension'					=> ['installer', 'modification', 'theme', 'component', 'module'],
 			'themecontrol'				=> ['themecontrol', 'pavmegamenu', 'pavblog'],
-			'system'					=> ['setting', 'payroll_setting'],
+			'system'					=> ['store', 'payroll_setting'],
 			'localisation'				=> ['language', 'currency', 'payroll_status', 'country', 'zone', 'city', 'geozone'],
 			'user'	 					=> ['user', 'user_permission', 'api'],
 			'tool'	 					=> ['sysinfo', 'upload', 'backup', 'error_log']
