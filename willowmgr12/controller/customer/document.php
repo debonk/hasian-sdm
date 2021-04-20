@@ -740,7 +740,7 @@ class ControllerCustomerDocument extends Controller {
 	}
 
 	protected function validateDelete() {
-		if (!$this->user->hasPermission('modify', 'payroll/payroll')) {
+		if (!$this->user->hasPermission('bypass', 'customer/document')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 

@@ -41,6 +41,7 @@ class ControllerSettingSetting extends Controller {
 		$data['text_captcha'] = $this->language->get('text_captcha');
 		$data['text_register'] = $this->language->get('text_register');
 		$data['text_mail'] = $this->language->get('text_mail');
+		$data['text_phpmailer'] = $this->language->get('text_phpmailer');
 		$data['text_smtp'] = $this->language->get('text_smtp');
 		$data['text_mail_api'] = $this->language->get('text_mail_api');//Bonk16
 		$data['text_general'] = $this->language->get('text_general');
@@ -762,6 +763,16 @@ class ControllerSettingSetting extends Controller {
 			$data['config_mail_protocol'] = $this->request->post['config_mail_protocol'];
 		} else {
 			$data['config_mail_protocol'] = $this->config->get('config_mail_protocol');
+		}
+
+		$data['mail_protocols'] = [];
+
+		$mail_protocols = ['mail', 'phpmailer', 'smtp', 'mail_api'];
+		foreach ($mail_protocols as $protocol) {
+			$data['mail_protocols'][] = [
+				'protocol'	=> $protocol,
+				'text' 		=> $this->language->get('text_' . $protocol)
+			];
 		}
 
 		if (isset($this->request->post['config_mail_parameter'])) {

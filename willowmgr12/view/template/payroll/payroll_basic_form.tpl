@@ -110,11 +110,11 @@ $('input[id^=\'input\']').blur(function() {
 
 $('input[id^=\'input\']').keyup(function() {
 	var node = this;
-	var gaji_pokok = parseInt($('input[name=\'gaji_pokok\']').val().replace(/,/g, ""));
-	var tunj_jabatan = parseInt($('input[name=\'tunj_jabatan\']').val().replace(/,/g, ""));
-	var tunj_hadir = parseInt($('input[name=\'tunj_hadir\']').val().replace(/,/g, ""));
-	var tunj_pph = parseInt($('input[name=\'tunj_pph\']').val().replace(/,/g, ""));
-	var total_uang_makan = parseInt($('input[name=\'uang_makan\']').val().replace(/,/g, "")) * 25;
+	var gaji_pokok = parseInt($('input[name=\'gaji_pokok\']').val().replace(/(?!-)[^0-9.]/g, ""));
+	var tunj_jabatan = parseInt($('input[name=\'tunj_jabatan\']').val().replace(/(?!-)[^0-9.]/g, ""));
+	var tunj_hadir = parseInt($('input[name=\'tunj_hadir\']').val().replace(/(?!-)[^0-9.]/g, ""));
+	var tunj_pph = parseInt($('input[name=\'tunj_pph\']').val().replace(/(?!-)[^0-9.]/g, ""));
+	var total_uang_makan = parseInt($('input[name=\'uang_makan\']').val().replace(/(?!-)[^0-9.]/g, "")) * 25;
 	var gaji_dasar = gaji_pokok + tunj_jabatan + tunj_hadir + tunj_pph + total_uang_makan;
 
 	$('input[name=\'gaji_dasar\']').val(gaji_dasar.toLocaleString());

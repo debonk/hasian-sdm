@@ -1,4 +1,7 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 class Mail {
 	protected $to;
 	protected $from;
@@ -162,6 +165,77 @@ class Mail {
 				mail($to, '=?UTF-8?B?' . base64_encode($this->subject) . '?=', $message, $header);
 			}
 			
+		} elseif ($this->protocol == 'phpmailer') {
+			require_once(DIR_VENDOR . 'autoload.php');
+
+			$mail = new PHPMailer(TRUE);
+			
+			$smtp_arr = explode('://', $this->smtp_hostname);
+			$smtp_secure = $smtp_arr[0];
+
+			if ($smtp_secure == 'tls' || $smtp_secure == 'ssl') {
+				$hostname = $smtp_arr[1];
+			} else {
+				$hostname = $this->smtp_hostname;
+				$smtp_secure = '';
+			}
+
+			try {
+				/* Set the mail sender. */
+				$mail->setFrom($this->from, $this->sender);
+				
+				/* Add a recipient. */
+				$mail->addAddress($this->to);
+
+				if ($this->reply_to) {
+					$mail->addReplyTo($this->reply_to, $this->sender);
+				}
+				
+				$mail->Subject = $this->subject;
+
+				if ($this->html) {
+					$mail->isHTML(TRUE);
+					$mail->Body = $this->html;
+					$mail->AltBody = $this->text;
+				} else {
+					$mail->Body = $this->text;
+				}
+				
+				/* SMTP parameters. */
+				$mail->isSMTP();
+				
+				/* SMTP server address. */
+				$mail->Host = $hostname;
+				
+				/* Use SMTP authentication. */
+				$mail->SMTPAuth = TRUE;
+				
+				/* Set the encryption system. */
+				$mail->SMTPSecure = $smtp_secure;
+				
+				/* SMTP authentication username. */
+				$mail->Username = $this->smtp_username;
+				
+				/* SMTP authentication password. */
+				$mail->Password = $this->smtp_password;
+				
+				/* Set the SMTP port. */
+				$mail->Port = $this->smtp_port;
+				var_dump($mail);die('---breakpoint---');
+
+				/* Finally send the mail. */
+				$mail->send();
+			}
+
+			catch (Exception $e)
+			{
+				echo $e->errorMessage();
+			}
+			catch (\Exception $e)
+			{
+				echo $e->getMessage();
+			}
+			
 		// Bonk16
 		} elseif ($this->protocol == 'mail_api') {
 			$url = 'https://api.elasticemail.com/v2/email/send';
@@ -200,8 +274,6 @@ class Mail {
 			catch(Exception $ex){
 				echo $ex->getMessage();
 			}
-			
-		
 		// Bonk16 End
 		
 		} elseif ($this->protocol == 'smtp') {

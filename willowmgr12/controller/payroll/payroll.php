@@ -255,7 +255,7 @@ class ControllerPayrollPayroll extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('payroll/payroll', 'token=' . $this->session->data['token'] . $url, true)
+			'href' => $this->url->link('payroll/payroll', 'token=' . $this->session->data['token'], true)
 		);
 
 		$filter_data = array(

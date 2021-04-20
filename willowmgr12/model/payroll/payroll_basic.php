@@ -9,7 +9,7 @@ class ModelPayrollPayrollBasic extends Model {
 	}
 
 	public function editPayrollBasic($customer_id, $data) {
-		$data = str_replace(',','',$data);
+		$data = preg_replace('/(?!-)[^0-9.]/', '', $data);
 		
 		$this->db->query("INSERT INTO " . DB_PREFIX . "payroll_basic SET customer_id = '" . (int)$customer_id . "', gaji_pokok = '" . (int)$data['gaji_pokok'] . "', tunj_jabatan = '" . (int)$data['tunj_jabatan'] . "', tunj_hadir = '" . (int)$data['tunj_hadir'] . "', tunj_pph = '" . (int)$data['tunj_pph'] . "', uang_makan = '" . (int)$data['uang_makan'] . "', date_added = NOW(), user_id = '" . (int)$this->user->getId() . "'");
 	}

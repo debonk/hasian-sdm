@@ -536,24 +536,14 @@
                 <label class="col-sm-2 control-label" for="input-mail-protocol"><span data-toggle="tooltip" title="<?php echo $help_mail_protocol; ?>"><?php echo $entry_mail_protocol; ?></span></label>
                 <div class="col-sm-10">
                   <select name="config_mail_protocol" id="input-mail-protocol" class="form-control">
-                    <?php if ($config_mail_protocol == 'mail') { ?>
-                    <option value="mail" selected="selected"><?php echo $text_mail; ?></option>
-                    <?php } else { ?>
-                    <option value="mail"><?php echo $text_mail; ?></option>
-                    <?php } ?>
-                    <?php if ($config_mail_protocol == 'smtp') { ?>
-                    <option value="smtp" selected="selected"><?php echo $text_smtp; ?></option>
-                    <?php } else { ?>
-                    <option value="smtp"><?php echo $text_smtp; ?></option>
-                    <?php } ?>
-					<!-- Bonk16 -->
-                    <?php if ($config_mail_protocol == 'mail_api') { ?>
-                    <option value="mail_api" selected="selected"><?php echo $text_mail_api; ?></option>
-                    <?php } else { ?>
-                    <option value="mail_api"><?php echo $text_mail_api; ?></option>
-                    <?php } ?>
-					<!-- Bonk16 End -->
-                  </select>
+                    <?php foreach ($mail_protocols as $mail_protocol) { ?>
+											<?php if ($mail_protocol['protocol'] == $config_mail_protocol) { ?>
+											<option value="<?php echo $mail_protocol['protocol']; ?>" selected="selected"><?php echo $mail_protocol['text']; ?></option>
+											<?php } else { ?>
+											<option value="<?php echo $mail_protocol['protocol']; ?>"><?php echo $mail_protocol['text']; ?></option>
+											<?php } ?>
+										<?php } ?>
+									</select>
                 </div>
               </div>
               <div class="form-group">
