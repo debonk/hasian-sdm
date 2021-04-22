@@ -204,7 +204,7 @@
     </div>
   </div>
 </div>
-<script type="text/javascript"><!--
+<script type="text/javascript">
 $('#period-info').load('index.php?route=common/period_info&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
 
 $('#customer-info').load('index.php?route=common/customer_info&token=<?php echo $token; ?>&customer_id=<?php echo $customer_id; ?>');
@@ -242,6 +242,6 @@ $('#absence-info').on('click', 'button[id^=\'button-action\']', function(e) {
 		});
 	}
 });
-//--></script> 
+</script> 
 </div>
 <?php echo $footer; ?>

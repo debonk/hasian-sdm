@@ -247,29 +247,33 @@ class ModelPresenceSchedule extends Model {
 			if ($exchange_info['time_start'] >= $exchange_info['time_end']) {
 				$time_out = date('Y-m-d H:i:s', strtotime('+1 day', strtotime($time_out)));
 			}
-			
-			$schedules_data[$exchange_info['date_to']] = array(
-				'applied'			=> 'exchange',
-				'schedule_type_id'	=> $exchange_info['schedule_type_id'],
-				'schedule_type'		=> 'X-' . $exchange_info['code'],
-				'time_in'			=> $time_in,
-				'time_out'			=> $time_out,
-				'note'				=> $exchange_info['description'],
-				'schedule_bg'		=> $exchange_info['bg_idx'],
-				'bg_class'			=> 'primary'
-			);
 
-			if (!isset($schedules_data[$exchange_info['date_from']])) {
-				$schedules_data[$exchange_info['date_from']] = array(
+			if($exchange_info['date_to'] >= $range_date['start'] && $exchange_info['date_to'] <= $range_date['end']) {
+				$schedules_data[$exchange_info['date_to']] = array(
 					'applied'			=> 'exchange',
-					'schedule_type_id'	=> 0,
-					'schedule_type'		=> 'X-',
-					'time_in'			=> '0000-00-00 00:00:00',
-					'time_out'			=> '0000-00-00 00:00:00',
+					'schedule_type_id'	=> $exchange_info['schedule_type_id'],
+					'schedule_type'		=> 'X-' . $exchange_info['code'],
+					'time_in'			=> $time_in,
+					'time_out'			=> $time_out,
 					'note'				=> $exchange_info['description'],
-					'schedule_bg'		=> 0,
+					'schedule_bg'		=> $exchange_info['bg_idx'],
 					'bg_class'			=> 'primary'
 				);
+			}
+
+			if($exchange_info['date_from'] >= $range_date['start'] && $exchange_info['date_from'] <= $range_date['end']) {
+				if (!isset($schedules_data[$exchange_info['date_from']])) {
+					$schedules_data[$exchange_info['date_from']] = array(
+						'applied'			=> 'exchange',
+						'schedule_type_id'	=> 0,
+						'schedule_type'		=> 'X-',
+						'time_in'			=> '0000-00-00 00:00:00',
+						'time_out'			=> '0000-00-00 00:00:00',
+						'note'				=> $exchange_info['description'],
+						'schedule_bg'		=> 0,
+						'bg_class'			=> 'primary'
+					);
+				}
 			}
 		}
 			

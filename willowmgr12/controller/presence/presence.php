@@ -713,7 +713,7 @@ class ControllerPresencePresence extends Controller {
 		$this->load->model('presence/schedule');
 		$this->load->model('overtime/overtime');
 		$schedules_info = $this->model_presence_schedule->getFinalSchedules($customer_id, $range_date);
-					
+
 		//Form Calendar
 		$data['list_days'] = explode(' ',$this->language->get('text_days'));
 
@@ -764,7 +764,7 @@ class ControllerPresencePresence extends Controller {
 						$note			= '';
 					}
 
-					$data['calendar'] [$week . $day] = array(
+					$data['calendar'][$week . $day] = array(
 						'date'				=> $date_text,
 						'text'				=> date('j M', strtotime('+ ' . $counter . ' day', $date_start)),
 						'presence_status_id'=> $presence_status_id,

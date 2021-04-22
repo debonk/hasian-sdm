@@ -1,6 +1,6 @@
 <?php
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\Exception as PHPMailerException;
 
 class Mail {
 	protected $to;
@@ -221,13 +221,12 @@ class Mail {
 				
 				/* Set the SMTP port. */
 				$mail->Port = $this->smtp_port;
-				var_dump($mail);die('---breakpoint---');
 
 				/* Finally send the mail. */
 				$mail->send();
 			}
 
-			catch (Exception $e)
+			catch (PHPMailerException $e)
 			{
 				echo $e->errorMessage();
 			}
