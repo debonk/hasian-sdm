@@ -682,7 +682,7 @@ td.thumb {
 }
 
 /* Fix form control bug */
-.form-control {
+.input-group-btn .form-control {
   height: 35.15px;
 }
 

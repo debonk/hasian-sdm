@@ -344,10 +344,12 @@ class ControllerReportCustomer extends Controller {
 			'heading_title',
 			'text_enabled',
 			'text_disabled',
+			'text_missing',
 			'text_yes',
 			'text_no',
 			'text_no_results',
 			'entry_default',
+			'entry_id_card_address',
 			'entry_year',//vacation info
 			'button_cancel',
 			'button_filter',
@@ -447,19 +449,23 @@ class ControllerReportCustomer extends Controller {
 			'status',
 			'date_end',
 			'gender',
+			'date_birth',
 			'marriage_status',
+			'children',
 			'npwp',
 			'npwp_address',
-			'children',
 			'payroll_method',
 			'acc_no',
 			'health_insurance',
-			'employment_insurance'
+			'health_insurance_id',
+			'employment_insurance',
+			'employment_insurance_id'
 		);
 		
 		$value['nip'] = $customer_info['nip'];
 		$value['nik'] = $customer_info['nik'];
 		$value['date_start'] = date($this->language->get('date_format_jMY'), strtotime($customer_info['date_start']));
+		$value['date_birth'] = date($this->language->get('date_format_jMY'), strtotime($customer_info['date_birth']));
 		$value['full_overtime'] = $customer_info['full_overtime'] ? $this->language->get('text_yes') : $this->language->get('text_no');
 		$value['status'] = $customer_info['status'] ? $this->language->get('text_enabled') : $this->language->get('text_disabled');
 		$value['date_end'] = $customer_info['date_end'] ? date($this->language->get('date_format_jMY'), strtotime($customer_info['date_end'])) : '-';
@@ -468,7 +474,9 @@ class ControllerReportCustomer extends Controller {
 		$value['children'] = $customer_info['children'];
 		$value['acc_no'] = $customer_info['acc_no'];
 		$value['health_insurance'] = $customer_info['health_insurance'] ? $this->language->get('text_yes') : $this->language->get('text_no');
+		$value['health_insurance_id'] = $customer_info['health_insurance_id'];
 		$value['employment_insurance'] = $customer_info['employment_insurance'] ? $this->language->get('text_yes') : $this->language->get('text_no');
+		$value['employment_insurance_id'] = $customer_info['employment_insurance_id'];
 		
 		$this->load->model('localisation/gender');
 		$gender = $this->model_localisation_gender->getGender($customer_info['gender_id']);
@@ -483,6 +491,7 @@ class ControllerReportCustomer extends Controller {
 		$value['payroll_method'] = $payroll_method['name'];
 		
 		$data['address_id'] = $customer_info['address_id'];
+		$data['id_card_address_id'] = $customer_info['id_card_address_id'];
 
 		foreach ($general_items as $item) {
 			$data['generals'][] = array(
@@ -512,11 +521,20 @@ class ControllerReportCustomer extends Controller {
 		$data['documents'] = array();
 		
 		$results = $this->model_customer_document->getDocumentsByCustomer($this->request->get['customer_id']);
+		// var_dump($results);die('---breakpoint---');
 
 		foreach ($results as $result) {
+			if (is_file(DIR_DOCUMENT . $result['filename'])) {
+				$href = $this->url->link('customer/document/view', 'token=' . $this->session->data['token'] . '&document_id=' . $result['document_id'], true);
+				// $missing = false;
+			} else {
+				$href = '';
+				// $missing = true;
+			}
+
 			$data['documents'][] = array(
-				'title' => $result['filename'],
-				'href'  => $this->url->link('customer/document/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $this->request->get['customer_id'], true)
+				'mask' => $result['mask'],
+				'href'  => $href
 			);
 		}
 		

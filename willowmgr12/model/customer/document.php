@@ -4,6 +4,14 @@ class ModelCustomerDocument extends Model {
 		$this->db->query("INSERT INTO " . DB_PREFIX . "document SET customer_id = '" . (int)$data['customer_id'] . "', document_type_id = '" . (int)$data['document_type_id'] . "', filename = '" . $this->db->escape($data['filename']) . "', mask = '" . $this->db->escape($data['mask']) . "', user_id = '" . (int)$this->user->getId() . "'");
 	}
 
+	public function getDocument($document_id) {
+		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "document WHERE document_id = '" . (int)$document_id . "'";
+		
+		$query = $this->db->query($sql);
+		
+		return $query->row;
+	}
+
 	public function getDocuments() {
 		$sql = "SELECT * FROM " . DB_PREFIX . "document";
 		
@@ -12,8 +20,8 @@ class ModelCustomerDocument extends Model {
 		return $query->rows;
 	}
 
-	public function deleteDocumentByCustomer($customer_id, $document_type_id) {
-		$this->db->query("DELETE FROM " . DB_PREFIX . "document WHERE customer_id = '" . (int)$customer_id . "' AND document_type_id = '" . (int)$document_type_id . "'");
+	public function deleteDocument($document_id) {
+		$this->db->query("DELETE FROM " . DB_PREFIX . "document WHERE document_id = '" . (int)$document_id . "'");
 	}
 
 	public function getDocumentsByCustomer($customer_id, $document_type_id = 0) {

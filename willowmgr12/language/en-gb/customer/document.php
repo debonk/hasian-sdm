@@ -12,6 +12,7 @@ $_['text_all_customer_group'] 	= 'Semua Jabatan';
 $_['text_all_location'] 		= 'Semua Lokasi';
 $_['text_active']				= 'Masih Bekerja';
 $_['text_inactive']				= 'Berhenti Bekerja';
+$_['text_missing']				= '(file missing)';
 $_['text_all_status']			= 'Semua Karyawan';
 
 // Column

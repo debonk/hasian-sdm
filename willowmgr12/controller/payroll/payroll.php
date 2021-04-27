@@ -629,7 +629,7 @@ class ControllerPayrollPayroll extends Controller {
 	
 			$absences_info = $this->model_presence_absence->getAbsencesByCustomerDate($result['customer_id'], $range_date);
 			
-			$note = implode(', ', array_filter(array_column($absences_info, 'description')));
+			$note = implode(', ', array_filter(array_column($absences_info, 'note')));
 			
 			$data['customers'][] = array(
 				'customer_id' 		=> $result['customer_id'],

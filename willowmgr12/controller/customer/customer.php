@@ -702,40 +702,44 @@ class ControllerCustomerCustomer extends Controller {
 			'text_loading',
 			'text_add_ban_ip',
 			'text_remove_ban_ip',
-			'entry_customer_department',
-			'entry_customer_group',
-			'entry_location',
-			'entry_payroll_method',
-			'entry_image',
-			'entry_nip',
-			'entry_nik',
-			'entry_firstname',
-			'entry_lastname',
-			'entry_skip_trial_status',
-			'entry_date_start',
-			'entry_date_end',
-			'entry_email',
-			'entry_gender',
-			'entry_marriage_status',
-			'entry_children',
-			'entry_payroll_include',
-			'entry_npwp',
-			'entry_npwp_address',
-			'entry_telephone',
 			'entry_acc_no',
-			'entry_full_overtime',
-			'entry_health_insurance',
-			'entry_employment_insurance',
-			'entry_password',
-			'entry_confirm',
-			'entry_status',
 			'entry_address_1',
 			'entry_address_2',
+			'entry_children',
 			'entry_city',
-			'entry_postcode',
-			'entry_zone',
+			'entry_confirm',
 			'entry_country',
+			'entry_customer_department',
+			'entry_customer_group',
+			'entry_date_birth',
+			'entry_date_end',
+			'entry_date_start',
 			'entry_default',
+			'entry_email',
+			'entry_employment_insurance',
+			'entry_employment_insurance_id',
+			'entry_firstname',
+			'entry_full_overtime',
+			'entry_gender',
+			'entry_health_insurance',
+			'entry_health_insurance_id',
+			'entry_id_card_address',
+			'entry_image',
+			'entry_lastname',
+			'entry_location',
+			'entry_marriage_status',
+			'entry_nik',
+			'entry_nip',
+			'entry_npwp_address',
+			'entry_npwp',
+			'entry_password',
+			'entry_payroll_include',
+			'entry_payroll_method',
+			'entry_postcode',
+			'entry_skip_trial_status',
+			'entry_status',
+			'entry_telephone',
+			'entry_zone',
 			'help_lastname',
 			'help_skip_trial_status',
 			'help_health_insurance',
@@ -770,11 +774,15 @@ class ControllerCustomerCustomer extends Controller {
 			'nik',
 			'firstname',
 			'lastname',
+			'customer_department',
+			'customer_group',
 			'date_start',
 			'date_end',
 			'email',
 			'telephone',
 			'npwp_address',
+			'health_insurance_id',
+			'employment_insurance_id',
 			'password',
 			'confirm'
 		);
@@ -869,134 +877,57 @@ class ControllerCustomerCustomer extends Controller {
 			$customer_info = $this->model_customer_customer->getCustomer($this->request->get['customer_id']);
 		}
 
+		$input_items = array(
+			'image'						=> null,
+			'customer_department_id'	=> null,
+			'customer_group_id'			=> null,
+			'location_id'				=> null,
+			'gender_id'					=> null,
+			'marriage_status_id'		=> 1,
+			'payroll_method_id'			=> null,
+			'nik'						=> null,
+			'firstname'					=> null,
+			'lastname'					=> null,
+			'skip_trial_status'			=> true,
+			'email'						=> null,
+			'telephone'					=> null,
+			'children'					=> null,
+			'payroll_include'			=> true,
+			'children'					=> null,
+			'npwp'						=> null,
+			'npwp_address'				=> null,
+			'acc_no'					=> null,
+			'full_overtime'				=> null,
+			'health_insurance'			=> true,
+			'health_insurance_id'		=> null,
+			'employment_insurance'		=> true,
+			'employment_insurance_id'	=> null,
+			'status'					=> true,
+			'id_card_address_id'		=> null,
+			'address_id'				=> null
+		);
+		foreach ($input_items as $input_item => $default_value) {
+			if (isset($this->request->post[$input_item])) {
+				$data[$input_item] = $this->request->post[$input_item];
+			} elseif (!empty($customer_info)) {
+				$data[$input_item] = $customer_info[$input_item];
+			} else {
+				$data[$input_item] = $default_value;
+			}
+		}
+
 		if (!empty($customer_info)) {
 			$data['nip'] = $customer_info['nip'];
 		} else {
 			$data['nip'] = '-';
 		}
 
-		if (isset($this->request->post['image'])) {
-			$data['image'] = $this->request->post['image'];
-		} elseif (!empty($customer_info)) {
-			$data['image'] = $customer_info['image'];
-		} else {
-			$data['image'] = '';
-		}
-
 		$this->load->model('tool/image');
 
-		if (isset($this->request->post['image']) && is_file(DIR_IMAGE . $this->request->post['image'])) {
-			$data['thumb'] = $this->model_tool_image->resize($this->request->post['image'], 200, 200);
-		} elseif (!empty($customer_info) && is_file(DIR_IMAGE . $customer_info['image'])) {
-			$data['thumb'] = $this->model_tool_image->resize($customer_info['image'], 200, 200);
+		if (!empty($data['image']) && is_file(DIR_IMAGE . $data['image'])) {
+			$data['thumb'] = $this->model_tool_image->resize($data['image'], 200, 200);
 		} else {
 			$data['thumb'] = $this->model_tool_image->resize('no_image.png', 200, 200);
-		}
-
-		$data['placeholder'] = $this->model_tool_image->resize('no_image.png', 200, 200);
-
-		$this->load->model('customer/customer_department');
-
-		$data['customer_departments'] = $this->model_customer_customer_department->getCustomerDepartments();
-
-		if (isset($this->request->post['customer_department_id'])) {
-			$data['customer_department_id'] = $this->request->post['customer_department_id'];
-		} elseif (!empty($customer_info)) {
-			$data['customer_department_id'] = $customer_info['customer_department_id'];
-		} else {
-			$data['customer_department_id'] = 0;
-		}
-
-		$this->load->model('customer/customer_group');
-
-		$data['customer_groups'] = $this->model_customer_customer_group->getCustomerGroups();
-
-		if (isset($this->request->post['customer_group_id'])) {
-			$data['customer_group_id'] = $this->request->post['customer_group_id'];
-		} elseif (!empty($customer_info)) {
-			$data['customer_group_id'] = $customer_info['customer_group_id'];
-		} else {
-			$data['customer_group_id'] = $this->config->get('config_customer_group_id');
-		}
-
-		$this->load->model('localisation/location');
-
-		$data['locations'] = $this->model_localisation_location->getLocations();
-
-		if (isset($this->request->post['location_id'])) {
-			$data['location_id'] = $this->request->post['location_id'];
-		} elseif (!empty($customer_info)) {
-			$data['location_id'] = $customer_info['location_id'];
-		} else {
-			$data['location_id'] = '';
-		}
-
-		$this->load->model('localisation/gender');
-
-		$data['genders'] = $this->model_localisation_gender->getGenders();
-
-		if (isset($this->request->post['gender_id'])) {
-			$data['gender_id'] = $this->request->post['gender_id'];
-		} elseif (!empty($customer_info)) {
-			$data['gender_id'] = $customer_info['gender_id'];
-		} else {
-			$data['gender_id'] = '';
-		}
-
-		$this->load->model('localisation/marriage_status');
-
-		$data['marriage_statuses'] = $this->model_localisation_marriage_status->getMarriageStatuses();
-
-		if (isset($this->request->post['marriage_status_id'])) {
-			$data['marriage_status_id'] = $this->request->post['marriage_status_id'];
-		} elseif (!empty($customer_info)) {
-			$data['marriage_status_id'] = $customer_info['marriage_status_id'];
-		} else {
-			$data['marriage_status_id'] = '1';
-		}
-
-		$this->load->model('localisation/payroll_method');
-
-		$data['payroll_methods'] = $this->model_localisation_payroll_method->getPayrollMethods();
-
-		if (isset($this->request->post['payroll_method_id'])) {
-			$data['payroll_method_id'] = $this->request->post['payroll_method_id'];
-		} elseif (!empty($customer_info)) {
-			$data['payroll_method_id'] = $customer_info['payroll_method_id'];
-		} else {
-			$data['payroll_method_id'] = '';
-		}
-
-		if (isset($this->request->post['nik'])) {
-			$data['nik'] = $this->request->post['nik'];
-		} elseif (!empty($customer_info)) {
-			$data['nik'] = $customer_info['nik'];
-		} else {
-			$data['nik'] = '';
-		}
-
-		if (isset($this->request->post['firstname'])) {
-			$data['firstname'] = $this->request->post['firstname'];
-		} elseif (!empty($customer_info)) {
-			$data['firstname'] = $customer_info['firstname'];
-		} else {
-			$data['firstname'] = '';
-		}
-
-		if (isset($this->request->post['lastname'])) {
-			$data['lastname'] = $this->request->post['lastname'];
-		} elseif (!empty($customer_info)) {
-			$data['lastname'] = $customer_info['lastname'];
-		} else {
-			$data['lastname'] = '';
-		}
-
-		if (isset($this->request->post['skip_trial_status'])) {
-			$data['skip_trial_status'] = $this->request->post['skip_trial_status'];
-		} elseif (!empty($customer_info)) {
-			$data['skip_trial_status'] = $customer_info['skip_trial_status'];
-		} else {
-			$data['skip_trial_status'] = 1;
 		}
 
 		if (isset($this->request->post['date_start'])) {
@@ -1015,85 +946,42 @@ class ControllerCustomerCustomer extends Controller {
 			$data['date_end'] = null;
 		}
 
-		if (isset($this->request->post['email'])) {
-			$data['email'] = $this->request->post['email'];
-		} elseif (!empty($customer_info)) {
-			$data['email'] = $customer_info['email'];
+		if (isset($this->request->post['date_birth'])) {
+			$data['date_birth'] = $this->request->post['date_birth'];
+		} elseif (!empty($customer_info) && $customer_info['date_birth']) {
+			$data['date_birth'] = date($this->language->get('date_format_jMY'), strtotime($customer_info['date_birth']));
 		} else {
-			$data['email'] = '';
+			$data['date_birth'] = null;
 		}
 
-		if (isset($this->request->post['telephone'])) {
-			$data['telephone'] = $this->request->post['telephone'];
-		} elseif (!empty($customer_info)) {
-			$data['telephone'] = $customer_info['telephone'];
+		if (isset($this->request->post['address'])) {
+			$data['addresses'] = $this->request->post['address'];
+		} elseif (isset($this->request->get['customer_id'])) {
+			$data['addresses'] = $this->model_customer_customer->getAddresses($this->request->get['customer_id']);
 		} else {
-			$data['telephone'] = '';
+			$data['addresses'] = array();
 		}
 
-		if (isset($this->request->post['children'])) {
-			$data['children'] = $this->request->post['children'];
-		} elseif (!empty($customer_info)) {
-			$data['children'] = $customer_info['children'];
-		} else {
-			$data['children'] = '';
-		}
+		$this->load->model('customer/customer_department');
+		$data['customer_departments'] = $this->model_customer_customer_department->getCustomerDepartments();
 
-		if (isset($this->request->post['payroll_include'])) {
-			$data['payroll_include'] = $this->request->post['payroll_include'];
-		} elseif (!empty($customer_info)) {
-			$data['payroll_include'] = $customer_info['payroll_include'];
-		} else {
-			$data['payroll_include'] = true;
-		}
+		$this->load->model('customer/customer_group');
+		$data['customer_groups'] = $this->model_customer_customer_group->getCustomerGroups();
 
-		if (isset($this->request->post['npwp'])) {
-			$data['npwp'] = $this->request->post['npwp'];
-		} elseif (!empty($customer_info)) {
-			$data['npwp'] = $customer_info['npwp'];
-		} else {
-			$data['npwp'] = '';
-		}
+		$this->load->model('localisation/location');
+		$data['locations'] = $this->model_localisation_location->getLocations();
 
-		if (isset($this->request->post['npwp_address'])) {
-			$data['npwp_address'] = $this->request->post['npwp_address'];
-		} elseif (!empty($customer_info)) {
-			$data['npwp_address'] = $customer_info['npwp_address'];
-		} else {
-			$data['npwp_address'] = '';
-		}
+		$this->load->model('localisation/gender');
+		$data['genders'] = $this->model_localisation_gender->getGenders();
 
-		if (isset($this->request->post['acc_no'])) {
-			$data['acc_no'] = $this->request->post['acc_no'];
-		} elseif (!empty($customer_info)) {
-			$data['acc_no'] = $customer_info['acc_no'];
-		} else {
-			$data['acc_no'] = '';
-		}
+		$this->load->model('localisation/marriage_status');
+		$data['marriage_statuses'] = $this->model_localisation_marriage_status->getMarriageStatuses();
 
-		if (isset($this->request->post['full_overtime'])) {
-			$data['full_overtime'] = $this->request->post['full_overtime'];
-		} elseif (!empty($customer_info)) {
-			$data['full_overtime'] = $customer_info['full_overtime'];
-		} else {
-			$data['full_overtime'] = 0;
-		}
+		$this->load->model('localisation/payroll_method');
+		$data['payroll_methods'] = $this->model_localisation_payroll_method->getPayrollMethods();
 
-		if (isset($this->request->post['health_insurance'])) {
-			$data['health_insurance'] = $this->request->post['health_insurance'];
-		} elseif (!empty($customer_info)) {
-			$data['health_insurance'] = $customer_info['health_insurance'];
-		} else {
-			$data['health_insurance'] = 1;
-		}
-
-		if (isset($this->request->post['employment_insurance'])) {
-			$data['employment_insurance'] = $this->request->post['employment_insurance'];
-		} elseif (!empty($customer_info)) {
-			$data['employment_insurance'] = $customer_info['employment_insurance'];
-		} else {
-			$data['employment_insurance'] = 1;
-		}
+		$this->load->model('localisation/country');
+		$data['countries'] = $this->model_localisation_country->getCountries();
 
 		// Custom Fields
 		$this->load->model('customer/custom_field');
@@ -1127,14 +1015,6 @@ class ControllerCustomerCustomer extends Controller {
 			$data['account_custom_field'] = array();
 		}
 
-		if (isset($this->request->post['status'])) {
-			$data['status'] = $this->request->post['status'];
-		} elseif (!empty($customer_info)) {
-			$data['status'] = $customer_info['status'];
-		} else {
-			$data['status'] = true;
-		}
-
 		$generated_password = token(20);
 
 		if (isset($this->request->post['password'])) {
@@ -1155,26 +1035,6 @@ class ControllerCustomerCustomer extends Controller {
 			} else {
 				$data['confirm'] = $generated_password;
 			}
-		}
-
-		$this->load->model('localisation/country');
-
-		$data['countries'] = $this->model_localisation_country->getCountries();
-
-		if (isset($this->request->post['address'])) {
-			$data['addresses'] = $this->request->post['address'];
-		} elseif (isset($this->request->get['customer_id'])) {
-			$data['addresses'] = $this->model_customer_customer->getAddresses($this->request->get['customer_id']);
-		} else {
-			$data['addresses'] = array();
-		}
-
-		if (isset($this->request->post['address_id'])) {
-			$data['address_id'] = $this->request->post['address_id'];
-		} elseif (!empty($customer_info)) {
-			$data['address_id'] = $customer_info['address_id'];
-		} else {
-			$data['address_id'] = '';
 		}
 
 		$data['date_start_locked'] = false;
@@ -1216,6 +1076,14 @@ class ControllerCustomerCustomer extends Controller {
 			$this->error['lastname'] = $this->language->get('error_lastname');
 		}
 
+		if (empty($this->request->post['customer_department_id'])) {
+			$this->error['customer_department'] = $this->language->get('error_customer_department');
+		}
+
+		if (empty($this->request->post['customer_group_id'])) {
+			$this->error['customer_group'] = $this->language->get('error_customer_group');
+		}
+
 		if (!isset($this->request->get['customer_id'])) {
 			if (!$this->request->post['date_start'] || empty(strtotime($this->request->post['date_start']))) {
 				$this->error['date_start'] = $this->language->get('error_date_start');
@@ -1238,6 +1106,14 @@ class ControllerCustomerCustomer extends Controller {
 			if ((utf8_strlen($this->request->post['npwp_address']) < 3) || (utf8_strlen(trim($this->request->post['npwp_address'])) > 255)) {
 				$this->error['npwp_address'] = $this->language->get('error_npwp_address');
 			}
+		}
+
+		if ($this->request->post['health_insurance_id'] && ((utf8_strlen($this->request->post['health_insurance_id']) != 13) || !preg_match('/^\d*$/', $this->request->post['health_insurance_id']))) {
+			$this->error['health_insurance_id'] = $this->language->get('error_health_insurance_id');
+		}
+
+		if ($this->request->post['employment_insurance_id'] && ((utf8_strlen($this->request->post['employment_insurance_id']) != 11) || !preg_match('/^\d*$/', $this->request->post['employment_insurance_id']))) {
+			$this->error['employment_insurance_id'] = $this->language->get('error_employment_insurance_id');
 		}
 
 		$customer_info = $this->model_customer_customer->getCustomerByEmail($this->request->post['email']);

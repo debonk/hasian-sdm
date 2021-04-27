@@ -14,7 +14,21 @@ class ModelCustomerCustomer extends Model {
 
 		$nip = $nip_prefix . $nip_no . mt_rand(0,9);
 
-		$this->db->query("INSERT INTO " . DB_PREFIX . "customer SET customer_department_id = '" . (int)$data['customer_department_id'] . "', customer_group_id = '" . (int)$data['customer_group_id'] . "', location_id = '" . (int)$data['location_id'] . "', nip = '" . $this->db->escape($nip) . "', nip_no = '" . (int)$nip_no . "', nik = '" . $this->db->escape($data['nik']) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', date_start = STR_TO_DATE('" . $this->db->escape($data['date_start']) . "', '%e %b %Y'), image = '" . $this->db->escape($data['image']) . "', skip_trial_status = '" . (int)$data['skip_trial_status'] . "', payroll_include = '" . (int)$data['payroll_include'] . "', acc_no = '" . $this->db->escape($data['acc_no']) . "', payroll_method_id = '" . (int)$data['payroll_method_id'] . "', health_insurance = '" . (int)$data['health_insurance'] . "', employment_insurance = '" . (int)$data['employment_insurance'] . "', full_overtime = '" . (int)$data['full_overtime'] . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "', salt = '" . $this->db->escape($salt = token(9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "', status = '" . (int)$data['status'] . "', date_added = NOW()");
+		if (!empty($data['date_birth'])) {
+			$data['date_birth'] = date('Y-m-j', strtotime($data['date_birth']));
+		} else {
+			$data['date_birth'] = null;
+		}
+
+		$sql = "INSERT INTO " . DB_PREFIX . "customer SET customer_department_id = '" . (int)$data['customer_department_id'] . "', customer_group_id = '" . (int)$data['customer_group_id'] . "', location_id = '" . (int)$data['location_id'] . "', nip = '" . $this->db->escape($nip) . "', nip_no = '" . (int)$nip_no . "', nik = '" . $this->db->escape($data['nik']) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', date_start = STR_TO_DATE('" . $this->db->escape($data['date_start']) . "', '%e %b %Y'), image = '" . $this->db->escape($data['image']) . "', skip_trial_status = '" . (int)$data['skip_trial_status'] . "', payroll_include = '" . (int)$data['payroll_include'] . "', acc_no = '" . $this->db->escape($data['acc_no']) . "', payroll_method_id = '" . (int)$data['payroll_method_id'] . "', health_insurance = '" . (int)$data['health_insurance'] . "', health_insurance_id = '" . $this->db->escape($data['health_insurance_id']) . "', employment_insurance = '" . (int)$data['employment_insurance'] . "', employment_insurance_id = '" . $this->db->escape($data['employment_insurance_id']) . "', full_overtime = '" . (int)$data['full_overtime'] . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "', salt = '" . $this->db->escape($salt = token(9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "', status = '" . (int)$data['status'] . "', date_added = NOW()";
+
+		if (!empty($data['date_birth'])) {
+			$sql .= ", date_birth = STR_TO_DATE('" . $this->db->escape($data['date_birth']) . "', '%e %b %Y')";
+		} else {
+			$sql .= ", date_birth = NULL";
+		}
+
+		$this->db->query($sql);
 
 		$customer_id = $this->db->getLastId();
 
@@ -24,9 +38,13 @@ class ModelCustomerCustomer extends Model {
 			foreach ($data['address'] as $address) {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "address SET customer_id = '" . (int)$customer_id . "', address_1 = '" . $this->db->escape($address['address_1']) . "', address_2 = '" . $this->db->escape($address['address_2']) . "', city = '" . $this->db->escape($address['city']) . "', postcode = '" . $this->db->escape($address['postcode']) . "', country_id = '" . (int)$address['country_id'] . "', zone_id = '" . (int)$address['zone_id'] . "', custom_field = '" . $this->db->escape(isset($address['custom_field']) ? json_encode($address['custom_field']) : '') . "'");
 
-				if (isset($address['default'])) {
-					$address_id = $this->db->getLastId();
+				$address_id = $this->db->getLastId();
 
+				if (isset($address['id_card_address'])) {
+					$this->db->query("UPDATE " . DB_PREFIX . "customer SET id_card_address_id = '" . (int)$address_id . "' WHERE customer_id = '" . (int)$customer_id . "'");
+				}
+
+				if (isset($address['default'])) {
 					$this->db->query("UPDATE " . DB_PREFIX . "customer SET address_id = '" . (int)$address_id . "' WHERE customer_id = '" . (int)$customer_id . "'");
 				}
 			}
@@ -52,7 +70,7 @@ class ModelCustomerCustomer extends Model {
 			}
 
 			$nip = $nip_prefix . $nip_no . mt_rand(0,9);
-			
+
 			$this->db->query("UPDATE " . DB_PREFIX . "customer SET nip = '" . $this->db->escape($nip) . "', nip_no = '" . (int)$nip_no . "' WHERE customer_id = '" . (int)$customer_id . "'");
 		}
 
@@ -64,7 +82,15 @@ class ModelCustomerCustomer extends Model {
 			$data['skip_trial_status'] = 0;
 		}
 
-		$sql = "UPDATE " . DB_PREFIX . "customer SET customer_department_id = '" . (int)$data['customer_department_id'] . "', customer_group_id = '" . (int)$data['customer_group_id'] . "', location_id = '" . (int)$data['location_id'] . "', nik = '" . $this->db->escape($data['nik']) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', image = '" . $this->db->escape($data['image']) . "', payroll_include = '" . (int)$data['payroll_include'] . "', acc_no = '" . $this->db->escape($data['acc_no']) . "', payroll_method_id = '" . (int)$data['payroll_method_id'] . "', health_insurance = '" . (int)$data['health_insurance'] . "', employment_insurance = '" . (int)$data['employment_insurance'] . "', full_overtime = '" . (int)$data['full_overtime'] . "', skip_trial_status = '" . (int)$data['skip_trial_status'] . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "', status = '" . (int)$data['status'] . "' WHERE customer_id = '" . (int)$customer_id . "'";
+		$sql = "UPDATE " . DB_PREFIX . "customer SET customer_department_id = '" . (int)$data['customer_department_id'] . "', customer_group_id = '" . (int)$data['customer_group_id'] . "', location_id = '" . (int)$data['location_id'] . "', nik = '" . $this->db->escape($data['nik']) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', image = '" . $this->db->escape($data['image']) . "', payroll_include = '" . (int)$data['payroll_include'] . "', acc_no = '" . $this->db->escape($data['acc_no']) . "', payroll_method_id = '" . (int)$data['payroll_method_id'] . "', health_insurance = '" . (int)$data['health_insurance'] . "', health_insurance_id = '" . $this->db->escape($data['health_insurance_id']) . "', employment_insurance = '" . (int)$data['employment_insurance'] . "', employment_insurance_id = '" . $this->db->escape($data['employment_insurance_id']) . "', full_overtime = '" . (int)$data['full_overtime'] . "', skip_trial_status = '" . (int)$data['skip_trial_status'] . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "', status = '" . (int)$data['status'] . "'";
+
+		if (!empty($data['date_birth'])) {
+			$sql .= ", date_birth = STR_TO_DATE('" . $this->db->escape($data['date_birth']) . "', '%e %b %Y')";
+		} else {
+			$sql .= ", date_birth = NULL";
+		}
+		
+		$sql .= " WHERE customer_id = '" . (int)$customer_id . "'";
 
 		$this->db->query($sql);
 		
@@ -92,9 +118,13 @@ class ModelCustomerCustomer extends Model {
 
 				$this->db->query("INSERT INTO " . DB_PREFIX . "address SET address_id = '" . (int)$address['address_id'] . "', customer_id = '" . (int)$customer_id . "', address_1 = '" . $this->db->escape($address['address_1']) . "', address_2 = '" . $this->db->escape($address['address_2']) . "', city = '" . $this->db->escape($address['city']) . "', postcode = '" . $this->db->escape($address['postcode']) . "', country_id = '" . (int)$address['country_id'] . "', zone_id = '" . (int)$address['zone_id'] . "', custom_field = '" . $this->db->escape(isset($address['custom_field']) ? json_encode($address['custom_field']) : '') . "'");
 
-				if (isset($address['default'])) {
-					$address_id = $this->db->getLastId();
+				$address_id = $this->db->getLastId();
 
+				if (isset($address['id_card_address'])) {
+					$this->db->query("UPDATE " . DB_PREFIX . "customer SET id_card_address_id = '" . (int)$address_id . "' WHERE customer_id = '" . (int)$customer_id . "'");
+				}
+
+				if (isset($address['default'])) {
 					$this->db->query("UPDATE " . DB_PREFIX . "customer SET address_id = '" . (int)$address_id . "' WHERE customer_id = '" . (int)$customer_id . "'");
 				}
 			}

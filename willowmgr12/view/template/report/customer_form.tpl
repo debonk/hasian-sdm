@@ -68,6 +68,18 @@
                       </div>
                     <?php } ?>
                       <div class="form-group">
+                        <label class="col-sm-3 control-label"><?php echo $entry_id_card_address; ?></label>
+                        <div class="col-sm-9">
+                          <label class="radio">
+                            <?php if (($address['address_id'] == $id_card_address_id) || !$addresses) { ?>
+                            <input type="radio" name="address[<?php echo $address_row; ?>][id_card_address]" value="<?php echo $address_row; ?>" checked="checked" />
+                            <?php } else { ?>
+                            <input type="radio" name="address[<?php echo $address_row; ?>][id_card_address]" value="<?php echo $address_row; ?>" disabled />
+                            <?php } ?>
+                          </label>
+                        </div>
+                      </div>
+                      <div class="form-group">
                         <label class="col-sm-3 control-label"><?php echo $entry_default; ?></label>
                         <div class="col-sm-9">
                           <label class="radio">
@@ -95,7 +107,19 @@
 			        <?php foreach ($documents as $document) { ?>
 			        <tr>
 				      <td>
-					    <a href="<?php echo $document['href']; ?>" target="_blank"><?php echo $document['title']; ?></a>
+								<?php if ($document['href']) { ?>
+									<a href="<?php echo $document['href']; ?>" target="_blank">
+										<?php echo $document['mask']; ?>
+									</a>
+									<?php } else { ?>
+									<?php echo $document['mask']; ?>
+									<cite class="text-danger">
+										<?php echo $text_missing; ?>
+									</cite>
+									<?php } ?>
+
+
+
 				      </td>
 			        </tr>
 			        <?php } ?>
