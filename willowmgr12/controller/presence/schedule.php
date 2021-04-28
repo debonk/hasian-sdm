@@ -839,6 +839,7 @@ class ControllerPresenceSchedule extends Controller
 			'text_log',
 			'text_off',
 			'column_code',
+			'column_duration',
 			'column_time_start',
 			'column_time_end',
 			'column_hke',
@@ -975,12 +976,14 @@ class ControllerPresenceSchedule extends Controller
 				if ($counter >= 0 && $counter <= $days_in_month) {
 					$key_date = date('Y-m-d', strtotime('+' . $counter . ' day', $date_start));
 
+					$schedule_type_code = '-';
+					$presence_status = '-';
+					$time_login = '';
+					$time_logout = '';
+					$duration = '...';
+
 					if (isset($this->request->post['schedule' . $key_date])) {
 						$schedule_type_id = $this->request->post['schedule' . $key_date];
-						$schedule_type_code = '-';
-						$presence_status = '-';
-						$time_login = '';
-						$time_logout = '';
 						$bg_class = '';
 					} elseif (!empty($schedules_data[$key_date])) {
 						$schedule_type_id = $schedules_data[$key_date]['schedule_type_id'];
@@ -990,12 +993,14 @@ class ControllerPresenceSchedule extends Controller
 						$time_logout = ($schedules_data[$key_date]['time_logout'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_data[$key_date]['time_logout'])) : '...';
 						$bg_class = !empty($schedules_data[$key_date]['bg_class']) ? $schedules_data[$key_date]['bg_class'] : 'info';
 						$note = !empty($schedules_data[$key_date]['note']) ? $schedules_data[$key_date]['note'] : '';
+
+						if ($schedules_data[$key_date]['time_login'] != '0000-00-00 00:00:00' && $schedules_data[$key_date]['time_logout'] != '0000-00-00 00:00:00') {
+							$diff = date_diff(date_create($schedules_data[$key_date]['time_login']),date_create($schedules_data[$key_date]['time_logout']));
+							$duration = $diff->format($this->language->get('info_duration'));
+						}
+
 					} else {
 						$schedule_type_id = 0;
-						$schedule_type_code = '-';
-						$presence_status = '-';
-						$time_login = '';
-						$time_logout = '';
 						$bg_class = 'warning';
 						$note = '';
 					}
@@ -1014,6 +1019,7 @@ class ControllerPresenceSchedule extends Controller
 						'presence_status'	=> $presence_status,
 						'time_login'		=> $time_login,
 						'time_logout'		=> $time_logout,
+						'duration'			=> $duration,
 						'bg_class'			=> $bg_class,
 						'note'				=> $note,
 						'locked'			=> $locked

@@ -8,6 +8,7 @@
   	    <td class="text-left"><?php echo $column_presence_status; ?></td>
   	    <td class="text-left"><?php echo $column_description; ?></td>
   	    <td class="text-left"><?php echo $column_note; ?></td>
+  	    <td class="text-left"><?php echo $column_username; ?></td>
   	    <td class="text-center"><?php echo $column_status; ?></td>
   	  </tr>
     </thead>
@@ -18,6 +19,7 @@
   		<td class="text-left"><?php echo $schedule_change['presence_status']; ?></td>
   		<td class="text-left"><?php echo $schedule_change['description']; ?></td>
   		<td class="text-left"><?php echo $schedule_change['note']; ?></td>
+  		<td class="text-left"><?php echo $schedule_change['username']; ?></td>
   		<td class="text-center">
 		  <?php if ($schedule_change['action_url']) { ?>
 		  <?php if ($schedule_change['approved']) { ?>

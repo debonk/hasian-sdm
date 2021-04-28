@@ -160,7 +160,7 @@ class ModelPresenceAbsence extends Model {
 	}
 
 	public function getAbsencesByCustomerDate($customer_id, $date = array()) {//Used by: schedule
-		$sql = "SELECT a.*, ps.code as presence_code, ps.name as presence_status FROM " . DB_PREFIX . "absence a LEFT JOIN " . DB_PREFIX . "presence_status ps ON (ps.presence_status_id = a.presence_status_id) WHERE customer_id = '" . (int)$customer_id . "' AND a.date >= '" . $this->db->escape($date['start']) . "' AND a.date <= '" . $this->db->escape($date['end']) . "' ORDER BY a.date ASC";
+		$sql = "SELECT a.*, ps.code as presence_code, ps.name as presence_status, u.username FROM " . DB_PREFIX . "absence a LEFT JOIN " . DB_PREFIX . "presence_status ps ON (ps.presence_status_id = a.presence_status_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = a.user_id) WHERE customer_id = '" . (int)$customer_id . "' AND a.date >= '" . $this->db->escape($date['start']) . "' AND a.date <= '" . $this->db->escape($date['end']) . "' ORDER BY a.date ASC";
 
 		$query = $this->db->query($sql);
 

@@ -28,6 +28,7 @@ class ControllerCommonAbsenceInfo extends Controller {
 			'column_description',
 			'column_note',
 			'column_status',
+			'column_username',
 			'button_unapprove',
 			'button_approve'
 		);
@@ -63,6 +64,7 @@ class ControllerCommonAbsenceInfo extends Controller {
 				'note'				=> $absence_info['note'],
 				'action_url'		=> 'presence/absence/approval&absence_id=' . $absence_info['absence_id'],
 				'approved'			=> $absence_info['approved'],
+				'username'			=> $absence_info['username'],
 				'sort_order'		=> $absence_info['date']
 			);
 		}
@@ -77,6 +79,7 @@ class ControllerCommonAbsenceInfo extends Controller {
 				'note'				=> '',
 				'action_url'		=> '',
 				'approved'			=> 1,
+				'username'			=> $exchange_info['username'],
 				'sort_order'		=> $exchange_info['date_from']
 			);
 		}
@@ -113,6 +116,7 @@ class ControllerCommonAbsenceInfo extends Controller {
 				'note'				=> $note,
 				'approved'			=> $overtime_info['approved'],
 				'action_url'		=> 'overtime/overtime/approval&overtime_id=' . $overtime_info['overtime_id'],
+				'username'			=> $overtime_info['username'],
 				'sort_order'		=> $overtime_info['date']
 			);
 		}

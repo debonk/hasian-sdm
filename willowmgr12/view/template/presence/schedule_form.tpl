@@ -174,6 +174,7 @@
 		      	  <td class="text-center"><?php echo $column_schedule; ?></td>
 		      	  <td class="text-center"><?php echo $column_login; ?></td>
 		      	  <td class="text-center"><?php echo $column_logout; ?></td>
+		      	  <td class="text-center"><?php echo $column_duration; ?></td>
 		      	  <td class="text-left"><?php echo $column_presence; ?></td>
 		      	</tr>
 		        </thead>
@@ -185,6 +186,7 @@
 		      	  <td class="text-center"><?php echo $calendar_data['schedule_type_code']; ?></td>
 		      	  <td class="text-center"><?php echo $calendar_data['time_login']; ?></td>
 		      	  <td class="text-center"><?php echo $calendar_data['time_logout']; ?></td>
+		      	  <td class="text-center"><?php echo $calendar_data['duration']; ?></td>
 		      	  <td class="text-left"><?php echo $calendar_data['presence_status']; ?></td>
 		      	</tr>
 		  		<?php } ?>

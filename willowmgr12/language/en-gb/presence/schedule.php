@@ -40,6 +40,7 @@ $_['column_customer_group']		= 'Jabatan';
 $_['column_location']			= 'Lokasi Kerja';
 $_['column_note']			 	= 'Catatan';
 $_['column_action']				= 'Action';
+$_['column_duration']			= 'Durasi Kerja';
 $_['column_hke']          		= 'HKE';
 $_['column_t']         			= 'Total Terlambat';
 $_['column_h']         			= 'H';
@@ -82,4 +83,5 @@ $_['error_manual_setting']		 = 'Warning: Pengaturan ditentukan manual. Silahkan 
 $_['error_not_selected']		 = 'Warning: Tidak ada karyawan yang dipilih!';
 
 //Information
+$_['info_duration']				 = '%h jam %i menit';
 $_['info_no_data']				 = 'Info: Jadwal %d orang karyawan masih kosong!';

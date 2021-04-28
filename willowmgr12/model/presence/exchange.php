@@ -112,7 +112,7 @@ class ModelPresenceExchange extends Model {
 	}
 	
 	public function getExchangesByCustomerDate($customer_id, $date = array()) {//Used by: schedule
-		$sql = "SELECT e.*, st.code, st.time_start, st.time_end, st.bg_idx FROM " . DB_PREFIX . "exchange e LEFT JOIN " . DB_PREFIX . "schedule_type st ON (st.schedule_type_id = e.schedule_type_id) WHERE customer_id = '" . (int)$customer_id . "' AND ((e.date_from >= '" . $this->db->escape($date['start']) . "' AND e.date_from <= '" . $this->db->escape($date['end']) . "') OR (e.date_to >= '" . $this->db->escape($date['start']) . "' AND e.date_to <= '" . $this->db->escape($date['end']) . "')) ORDER BY e.date_from ASC";
+		$sql = "SELECT e.*, st.code, st.time_start, st.time_end, st.bg_idx, u.username FROM " . DB_PREFIX . "exchange e LEFT JOIN " . DB_PREFIX . "schedule_type st ON (st.schedule_type_id = e.schedule_type_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = e.user_id) WHERE customer_id = '" . (int)$customer_id . "' AND ((e.date_from >= '" . $this->db->escape($date['start']) . "' AND e.date_from <= '" . $this->db->escape($date['end']) . "') OR (e.date_to >= '" . $this->db->escape($date['start']) . "' AND e.date_to <= '" . $this->db->escape($date['end']) . "')) ORDER BY e.date_from ASC";
 
 		$query = $this->db->query($sql);
 
