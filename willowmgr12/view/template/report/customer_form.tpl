@@ -168,7 +168,7 @@
     </div>
   </div>
   </div>
-  <script type="text/javascript"><!--
+  <script type="text/javascript">
 $('#history-info').load('index.php?route=report/customer_history/report&token=<?php echo $token; ?>&customer_id=<?php echo $customer_id; ?>');
 
 $('#history-info').on('click', '.pagination a', function(e) {
@@ -209,5 +209,5 @@ $('.year').datetimepicker({
 	minViewMode: 'years',
 	pickTime: false
 });
-//--></script>
+</script>
 <?php echo $footer; ?>

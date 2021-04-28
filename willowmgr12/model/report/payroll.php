@@ -47,7 +47,7 @@ class ModelReportPayroll extends Model {
 	}
 	
 	public function getPayrolls($presence_period_id, $data = array()) {//model_report_payroll_tax
-		$sql = "SELECT p.*, c.lastname as customer, cgd.name AS customer_group, l.name AS location, cad.*, g.name AS gender, g.code AS gender_code, ms.name AS marriage_status, ms.code AS marriage_status_code FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON (cad.customer_id = c.customer_id) LEFT JOIN " . DB_PREFIX . "gender g ON (g.gender_id = cad.gender_id) LEFT JOIN " . DB_PREFIX . "marriage_status ms ON (ms.marriage_status_id = cad.marriage_status_id) WHERE presence_period_id = '" . (int)$presence_period_id . "'";
+		$sql = "SELECT p.*, c.lastname AS customer, c.nik, c.id_card_address_id, cgd.name AS customer_group, l.name AS location, cad.*, g.name AS gender, g.code AS gender_code, ms.name AS marriage_status, ms.code AS marriage_status_code FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON (cad.customer_id = c.customer_id) LEFT JOIN " . DB_PREFIX . "gender g ON (g.gender_id = cad.gender_id) LEFT JOIN " . DB_PREFIX . "marriage_status ms ON (ms.marriage_status_id = cad.marriage_status_id) WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
 		$sort_data = array(
 			'customer',
@@ -168,8 +168,29 @@ class ModelReportPayroll extends Model {
 		$results = $this->getPayrolls($presence_period_id, $data);
 
 		$taxes_data = array();
+
+		$this->load->model('report/customer');
 	
 		foreach ($results as $result) {
+			if ($result['id_card_address_id']) {
+				$address_info = $this->model_report_customer->getAddress($result['id_card_address_id']);
+				
+				$id_card_address = $address_info['address_1'];
+
+				if ($address_info['address_2']) {
+					$id_card_address .= ', ' . $address_info['address_2'];
+				}
+				
+				$id_card_address .= ', ' . $address_info['city_name'] . ', ' . $address_info['zone'] . ', ' . $address_info['country'];
+
+				if ($address_info['postcode']) {
+					$id_card_address .= ' - ' . $address_info['postcode'];
+				}
+			} else {
+				$id_card_address = '';
+			}
+
+
 			if ($result['gender_code'] == 'L') {
 				$marriage_status = $result['marriage_status_code'] . '/' . $result['children'];
 			} else {
@@ -236,13 +257,14 @@ class ModelReportPayroll extends Model {
 			$taxes_data[] = array(
 				'customer_id'		=> $result['customer_id'],
 				'customer'			=> $result['customer'],
+				'nik'				=> $result['nik'],
+				'id_card_address'	=> $id_card_address,
 				'gender_code'		=> $result['gender_code'],
 				'marriage_status'	=> $marriage_status,
 				'customer_group'	=> $result['customer_group'],
 				'npwp'				=> $result['npwp'],
 				'npwp_address'		=> $result['npwp_address'],
 				'location'			=> $result['location'],
-				// 'salary'			=> $salary,
 				'salary'			=> $salary + $component_data[1] + $component_data[0],
 				'tax_value'			=> $tax_value
 			);

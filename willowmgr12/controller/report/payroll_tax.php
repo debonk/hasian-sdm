@@ -239,6 +239,8 @@ class ControllerReportPayrollTax extends Controller {
 				'heading_title',
 				'column_no',
 				'column_customer',
+				'column_nik',
+				'column_id_card_address',
 				'column_gender',
 				'column_marriage_status',
 				'column_customer_group',
@@ -257,19 +259,11 @@ class ControllerReportPayrollTax extends Controller {
 
 			$output = '';
 
-			$filter_data = array(
-				// 'code'		=> 'insurance, overtime, incentive, dayoff, cutoff', //component yang ikut dalam perhitungan PPh21
-				'code'		=> 'overtime, incentive, dayoff, cutoff', //component yang termasuk dalam basic salary
-				'sort'      => $sort,
-				'order'     => $order
-			);
-
 			$this->load->model('component/insurance');
 			$titles = $this->model_component_insurance->getTitles();
 
-
 			$output = $data['heading_title'] . ' - ' . $period . '|||||||||' . implode('||', $titles) . "\n";
-			$output .= $data['column_no'] . '|' . $data['column_customer'] . '|' . $data['column_gender'] . '|' . $data['column_marriage_status'] . '|' . $data['column_customer_group'] . '|' . $data['column_npwp'] . '|' . $data['column_npwp_address'] . '|' . $data['column_location'] . '|' . $data['column_net_salary'];
+			$output .= $data['column_no'] . '|' . $data['column_customer'] . '|' . $data['column_nik'] . '|' . $data['column_id_card_address'] . '|' . $data['column_gender'] . '|' . $data['column_marriage_status'] . '|' . $data['column_customer_group'] . '|' . $data['column_npwp'] . '|' . $data['column_npwp_address'] . '|' . $data['column_location'] . '|' . $data['column_net_salary'];
 			foreach ($titles as $title) {
 				$output .= '|' . $data['column_company'] . '|' . $data['column_customer'];
 			}
@@ -278,8 +272,14 @@ class ControllerReportPayrollTax extends Controller {
 			
 			$output = str_replace('|', "\t", $output);
 			
+			$filter_data = array(
+				'code'		=> 'insurance, overtime, incentive, dayoff, cutoff', //component yang ikut dalam perhitungan PPh21
+				'sort'      => $sort,
+				'order'     => $order
+			);
+
 			$results = $this->model_report_payroll->getTaxes($presence_period_id, $filter_data);
-			
+
 			$no = 1;
 			
 			foreach ($results as $result) {
@@ -287,14 +287,16 @@ class ControllerReportPayrollTax extends Controller {
 				$component_data = array();
 				
 				$value = '';
-				$value .= $no . '|' . $result['customer'] . '|' . $result['gender_code'] . '|' . $result['marriage_status'] . '|' . $result['customer_group'] . '|' . $result['npwp'] . '|' . $result['npwp_address'] . '|' . $result['location'] . '|' . $result['salary'];
+				$value .= $no . '|' . $result['customer'] . '|\'' . $result['nik'] . '|' . $result['id_card_address'] . '|' . $result['gender_code'] . '|' . $result['marriage_status'] . '|' . $result['customer_group'] . '|' . $result['npwp'] . '|' . $result['npwp_address'] . '|' . $result['location'] . '|';
 				
-				// $components_info = $this->model_report_payroll->getComponents($presence_period_id, $result['customer_id'], $filter_data['code']);
 				$components_info = $this->model_report_payroll->getComponents($presence_period_id, $result['customer_id'], 'insurance');//Karena hanya insurance yg dirinci.
 				
 				foreach ($components_info as $component_info) {
 					$component_value[$component_info['title']][$component_info['type']] = $component_info['value'];
 				}
+
+				$sub_value = '';
+				$salary = $result['salary'];
 
 				foreach ($titles as $title) {
 					if (!empty($component_value[$title][1])) {
@@ -309,10 +311,12 @@ class ControllerReportPayrollTax extends Controller {
 						$component_data[$title][0] = 0;
 					}
 					
-					$value .= '|' . $component_data[$title][1] . '|' . $component_data[$title][0];
+					$sub_value .= '|' . $component_data[$title][1] . '|' . $component_data[$title][0];
+
+					$salary += $component_data[$title][0];
 				}
 				
-				$value .= '|' . $result['tax_value'];
+				$value .= $salary . $sub_value . '|' . $result['tax_value'];
 				
 				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
 				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
@@ -322,6 +326,7 @@ class ControllerReportPayrollTax extends Controller {
 				$value = str_replace('\\\r', '\r',	$value);
 				$value = str_replace('\\\t', '\t',	$value);
 				$value = str_replace('|', "\t",	$value);
+				$value = stripslashes($value);
 				
 				$output .= "\n" . $value;
 				// $output .= "<br>" . $value;

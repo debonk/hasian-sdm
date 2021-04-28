@@ -10,6 +10,8 @@ $_['text_result_count']    	= 'Showing %d records';
 // Column
 $_['column_no']				= 'No';
 $_['column_customer']		= 'Karyawan';
+$_['column_nik']			= 'NIK';
+$_['column_id_card_address']= 'Alamat Sesuai KTP';
 $_['column_gender']			= 'Jenis Kelamin';
 $_['column_marriage_status']= 'Status';
 $_['column_customer_group']	= 'Jabatan';
