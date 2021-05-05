@@ -46,6 +46,7 @@ class ControllerPayrollPayrollSetting extends Controller {
 			'entry_logout_start',
 			'entry_use_fingerprint',
 			'entry_schedule_check',
+			'entry_completed_after',
 			'entry_presence_statuses',
 			'button_save',
 			'button_cancel',
@@ -56,6 +57,7 @@ class ControllerPayrollPayrollSetting extends Controller {
 			'help_approved_status',
 			'help_released_status',
 			'help_completed_status',
+			'help_completed_after',
 			'help_presence_lock',
 			'help_default_hke',
 			'help_vacation_limit',
@@ -128,6 +130,9 @@ class ControllerPayrollPayrollSetting extends Controller {
 			't2',
 			't3'
 		);
+		$data['entry_status'] = [];
+		$data['payroll_setting_id'] = [];
+
 		foreach ($data['presence_items'] as $presence_item) {
 			//Language item
 			$data['entry_status'][$presence_item] = $this->language->get('entry_status_' . $presence_item);
@@ -156,47 +161,69 @@ class ControllerPayrollPayrollSetting extends Controller {
 			$data['payroll_setting_presence_status_ids'] = array();
 		}
 
-		if (isset($this->request->post['payroll_setting_pending_status_id'])) {
-			$data['payroll_setting_pending_status_id'] = $this->request->post['payroll_setting_pending_status_id'];
-		} else {
-			$data['payroll_setting_pending_status_id'] = $this->config->get('payroll_setting_pending_status_id');
+		$payroll_items = [
+			'pending',
+			'processing',
+			'submitted',
+			'generated',
+			'approved',
+			'released',
+			'completed'
+		];
+
+		foreach ($payroll_items as $payroll_item) {
+			if (isset($this->request->post['payroll_setting_' . $payroll_item . '_status_id'])) {
+				$data['payroll_setting_' . $payroll_item . '_status_id'] = $this->request->post['payroll_setting_' . $payroll_item . '_status_id'];
+			} elseif ($this->config->has('payroll_setting_' . $payroll_item . '_status_id')) {
+				$data['payroll_setting_' . $payroll_item . '_status_id'] = $this->config->get('payroll_setting_' . $payroll_item . '_status_id');
+			} else {
+				$data['payroll_setting_' . $payroll_item . '_status_id'] = 0;
+			}
 		}
 
-		if (isset($this->request->post['payroll_setting_processing_status_id'])) {
-			$data['payroll_setting_processing_status_id'] = $this->request->post['payroll_setting_processing_status_id'];
-		} else {
-			$data['payroll_setting_processing_status_id'] = $this->config->get('payroll_setting_processing_status_id');
-		}
+		// if (isset($this->request->post['payroll_setting_pending_status_id'])) {
+		// 	$data['payroll_setting_pending_status_id'] = $this->request->post['payroll_setting_pending_status_id'];
+		// } elseif ($this->config->has('payroll_setting_pending_status_id')) {
+		// 	$data['payroll_setting_pending_status_id'] = $this->config->get('payroll_setting_pending_status_id');
+		// } else {
+		// 	$data['payroll_setting_pending_status_id'] = 0;
+		// }
 
-		if (isset($this->request->post['payroll_setting_submitted_status_id'])) {
-			$data['payroll_setting_submitted_status_id'] = $this->request->post['payroll_setting_submitted_status_id'];
-		} else {
-			$data['payroll_setting_submitted_status_id'] = $this->config->get('payroll_setting_submitted_status_id');
-		}
+		// if (isset($this->request->post['payroll_setting_processing_status_id'])) {
+		// 	$data['payroll_setting_processing_status_id'] = $this->request->post['payroll_setting_processing_status_id'];
+		// } else {
+		// 	$data['payroll_setting_processing_status_id'] = $this->config->get('payroll_setting_processing_status_id');
+		// }
 
-		if (isset($this->request->post['payroll_setting_generated_status_id'])) {
-			$data['payroll_setting_generated_status_id'] = $this->request->post['payroll_setting_generated_status_id'];
-		} else {
-			$data['payroll_setting_generated_status_id'] = $this->config->get('payroll_setting_generated_status_id');
-		}
+		// if (isset($this->request->post['payroll_setting_submitted_status_id'])) {
+		// 	$data['payroll_setting_submitted_status_id'] = $this->request->post['payroll_setting_submitted_status_id'];
+		// } else {
+		// 	$data['payroll_setting_submitted_status_id'] = $this->config->get('payroll_setting_submitted_status_id');
+		// }
 
-		if (isset($this->request->post['payroll_setting_approved_status_id'])) {
-			$data['payroll_setting_approved_status_id'] = $this->request->post['payroll_setting_approved_status_id'];
-		} else {
-			$data['payroll_setting_approved_status_id'] = $this->config->get('payroll_setting_approved_status_id');
-		}
+		// if (isset($this->request->post['payroll_setting_generated_status_id'])) {
+		// 	$data['payroll_setting_generated_status_id'] = $this->request->post['payroll_setting_generated_status_id'];
+		// } else {
+		// 	$data['payroll_setting_generated_status_id'] = $this->config->get('payroll_setting_generated_status_id');
+		// }
 
-		if (isset($this->request->post['payroll_setting_released_status_id'])) {
-			$data['payroll_setting_released_status_id'] = $this->request->post['payroll_setting_released_status_id'];
-		} else {
-			$data['payroll_setting_released_status_id'] = $this->config->get('payroll_setting_released_status_id');
-		}
+		// if (isset($this->request->post['payroll_setting_approved_status_id'])) {
+		// 	$data['payroll_setting_approved_status_id'] = $this->request->post['payroll_setting_approved_status_id'];
+		// } else {
+		// 	$data['payroll_setting_approved_status_id'] = $this->config->get('payroll_setting_approved_status_id');
+		// }
 
-		if (isset($this->request->post['payroll_setting_completed_status_id'])) {
-			$data['payroll_setting_completed_status_id'] = $this->request->post['payroll_setting_completed_status_id'];
-		} else {
-			$data['payroll_setting_completed_status_id'] = $this->config->get('payroll_setting_completed_status_id');
-		}
+		// if (isset($this->request->post['payroll_setting_released_status_id'])) {
+		// 	$data['payroll_setting_released_status_id'] = $this->request->post['payroll_setting_released_status_id'];
+		// } else {
+		// 	$data['payroll_setting_released_status_id'] = $this->config->get('payroll_setting_released_status_id');
+		// }
+
+		// if (isset($this->request->post['payroll_setting_completed_status_id'])) {
+		// 	$data['payroll_setting_completed_status_id'] = $this->request->post['payroll_setting_completed_status_id'];
+		// } else {
+		// 	$data['payroll_setting_completed_status_id'] = $this->config->get('payroll_setting_completed_status_id');
+		// }
 
 		if (isset($this->request->post['payroll_setting_default_hke'])) {
 			$data['payroll_setting_default_hke'] = $this->request->post['payroll_setting_default_hke'];
@@ -252,6 +279,14 @@ class ControllerPayrollPayrollSetting extends Controller {
 			$data['payroll_setting_logout_start'] = $this->config->get('payroll_setting_logout_start');
 		} else {
 			$data['payroll_setting_logout_start'] = 0;
+		}
+
+		if (isset($this->request->post['payroll_setting_completed_after'])) {
+			$data['payroll_setting_completed_after'] = $this->request->post['payroll_setting_completed_after'];
+		} elseif ($this->config->get('payroll_setting_completed_after')) {
+			$data['payroll_setting_completed_after'] = $this->config->get('payroll_setting_completed_after');
+		} else {
+			$data['payroll_setting_completed_after'] = 0;
 		}
 
 		if (isset($this->request->post['payroll_setting_use_fingerprint'])) {

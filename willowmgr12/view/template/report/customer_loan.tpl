@@ -88,7 +88,7 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript"><!--
+  <script type="text/javascript">
 $('#button-filter').on('click', function() {
 	url = 'index.php?route=report/customer_loan&token=<?php echo $token; ?>';
 	
@@ -106,10 +106,10 @@ $('#button-filter').on('click', function() {
 	
 	location = url;
 });
-//--></script> 
-  <script type="text/javascript"><!--
+</script> 
+  <script type="text/javascript">
 $('.date').datetimepicker({
 	pickTime: false
 });
-//--></script></div>
+</script></div>
 <?php echo $footer; ?>

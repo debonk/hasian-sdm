@@ -226,13 +226,13 @@ class Mail {
 				$mail->send();
 			}
 
-			catch (PHPMailerException $e)
+			catch (PHPMailerException $ep)
 			{
-				echo $e->errorMessage();
+				return $ep->errorMessage();
 			}
 			catch (\Exception $e)
 			{
-				echo $e->getMessage();
+				return $e->getMessage();
 			}
 			
 		// Bonk16
@@ -271,7 +271,7 @@ class Mail {
 				curl_close ($ch);
 			}
 			catch(Exception $ex){
-				echo $ex->getMessage();
+				return $ex->getMessage();
 			}
 		// Bonk16 End
 		

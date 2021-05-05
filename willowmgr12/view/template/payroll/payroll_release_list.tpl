@@ -22,17 +22,17 @@
     </div>
   </div>
   <div class="container-fluid">
-    <?php if ($error_warning) { ?>
-    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $error_warning; ?>
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-    </div>
-    <?php } ?>
     <?php if ($success) { ?>
     <div class="alert alert-success"><i class="fa fa-check-circle"></i> <?php echo $success; ?>
       <button type="button" class="close" data-dismiss="alert">&times;</button>
     </div>
     <?php } ?>
-    <div class="row">
+    <?php if ($error_warning) { ?>
+		<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $error_warning; ?>
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		<?php } ?>
+		<div class="row">
 		<div class="col-sm-6" id="period-info"></div>
 		<div class="col-sm-6" id="release-info"></div>
     </div>
@@ -43,13 +43,13 @@
       <div class="panel-body">
         <div class="well">
           <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-3">
               <div class="form-group">
                 <label class="control-label" for="input-name"><?php echo $entry_name; ?></label>
                 <input type="text" name="filter_name" value="<?php echo $filter_name; ?>" placeholder="<?php echo $entry_name; ?>" id="input-name" class="form-control" />
               </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
               <div class="form-group">
                 <label class="control-label" for="input-customer-group"><?php echo $entry_customer_group; ?></label>
                 <select name="filter_customer_group_id" id="input-customer-group" class="form-control">
@@ -64,7 +64,7 @@
                 </select>
               </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
               <div class="form-group">
                 <label class="control-label" for="input-payroll-method"><?php echo $entry_payroll_method; ?></label>
                 <select name="filter_payroll_method_id" id="input-payroll-method" class="form-control">
@@ -77,6 +77,24 @@
                   <?php } ?>
                   <?php } ?>
                 </select>
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="form-group">
+                <label class="control-label" for="input-statement-sent"><?php echo $entry_statement_sent; ?></label>
+                <select name="filter_statement_sent" id="input-statement-sent" class="form-control">
+										<option value="*"><?php echo $text_all; ?></option>
+										<?php if ($filter_statement_sent) { ?>
+										<option value="1" selected="selected"><?php echo $text_yes; ?></option>
+										<?php } else { ?>
+										<option value="1"><?php echo $text_yes; ?></option>
+										<?php } ?>
+										<?php if (!$filter_statement_sent && !is_null($filter_statement_sent)) { ?>
+										<option value="0" selected="selected"><?php echo $text_no; ?></option>
+										<?php } else { ?>
+										<option value="0"><?php echo $text_no; ?></option>
+										<?php } ?>
+									</select>
               </div>
               <button type="button" id="button-filter" class="btn btn-primary pull-right"><i class="fa fa-search"></i> <?php echo $button_filter; ?></button>
             </div>
@@ -111,6 +129,11 @@
                   <a href="<?php echo $sort_payroll_method; ?>"><?php echo $column_payroll_method; ?></a>
                 <?php } ?></td>
 				<td class="text-right"><?php echo $column_grandtotal; ?></td>
+                <td class="text-center"><?php if ($sort == 'statement_sent') { ?>
+                  <a href="<?php echo $sort_statement_sent; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_statement_sent; ?></a>
+                  <?php } else { ?>
+                  <a href="<?php echo $sort_statement_sent; ?>"><?php echo $column_statement_sent; ?></a>
+                <?php } ?></td>
               </tr>
             </thead>
             <tbody>
@@ -129,6 +152,8 @@
 					<td class="text-left"><?php echo $payroll_release['acc_no']; ?></td>
 					<td class="text-left"><?php echo $payroll_release['payroll_method']; ?></td>
 					<td class="text-right"><?php echo $payroll_release['grandtotal']; ?></td>
+					<td class="text-center"><?php echo $payroll_release['statement_sent'] ? '<i class="fa fa-check-square-o"></i>' : '<i class="fa fa-square-o"></i>' ?></td>
+					<!-- <td class="text-left"><?php echo $payroll_release['statement_sent'] ? $text_yes : $text_no; ?></td> -->
 				  </tr>
 				<?php } ?>
               <?php } else { ?>
@@ -147,7 +172,7 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript"><!--
+  <script type="text/javascript">
 $('#period-info').load('index.php?route=common/period_info&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
 
 $('#release-info').load('index.php?route=payroll/payroll_release/releaseinfo&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
@@ -179,10 +204,16 @@ $('#button-filter').on('click', function() {
 		url += '&filter_payroll_method_id=' + encodeURIComponent(filter_payroll_method_id);
 	}	
 	
+	var filter_statement_sent = $('select[name=\'filter_statement_sent\']').val();
+	
+	if (filter_statement_sent != '*') {
+		url += '&filter_statement_sent=' + encodeURIComponent(filter_statement_sent); 
+	}	
+	
 	location = url;
 });
-//--></script> 
-  <script type="text/javascript"><!--
+</script> 
+  <script type="text/javascript">
 $('#button-payroll-complete').on('click', function(e) {
 	if (confirm('<?php echo $text_confirm; ?>')) {
 		$.ajax({
@@ -215,8 +246,8 @@ $('#button-payroll-complete').on('click', function(e) {
 		});
 	}
 });
-//--></script> 
-  <script type="text/javascript"><!--
+</script> 
+  <script type="text/javascript">
 $('input[name=\'filter_name\']').autocomplete({
 	'source': function(request, response) {
 		$.ajax({
@@ -236,6 +267,6 @@ $('input[name=\'filter_name\']').autocomplete({
 		$('input[name=\'filter_name\']').val(item['label']);
 	}	
 });
-//--></script> 
+</script> 
 </div>
 <?php echo $footer; ?> 

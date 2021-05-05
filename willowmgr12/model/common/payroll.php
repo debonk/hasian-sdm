@@ -83,9 +83,13 @@ class ModelCommonPayroll extends Model {
 			switch ($period_status) {
 				case "approved":
 					$sql .= ", total_payroll = '" . (int)$data['total_payroll'] . "'";
+					
 					break;
 				case "released":
-					$sql .= ", fund_account_id = '" . (int)$data['fund_account_id'] . "', date_release = STR_TO_DATE('" . $this->db->escape($data['date_release']) . "', '%d %b %Y')";
+					if ($this->checkPeriodStatus($presence_period_id, 'approved, release')) {
+						$sql .= ", fund_account_id = '" . (int)$data['fund_account_id'] . "', date_release = STR_TO_DATE('" . $this->db->escape($data['date_release']) . "', '%d %b %Y')";
+					}
+
 					break;
 				default:
 			}

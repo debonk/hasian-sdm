@@ -41,6 +41,7 @@ $_['entry_logout_start']  	 	 = 'Awal Logout (menit)';
 $_['entry_schedule_check']  	 = 'Validasi Jadwal';
 $_['entry_use_fingerprint']  	 = 'Gunakan Fingerprint';
 $_['entry_vacation_status']  	 = 'Status Cuti';
+$_['entry_completed_after']  	 = 'Proteksi Status Completed (bulan)';
 
 // Error
 $_['error_warning']              = 'Warning: Please check the form carefully for errors!';
@@ -57,6 +58,7 @@ $_['help_generated_status']     = 'Payroll Status saat proses perhitungan gaji k
 $_['help_approved_status']      = 'Payroll Status setelah gaji karyawan disetujui';
 $_['help_released_status']      = 'Payroll Status saat gaji karyawan dibagikan';
 $_['help_completed_status']     = 'Payroll Status proses penggajian karyawan telah selesai';
+$_['help_completed_after']      = 'Waktu tunggu agar Status Completed diijinkan';
 $_['help_presence_lock']     	= 'Kunci data hadir. Kunci dibuka untuk lokasi kerja yang masih masa trial.';
 $_['help_default_hke']     		= 'Default HKE untuk karyawan yang masuk di pertengahan bulan.';
 $_['help_vacation_limit']     	= 'Isi dengan 0 untuk menonaktifkan Batas Cuti Tahunan';
