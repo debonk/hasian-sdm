@@ -1,7 +1,2 @@
 User-agent: *
-Disallow: /dev/
-Disallow: /*?sort
-Disallow: /*?route=checkout/
-Disallow: /*?route=account/
-Disallow: /*?route=product/search
-Allow: /
+Disallow: /

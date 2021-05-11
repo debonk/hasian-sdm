@@ -32,7 +32,7 @@
 			    <input type="text" value="<?php echo $allowance_period; ?>" class="form-control" disabled />
 			  <?php } else { ?>
 			  <div class="input-group date">
-                <input type="text" name="allowance_period" value="<?php echo $allowance_period; ?>" placeholder="<?php echo $entry_allowance_period; ?>" id="input-allowance-period" class="form-control" data-date-format="D MMM YY" />
+                <input type="text" name="allowance_period" value="<?php echo $allowance_period; ?>" placeholder="<?php echo $entry_allowance_period; ?>" id="input-allowance-period" class="form-control" data-date-format="D MMM YYYY" />
 		  	    <span class="input-group-btn">
 		  	      <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
 		  	    </span>

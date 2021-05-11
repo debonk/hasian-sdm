@@ -3,7 +3,7 @@ if (isset($_POST['VerPas']) && !empty($_POST['VerPas']) && isset($_GET['action']
 	include 'include/global.php';
 	include 'include/function.php';
 
-//VerPas = 3;E141182C1304FA9CCE3D36A0E4605002;20190529173859;J720J00250;extraParams
+//VerPas = 10;6a6b3cff0e1f74e6dd64b9f05d53b410;20210511120224;k520j03896;2021-05-11
 
 	$data 			= explode(";",$_POST['VerPas']);
 	$customer_id	= $data[0];

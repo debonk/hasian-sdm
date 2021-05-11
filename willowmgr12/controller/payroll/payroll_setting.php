@@ -286,7 +286,7 @@ class ControllerPayrollPayrollSetting extends Controller {
 		} elseif ($this->config->get('payroll_setting_completed_after')) {
 			$data['payroll_setting_completed_after'] = $this->config->get('payroll_setting_completed_after');
 		} else {
-			$data['payroll_setting_completed_after'] = 0;
+			$data['payroll_setting_completed_after'] = 3;
 		}
 
 		if (isset($this->request->post['payroll_setting_use_fingerprint'])) {

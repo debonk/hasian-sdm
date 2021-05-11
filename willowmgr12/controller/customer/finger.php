@@ -316,13 +316,20 @@ class ControllerCustomerFinger extends Controller {
 		}
 		
 		if ($this->validateVerification()) {
+			// if ($this->request->server['HTTPS']) {
+			// 	$server = HTTPS_SERVER;
+			// } else {
+			// 	$server = HTTP_SERVER;
+			// }
+
 			$verification_path	= HTTP_SERVER . 'model/finger/verification.php';
-			
+			// $verification_path	= $server . 'model/finger/verification.php';
+										
 			$url_verification	= base64_encode($verification_path . '?customer_id=' . $customer_id);
+			$verification = 'finspot:FingerspotVer;' . $url_verification;
 			// $url_verification	= ($verification_path . '?customer_id=' . $customer_id);
 			// $verification = $url_verification;
-			$verification = 'finspot:FingerspotVer;' . $url_verification;
-
+			
 			$this->response->redirect($verification);
 		}
 

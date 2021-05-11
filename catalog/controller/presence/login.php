@@ -161,13 +161,20 @@ class ControllerPresenceLogin extends Controller {
 			$action = 'login';
 		}
 
-		$verification_path	= HTTP_SERVER . 'catalog/model/finger/verification.php';
+		// if ($this->request->server['HTTPS']) {
+		// 	$server = HTTPS_SERVER;
+		// } else {
+		// 	$server = HTTP_SERVER;
+		// }
 		
+		$verification_path	= HTTP_SERVER . 'catalog/model/finger/verification.php';
+		// $verification_path	= $server . 'catalog/model/finger/verification.php';
+	
 		$url_verification	= base64_encode($verification_path . '?customer_id=' . $customer_id . '&schedule_date=' . $schedule_date . '&action=' . $action);
+		$verification = 'finspot:FingerspotVer;' . $url_verification;
 		// $url_verification = ($verification_path . '?customer_id=' . $customer_id . '&schedule_date=' . $schedule_date . '&action=' . $action);
 		// $verification = $url_verification;
-		$verification = 'finspot:FingerspotVer;' . $url_verification;
-
+		
 		$this->response->redirect($verification);
 	}
 
