@@ -5,7 +5,6 @@ $_['heading_title']     	= 'Laporan PPh21';
 // Text
 $_['text_list']         	= 'Daftar Karyawan';
 $_['text_total']         	= 'Total';
-$_['text_result_count']    	= 'Showing %d records';
 
 // Column
 $_['column_no']				= 'No';

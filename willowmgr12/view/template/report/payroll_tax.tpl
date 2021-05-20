@@ -45,7 +45,7 @@
     </div>
   </div>
   <script type="text/javascript">
-$('#tax-report').load('index.php?route=report/payroll_tax/report&token=<?php echo $token; ?>' + '<?php echo $url; ?>');
+$('#tax-report').load('index.php?route=report/payroll_tax/report&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
 
 $('#tax-report').on('click', '.pagination a', function(e) {
 	e.preventDefault();
@@ -53,12 +53,14 @@ $('#tax-report').on('click', '.pagination a', function(e) {
 	$('#tax-report').load(this.href);
 });
 
-$('#tax-report').on('click', 'td a', function() {
-	location = this.href;
+$('#tax-report').on('click', 'td a', function(e) {
+	e.preventDefault();
+
+	$('#tax-report').load(this.href);
 });
 
 $('#button-export').on('click', function() {
-	url = 'index.php?route=report/payroll_tax/export&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>' + '<?php echo $url; ?>';
+	url = 'index.php?route=report/payroll_tax/export&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>';
 	
 	location = url;
 });

@@ -16,28 +16,8 @@ class ControllerReportPayrollTax extends Controller {
 			$presence_period_id = $presence_periods[0]['presence_period_id'];
 		}
 	
- 		if (isset($this->request->get['sort'])) {
-			$sort = $this->request->get['sort'];
-		} else {
-			$sort = 'customer';
-		}
-
-		if (isset($this->request->get['order'])) {
-			$order = $this->request->get['order'];
-		} else {
-			$order = 'ASC';
-		}
-
 		$url = '';
 		$url .= '&presence_period_id=' . $presence_period_id;
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
 
 		$data['breadcrumbs'] = array();
 
@@ -70,7 +50,6 @@ class ControllerReportPayrollTax extends Controller {
 
 		$data['presence_periods'] = $presence_periods;
 		$data['presence_period_id'] = $presence_period_id;
-		$data['url'] = $url;
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -129,7 +108,7 @@ class ControllerReportPayrollTax extends Controller {
 			
 			foreach ($results as $result) {
 				$data['taxes'][] = array(
-					'customer_id' 		=> $result['customer_id'],
+					// 'customer_id' 		=> $result['customer_id'],
 					'customer'			=> $result['customer'],
 					'gender' 			=> $result['gender_code'],
 					'marriage_status'	=> $result['marriage_status'],
@@ -174,9 +153,9 @@ class ControllerReportPayrollTax extends Controller {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 
-		$data['sort_customer'] = $this->url->link('report/payroll_tax', 'token=' . $this->session->data['token'] . '&sort=customer' . $url, true);
-		$data['sort_customer_group'] = $this->url->link('report/payroll_tax', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
-		$data['sort_location'] = $this->url->link('report/payroll_tax', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
+		$data['sort_customer'] = $this->url->link('report/payroll_tax/report', 'token=' . $this->session->data['token'] . '&sort=customer' . $url, true);
+		$data['sort_customer_group'] = $this->url->link('report/payroll_tax/report', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
+		$data['sort_location'] = $this->url->link('report/payroll_tax/report', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
 
 		$url = '';
 		$url .= '&presence_period_id=' . $presence_period_id;

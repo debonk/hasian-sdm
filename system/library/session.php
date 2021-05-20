@@ -25,7 +25,7 @@ class Session {
 			ini_set('session.use_cookies', 'On');
 			ini_set('session.use_trans_sid', 'Off');
 			ini_set('session.cookie_httponly', 'On');
-			// ini_set('session.cookie_secure', 'On');
+			ini_set('session.cookie_secure', 'On');
 			ini_set('session.cookie_samesite', 'Lax');
 		
 			if ($session_id) {

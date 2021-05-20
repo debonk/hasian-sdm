@@ -596,7 +596,6 @@ class ControllerPayrollPayroll extends Controller {
 		//End GetNote Block
 		
 		foreach ($results as $result) {
-
 			$earning = $result['gaji_pokok'] + $result['tunj_jabatan'] + $result['tunj_hadir'] + $result['tunj_pph'] + $result['total_uang_makan'];
 			$deduction = $result['pot_sakit'] + $result['pot_bolos'] + $result['pot_tunj_hadir'] + $result['pot_gaji_pokok'] + $result['pot_terlambat'];
 			
@@ -665,7 +664,6 @@ class ControllerPayrollPayroll extends Controller {
 			'column_action',
 			'column_net_salary',
 			'column_component',
-			'column_deduction',
 			'column_grandtotal',
 			'column_note',
 			'entry_name',
