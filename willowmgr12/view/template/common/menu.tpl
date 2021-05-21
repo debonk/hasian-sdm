@@ -5,10 +5,10 @@
       <li id="<?php echo $menu_titles[$group_code]['text']; ?>"><a class="parent"><i class="fa <?php echo $menu_titles[$group_code]['icon']; ?> fa-fw"></i> <span><?php echo $menu_titles[$group_code]['text']; ?></span></a>
         <ul>
           <?php foreach($menu_group as $code => $menu_item) { ?>
-            <?php if (isset($child_groups[$code])) { ?>
+            <?php if (isset($child_groups[$group_code][$code])) { ?>
               <li><a class="parent"><?php echo $menu_item['text']; ?></a>
                 <ul>
-                  <?php foreach($child_groups[$code] as $child_item) { ?>
+                  <?php foreach($child_groups[$group_code][$code] as $child_item) { ?>
                     <li><a href="<?php echo $child_item['url']; ?>" class="<?php echo $child_item['class']; ?>"><?php echo $child_item['text']; ?></a></li>
                   <?php } ?>
                 </ul>

@@ -85,11 +85,11 @@ class ControllerCommonMenu extends Controller
 				if (is_array($menu_item)) {
 					foreach ($menu_item as $child_item) {
 						if (array_key_exists($child_item, $permission_data)) {
-							$data['child_groups'][$child_group][] = $permission_data[$child_item];
+							$data['child_groups'][$menu_group][$child_group][] = $permission_data[$child_item];
 						}
 					}
 
-					if (!empty($data['child_groups'][$child_group])) {
+					if (!empty($data['child_groups'][$menu_group][$child_group])) {
 						$data['menu_groups'][$menu_group][$child_group] = [
 							'text'	=> $this->language->get('text_' . $child_group)
 						];
