@@ -12,7 +12,11 @@ class ControllerPresenceSchedule extends Controller
 		$this->load->model('common/payroll');
 		$this->load->model('presence/schedule');
 
-		$this->getList();
+		if ($this->registry->has('framework_load')) {
+			$this->getList();
+		} else {
+			return new Action('error/not_found');
+		}
 	}
 
 	public function edit()

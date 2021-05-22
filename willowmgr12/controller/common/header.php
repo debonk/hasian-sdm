@@ -3,10 +3,18 @@ class ControllerCommonHeader extends Controller {
 	public function index() {
 		$data['title'] = $this->document->getTitle();
 
+		$this->load->language('common/header');
+
 		if ($this->request->server['HTTPS']) {
 			$data['base'] = HTTPS_SERVER;
 		} else {
 			$data['base'] = HTTP_SERVER;
+		}
+
+		if ($this->registry->get('framework_load') == 'update') {
+			$data['text_framework_update'] = $this->language->get('text_framework_update');
+		} else {
+			$data['text_framework_update'] = '';
 		}
 
 		$data['description'] = $this->document->getDescription();
@@ -16,8 +24,6 @@ class ControllerCommonHeader extends Controller {
 		$data['scripts'] = $this->document->getScripts();
 		$data['lang'] = $this->language->get('code');
 		$data['direction'] = $this->language->get('direction');
-
-		$this->load->language('common/header');
 
 		$data['heading_title'] = $this->language->get('heading_title');
 

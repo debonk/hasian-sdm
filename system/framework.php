@@ -1,6 +1,9 @@
 <?php
 // Registry
 $registry = new Registry();
+if (!$registry->has('framework_load')) {
+	exit('Framework update required!');
+}
 
 // Loader
 $loader = new Loader($registry);

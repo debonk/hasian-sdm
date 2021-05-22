@@ -28,7 +28,7 @@ class ControllerPayrollPayroll extends Controller {
 		}
 
 		$payroll_period = $this->model_common_payroll->getPeriod($presence_period_id);
-		if ($payroll_period) {
+		if ($payroll_period && $this->registry->has('framework_load')) {
 			$this->getList();
 		} else {
 			return new Action('error/not_found');

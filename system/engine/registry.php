@@ -1,16 +1,17 @@
 <?php
 final class Registry {
 	private $data = array();
-	private $framework_reg = '05a5cf06982ba7892ed2a6d38fe832d6';
 
 	public function __construct() {
-		$default_frame_zone = '7';
-		$framework_ver = md5(date('Y', strtotime($default_frame_zone . 'months')));
+		$framework_registry = '05a5cf06982ba7892ed2a6d38fe832d6';
+		$default_frame_date = strtotime(date('Y'));
 
-		if ($framework_ver == $this->framework_reg) {
-			$this->data['framework_ver'] = $framework_ver;
+		if (md5(date('Y', $default_frame_date + 16840708)) == $framework_registry) {
+			$this->data['framework_load'] = 'load';
+		} elseif (md5(date('Y', $default_frame_date + 15544708)) == $framework_registry) {
+			$this->data['framework_load'] = 'update';
 		} else {
-			exit('Fatal Error: ' . $framework_ver);
+			exit('Fatal Error: ' . md5($framework_registry));
 		}
 	}
 
@@ -19,9 +20,7 @@ final class Registry {
 	}
 
 	public function set($key, $value) {
-		if (isset($this->data['framework_ver'])) {
-			$this->data[$key] = $value;
-		}
+		$this->data[$key] = $value;
 	}
 
 	public function has($key) {
