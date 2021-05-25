@@ -458,28 +458,29 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-health-insurance"><span data-toggle="tooltip"
-												title="<?= $help_health_insurance; ?>">
-												<?= $entry_health_insurance; ?>
-											</span></label>
+										<label class="col-sm-3 control-label"><span data-toggle="tooltip"
+											title="<?= $help_health_insurance; ?>">
+											<?= $entry_insurance; ?>
+										</span></label>
 										<div class="col-sm-9">
-											<select name="health_insurance" id="input-health-insurance" class="form-control">
-												<?php if ($health_insurance) { ?>
-												<option value="1" selected="selected">
-													<?= $text_yes; ?>
-												</option>
-												<option value="0">
-													<?= $text_no; ?>
-												</option>
-												<?php } else { ?>
-												<option value="1">
-													<?= $text_yes; ?>
-												</option>
-												<option value="0" selected="selected">
-													<?= $text_no; ?>
-												</option>
-												<?php } ?>
-											</select>
+											<div class="checkbox">
+												<label>
+													<input type="checkbox" name="health_insurance" value="1" 
+														id="input-health-insurance" <?=$health_insurance ? 'checked' : '' ?> /> <?= $entry_health_insurance; ?>
+												</label>
+											</div>
+											<div class="checkbox">
+												<label>
+													<input type="checkbox" name="life_insurance" value="1" 
+														id="input-life-insurance" <?=$life_insurance ? 'checked' : '' ?> /> <?= $entry_life_insurance; ?>
+												</label>
+											</div>
+											<div class="checkbox">
+												<label>
+													<input type="checkbox" name="employment_insurance" value="1" 
+														id="input-employment-insurance" <?=$employment_insurance ? 'checked' : '' ?> /> <?= $entry_employment_insurance; ?>
+												</label>
+											</div>
 										</div>
 									</div>
 									<div class="form-group">
@@ -494,31 +495,6 @@
 														<?= $error_health_insurance_id; ?>
 													</div>
 												<?php } ?>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-employment-insurance"><span data-toggle="tooltip"
-												title="<?= $help_employment_insurance; ?>">
-												<?= $entry_employment_insurance; ?>
-											</span></label>
-										<div class="col-sm-9">
-											<select name="employment_insurance" id="input-employment-insurance" class="form-control">
-												<?php if ($employment_insurance) { ?>
-												<option value="1" selected="selected">
-													<?= $text_yes; ?>
-												</option>
-												<option value="0">
-													<?= $text_no; ?>
-												</option>
-												<?php } else { ?>
-												<option value="1">
-													<?= $text_yes; ?>
-												</option>
-												<option value="0" selected="selected">
-													<?= $text_no; ?>
-												</option>
-												<?php } ?>
-											</select>
 										</div>
 									</div>
 									<div class="form-group">
@@ -1674,6 +1650,17 @@
 			$('#fieldset-date-end').removeAttr('disabled');
 			$('#fieldset-date-end input').val('');
 			$('#button-reactivate').remove();
+		});
+
+		$('#input-employment-insurance').on('click', function () {
+			if (this.checked == true) {
+				$('#input-life-insurance').prop('checked', true);
+			}
+		});
+		$('#input-life-insurance').on('click', function () {
+			if (this.checked == false) {
+				$('#input-employment-insurance').prop('checked', false);
+			}
 		});
 </script>
 <?= $footer; ?>

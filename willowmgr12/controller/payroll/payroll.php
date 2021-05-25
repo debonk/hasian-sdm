@@ -1019,7 +1019,7 @@ class ControllerPayrollPayroll extends Controller {
 			
 		if ($this->model_common_payroll->checkPeriodStatus($presence_period_id, 'generated')) {
 			$components = $this->model_payroll_payroll->calculatePayrollComponent($presence_period_id, $customer_id);
-
+			
 			foreach ($components as $component) {
 				if (isset($always_view[$component['code']]) && $always_view[$component['code']]) {
 					foreach ($component['quote'] as $quote) {

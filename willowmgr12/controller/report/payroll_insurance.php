@@ -97,8 +97,11 @@ class ControllerReportPayrollInsurance extends Controller {
 		$insurance_titles = $this->model_component_insurance->getTitles();
 
 		if ($period_status && $this->config->get('insurance_status')) {
-			$filter_data['presence_period_id'] = $presence_period_id;  
-			
+			$filter_data = array(
+				'presence_period_id'   		=> $presence_period_id,
+				'filter_payroll_include' 	=> 1
+			);
+
 			$this->load->model('presence/presence');
 		
 			$customers = $this->model_presence_presence->getCustomers($filter_data);

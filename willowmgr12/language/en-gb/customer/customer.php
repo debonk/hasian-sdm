@@ -61,9 +61,11 @@ $_['entry_email']					= 'E-Mail';
 $_['entry_telephone']				= 'Telepon/HP';
 $_['entry_acc_no']					= 'No. Rekening';
 $_['entry_full_overtime']			= 'Premi 12 Jam';
+$_['entry_insurance']				= 'BPJS';
 $_['entry_health_insurance']		= 'BPJS Kesehatan';
 $_['entry_health_insurance_id']		= 'No. BPJS Kesehatan';
-$_['entry_employment_insurance']	= 'BPJS Ketenagakerjaan';
+$_['entry_life_insurance']			= 'BPJS Ketenagakerjaan (JKK & JKM)';
+$_['entry_employment_insurance']	= 'BPJS Ketenagakerjaan (JHT)';
 $_['entry_employment_insurance_id']	= 'No. BPJS Ketenagakerjaan';
 $_['entry_status']					= 'Status';
 $_['entry_password']				= 'Password';
@@ -82,7 +84,7 @@ $_['entry_active']					= 'Status Karyawan';
 // Help
 $_['help_lastname']					= 'Sesuai KTP';
 $_['help_skip_trial_status']		= 'Centang untuk menentukan karyawan tidak perlu masa percobaan lagi. Hanya diisi sekali saat pendaftaran atau reaktivasi karyawan.';
-$_['help_health_insurance']			= 'BPJS Kesehatan mulai berlaku setelah memasuki PKWT II (12 bulan masa kerja)';
+$_['help_health_insurance']			= 'BPJS TK - Non JHT berlaku sejak PKWT I, BPJS Kesehatan mulai berlaku setelah memasuki PKWT II, dan BPJS TK - JHT saat memasuki PKWT III';
 $_['help_employment_insurance']		= 'BPJS Ketenagakerjaan NON JHT berlaku sejak masuk dan JHT saat memasuki PKWT III (24 bulan masa kerja)';
 $_['help_npwp_address']				= 'Harus diisi jika telah memiliki NPWP';
 

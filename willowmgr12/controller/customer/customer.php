@@ -93,7 +93,7 @@ class ControllerCustomerCustomer extends Controller {
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('customer/customer');
-
+		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
 			$this->customerHistory();
 			
@@ -725,7 +725,9 @@ class ControllerCustomerCustomer extends Controller {
 			'entry_health_insurance_id',
 			'entry_id_card_address',
 			'entry_image',
+			'entry_insurance',
 			'entry_lastname',
+			'entry_life_insurance',
 			'entry_location',
 			'entry_marriage_status',
 			'entry_nik',
@@ -899,8 +901,9 @@ class ControllerCustomerCustomer extends Controller {
 			'acc_no'					=> null,
 			'full_overtime'				=> null,
 			'health_insurance'			=> true,
+			'life_insurance'			=> true,
+			'employment_insurance'		=> false,
 			'health_insurance_id'		=> null,
-			'employment_insurance'		=> true,
 			'employment_insurance_id'	=> null,
 			'status'					=> true,
 			'id_card_address_id'		=> null,

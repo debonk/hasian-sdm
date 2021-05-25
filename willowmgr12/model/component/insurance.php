@@ -6,7 +6,6 @@ class ModelComponentInsurance extends Model {
 		if ($this->config->get('insurance_status')) {
 			$this->load->model('common/payroll');
 			$period = $this->model_common_payroll->getPeriod($presence_period_id)['period'];
-			// $text_period = date($this->language->get('date_format_m_y'), strtotime($period));
 			
 			$customer_info = $this->model_common_payroll->getCustomer($customer_id);
 		
@@ -21,13 +20,14 @@ class ModelComponentInsurance extends Model {
 				$date_start = date('Y-m-', strtotime($customer_info['date_start'])) . '01';
 			}
 			
-			$health_insurance_check = strtotime($period) > strtotime('+ 14 months', strtotime($date_start));
+			$health_insurance_check = strtotime($period) > strtotime('+ 14 months', strtotime($date_start)); # Dikurangi 1 bln krn BPJS Kes bayar di depan. 
 			$non_jht_insurance_check = strtotime($period) > strtotime('+ 3 months', strtotime($date_start));
-			$jht_insurance_check = strtotime($period) > strtotime('+ 39 months', strtotime($date_start));
-			
+			$jht_insurance_check = strtotime($period) > strtotime('+ 27 months', strtotime($date_start));
+						
 			$values = array();
 			
 			if ($health_insurance_check && $customer_info['health_insurance']) {
+				# BPJS Kesehatan: Pembayaran di awal bulan (Pembayaran Maju)
 				if (strtotime('+1 month', strtotime($period)) < $insurance_date_start) {
 					$wage = $this->config->get('insurance_min_wage_old');
 				}
@@ -47,12 +47,13 @@ class ModelComponentInsurance extends Model {
 				
 			$values = array();
 			
-			if ($non_jht_insurance_check && $customer_info['employment_insurance']) {
+			if ($non_jht_insurance_check && $customer_info['life_insurance']) {
+				# BPJS TK: Pembayaran di akhir bulan (Pembayaran Mundur)
 				if (strtotime($period) < $insurance_date_start) {
 					$wage = $this->config->get('insurance_min_wage_old');
 				}
 				
-				if ($jht_insurance_check) {
+				if ($jht_insurance_check && $customer_info['employment_insurance']) {
 					$values[0] = -ceil($wage * 0.0624);
 					$values[1] = ceil($wage * 0.0424);
 					$text = $this->language->get('text_jht');
