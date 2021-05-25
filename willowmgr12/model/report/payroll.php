@@ -133,7 +133,7 @@ class ModelReportPayroll extends Model {
 			$sql .= " AND pcv.code = '" . $this->db->escape($data['code']) . "'";
 		}
 
-		$sql .= " GROUP BY pcv.customer_id ASC";
+		$sql .= " GROUP BY pcv.customer_id ORDER BY name ASC";
 		
 		if (isset($data['start']) || isset($data['limit'])) {
 			if ($data['start'] < 0) {

@@ -63,24 +63,6 @@ class ControllerReportPayrollInsurance extends Controller {
 		} else {
 			$presence_period_id = 0;
 		}
-		
-/* 		if (isset($this->request->get['sort'])) {
-			$sort = $this->request->get['sort'];
-		} else {
-			$sort = 'name';
-		}
-
-		if (isset($this->request->get['order'])) {
-			$order = $this->request->get['order'];
-		} else {
-			$order = 'ASC';
-		}
-
- */		if (isset($this->request->get['page'])) {
-			$page = $this->request->get['page'];
-		} else {
-			$page = 1;
-		}
 
 		$this->load->model('report/payroll');
 
@@ -120,11 +102,7 @@ class ControllerReportPayrollInsurance extends Controller {
 			
 		} else {
 			$filter_data = array(
-				'code'		=> 'insurance',
-				// 'sort'        => $sort,
-				// 'order'       => $order,
-				// 'start'     => ($page - 1) * $this->config->get('config_limit_admin'),
-				// 'limit'     => $this->config->get('config_limit_admin')
+				'code'		=> 'insurance'
 			);
 
 			$customer_count = $this->model_report_payroll->getComponentCustomersCount($presence_period_id, 'insurance');
