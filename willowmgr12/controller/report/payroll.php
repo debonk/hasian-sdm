@@ -92,7 +92,9 @@ class ControllerReportPayroll extends Controller
 
 		$this->load->model('common/payroll');
 
-		$period_status = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'approved, released, completed');
+		$result_count = 0;
+
+		$period_status = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'generated, approved, released, completed');
 
 		if ($period_status) {
 			$filter_data = array(
@@ -128,9 +130,9 @@ class ControllerReportPayroll extends Controller
 					'grandtotal'    	=> $this->currency->format($net_salary + $component_info['grandtotal'], $this->config->get('config_currency')),
 				);
 			}
+			
+			$result_count = $this->model_report_payroll->getPayrollsCount($presence_period_id);
 		}
-
-		$result_count = $this->model_report_payroll->getPayrollsCount($presence_period_id);
 
 		$language_list = array(
 			'text_no_results',

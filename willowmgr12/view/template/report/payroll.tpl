@@ -68,7 +68,7 @@
 	</div>
 	<script type="text/javascript">
 		$('#period-info').load('index.php?route=common/period_info&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
-		$('#payroll-info').load('index.php?route=payroll/payroll/payrollinfo&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
+		$('#payroll-info').load('index.php?route=common/payroll_info&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
 
 		$('#payroll-report').load('index.php?route=report/payroll/report&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
 

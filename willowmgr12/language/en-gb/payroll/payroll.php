@@ -3,45 +3,44 @@
 $_['heading_title']              = 'Penggajian';
 
 // Text
-$_['text_period_list']           = 'Daftar Periode';
-$_['text_list']                  = 'Daftar Gaji';
-$_['text_all_customer_group'] 	 = 'Semua Jabatan';
+$_['code_full_overtime']		 = 'LH';
 $_['text_add']                   = 'Add Gaji Karyawan';
-$_['text_edit']                  = 'Edit Gaji Karyawan';
-$_['text_success']          	 = 'Success: You have modified payrolls!';
-$_['text_success_generated']     = 'Success: %d of %d payrolls generated!';
-$_['text_presence_summary']      = 'Ringkasan Absensi';
-$_['text_payroll_calculation']   = 'Rincian Gaji';
-$_['text_payroll_basic']         = 'Komponen Gaji';
-
-$_['text_gaji_pokok'] 		     = 'Gaji Pokok';
-$_['text_tunj_jabatan'] 		 = 'Tunjangan Jabatan';
-$_['text_tunj_hadir'] 		     = 'Tunjangan Kehadiran';
-$_['text_tunj_pph'] 			 = 'Premi Prestasi Hadir';
-$_['text_total_uang_makan'] 	 = 'Total Uang Makan (%s x %s)';
-$_['text_pot_sakit'] 		     = 'Potongan Sakit (%d x %s)';
-$_['text_pot_bolos'] 		     = 'Potongan Alpa (%d x %s) + PPH';
-$_['text_pot_tunj_hadir'] 	     = 'Potongan Tunjangan Kehadiran';
-$_['text_pot_gaji_pokok'] 	     = 'Potongan Gaji Pokok & Jabatan';
-$_['text_pot_terlambat'] 	     = 'Potongan Terlambat (~%d x %s)';
-$_['text_subtotal'] 		     = 'Subtotal Komponen Gaji';
-$_['text_total_earning'] 	     = 'Total Pendapatan';
-$_['text_total_deduction'] 	     = 'Total Potongan';
-$_['text_grandtotal'] 	  	   	 = 'Take Home Pay';
-$_['text_total_customer'] 	  	 = 'Jumlah Karyawan';
-$_['text_payroll_old'] 	  	   	 = 'Perbaharui Rincian Gaji?';
-$_['text_generate'] 	  	 	 = 'Generate Payroll terlebih dahulu.';
+$_['text_all_customer_group'] 	 = 'Semua Jabatan';
 $_['text_approve_confirm']       = 'Setelah diapprove, Data tidak bisa diedit lagi.\nApprove?';
 $_['text_approve_success']       = 'Success: Daftar Gaji Karyawan telah disetujui!';
+$_['text_edit']                  = 'Edit Gaji Karyawan';
+$_['text_gaji_pokok'] 		     = 'Gaji Pokok';
+$_['text_generate'] 	  	 	 = 'Generate Payroll terlebih dahulu.';
+$_['text_grandtotal'] 	  	   	 = 'Take Home Pay';
+$_['text_list']                  = 'Daftar Gaji';
+$_['text_payroll_basic']         = 'Komponen Gaji';
+$_['text_payroll_calculation']   = 'Rincian Gaji';
+// $_['text_payroll_info']			 = 'Total Gaji Periode Ini';
+$_['text_payroll_old'] 	  	   	 = 'Perbaharui Rincian Gaji?';
+$_['text_period_list']           = 'Daftar Periode';
+$_['text_pot_bolos'] 		     = 'Potongan Alpa (%d x %s) + PPH';
+$_['text_pot_gaji_pokok'] 	     = 'Potongan Gaji Pokok & Jabatan';
+$_['text_pot_sakit'] 		     = 'Potongan Sakit (%d x %s)';
+$_['text_pot_terlambat'] 	     = 'Potongan Terlambat (~%d x %s)';
+$_['text_pot_tunj_hadir'] 	     = 'Potongan Tunjangan Kehadiran';
+$_['text_presence_summary']      = 'Ringkasan Absensi';
+$_['text_subtotal'] 		     = 'Subtotal Komponen Gaji';
+$_['text_success_generated']     = 'Success: %d of %d payrolls generated!';
+$_['text_success']          	 = 'Success: You have modified payrolls!';
+// $_['text_total_customer'] 	  	 = 'Jumlah Karyawan';
+$_['text_total_deduction'] 	     = 'Total Potongan';
+$_['text_total_earning'] 	     = 'Total Pendapatan';
+$_['text_total_uang_makan'] 	 = 'Total Uang Makan (%s x %s)';
+$_['text_tunj_hadir'] 		     = 'Tunjangan Kehadiran';
+$_['text_tunj_jabatan'] 		 = 'Tunjangan Jabatan';
+$_['text_tunj_pph'] 			 = 'Premi Prestasi Hadir';
+
 $_['text_insurance']       		 = 'BPJS';
 $_['text_loan']    		   		 = 'Pinjaman';
 $_['text_incentive']    		 = 'Insentif';
 $_['text_cutoff']    		   	 = 'Potongan Nota';
 $_['text_overtime']				 = 'Lembur';
 $_['text_dayoff']				 = 'DRM';
-$_['text_payroll_info']			 = 'Total Gaji Periode Ini';
-
-$_['code_full_overtime']		 = 'LH';
 
 // Column
 $_['column_period']              = 'Periode Absensi';

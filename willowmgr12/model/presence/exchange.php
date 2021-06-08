@@ -30,7 +30,7 @@ class ModelPresenceExchange extends Model {
 		}
 
 		if (!empty($data['filter_date'])) {
-			$implode[] = "e.date_from = STR_TO_DATE('" . $this->db->escape($data['filter_date']) . "', '%e %b %Y') OR e.date_to = STR_TO_DATE('" . $this->db->escape($data['filter_date']) . "', '%e %b %Y')";
+			$implode[] = "(e.date_from = STR_TO_DATE('" . $this->db->escape($data['filter_date']) . "', '%e %b %Y') OR e.date_to = STR_TO_DATE('" . $this->db->escape($data['filter_date']) . "', '%e %b %Y'))";
 		}
 
 		if (!empty($data['filter_period_id'])) {
@@ -91,7 +91,7 @@ class ModelPresenceExchange extends Model {
 		}
 
 		if (!empty($data['filter_date'])) {
-			$implode[] = "e.date_from = STR_TO_DATE('" . $this->db->escape($data['filter_date']) . "', '%e %b %Y') OR e.date_to = STR_TO_DATE('" . $this->db->escape($data['filter_date']) . "', '%e %b %Y')";
+			$implode[] = "(e.date_from = STR_TO_DATE('" . $this->db->escape($data['filter_date']) . "', '%e %b %Y') OR e.date_to = STR_TO_DATE('" . $this->db->escape($data['filter_date']) . "', '%e %b %Y'))";
 		}
 
 		if (!empty($data['filter_period_id'])) {

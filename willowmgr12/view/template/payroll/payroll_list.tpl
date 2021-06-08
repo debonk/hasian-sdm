@@ -170,7 +170,7 @@ $(document).keypress(function(e) {
 
 $('#period-info').load('index.php?route=common/period_info&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
 
-$('#payroll-info').load('index.php?route=payroll/payroll/payrollinfo&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
+$('#payroll-info').load('index.php?route=common/payroll_info&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
 
 $('#button-filter').on('click', function() {
 	url = 'index.php?route=payroll/payroll/info&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>';
