@@ -3,7 +3,7 @@ final class Registry {
 	private $data = array();
 
 	public function __construct() {
-		$framework_registry = '05a5cf06982ba7892ed2a6d38fe832d6';
+		$framework_registry = '3a824154b16ed7dab899bf000b80eeee';
 		$default_frame_date = strtotime(date('Y'));
 
 		if (md5(date('Y', $default_frame_date + 16840708)) == $framework_registry) {
