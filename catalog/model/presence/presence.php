@@ -246,10 +246,24 @@ class ModelPresencePresence extends Model {
 	}
 
 	public function addLog($customer_id, $date, $action) {
+		if ($this->request->server['HTTPS']) {
+			$server = HTTPS_SERVER;
+		} else {
+			$server = HTTP_SERVER;
+		}
+
+		if (strpos($server, 'localhost')) {
+			$time = date('Y-m-d H:i:s');
+		} else {
+			$server_info = get_headers($server, true);
+			$date = strtotime(($server_info['Date'][0]));
+			$time = date("Y-m-d H:i:s", $date);
+		}
+
 		if ($action == 'login') {
-			$sql = "UPDATE " . DB_PREFIX . "presence_log SET time_login = NOW() WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $this->db->escape($date) . "'";
+			$sql = "UPDATE " . DB_PREFIX . "presence_log SET time_login = '" . $this->db->escape($time) . "' WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $this->db->escape($date) . "'";
 		} elseif ($action == 'logout') {
-			$sql = "UPDATE " . DB_PREFIX . "presence_log SET time_logout = NOW() WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $this->db->escape($date) . "'";
+			$sql = "UPDATE " . DB_PREFIX . "presence_log SET time_logout = '" . $this->db->escape($time) . "' WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $this->db->escape($date) . "'";
 		}
 
 		$this->db->query($sql);
