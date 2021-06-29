@@ -15,5 +15,7 @@ $time_limit_ver = '10';
 
 $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name, $port);
 
+date_default_timezone_set("Asia/Jakarta");
+
 if (!$conn) die("Connection refused!");
 ?>

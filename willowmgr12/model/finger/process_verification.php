@@ -20,8 +20,19 @@ if (isset($_POST['VerPas']) && !empty($_POST['VerPas'])) {
 	
 	if (strtoupper($vStamp) == strtoupper($salt)) {
 		$name = getCustomerName($conn, $customer_id);
+
+		$server_info = get_headers('http://wsdm.willowbabyshop.com/', true);
+
+		if (is_array($server_info['Date'])) {
+			$date_info = $server_info['Date'][0];
+		} else {
+			$date_info = $server_info['Date'];
+		}
+
+		$datetime = date("Y-m-d H:i:s", strtotime($date_info));
+
 		
-		echo $base_path . "messages.php?name=$name&time=$time";
+		echo $base_path . "messages.php?name=$name&time=$datetime";
 		// $msg = $name;
 		// echo $base_path . "messages.php?msg=$msg";
 	}

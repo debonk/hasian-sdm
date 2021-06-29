@@ -63,11 +63,18 @@
 	
 	function addLog($conn, $customer_id, $schedule_date, $datetime, $action) {
 		if (!strpos(HTTP_SERVER, 'localhost')) {
+			// $server_info = get_headers('http://wsdm.willowbabyshop.com/', true);
 			$server_info = get_headers(HTTP_SERVER, true);
-			$date = strtotime(($server_info['Date'][0]));
-			$datetime = date("Y-m-d H:i:s", $date);
-		}
 
+			if (is_array($server_info['Date'])) {
+				$date_info = $server_info['Date'][0];
+			} else {
+				$date_info = $server_info['Date'];
+			}
+
+			$datetime = date('Y-m-d H:i:s', strtotime($date_info));
+		}
+		
 		if ($action == 'login') {
 			$sql = "UPDATE oc_presence_log SET time_login = '" . $datetime . "' WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $schedule_date . "'";
 		} elseif ($action == 'logout') {

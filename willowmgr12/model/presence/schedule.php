@@ -360,9 +360,23 @@ class ModelPresenceSchedule extends Model {
 				);
 			}
 
+			# Blok jika absensi tanpa menggunakan jadwal. Develop Later..
+			if (!isset($schedules_data[$log_info['date']])) {
+				$schedules_data[$log_info['date']] = [
+					'applied'			=> '-',
+					'schedule_type_id'	=> 0,
+					'schedule_type'		=> '',
+					'time_in'			=> '0000-00-00 00:00:00',
+					'time_out'			=> '0000-00-00 00:00:00',
+					'note'				=> '',
+					'schedule_bg'		=> '',
+					'bg_class'			=> ''
+				];
+			}
+
 			$schedules_data[$log_info['date']] = array_merge($schedules_data[$log_info['date']],$logs_data);
 		}
-		
+
 		$this->load->model('localisation/presence_status');
 		
 		$presence_statuses_data = array();
