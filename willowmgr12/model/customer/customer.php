@@ -110,6 +110,10 @@ class ModelCustomerCustomer extends Model {
 			}
 		}
 
+		if (isset($data['date_start'])) {
+			$this->db->query("UPDATE " . DB_PREFIX . "customer SET date_start = STR_TO_DATE('" . $this->db->escape($data['date_start']) . "', '%e %b %Y') WHERE customer_id = '" . (int)$customer_id . "'");
+		}
+
 		if ($data['password']) {
 			$this->db->query("UPDATE " . DB_PREFIX . "customer SET salt = '" . $this->db->escape($salt = token(9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "' WHERE customer_id = '" . (int)$customer_id . "'");
 		}

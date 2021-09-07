@@ -863,7 +863,7 @@
 										</label>
 										<div class="col-sm-9">
 											<select name="address[<?= $address_row; ?>][country_id]" id="input-country<?= $address_row; ?>"
-												onchange="country(this, '<?= $address_row; ?>', '<?= $address['zone_id']; ?>', '<?= $address['city']; ?>');"
+												onchange="country(this, '<?= $address_row; ?>', `<?= $address['zone_id']; ?>`, `<?= $address['city']; ?>`);"
 												class="form-control">
 												<option value="">
 													<?= $text_select; ?>
@@ -894,7 +894,7 @@
 										</label>
 										<div class="col-sm-9">
 											<select name="address[<?= $address_row; ?>][zone_id]" id="input-zone<?= $address_row; ?>"
-												onchange="zone(this, '<?= $address_row; ?>', '<?= $address['city']; ?>');" class="form-control">
+												onchange="zone(this, '<?= $address_row; ?>', `<?= $address['city']; ?>`);" class="form-control">
 											</select>
 											<?php if (isset($error_address[$address_row]['zone'])) { ?>
 											<div class="text-danger">
@@ -1466,12 +1466,6 @@
 				$('.fa-spin').remove();
 			},
 			success: function (json) {
-				/*			if (json['postcode_required'] == '1') {
-								$('input[name=\'address[' + index + '][postcode]\']').parent().parent().addClass('required');
-							} else {
-								$('input[name=\'address[' + index + '][postcode]\']').parent().parent().removeClass('required');
-							}
-				*/
 				html = '<option value=""><?= $text_select; ?></option>';
 
 				if (json['zone'] && json['zone'] != '') {
