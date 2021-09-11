@@ -348,12 +348,20 @@ class ControllerPresenceScheduleType extends Controller {
 			$locations_data[$location['location_id']] = $location['name'];
 		}
 
+		$this->load->model('presence/schedule');
+		$this->load->model('common/payroll');
+		$period_info = $this->model_common_payroll->getPeriod(); //get current presence_period_id
+
 		foreach ($results as $result) {
 			if ($result['location_ids']) {
 				$result_locations = array_intersect_key($locations_data,array_flip(json_decode($result['location_ids'])));
 			} else {
 				$result_locations = array();
 			}
+
+			if ($period_info) {
+				$period_schedule_type_count = $this->model_presence_schedule->getSchedulesCountByScheduleTypeId($result['schedule_type_id'], $period_info['presence_period_id']);
+			} 
 			
 			$data['schedule_types'][] = array(
 				'schedule_type_id' => $result['schedule_type_id'],
@@ -365,6 +373,7 @@ class ControllerPresenceScheduleType extends Controller {
 				'bg_idx'      	  => $result['bg_idx'],
 				'sort_order'      => $result['sort_order'],
 				'status'      	  => $result['status'] ? $this->language->get('text_enabled') : $this->language->get('text_disabled'),
+				'current_use'     => $period_schedule_type_count ? $this->language->get('text_yes') : $this->language->get('text_no'),
 				'edit'            => $this->url->link('presence/schedule_type/edit', 'token=' . $this->session->data['token'] . '&schedule_type_id=' . $result['schedule_type_id'] . $url, true)
 			);
 		}
@@ -379,6 +388,8 @@ class ControllerPresenceScheduleType extends Controller {
 			'text_enabled',
 			'text_disabled',
 			'text_all',
+			'text_yes',
+			'text_no',
 			'entry_name',
 			'entry_code',
 			'entry_customer_group',
@@ -391,6 +402,7 @@ class ControllerPresenceScheduleType extends Controller {
 			'column_time_end',
 			'column_sort_order',
 			'column_status',
+			'column_current_use',
 			'column_action',
 			'button_add',
 			'button_copy',
@@ -645,7 +657,6 @@ class ControllerPresenceScheduleType extends Controller {
 		$schedule_type_items = array(
 			'name',
 			'code',
-			// 'location_id',
 			'bg_idx',
 			'sort_order',
 			'status'

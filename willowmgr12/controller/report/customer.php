@@ -1,6 +1,6 @@
 <?php
 class ControllerReportCustomer extends Controller {
-	private $error = array();
+	// private $error = array();
 
 	public function index() {
 		$this->load->language('report/customer');
@@ -465,7 +465,7 @@ class ControllerReportCustomer extends Controller {
 		$value['nip'] = $customer_info['nip'];
 		$value['nik'] = $customer_info['nik'];
 		$value['date_start'] = date($this->language->get('date_format_jMY'), strtotime($customer_info['date_start']));
-		$value['date_birth'] = date($this->language->get('date_format_jMY'), strtotime($customer_info['date_birth']));
+		$value['date_birth'] = $customer_info['date_birth'] ? date($this->language->get('date_format_jMY'), strtotime($customer_info['date_birth'])) : '-';
 		$value['full_overtime'] = $customer_info['full_overtime'] ? $this->language->get('text_yes') : $this->language->get('text_no');
 		$value['status'] = $customer_info['status'] ? $this->language->get('text_enabled') : $this->language->get('text_disabled');
 		$value['date_end'] = $customer_info['date_end'] ? date($this->language->get('date_format_jMY'), strtotime($customer_info['date_end'])) : '-';

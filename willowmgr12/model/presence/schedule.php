@@ -346,10 +346,10 @@ class ModelPresenceSchedule extends Model {
 		$logs_info = $this->getLogs($customer_id, $range_date);
 		
 		foreach ($logs_info as $log_info) {
-			if ($log_info['time_in'] != '0000-00-00 00:00:00') {
+			if ($schedules_data[$log_info['date']]['time_in'] != '0000-00-00 00:00:00') {
 				$logs_data = array(
-					'time_in'		=> $log_info['time_in'],
-					'time_out'		=> $log_info['time_out'],
+					'time_in'		=> $schedules_data[$log_info['date']]['time_in'],
+					'time_out'		=> $schedules_data[$log_info['date']]['time_out'],
 					'time_login'	=> $log_info['time_login'],
 					'time_logout'	=> $log_info['time_logout']
 				);
@@ -560,9 +560,13 @@ class ModelPresenceSchedule extends Model {
 		return $query->row['total'];
 	}
 	
-	public function getSchedulesCountByScheduleTypeId($schedule_type_id) {//used by: schedule_type
+	public function getSchedulesCountByScheduleTypeId($schedule_type_id, $presence_period_id = 0) {//used by: schedule_type
 		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "schedule s LEFT JOIN " . DB_PREFIX . "presence_period pp ON (pp.presence_period_id = s.presence_period_id) WHERE s.schedule_type_id = '" . (int)$schedule_type_id . "' AND pp.payroll_status_id <> '" . (int)$this->config->get('payroll_setting_completed_status_id') . "'";
 
+		if ($presence_period_id) {
+			$sql .= " AND s.presence_period_id = '" . (int)$presence_period_id . "'";
+		}
+		
 		$query = $this->db->query($sql);
 
 		return $query->row['total'];

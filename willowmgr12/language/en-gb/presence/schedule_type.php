@@ -16,6 +16,7 @@ $_['column_time_start']		= 'Jam Masuk';
 $_['column_time_end']		= 'Jam Keluar';
 $_['column_sort_order']		= 'Sort Order';
 $_['column_status']			= 'Status';
+$_['column_current_use']	= 'Currently Use';
 
 // Entry
 $_['entry_name']			= 'Nama Jenis Jadwal';
