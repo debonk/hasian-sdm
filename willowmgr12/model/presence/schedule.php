@@ -486,7 +486,7 @@ class ModelPresenceSchedule extends Model {
 		$presence_summary_data = array();
 
 		$presence_summary = array_count_values(array_column($final_schedule_data, 'presence_status_id'));
-		
+
 		foreach ($config_presence_status_id as $key => $value) {
 			if (isset($presence_summary[$value])) {
 				$presence_summary_data[$key] = $presence_summary[$value];
@@ -509,7 +509,7 @@ class ModelPresenceSchedule extends Model {
 			$full_overtimes_count = $this->model_overtime_overtime->getFullOvertimesCount($customer_id, $range_date);
 			$default_hke += $full_overtimes_count;
 
-			$off = array(0 => '');
+			$off = array(0 => '', 1 => '');
 			
 			$presence_summary_data['ns'] = max($default_hke - array_sum(array_diff_key($presence_summary, $off)), 0);
 		}

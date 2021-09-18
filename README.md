@@ -3,6 +3,9 @@ hasian sdm software
 
 ADMIN
 
+2.3.8	18/9/2021
+Bug Fixed: Karyawan baru, Jadwal Off ikut mengurangi nilai NS sehingga HKE < 25.
+
 2.3.7	11/9/2021
 Modul: Schedule Type > Menambah kolom 'Currently Use' jika schedule type digunakan pada periode berjalan.
 Bug Fixed: Tukar Off tercatat A, jika sudah mencoba login sebelum input Tukar Off.
