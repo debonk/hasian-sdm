@@ -3,6 +3,10 @@ hasian sdm software
 
 ADMIN
 
+2.3.9	20/12/2021
+Fatal Error: Absensi finger tidak terdaftar.
+Bug Fixed: Forgotten Password
+
 2.3.8	18/9/2021
 Bug Fixed: Karyawan baru, Jadwal Off ikut mengurangi nilai NS sehingga HKE < 25.
 

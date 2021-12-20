@@ -2,7 +2,7 @@
 require '../../config.php';
 
 // $base_path		= "http://localhost/wsdm/willowmgr12/model/finger/";
-$base_path		= HTTP_SERVER . 'model/finger/';
+$base_path		= HTTPS_SERVER . 'model/finger/';
 
 $db_name		= DB_DATABASE;
 $db_user		= DB_USERNAME;

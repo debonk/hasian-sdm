@@ -50,7 +50,6 @@ class ControllerCommonMenu extends Controller
 			'information'	=> ['module/information', 'catalog/download'],
 			'extension'		=> ['extension/installer', 'extension/modification', 'extension/theme', 'extension/component', 'extension/module'],
 			'themecontrol'	=> ['module/themecontrol', 'module/pavmegamenu', 'module/pavblog'],
-			'system'					=> ['store', 'payroll_setting'],
 			'system'		=> [
 				'setting/store',
 				'payroll/payroll_setting',

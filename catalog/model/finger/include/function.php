@@ -66,10 +66,10 @@
 			// $server_info = get_headers('http://wsdm.willowbabyshop.com/', true);
 			$server_info = get_headers(HTTP_SERVER, true);
 
-			if (is_array($server_info['Date'])) {
-				$date_info = $server_info['Date'][0];
+			if (is_array($server_info['date'])) {
+				$date_info = $server_info['date'][0];
 			} else {
-				$date_info = $server_info['Date'];
+				$date_info = $server_info['date'];
 			}
 
 			$datetime = date('Y-m-d H:i:s', strtotime($date_info));

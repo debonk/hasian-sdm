@@ -150,7 +150,7 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript"><!--
+  <script type="text/javascript">
 $(document).keypress(function(e) {
         if(e.which == 13) {
 			$("#button-filter").click();
@@ -186,8 +186,8 @@ $('#button-filter').on('click', function() {
 	
 	location = url;
 });
-//--></script> 
-  <script type="text/javascript"><!--
+</script> 
+  <script type="text/javascript">
 $('input[name=\'filter_name\']').autocomplete({
 	'source': function(request, response) {
 		$.ajax({
@@ -207,8 +207,8 @@ $('input[name=\'filter_name\']').autocomplete({
 		$('input[name=\'filter_name\']').val(item['label']);
 	}	
 });
-//--></script> 
-  <script type="text/javascript"><!--
+</script> 
+  <script type="text/javascript">
 $('button[id^=\'button-register\']').on('click', function(e) {
 	var node = this;
 	$(node).button('loading');
@@ -278,8 +278,8 @@ function getRegisterStatus(customer_id) {
 	});
 }
 
-//--></script> 
-  <script type="text/javascript"><!--
+</script> 
+  <script type="text/javascript">
 $('td').on('click', 'button[id^=\'button-verification\']', function(e) {
 	var node = this;
 	$(node).button('loading');
@@ -328,6 +328,6 @@ $('td').on('click', 'button[id^=\'button-delete\']', function(e) {
 		});
 	}
 });
-//--></script> 
+</script> 
 </div>
 <?php echo $footer; ?> 
