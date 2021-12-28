@@ -15,9 +15,15 @@ class ModelLocalisationLocation extends Model {
 	}
 
 	public function generateLocationToken($location_id) {
-		$token = token(12);
+		$location_info = $this->getLocation($location_id);
 
-		$this->db->query("UPDATE " . DB_PREFIX . "location SET token = '" . $this->db->escape($token) . "' WHERE location_id = '" . (int)$location_id . "'");
+		if ($location_info) {
+			$token = $location_info['token'];
+		} else {
+			$token = token(12);
+
+			$this->db->query("UPDATE " . DB_PREFIX . "location SET token = '" . $this->db->escape($token) . "' WHERE location_id = '" . (int)$location_id . "'");
+		}
 
 		return $token;
 	}
