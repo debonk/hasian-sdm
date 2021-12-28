@@ -7,7 +7,7 @@ Pemasangan SSL Connection
 CATALOG > Presence - Login > Layout absensi
 Bug Fixed: Presence - Schedule > Perhitungan kehadiran pada Data Log jika jadwal tidak diset
 
-2.3.10
+2.3.10	28/12/2021
 Fatal Error: Absensi finger tidak terdaftar karena struktur headers server berubah.
 
 2.3.9	20/12/2021
