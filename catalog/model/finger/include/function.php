@@ -13,7 +13,6 @@
 			);
 				
 			$i++;
-
 		}
 
 		return $arr;
@@ -61,24 +60,24 @@
 		return $arr;
 	}
 	
-	function addLog($conn, $customer_id, $schedule_date, $datetime, $action) {
-		if (!strpos(HTTP_SERVER, 'localhost')) {
-			// $server_info = get_headers('http://wsdm.willowbabyshop.com/', true);
-			$server_info = get_headers(HTTP_SERVER, true);
+	function addLog($conn, $customer_id, $schedule_date, $action) {
+		// if (!strpos(HTTP_SERVER, 'localhost')) {
+		// 	// $server_info = get_headers('http://wsdm.willowbabyshop.com/', true);
+		// 	$server_info = get_headers(HTTP_SERVER, true);
 
-			if (is_array($server_info['date'])) {
-				$date_info = $server_info['date'][0];
-			} else {
-				$date_info = $server_info['date'];
-			}
+		// 	if (is_array($server_info['date'])) {
+		// 		$date_info = $server_info['date'][0];
+		// 	} else {
+		// 		$date_info = $server_info['date'];
+		// 	}
 
-			$datetime = date('Y-m-d H:i:s', strtotime($date_info));
-		}
+		// 	$datetime = date('Y-m-d H:i:s', strtotime($date_info));
+		// }
 		
 		if ($action == 'login') {
-			$sql = "UPDATE oc_presence_log SET time_login = '" . $datetime . "' WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $schedule_date . "'";
+			$sql = "UPDATE oc_presence_log SET time_login = NOW() WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $schedule_date . "'";
 		} elseif ($action == 'logout') {
-			$sql = "UPDATE oc_presence_log SET time_logout = '" . $datetime . "' WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $schedule_date . "'";
+			$sql = "UPDATE oc_presence_log SET time_logout = NOW() WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $schedule_date . "'";
 		}
 		
 		$result	= mysqli_query($conn, $sql);

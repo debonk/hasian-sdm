@@ -21,15 +21,18 @@ if (isset($_POST['VerPas']) && !empty($_POST['VerPas'])) {
 	if (strtoupper($vStamp) == strtoupper($salt)) {
 		$name = getCustomerName($conn, $customer_id);
 
-		$server_info = get_headers('https://wsdm.willowbabyshop.com/', true);
+		// // $server_info = get_headers('https://wsdm.willowbabyshop.com/', true);
+		// $server_info = get_headers(HTTP_SERVER, true);
 
-		if (is_array($server_info['date'])) {
-			$date_info = $server_info['date'][0];
-		} else {
-			$date_info = $server_info['date'];
-		}
+		// if (is_array($server_info['date'])) {
+		// 	$date_info = $server_info['date'][0];
+		// } else {
+		// 	$date_info = $server_info['date'];
+		// }
 
-		$datetime = date("Y-m-d H:i:s", strtotime($date_info));
+		// $datetime = date("Y-m-d H:i:s", strtotime($date_info));
+
+		$datetime = getServerTime($conn);
 
 		echo $base_path . "messages.php?name=$name&time=$datetime";
 		// $msg = $name;
@@ -37,5 +40,8 @@ if (isset($_POST['VerPas']) && !empty($_POST['VerPas'])) {
 	}
 	
 	include 'include/close.php';
+} else {
+	$msg = 'no VerPass';
+	echo HTTP_SERVER . 'model/finger/' . "messages.php?msg=$msg";
 }
 ?>

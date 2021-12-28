@@ -19,10 +19,10 @@ if (isset($_POST['VerPas']) && !empty($_POST['VerPas']) && isset($_GET['action']
 	$salt = md5($sn . $fingerData[0]['finger_data'] . $device[0]['vc'] . $time . $customer_id . $device[0]['vkey']);
 	
 	if (strtoupper($vStamp) == strtoupper($salt)) {
-		$datetime = date('Y-m-d H:i:s', strtotime($time));
+		// $datetime = date('Y-m-d H:i:s', strtotime($time));
 		$action = $_GET['action'];
 		
-		$log = addLog($conn, $customer_id, $schedule_date, $datetime, $action);
+		$log = addLog($conn, $customer_id, $schedule_date, $action);
 	}
 	
 	// include 'include/close.php';//Jangan di close untuk pengecekan status log

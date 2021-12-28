@@ -3,7 +3,7 @@ require '../../../config.php';
 
 // $base_path		= "http://localhost/wsdm/catalog/model/finger/";
 $base_path		= HTTP_SERVER . 'catalog/model/finger/';
-$base_path2		= HTTP_SERVER . 'catalog/model/finger/messages.php';
+// $base_path2		= HTTP_SERVER . 'catalog/model/finger/messages.php';
 
 $db_name		= DB_DATABASE;
 $db_user		= DB_USERNAME;
