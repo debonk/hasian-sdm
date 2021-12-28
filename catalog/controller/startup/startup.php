@@ -122,7 +122,7 @@ class ControllerStartupStartup extends Controller {
 		if (isset($this->session->data['currency'])) {
 			$code = $this->session->data['currency'];
 		}
-		
+
 		if (isset($this->request->cookie['currency']) && !array_key_exists($code, $currencies)) {
 			$code = $this->request->cookie['currency'];
 		}
@@ -143,6 +143,21 @@ class ControllerStartupStartup extends Controller {
 		}		
 		
 		$this->registry->set('currency', new Cart\Currency($this->registry));
+		
+		// Login Session
+		$code = '';
+		
+		if (!empty($this->session->data['login_session'])) {
+			$code = $this->session->data['login_session'];
+		}
+		
+		if (!empty($this->request->cookie['login_session'])) {
+			$code = $this->request->cookie['login_session'];
+		}
+		
+		if (empty($this->session->data['login_session']) || $this->session->data['login_session'] != $code) {
+			$this->session->data['login_session'] = $code;
+		}
 		
 		// Tax
 		// $this->registry->set('tax', new Cart\Tax($this->registry));

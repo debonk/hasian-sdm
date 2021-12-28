@@ -27,7 +27,7 @@ class ModelPresencePresence extends Model {
 	}
 
 	public function getCustomers($data = array()) { //Used by: dashboard/customer, payroll, report payroll insurance, payroll_basic, schedule
-		$sql = "SELECT c.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.image, c.date_added, c.customer_group_id, cgd.name AS customer_group, c.location_id, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN (" . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND status = 1";
+		$sql = "SELECT c.customer_id, c.nip, c.firstname, c.lastname, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.image, c.date_added, c.customer_group_id, cgd.name AS customer_group, c.location_id, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN (" . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND status = 1";
 
 		$implode = array();
 

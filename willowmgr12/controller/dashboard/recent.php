@@ -1,6 +1,10 @@
 <?php
 class ControllerDashboardRecent extends Controller {
 	public function index() {
+		if (!$this->user->hasPermission('access', 'dashboard/recent')) {
+			return;
+		}
+
 		$this->load->language('dashboard/recent');
 
 		$data['heading_title'] = $this->language->get('heading_title');

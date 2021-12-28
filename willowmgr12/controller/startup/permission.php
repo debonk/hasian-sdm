@@ -22,14 +22,15 @@ class ControllerStartupPermission extends Controller {
 				'common/reset',
 				'error/not_found',
 				'error/permission',
-				'dashboard/order',
-				'dashboard/sale',
+				'dashboard/login_session',
+				'dashboard/presence',
 				'dashboard/customer',
 				'dashboard/online',
+				'dashboard/history',
+				'dashboard/recent',
+
 				'dashboard/map',
-				'dashboard/activity',
-				'dashboard/chart',
-				'dashboard/recent'
+				'dashboard/chart'
 			);
 
 			if (!in_array($route, $ignore) && !$this->user->hasPermission('access', $route)) {

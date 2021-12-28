@@ -40,11 +40,13 @@ class ControllerPayrollPayrollSetting extends Controller {
 			'entry_default_hke',
 			'entry_vacation_limit',
 			'entry_schedule_lock',
+			'entry_login_session',
 			'entry_logout_date',
 			'entry_login_start',
 			'entry_login_end',
 			'entry_logout_start',
 			'entry_use_fingerprint',
+			'entry_use_customer_image',
 			'entry_schedule_check',
 			'entry_completed_after',
 			'entry_presence_statuses',
@@ -67,6 +69,7 @@ class ControllerPayrollPayrollSetting extends Controller {
 			'help_login_end',
 			'help_logout_start',
 			'help_use_fingerprint',
+			'help_use_customer_image',
 			'help_schedule_check',
 			'help_presence_statuses',
 			'tab_general',
@@ -249,6 +252,14 @@ class ControllerPayrollPayrollSetting extends Controller {
 			$data['payroll_setting_schedule_lock'] = 0;
 		}
 
+		if (isset($this->request->post['payroll_setting_login_session'])) {
+			$data['payroll_setting_login_session'] = $this->request->post['payroll_setting_login_session'];
+		} elseif ($this->config->get('payroll_setting_login_session')) {
+			$data['payroll_setting_login_session'] = $this->config->get('payroll_setting_login_session');
+		} else {
+			$data['payroll_setting_login_session'] = 0;
+		}
+
 		if (isset($this->request->post['payroll_setting_logout_date'])) {
 			$data['payroll_setting_logout_date'] = $this->request->post['payroll_setting_logout_date'];
 		} elseif ($this->config->get('payroll_setting_logout_date')) {
@@ -293,6 +304,12 @@ class ControllerPayrollPayrollSetting extends Controller {
 			$data['payroll_setting_use_fingerprint'] = $this->request->post['payroll_setting_use_fingerprint'];
 		} else {
 			$data['payroll_setting_use_fingerprint'] = $this->config->get('payroll_setting_use_fingerprint');
+		}
+		
+		if (isset($this->request->post['payroll_setting_use_customer_image'])) {
+			$data['payroll_setting_use_customer_image'] = $this->request->post['payroll_setting_use_customer_image'];
+		} else {
+			$data['payroll_setting_use_customer_image'] = $this->config->get('payroll_setting_use_customer_image');
 		}
 		
 		if (isset($this->request->post['payroll_setting_schedule_check'])) {

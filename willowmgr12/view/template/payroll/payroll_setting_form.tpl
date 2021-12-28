@@ -114,27 +114,60 @@
 							</div>
 							<div class="form-group">
 								<label class="col-sm-2 control-label" for="input-schedule-lock"><span data-toggle="tooltip"
-										title="<?php echo $help_schedule_lock; ?>">
-										<?php echo $entry_schedule_lock; ?>
-									</span></label>
+									title="<?php echo $help_schedule_lock; ?>">
+									<?php echo $entry_schedule_lock; ?>
+								</span></label>
 								<div class="col-sm-10">
-									<select name="payroll_setting_schedule_lock" id="input-schedule-lock" class="form-control">
+									<label class="radio-inline">
 										<?php if ($payroll_setting_schedule_lock) { ?>
-										<option value="1" selected="selected">
-											<?php echo $text_yes; ?>
-										</option>
-										<option value="0">
-											<?php echo $text_no; ?>
-										</option>
+										<input type="radio" name="payroll_setting_schedule_lock" value="1" checked="checked" />
+										<?php echo $text_yes; ?>
 										<?php } else { ?>
-										<option value="1">
-											<?php echo $text_yes; ?>
-										</option>
-										<option value="0" selected="selected">
-											<?php echo $text_no; ?>
-										</option>
+										<input type="radio" name="payroll_setting_schedule_lock" value="1" />
+										<?php echo $text_yes; ?>
 										<?php } ?>
-									</select>
+									</label>
+									<label class="radio-inline">
+										<?php if (!$payroll_setting_schedule_lock) { ?>
+										<input type="radio" name="payroll_setting_schedule_lock" value="0" checked="checked" />
+										<?php echo $text_no; ?>
+										<?php } else { ?>
+										<input type="radio" name="payroll_setting_schedule_lock" value="0" />
+										<?php echo $text_no; ?>
+										<?php } ?>
+									</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label"><span data-toggle="tooltip" title="<?php echo $help_use_customer_image; ?>"><?php echo $entry_use_customer_image; ?></span></label>
+								<div class="col-sm-10">
+									<label class="radio-inline">
+										<?php if ($payroll_setting_use_customer_image) { ?>
+										<input type="radio" name="payroll_setting_use_customer_image" value="1" checked="checked" />
+										<?php echo $text_yes; ?>
+										<?php } else { ?>
+										<input type="radio" name="payroll_setting_use_customer_image" value="1" />
+										<?php echo $text_yes; ?>
+										<?php } ?>
+									</label>
+									<label class="radio-inline">
+										<?php if (!$payroll_setting_use_customer_image) { ?>
+										<input type="radio" name="payroll_setting_use_customer_image" value="0" checked="checked" />
+										<?php echo $text_no; ?>
+										<?php } else { ?>
+										<input type="radio" name="payroll_setting_use_customer_image" value="0" />
+										<?php echo $text_no; ?>
+										<?php } ?>
+									</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-login-session">
+										<?php echo $entry_login_session; ?>
+									</label>
+								<div class="col-sm-10">
+									<input type="text" name="payroll_setting_login_session"
+										value="<?php echo $payroll_setting_login_session; ?>" class="form-control" id="input-login-session" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -178,53 +211,55 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label" for="input-use-fingerprint"><span data-toggle="tooltip"
-										title="<?php echo $help_use_fingerprint; ?>">
-										<?php echo $entry_use_fingerprint; ?>
-									</span></label>
+								<label class="col-sm-2 control-label"><span data-toggle="tooltip"
+									title="<?php echo $help_use_fingerprint; ?>">
+									<?php echo $entry_use_fingerprint; ?>
+								</span></label>
 								<div class="col-sm-10">
-									<select name="payroll_setting_use_fingerprint" id="input-use-fingerprint" class="form-control">
+									<label class="radio-inline">
 										<?php if ($payroll_setting_use_fingerprint) { ?>
-										<option value="1" selected="selected">
-											<?php echo $text_yes; ?>
-										</option>
-										<option value="0">
-											<?php echo $text_no; ?>
-										</option>
+										<input type="radio" name="payroll_setting_use_fingerprint" value="1" checked="checked" />
+										<?php echo $text_yes; ?>
 										<?php } else { ?>
-										<option value="1">
-											<?php echo $text_yes; ?>
-										</option>
-										<option value="0" selected="selected">
-											<?php echo $text_no; ?>
-										</option>
+										<input type="radio" name="payroll_setting_use_fingerprint" value="1" />
+										<?php echo $text_yes; ?>
 										<?php } ?>
-									</select>
+									</label>
+									<label class="radio-inline">
+										<?php if (!$payroll_setting_use_fingerprint) { ?>
+										<input type="radio" name="payroll_setting_use_fingerprint" value="0" checked="checked" />
+										<?php echo $text_no; ?>
+										<?php } else { ?>
+										<input type="radio" name="payroll_setting_use_fingerprint" value="0" />
+										<?php echo $text_no; ?>
+										<?php } ?>
+									</label>
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label" for="input-schedule-check"><span data-toggle="tooltip"
-										title="<?php echo $help_schedule_check; ?>">
-										<?php echo $entry_schedule_check; ?>
-									</span></label>
+								<label class="col-sm-2 control-label"><span data-toggle="tooltip"
+									title="<?php echo $help_schedule_check; ?>">
+									<?php echo $entry_schedule_check; ?>
+								</span></label>
 								<div class="col-sm-10">
-									<select name="payroll_setting_schedule_check" id="input-schedule-check" class="form-control">
+									<label class="radio-inline">
 										<?php if ($payroll_setting_schedule_check) { ?>
-										<option value="1" selected="selected">
-											<?php echo $text_yes; ?>
-										</option>
-										<option value="0">
-											<?php echo $text_no; ?>
-										</option>
+										<input type="radio" name="payroll_setting_schedule_check" value="1" checked="checked" />
+										<?php echo $text_yes; ?>
 										<?php } else { ?>
-										<option value="1">
-											<?php echo $text_yes; ?>
-										</option>
-										<option value="0" selected="selected">
-											<?php echo $text_no; ?>
-										</option>
+										<input type="radio" name="payroll_setting_schedule_check" value="1" />
+										<?php echo $text_yes; ?>
 										<?php } ?>
-									</select>
+									</label>
+									<label class="radio-inline">
+										<?php if (!$payroll_setting_schedule_check) { ?>
+										<input type="radio" name="payroll_setting_schedule_check" value="0" checked="checked" />
+										<?php echo $text_no; ?>
+										<?php } else { ?>
+										<input type="radio" name="payroll_setting_schedule_check" value="0" />
+										<?php echo $text_no; ?>
+										<?php } ?>
+									</label>
 								</div>
 							</div>
 							<div class="form-group">

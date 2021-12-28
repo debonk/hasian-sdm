@@ -6,6 +6,12 @@ class ModelLocalisationLocation extends Model {
 		return $query->row;
 	}
 	
+	public function getLocationByToken($token) {
+		$query = $this->db->query("SELECT location_id FROM " . DB_PREFIX . "location WHERE token = '" . $this->db->escape($token) . "'");
+
+		return $query->row;
+	}
+	
 	public function getLocations() {//Used by: login
 		$sql = "SELECT location_id, name, image FROM " . DB_PREFIX . "location ORDER BY name ASC";
 

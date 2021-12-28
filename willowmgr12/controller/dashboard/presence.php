@@ -14,7 +14,7 @@ class ControllerDashboardPresence extends Controller {
 		$period_y_m = date('Y') . '-' . (date('n') - 1);
 		$last_month = $this->model_report_presence->getPercentPresenceByPeriod($period_y_m);
 
-		if ($last_month['period']) {
+		if ($last_month['sum_presence']) {
 			$last_month_presence = $last_month['sum_presence'] * 100 / ($last_month['sum_presence'] + $last_month['sum_absence']);
 		} else {
 			$last_month_presence = 0;

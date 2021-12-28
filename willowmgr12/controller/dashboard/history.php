@@ -1,6 +1,10 @@
 <?php
 class ControllerDashboardHistory extends Controller {
 	public function index() {
+		if (!$this->user->hasPermission('access', 'dashboard/history')) {
+			return;
+		}
+
 		$this->load->language('dashboard/history');
 
 		$data['heading_title'] = $this->language->get('heading_title');

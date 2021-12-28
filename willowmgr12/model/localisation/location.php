@@ -14,6 +14,14 @@ class ModelLocalisationLocation extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "location WHERE location_id = " . (int)$location_id);
 	}
 
+	public function generateLocationToken($location_id) {
+		$token = token(12);
+
+		$this->db->query("UPDATE " . DB_PREFIX . "location SET token = '" . $this->db->escape($token) . "' WHERE location_id = '" . (int)$location_id . "'");
+
+		return $token;
+	}
+
 	public function getLocation($location_id) { //customer_info
 		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "location WHERE location_id = '" . (int)$location_id . "'");
 

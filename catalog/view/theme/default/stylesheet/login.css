@@ -23,11 +23,22 @@
 	border-color: #7d7d7d;
 }
 
+.tile-active:hover{
+	background-color: #a4e382;
+}
+.tile-login:hover{
+	background-color: #82cbe3;
+}
+.tile-logout:hover{
+	background-color: #b3b3b3;
+}
+
 .tile-body {
 	padding: 5px;
 	color: #FFFFFF;
 	line-height: 48px;
 	text-align: center;
+	min-height: 75px;
 }
 .tile .tile-body img{
 	font-size: 16px;

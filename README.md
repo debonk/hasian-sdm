@@ -1,11 +1,15 @@
 # sdm
 hasian sdm software
-2.4.0
+2.4.0	28/12/2021
 Modul: Dashboard - Login Session
-	ALTER TABLE `oc_location` ADD `token` VARCHAR(12) NULL DEFAULT NULL AFTER `comment`;
+	Setting: Pengaturan batas waktu session
+	User Group: Pengaturan akses login session pada user
+	User: Penambahan user security
+
 Pemasangan SSL Connection
 CATALOG > Presence - Login > Layout absensi
 Bug Fixed: Presence - Schedule > Perhitungan kehadiran pada Data Log jika jadwal tidak diset
+Bug Fixed: Employee - Finger - Verification > Datetime tidak berfungsi.
 
 2.3.10	28/12/2021
 Fatal Error: Absensi finger tidak terdaftar karena struktur headers server berubah.

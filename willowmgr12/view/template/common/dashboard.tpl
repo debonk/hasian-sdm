@@ -17,6 +17,9 @@
     </div>
     <?php } ?>
     <div class="row">
+				<?php echo $login_session; ?>
+    </div>
+    <div class="row">
       <div class="col-lg-4 col-md-4 col-sm-6"><?php echo $presence; ?></div>
       <div class="col-lg-4 col-md-4 col-sm-6"><?php echo $customer; ?></div>
       <div class="col-lg-4 col-md-4 col-sm-6"><?php echo $online; ?></div>

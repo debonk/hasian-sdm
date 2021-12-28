@@ -346,7 +346,9 @@ class ModelPresenceSchedule extends Model {
 		$logs_info = $this->getLogs($customer_id, $range_date);
 		
 		foreach ($logs_info as $log_info) {
-			if ($schedules_data[$log_info['date']]['time_in'] != '0000-00-00 00:00:00') {
+			// if ( $schedules_data[$log_info['date']]['time_in'] != '0000-00-00 00:00:00') {
+
+			if (isset($schedules_data[$log_info['date']]) && $schedules_data[$log_info['date']]['time_in'] != '0000-00-00 00:00:00') {
 				$logs_data = array(
 					'time_in'		=> $schedules_data[$log_info['date']]['time_in'],
 					'time_out'		=> $schedules_data[$log_info['date']]['time_out'],
@@ -359,7 +361,7 @@ class ModelPresenceSchedule extends Model {
 					'time_logout'	=> $log_info['time_logout']
 				);
 			}
-
+	
 			# Blok jika absensi tanpa menggunakan jadwal. Develop Later..
 			if (!isset($schedules_data[$log_info['date']])) {
 				$schedules_data[$log_info['date']] = [
@@ -401,9 +403,15 @@ class ModelPresenceSchedule extends Model {
 					$presence_code = 'a';
 				}
 			} else {
-				$time_login = '0000-00-00 00:00:00';
-				$time_logout = '0000-00-00 00:00:00';
-				$presence_code = 'off';
+				if (isset($schedule_data['time_login'])) {
+					$time_login = $schedule_data['time_login'];
+					$time_logout = $schedule_data['time_logout'];
+					$presence_code = 'h';
+				} else {
+					$time_login = '0000-00-00 00:00:00';
+					$time_logout = '0000-00-00 00:00:00';
+					$presence_code = 'off';
+				}
 			}
 
 			$schedules_data[$date] = array(

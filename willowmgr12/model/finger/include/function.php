@@ -81,13 +81,13 @@
 	}
 	
 	function getServerTime($conn) {
-		$sql 	= "SELECT NOW AS time";
+		$sql 	= "SELECT NOW() as time";
 		$result	= mysqli_query($conn, $sql);
 
 		if ($row = mysqli_fetch_row($result)) {
 			$str = $row[0];
 		}
 
-		return $str['time'];
+		return $str;
 	}
 ?>

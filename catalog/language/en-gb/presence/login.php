@@ -23,6 +23,4 @@ $_['error_logout']    			= 'Warning: Anda sudah logout!';
 $_['error_login']    			= 'Warning: Anda sudah login!';
 $_['error_not_login']    		= 'Warning: Anda belum login!';
 $_['error_verification']		= 'Warning: Proses Verifikasi Gagal!';
-
-//Info
-// $_['info_late']				= 'Anda terlambat %d menit!';
+$_['error_session']				= 'Sesi absensi telah habis. Hubungi Supervisor untuk memperbaharui!';
