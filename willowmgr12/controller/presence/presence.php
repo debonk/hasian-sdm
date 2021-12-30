@@ -829,7 +829,7 @@ class ControllerPresencePresence extends Controller {
 				$customer_id = $this->request->get['customer_id'];
 				$customer_info = $this->model_common_payroll->getCustomer($customer_id);
 
-				if (in_array($customer_info['location_id'], $this->config->get('payroll_setting_presence_lock'))) {
+				if ($this->config->has('payroll_setting_presence_lock') && in_array($customer_info['location_id'], $this->config->get('payroll_setting_presence_lock'))) {
 					$this->error['warning'] = $this->language->get('error_presence_lock');
 				}
 			}

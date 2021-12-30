@@ -1,5 +1,14 @@
 # sdm
 hasian sdm software
+
+2.4.1	30/12/2021
+Modul: CATALOG Presence > Login: Redirect Home after 1 minute idle.
+Modul: Location > List: Add Clear Location Token feature, to unlink from all device.
+Bug Fixed: Presence > Login: Cookies if location token is empty.
+Bug Fixed: Customer > Customer: Undefined index: health_insurance, life_insurance, employment_insurance.
+Bug Fixed: CATALOG Presence > Login: date() expects parameter 2 to be int, string given.
+Bug Fixed: Presence > Presence: in_array() expects parameter 2 to be array, null given.
+
 2.4.0	28/12/2021
 Modul: Dashboard - Login Session
 	Setting: Pengaturan batas waktu session

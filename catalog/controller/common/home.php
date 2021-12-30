@@ -60,8 +60,15 @@ class ControllerCommonHome extends Controller {
 		//Temporary sebelum buat modul display
 		// $data['main_image'] = $server . 'image/catalog/u_img/willow_main.jpg';
 		$data['main_image'] = $server . 'image/main_image.jpg'; //sdm.grahakartini
-		$data['main_url'] = $this->url->link('presence/login', '', true);
-		$data['info'] = 'Klik untuk Login';
+
+		$url = '';
+
+		if (isset($this->request->get['action']) && $this->request->get['action'] == 'logout') {
+			$url = '&action=logout';
+		}
+
+		$data['main_url'] = $this->url->link('presence/login', $url, true);
+		$data['info'] = 'Klik untuk Login/Logout';
 		//End Temporary
 
 		$this->response->setOutput($this->load->view('common/home', $data));

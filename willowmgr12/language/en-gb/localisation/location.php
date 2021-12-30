@@ -14,6 +14,7 @@ $_['text_geocode']     = 'Geocode was not successful for the following reason:';
 // Column
 $_['column_name']      = 'Nama Kantor/Toko';
 $_['column_address']   = 'Alamat';
+$_['column_token']     = 'Location Token';
 $_['column_action']    = 'Action';
 
 // Entry
@@ -36,3 +37,6 @@ $_['error_permission'] = 'Warning: You do not have permission to modify work loc
 $_['error_name']       = 'Name must be at least 1 character!';
 $_['error_address']    = 'Alamat must be between 3 and 128 characters!';
 $_['error_telephone']  = 'Telepon must be between 3 and 32 characters!';
+
+// Button
+$_['button_clear_token']	= 'Clear Location Token.';

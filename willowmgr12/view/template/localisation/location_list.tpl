@@ -2,7 +2,9 @@
 <div id="content">
   <div class="page-header">
     <div class="container-fluid">
-      <div class="pull-right"><a href="<?php echo $add; ?>" data-toggle="tooltip" title="<?php echo $button_add; ?>" class="btn btn-primary"><i class="fa fa-plus"></i></a>
+      <div class="pull-right">
+				<a href="<?php echo $add; ?>" data-toggle="tooltip" title="<?php echo $button_add; ?>" class="btn btn-primary"><i class="fa fa-plus"></i></a>
+        <button type="submit" id="button-token" form="form-location" formaction="<?php echo $clear_token; ?>" data-toggle="tooltip" title="<?php echo $button_clear_token; ?>" class="btn btn-warning"><i class="fa fa-chain-broken"></i></button>
         <button type="button" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger" onclick="confirm('<?php echo $text_confirm; ?>') ? $('#form-location').submit() : false;"><i class="fa fa-trash-o"></i></button>
       </div>
       <h1><?php echo $heading_title; ?></h1>
@@ -45,6 +47,7 @@
                     <?php } else { ?>
                     <a href="<?php echo $sort_address; ?>"><?php echo $column_address; ?></a>
                     <?php } ?></td>
+                  <td class="text-left"><?php echo $column_token; ?></td>
                   <td class="text-right"><?php echo $column_action; ?></td>
                 </tr>
               </thead>
@@ -59,6 +62,7 @@
                     <?php } ?></td>
                   <td class="text-left"><?php echo $locations['name']; ?></td>
                   <td class="text-left"><?php echo $locations['address']; ?></td>
+                  <td class="text-left"><code><?php echo $locations['token']; ?></code></td>
                   <td class="text-right"><a href="<?php echo $locations['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
                 </tr>
                 <?php } ?>

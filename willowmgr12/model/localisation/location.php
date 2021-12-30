@@ -10,6 +10,10 @@ class ModelLocalisationLocation extends Model {
 		$this->db->query("UPDATE " . DB_PREFIX . "location SET name = '" . $this->db->escape($data['name']) . "', address = '" . $this->db->escape($data['address']) . "', geocode = '" . $this->db->escape($data['geocode']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', fax = '" . $this->db->escape($data['fax']) . "', image = '" . $this->db->escape($data['image']) . "', open = '" . $this->db->escape($data['open']) . "', comment = '" . $this->db->escape($data['comment']) . "' WHERE location_id = '" . (int)$location_id . "'");
 	}
 
+	public function clearLocationToken($location_id) {
+		$this->db->query("UPDATE " . DB_PREFIX . "location SET token = null WHERE location_id = '" . (int)$location_id . "'");
+	}
+
 	public function deleteLocation($location_id) {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "location WHERE location_id = " . (int)$location_id);
 	}
@@ -17,7 +21,7 @@ class ModelLocalisationLocation extends Model {
 	public function generateLocationToken($location_id) {
 		$location_info = $this->getLocation($location_id);
 
-		if ($location_info) {
+		if ($location_info && !empty($location_info['token'])) {
 			$token = $location_info['token'];
 		} else {
 			$token = token(12);
@@ -35,7 +39,7 @@ class ModelLocalisationLocation extends Model {
 	}
 
 	public function getLocations($data = array()) {//Used by: schedule_type
-		$sql = "SELECT location_id, name, address FROM " . DB_PREFIX . "location";
+		$sql = "SELECT location_id, name, address, token FROM " . DB_PREFIX . "location";
 
 		$sort_data = array(
 			'name',

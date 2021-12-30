@@ -110,6 +110,40 @@ class ControllerLocalisationLocation extends Controller {
 		$this->getList();
 	}
 
+	public function clearToken() {
+		$this->load->language('localisation/location');
+
+		$this->document->setTitle($this->language->get('heading_title'));
+
+		$this->load->model('localisation/location');
+
+		if (isset($this->request->post['selected']) && $this->validateDelete()) {
+			foreach ($this->request->post['selected'] as $location_id) {
+				$this->model_localisation_location->clearLocationToken($location_id);
+			}
+
+			$this->session->data['success'] = $this->language->get('text_success');
+
+			$url = '';
+
+			if (isset($this->request->get['sort'])) {
+				$url .= '&sort=' . $this->request->get['sort'];
+			}
+
+			if (isset($this->request->get['order'])) {
+				$url .= '&order=' . $this->request->get['order'];
+			}
+
+			if (isset($this->request->get['page'])) {
+				$url .= '&page=' . $this->request->get['page'];
+			}
+
+			$this->response->redirect($this->url->link('localisation/location', 'token=' . $this->session->data['token'] . $url, true));
+		}
+
+		$this->getList();
+	}
+
 	protected function getList() {
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
@@ -157,6 +191,7 @@ class ControllerLocalisationLocation extends Controller {
 
 		$data['add'] = $this->url->link('localisation/location/add', 'token=' . $this->session->data['token'] . $url, true);
 		$data['delete'] = $this->url->link('localisation/location/delete', 'token=' . $this->session->data['token'] . $url, true);
+		$data['clear_token'] = $this->url->link('localisation/location/clearToken', 'token=' . $this->session->data['token'] . $url, true);
 
 		$data['location'] = array();
 
@@ -176,6 +211,7 @@ class ControllerLocalisationLocation extends Controller {
 				'location_id' => $result['location_id'],
 				'name'        => $result['name'],
 				'address'     => $result['address'],
+				'token'       => $result['token'] ? utf8_substr($result['token'], 0, 4) . '...' : '-',
 				'edit'        => $this->url->link('localisation/location/edit', 'token=' . $this->session->data['token'] . '&location_id=' . $result['location_id'] . $url, true)
 			);
 		}
@@ -188,10 +224,12 @@ class ControllerLocalisationLocation extends Controller {
 
 		$data['column_name'] = $this->language->get('column_name');
 		$data['column_address'] = $this->language->get('column_address');
+		$data['column_token'] = $this->language->get('column_token');
 		$data['column_action'] = $this->language->get('column_action');
 
 		$data['button_add'] = $this->language->get('button_add');
 		$data['button_edit'] = $this->language->get('button_edit');
+		$data['button_clear_token'] = $this->language->get('button_clear_token');
 		$data['button_delete'] = $this->language->get('button_delete');
 
 		if (isset($this->error['warning'])) {

@@ -112,8 +112,14 @@
 	<script type="text/javascript">
 		var log_ct = 1;
 		var click_ct = 1;
-		var alert_fade_out;
+		let alert_fade_out;
+		let home;
 
+		function redirectHome() {
+			home = setTimeout(function () { location = 'index.php?route=common/home&action=<?= $action; ?>'; }, 60000);
+		}
+
+		redirectHome();
 
 		$('a[id^=\'customer\']').on('click', function (e) {
 			e.preventDefault();
@@ -133,10 +139,13 @@
 					crossDomain: true,
 					beforeSend: function () {
 						clearTimeout(alert_fade_out);
+						clearTimeout(home);
 						$('.alert').remove();
 					},
 
 					success: function (json) {
+						redirectHome();
+
 						if (json['error']) {
 							$('#fixed-alert').html('<div class="alert fixed-alert alert-danger">' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 

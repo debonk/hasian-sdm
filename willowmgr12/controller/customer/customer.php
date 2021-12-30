@@ -19,7 +19,7 @@ class ControllerCustomerCustomer extends Controller {
 
 		$this->load->model('customer/customer');
 
-		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+		if (($this->request->server['REQUEST_METHOD'] == 'POST') && !$this->validateForm()) {
 			$customer_id = $this->model_customer_customer->addCustomer($this->request->post);
 
 			// Add to customer_history log

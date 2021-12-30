@@ -19,6 +19,18 @@ class ModelCustomerCustomer extends Model {
 		} else {
 			$data['date_birth'] = null;
 		}
+		
+		$fields_data = [
+			'skip_trial_status',
+			'health_insurance',
+			'employment_insurance',
+			'life_insurance'
+		];
+		foreach ($fields_data as $field_data) {
+			if (!isset($data[$field_data])) {
+				$data[$field_data] = 0;
+			}
+		}
 
 		$sql = "INSERT INTO " . DB_PREFIX . "customer SET customer_department_id = '" . (int)$data['customer_department_id'] . "', customer_group_id = '" . (int)$data['customer_group_id'] . "', location_id = '" . (int)$data['location_id'] . "', nip = '" . $this->db->escape($nip) . "', nip_no = '" . (int)$nip_no . "', nik = '" . $this->db->escape($data['nik']) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', date_start = STR_TO_DATE('" . $this->db->escape($data['date_start']) . "', '%e %b %Y'), image = '" . $this->db->escape($data['image']) . "', skip_trial_status = '" . (int)$data['skip_trial_status'] . "', payroll_include = '" . (int)$data['payroll_include'] . "', acc_no = '" . $this->db->escape($data['acc_no']) . "', payroll_method_id = '" . (int)$data['payroll_method_id'] . "', health_insurance = '" . (int)$data['health_insurance'] . "', life_insurance = '" . (int)$data['life_insurance'] . "', employment_insurance = '" . (int)$data['employment_insurance'] . "', health_insurance_id = '" . $this->db->escape($data['health_insurance_id']) . "', employment_insurance_id = '" . $this->db->escape($data['employment_insurance_id']) . "', full_overtime = '" . (int)$data['full_overtime'] . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "', salt = '" . $this->db->escape($salt = token(9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "', status = '" . (int)$data['status'] . "', date_added = NOW()";
 
