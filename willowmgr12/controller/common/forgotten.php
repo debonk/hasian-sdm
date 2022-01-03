@@ -49,13 +49,26 @@ class ControllerCommonForgotten extends Controller {
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
+			# Add to activity log
+			$user_info = $this->model_user_user->getUserByCode($code);
+
+			if ($user_info) {
+				$this->load->model('user/activity');
+
+				$activity_data = array(
+					'user_id' => $user_info['user_id'],
+					'name'    => $user_info['username']
+				);
+	
+				$this->model_user_activity->addActivity('forgotten', $activity_data);
+			}
+
 			$this->response->redirect($this->url->link('common/login', '', true));
 		}
 
 		$data['heading_title'] = $this->language->get('heading_title');
 
 		$data['text_your_email'] = $this->language->get('text_your_email');
-		$data['text_email'] = $this->language->get('text_email');
 
 		$data['entry_email'] = $this->language->get('entry_email');
 
@@ -97,10 +110,10 @@ class ControllerCommonForgotten extends Controller {
 	}
 
 	protected function validate() {
-		if (!isset($this->request->post['email'])) {
+		if (empty($this->request->post['email'])) {
 			$this->error['warning'] = $this->language->get('error_email');
 		} elseif (!$this->model_user_user->getTotalUsersByEmail($this->request->post['email'])) {
-			$this->error['warning'] = $this->language->get('error_email');
+			$this->error['warning'] = $this->language->get('error_not_found');
 		}
 
 		return !$this->error;

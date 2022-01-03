@@ -3,11 +3,6 @@ class ControllerPayrollPayrollRelease extends Controller
 {
 	private $error = array();
 
-	// private function initDbArchive() {
-	// 	$db_archive = new DB(DB_DRIVER, DB_HOSTNAME, DB_ARCH_USERNAME, DB_ARCH_PASSWORD, DB_ARCH_DATABASE, DB_PORT);
-	// 	$this->registry->set('db_archive', $db_archive);
-	// }
-
 	public function index()
 	{
 		$this->load->language('payroll/payroll_release');

@@ -1,6 +1,29 @@
 # sdm
 hasian sdm software
 
+2.5.0	03/01/2021
+Modul: Report - User Activity
+	# Create Table
+		CREATE TABLE `oc_user_activity` (
+		`user_activity_id` int(11) NOT NULL,
+		`user_id` int(11) NOT NULL,
+		`key` varchar(64) NOT NULL,
+		`data` text NOT NULL,
+		`ip` varchar(40) NOT NULL,
+		`date_added` datetime NOT NULL
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+		ALTER TABLE `oc_user_activity`
+		ADD PRIMARY KEY (`user_activity_id`);
+
+
+		ALTER TABLE `oc_user_activity`
+		MODIFY `user_activity_id` int(11) NOT NULL AUTO_INCREMENT;
+	# End Create Table
+
+Bug Fixed: Password Reset not work.
+
 2.4.1	30/12/2021
 Modul: CATALOG Presence > Login: Redirect Home after 1 minute idle.
 Modul: Location > List: Add Clear Location Token feature, to unlink from all device.

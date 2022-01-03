@@ -14,6 +14,16 @@ class ControllerCommonLogin extends Controller {
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$this->session->data['token'] = token(32);
 			
+			// Add to activity log
+			$this->load->model('user/activity');
+
+			$activity_data = array(
+				'user_id' => $this->user->getId(),
+				'name'    => $this->user->getUserName()
+			);
+
+			$this->model_user_activity->addActivity('login', $activity_data);
+
 			if (isset($this->request->post['redirect']) && (strpos($this->request->post['redirect'], HTTP_SERVER) === 0 || strpos($this->request->post['redirect'], HTTPS_SERVER) === 0)) {
 				$this->response->redirect($this->request->post['redirect'] . '&token=' . $this->session->data['token']);
 			} else {
