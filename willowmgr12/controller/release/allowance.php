@@ -408,6 +408,31 @@ class ControllerReleaseAllowance extends Controller {
 			$data['date_process'] = date($this->language->get('date_format_jMY'), strtotime('today'));
 		}
 		
+		// $components = [
+		// 	'gaji_pokok',
+		// 	'tunj_jabatan',
+		// 	'tunj_hadir',
+		// 	'tunj_pph',
+		// 	'uang_makan'
+		// ];
+
+		// $data['components'] = [];
+
+		// foreach ($components as $component) {
+		// 	$data['components'][] = [
+		// 		'value'	=> $component,
+		// 		'text'	=> $component == 'uang_makan' ? sprintf($this->language->get('text_' . $component), $this->config->get('payroll_setting_default_hke')) : $this->language->get('text_' . $component)
+		// 	];
+		// };
+
+		// if (isset($this->request->post['allowance_components'])) {
+		// 	$data['allowance_components'] = $this->request->post['allowance_components'];
+		// } elseif (!empty($allowance_info)) {
+		//    	$data['allowance_components'] = $allowance_info('allowance_components');
+		// } else {
+		// 	$data['allowance_components'] = ['gaji_pokok', 'tunj_jabatan', 'tunj_hadir', 'tunj_pph'];
+		// }
+
 		if (!empty($allowance_customers)) {
 			$date_allowance = date_create($allowance_info['allowance_period']);
 			
@@ -476,12 +501,6 @@ class ControllerReleaseAllowance extends Controller {
 			$url .= '&order=' . $this->request->get['order'];
 		}
 
-		// if (isset($this->request->get['page'])) {
-			// $url .= '&page=' . $this->request->get['page'];
-		// }
-
-// print_r(($page));
-// print_r( '<br>');
 		$pagination = new Pagination();
 		$pagination->total = $allowance_customers_count;
 		$pagination->page = $page;
@@ -510,6 +529,12 @@ class ControllerReleaseAllowance extends Controller {
 			$this->error['allowance_period'] = $this->language->get('error_allowance_period');
 		}
 
+		$this->load->model('common/payroll');
+
+		if (!$this->model_common_payroll->getPeriodByDate(date('Y-m-d', strtotime($this->db->escape($this->request->post['allowance_period']))))) {
+			$this->error['allowance_period'] = $this->language->get('error_presence_period');
+		}
+		
 		if (empty($this->request->post['fund_account_id'])) {
 			$this->error['fund_account'] = $this->language->get('error_fund_account');
 		}

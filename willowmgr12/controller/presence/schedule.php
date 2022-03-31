@@ -380,9 +380,9 @@ class ControllerPresenceSchedule extends Controller
 
 		$period_status_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'pending, approved, released, completed');
 
-		if ($period_status_check || !$this->user->hasPermission('modify', 'presence/schedule')) {
-			return new Action('error/not_found');
-		}
+		// if ($period_status_check || !$this->user->hasPermission('modify', 'presence/schedule')) {
+			// return new Action('error/not_found');
+		// }
 
 		if (isset($this->request->get['filter_name'])) {
 			$filter_name = $this->request->get['filter_name'];

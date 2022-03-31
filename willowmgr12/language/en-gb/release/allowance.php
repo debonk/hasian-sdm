@@ -27,8 +27,6 @@ $_['column_amount']				= 'Jumlah';
 $_['entry_allowance_period']	= 'Periode THR';
 $_['entry_date_process']		= 'Tanggal Proses';
 $_['entry_fund_account']		= 'Sumber Dana';
-// $_['entry_customer']			= 'Karyawan';
-// $_['entry_amount']			= 'Jumlah';
 
 //Button
 $_['button_calculate']			= 'Hitung THR Karyawan';
@@ -36,6 +34,7 @@ $_['button_export_csv']			= 'Export CIMB CSV';
 
 // Error
 $_['error_allowance_period']	 = 'Periode THR harus diisi';
+$_['error_presence_period']		 = 'Periode Penggajian masih belum berjalan';
 
 $_['error_customer']			 = 'Warning: Tentukan karyawan penerima THR!';
 $_['error_customer_not_found']	 = 'Warning: Data karyawan tidak ditemukan!';

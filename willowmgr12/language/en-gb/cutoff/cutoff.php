@@ -1,20 +1,20 @@
 <?php
 // Heading
-$_['heading_title']				 = 'Potongan Nota';
+$_['heading_title']				 = 'Potongan';
 
 // Text
 $_['text_select_customer']	 	 = '-- Pilih Karyawan --';
-$_['text_list']					 = 'Daftar Potongan Nota';
-$_['text_add']					 = 'Potongan Nota Baru';
-$_['text_edit']					 = 'Edit Potongan Nota';
+$_['text_list']					 = 'Daftar Potongan';
+$_['text_add']					 = 'Data Potongan Baru';
+$_['text_edit']					 = 'Ubah Potongan';
 $_['text_paid']	 				 = 'Telah Dibayar';
 $_['text_unpaid']	 			 = 'Belum Dibayar';
 $_['text_all_status']	 		 = 'Semua Status';
 $_['text_success']				 = 'Success: You have modified cutoffs!';
 
 // Column
-$_['column_inv_no']				= 'No Nota';
-$_['column_date']			 	= 'Tanggal Nota';
+$_['column_inv_no']				= 'Deskripsi';
+$_['column_date']			 	= 'Tanggal';
 $_['column_name']				= 'Nama Karyawan';
 $_['column_principle']			= 'Principle';
 $_['column_business_name']		= 'Nama Toko';
@@ -26,7 +26,7 @@ $_['column_payment']			= 'Pembayaran';
 // Entry
 $_['entry_name']				= 'Nama Karyawan';
 $_['entry_date']				= 'Tanggal Nota';
-$_['entry_inv_no']      		= 'No Nota';
+$_['entry_inv_no']      		= 'Deskripsi';
 $_['entry_principle']     		= 'Principle';
 $_['entry_business_name']		= 'Nama Toko';
 $_['entry_amount']				= 'Jumlah';

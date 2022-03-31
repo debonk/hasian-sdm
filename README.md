@@ -1,7 +1,15 @@
-# sdm
-hasian sdm software
+# hsdm software
 
-2.5.0	03/01/2021
+2.5.1	31/03/2022
+Bug Fixed: Error save presence/presence if no modify permission.
+Bug Fixed: New Employee not saved.
+Bug Fixed: Config SSL not set on store_id = 0.
+Modify: Schedule > Print: Need access role only to print schedule
+Modify: Cutoff: Modify some language.
+Bug Fixed: Finger Device list if no results
+Modify: Allowance: Add components option in Setting for allowance calculation
+
+2.5.0	03/01/2022
 Modul: Report - User Activity
 	# Create Table
 		CREATE TABLE `oc_user_activity` (

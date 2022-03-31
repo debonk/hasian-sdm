@@ -23,144 +23,151 @@ class ControllerSettingSetting extends Controller {
 			$this->response->redirect($this->url->link('setting/store', 'token=' . $this->session->data['token'], true));
 		}
 
-		$data['heading_title'] = $this->language->get('heading_title');
+		$language_items = array(
+			'heading_title',
+			'text_account',
+			'text_affiliate',
+			'text_allowance',
+			'text_captcha',
+			'text_checkout',
+			'text_customer',
+			'text_disabled',
+			'text_edit',
+			'text_enabled',
+			'text_error',
+			'text_general',
+			'text_item',
+			'text_mail_api',
+			'text_mail',
+			'text_no',
+			'text_none',
+			'text_phpmailer',
+			'text_register',
+			'text_return',
+			'text_security',
+			'text_select',
+			'text_smtp',
+			'text_upload',
+			'text_yes',
 
-		$data['text_edit'] = $this->language->get('text_edit');
-		$data['text_enabled'] = $this->language->get('text_enabled');
-		$data['text_disabled'] = $this->language->get('text_disabled');
-		$data['text_select'] = $this->language->get('text_select');
-		$data['text_none'] = $this->language->get('text_none');
-		$data['text_yes'] = $this->language->get('text_yes');
-		$data['text_no'] = $this->language->get('text_no');
-		$data['text_customer'] = $this->language->get('text_customer');
-		$data['text_item'] = $this->language->get('text_item');
-		$data['text_account'] = $this->language->get('text_account');
-		$data['text_checkout'] = $this->language->get('text_checkout');
-		$data['text_affiliate'] = $this->language->get('text_affiliate');
-		$data['text_return'] = $this->language->get('text_return');
-		$data['text_captcha'] = $this->language->get('text_captcha');
-		$data['text_register'] = $this->language->get('text_register');
-		$data['text_mail'] = $this->language->get('text_mail');
-		$data['text_phpmailer'] = $this->language->get('text_phpmailer');
-		$data['text_smtp'] = $this->language->get('text_smtp');
-		$data['text_mail_api'] = $this->language->get('text_mail_api');//Bonk16
-		$data['text_general'] = $this->language->get('text_general');
-		$data['text_security'] = $this->language->get('text_security');
-		$data['text_upload'] = $this->language->get('text_upload');
-		$data['text_error'] = $this->language->get('text_error');
+			'entry_account_mail',
+			'entry_account',
+			'entry_address',
+			'entry_admin_language',
+			'entry_api',
+			'entry_bbm',
+			'entry_captcha_page',
+			'entry_captcha',
+			'entry_comment',
+			'entry_components',
+			'entry_compression',
+			'entry_country',
+			'entry_currency_auto',
+			'entry_currency',
+			'entry_customer_online',
+			'entry_email',
+			'entry_encryption',
+			'entry_error_display',
+			'entry_error_filename',
+			'entry_error_log',
+			'entry_fax',
+			'entry_file_ext_allowed',
+			'entry_file_max_size',
+			'entry_file_mime_allowed',
+			'entry_ftp_hostname',
+			'entry_ftp_password',
+			'entry_ftp_port',
+			'entry_ftp_root',
+			'entry_ftp_status',
+			'entry_ftp_username',
+			'entry_geocode',
+			'entry_icon',
+			'entry_image',
+			'entry_language',
+			'entry_layout',
+			'entry_limit_admin',
+			'entry_line',
+			'entry_location',
+			'entry_login_attempts',
+			'entry_logo',
+			'entry_mail_alert',
+			'entry_mail_parameter',
+			'entry_mail_protocol',
+			'entry_mail_smtp_hostname',
+			'entry_mail_smtp_password',
+			'entry_mail_smtp_port',
+			'entry_mail_smtp_timeout',
+			'entry_mail_smtp_username',
+			'entry_maintenance',
+			'entry_meta_description',
+			'entry_meta_keyword',
+			'entry_meta_title',
+			'entry_name',
+			'entry_nip_prefix',
+			'entry_open',
+			'entry_owner',
+			'entry_password',
+			'entry_robots',
+			'entry_secure',
+			'entry_seo_url',
+			'entry_shared',
+			'entry_status',
+			'entry_telephone',
+			'entry_theme',
+			'entry_wa',
+			'entry_zone',
 
-		$data['entry_name'] = $this->language->get('entry_name');
-		$data['entry_owner'] = $this->language->get('entry_owner');
-		$data['entry_address'] = $this->language->get('entry_address');
-		$data['entry_geocode'] = $this->language->get('entry_geocode');
-		$data['entry_email'] = $this->language->get('entry_email');
-		$data['entry_telephone'] = $this->language->get('entry_telephone');
-		$data['entry_fax'] = $this->language->get('entry_fax');
-		$data['entry_wa'] = $this->language->get('entry_wa');// Bonk
-		$data['entry_bbm'] = $this->language->get('entry_bbm');// Bonk
-		$data['entry_line'] = $this->language->get('entry_line');// Bonk
-		$data['entry_image'] = $this->language->get('entry_image');
-		$data['entry_open'] = $this->language->get('entry_open');
-		$data['entry_comment'] = $this->language->get('entry_comment');
-		$data['entry_location'] = $this->language->get('entry_location');
-		$data['entry_meta_title'] = $this->language->get('entry_meta_title');
-		$data['entry_meta_description'] = $this->language->get('entry_meta_description');
-		$data['entry_meta_keyword'] = $this->language->get('entry_meta_keyword');
-		$data['entry_theme'] = $this->language->get('entry_theme');
-		$data['entry_layout'] = $this->language->get('entry_layout');
-		$data['entry_country'] = $this->language->get('entry_country');
-		$data['entry_zone'] = $this->language->get('entry_zone');
-		$data['entry_language'] = $this->language->get('entry_language');
-		$data['entry_admin_language'] = $this->language->get('entry_admin_language');
-		$data['entry_currency'] = $this->language->get('entry_currency');
-		$data['entry_currency_auto'] = $this->language->get('entry_currency_auto');
-		$data['entry_nip_prefix'] = $this->language->get('entry_nip_prefix');
-		$data['entry_limit_admin'] = $this->language->get('entry_limit_admin');
-		$data['entry_customer_online'] = $this->language->get('entry_customer_online');
-		$data['entry_login_attempts'] = $this->language->get('entry_login_attempts');
-		$data['entry_account'] = $this->language->get('entry_account');
-		$data['entry_account_mail'] = $this->language->get('entry_account_mail');
-		$data['entry_api'] = $this->language->get('entry_api');
-		$data['entry_captcha'] = $this->language->get('entry_captcha');
-		$data['entry_captcha_page'] = $this->language->get('entry_captcha_page');
-		$data['entry_logo'] = $this->language->get('entry_logo');
-		$data['entry_icon'] = $this->language->get('entry_icon');
-		$data['entry_ftp_hostname'] = $this->language->get('entry_ftp_hostname');
-		$data['entry_ftp_port'] = $this->language->get('entry_ftp_port');
-		$data['entry_ftp_username'] = $this->language->get('entry_ftp_username');
-		$data['entry_ftp_password'] = $this->language->get('entry_ftp_password');
-		$data['entry_ftp_root'] = $this->language->get('entry_ftp_root');
-		$data['entry_ftp_status'] = $this->language->get('entry_ftp_status');
-		$data['entry_mail_protocol'] = $this->language->get('entry_mail_protocol');
-		$data['entry_mail_parameter'] = $this->language->get('entry_mail_parameter');
-		$data['entry_mail_smtp_hostname'] = $this->language->get('entry_mail_smtp_hostname');
-		$data['entry_mail_smtp_username'] = $this->language->get('entry_mail_smtp_username');
-		$data['entry_mail_smtp_password'] = $this->language->get('entry_mail_smtp_password');
-		$data['entry_mail_smtp_port'] = $this->language->get('entry_mail_smtp_port');
-		$data['entry_mail_smtp_timeout'] = $this->language->get('entry_mail_smtp_timeout');
-		$data['entry_mail_alert'] = $this->language->get('entry_mail_alert');
-		$data['entry_secure'] = $this->language->get('entry_secure');
-		$data['entry_shared'] = $this->language->get('entry_shared');
-		$data['entry_robots'] = $this->language->get('entry_robots');
-		$data['entry_file_max_size'] = $this->language->get('entry_file_max_size');
-		$data['entry_file_ext_allowed'] = $this->language->get('entry_file_ext_allowed');
-		$data['entry_file_mime_allowed'] = $this->language->get('entry_file_mime_allowed');
-		$data['entry_maintenance'] = $this->language->get('entry_maintenance');
-		$data['entry_password'] = $this->language->get('entry_password');
-		$data['entry_encryption'] = $this->language->get('entry_encryption');
-		$data['entry_seo_url'] = $this->language->get('entry_seo_url');
-		$data['entry_compression'] = $this->language->get('entry_compression');
-		$data['entry_error_display'] = $this->language->get('entry_error_display');
-		$data['entry_error_log'] = $this->language->get('entry_error_log');
-		$data['entry_error_filename'] = $this->language->get('entry_error_filename');
-		$data['entry_status'] = $this->language->get('entry_status');
+			'help_account_mail',
+			'help_account',
+			'help_api',
+			'help_captcha',
+			'help_comment',
+			'help_components',
+			'help_compression',
+			'help_currency_auto',
+			'help_currency',
+			'help_customer_online',
+			'help_encryption',
+			'help_file_ext_allowed',
+			'help_file_max_size',
+			'help_file_mime_allowed',
+			'help_ftp_root',
+			'help_geocode',
+			'help_icon',
+			'help_limit_admin',
+			'help_location',
+			'help_login_attempts',
+			'help_mail_alert',
+			'help_mail_parameter',
+			'help_mail_protocol',
+			'help_mail_smtp_hostname',
+			'help_mail_smtp_password',
+			'help_maintenance',
+			'help_nip_prefix',
+			'help_open',
+			'help_password',
+			'help_robots',
+			'help_secure',
+			'help_seo_url',
+			'help_shared',
+			'help_tax_customer',
+			'help_tax_default',
 
-		$data['help_geocode'] = $this->language->get('help_geocode');
-		$data['help_open'] = $this->language->get('help_open');
-		$data['help_comment'] = $this->language->get('help_comment');
-		$data['help_location'] = $this->language->get('help_location');
-		$data['help_currency'] = $this->language->get('help_currency');
-		$data['help_currency_auto'] = $this->language->get('help_currency_auto');
-		$data['help_nip_prefix'] = $this->language->get('help_nip_prefix');
-		$data['help_limit_admin'] = $this->language->get('help_limit_admin');
-		$data['help_tax_default'] = $this->language->get('help_tax_default');
-		$data['help_tax_customer'] = $this->language->get('help_tax_customer');
-		$data['help_customer_online'] = $this->language->get('help_customer_online');
-		$data['help_login_attempts'] = $this->language->get('help_login_attempts');
-		$data['help_account'] = $this->language->get('help_account');
-		$data['help_account_mail'] = $this->language->get('help_account_mail');
-		$data['help_api'] = $this->language->get('help_api');
-		$data['help_captcha'] = $this->language->get('help_captcha');
-		$data['help_icon'] = $this->language->get('help_icon');
-		$data['help_ftp_root'] = $this->language->get('help_ftp_root');
-		$data['help_mail_protocol'] = $this->language->get('help_mail_protocol');
-		$data['help_mail_parameter'] = $this->language->get('help_mail_parameter');
-		$data['help_mail_smtp_hostname'] = $this->language->get('help_mail_smtp_hostname');
-		$data['help_mail_smtp_password'] = $this->language->get('help_mail_smtp_password');
-		$data['help_mail_alert'] = $this->language->get('help_mail_alert');
-		$data['help_secure'] = $this->language->get('help_secure');
-		$data['help_shared'] = $this->language->get('help_shared');
-		$data['help_robots'] = $this->language->get('help_robots');
-		$data['help_seo_url'] = $this->language->get('help_seo_url');
-		$data['help_file_max_size'] = $this->language->get('help_file_max_size');
-		$data['help_file_ext_allowed'] = $this->language->get('help_file_ext_allowed');
-		$data['help_file_mime_allowed'] = $this->language->get('help_file_mime_allowed');
-		$data['help_maintenance'] = $this->language->get('help_maintenance');
-		$data['help_password'] = $this->language->get('help_password');
-		$data['help_encryption'] = $this->language->get('help_encryption');
-		$data['help_compression'] = $this->language->get('help_compression');
+			'button_cancel',
+			'button_save',
 
-		$data['button_save'] = $this->language->get('button_save');
-		$data['button_cancel'] = $this->language->get('button_cancel');
-
-		$data['tab_general'] = $this->language->get('tab_general');
-		$data['tab_store'] = $this->language->get('tab_store');
-		$data['tab_local'] = $this->language->get('tab_local');
-		$data['tab_option'] = $this->language->get('tab_option');
-		$data['tab_image'] = $this->language->get('tab_image');
-		$data['tab_ftp'] = $this->language->get('tab_ftp');
-		$data['tab_mail'] = $this->language->get('tab_mail');
-		$data['tab_server'] = $this->language->get('tab_server');
+			'tab_ftp',
+			'tab_general',
+			'tab_image',
+			'tab_local',
+			'tab_mail',
+			'tab_option',
+			'tab_server',
+			'tab_store',
+		);
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -516,6 +523,31 @@ class ControllerSettingSetting extends Controller {
 			$data['config_nip_prefix'] = $this->request->post['config_nip_prefix'];
 		} else {
 			$data['config_nip_prefix'] = $this->config->get('config_nip_prefix');
+		}
+
+		$components = [
+			'gaji_pokok',
+			'tunj_jabatan',
+			'tunj_hadir',
+			'tunj_pph',
+			'uang_makan'
+		];
+
+		$data['components'] = [];
+
+		foreach ($components as $component) {
+			$data['components'][] = [
+				'value'	=> $component,
+				'text'	=> $component == 'uang_makan' ? sprintf($this->language->get('text_' . $component), $this->config->get('payroll_setting_default_hke')) : $this->language->get('text_' . $component)
+			];
+		};
+
+		if (isset($this->request->post['config_components'])) {
+			$data['config_components'] = $this->request->post['config_components'];
+		} elseif ($this->config->has('config_components')) {
+		   	$data['config_components'] = $this->config->get('config_components');
+		} else {
+			$data['config_components'] = ['gaji_pokok', 'tunj_jabatan', 'tunj_hadir', 'tunj_pph'];
 		}
 
 		if (isset($this->request->post['config_limit_admin'])) {

@@ -708,12 +708,12 @@ class ControllerPresencePresence extends Controller {
 			'end'	=> $customer_info['date_end'] ? min($period_info['date_end'], $customer_info['date_end']) : $period_info['date_end']
 		);
 
-		$presences_info = $this->model_presence_presence->getFinalPresences($customer_id, $range_date);
-		
 		$this->load->model('presence/schedule');
 		$this->load->model('overtime/overtime');
 		$schedules_info = $this->model_presence_schedule->getFinalSchedules($customer_id, $range_date);
-
+		
+		$presences_info = $this->model_presence_presence->getFinalPresences($customer_id, $range_date);
+		
 		//Form Calendar
 		$data['list_days'] = explode(' ',$this->language->get('text_days'));
 
@@ -742,6 +742,12 @@ class ControllerPresencePresence extends Controller {
 						$locked = 0;
 					}
 
+					$schedule_type	= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_in'] != '0000-00-00 00:00:00') ? ($schedules_info[$date_text]['schedule_type'] . ' (' . date('H:i', strtotime($schedules_info[$date_text]['time_in'])) . '-' . date('H:i', strtotime($schedules_info[$date_text]['time_out'])) . ')') : $data['text_off'];
+					$time_login		= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_login'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_info[$date_text]['time_login'])) : '...';
+					$time_logout	= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_logout'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_info[$date_text]['time_logout'])) : '...';
+					$bg_class		= !empty($schedules_info[$date_text]['bg_class']) ? $schedules_info[$date_text]['bg_class'] : 'info';
+					$note			= !empty($schedules_info[$date_text]['note']) ? $schedules_info[$date_text]['note'] : '';
+
 					if (isset($this->request->post['detail' . $date_text])) {
 						$presence_status_id = $this->request->post['detail' . $date_text];
 						$presence_status = '-';
@@ -749,19 +755,19 @@ class ControllerPresencePresence extends Controller {
 						$presence_status_id = $presences_info[$date_text]['presence_status_id'];
 						$presence_status = $presences_info[$date_text]['presence_status'];
 						$locked = $presences_info[$date_text]['locked'];
-						$schedule_type	= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_in'] != '0000-00-00 00:00:00') ? ($schedules_info[$date_text]['schedule_type'] . ' (' . date('H:i', strtotime($schedules_info[$date_text]['time_in'])) . '-' . date('H:i', strtotime($schedules_info[$date_text]['time_out'])) . ')') : $data['text_off'];
-						$time_login		= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_login'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_info[$date_text]['time_login'])) : '...';
-						$time_logout	= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_logout'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_info[$date_text]['time_logout'])) : '...';
-						$bg_class		= !empty($schedules_info[$date_text]['bg_class']) ? $schedules_info[$date_text]['bg_class'] : 'info';
-						$note			= !empty($schedules_info[$date_text]['note']) ? $schedules_info[$date_text]['note'] : '';
+						// $schedule_type	= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_in'] != '0000-00-00 00:00:00') ? ($schedules_info[$date_text]['schedule_type'] . ' (' . date('H:i', strtotime($schedules_info[$date_text]['time_in'])) . '-' . date('H:i', strtotime($schedules_info[$date_text]['time_out'])) . ')') : $data['text_off'];
+						// $time_login		= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_login'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_info[$date_text]['time_login'])) : '...';
+						// $time_logout	= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_logout'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_info[$date_text]['time_logout'])) : '...';
+						// $bg_class		= !empty($schedules_info[$date_text]['bg_class']) ? $schedules_info[$date_text]['bg_class'] : 'info';
+						// $note			= !empty($schedules_info[$date_text]['note']) ? $schedules_info[$date_text]['note'] : '';
 					} else {
 						$presence_status_id = 0;
 						$presence_status = '-';
-						$schedule_type	= '-';
-						$time_login		= '';
-						$time_logout	= '';
-						$bg_class		= 'warning';
-						$note			= '';
+						// $schedule_type	= '-';
+						// $time_login		= '';
+						// $time_logout	= '';
+						// $bg_class		= 'warning';
+						// $note			= '';
 					}
 
 					$data['calendar'][$week . $day] = array(
