@@ -46,7 +46,7 @@
 						</label>
 						<div class="col-sm-10">
 							<?php if ($allowance_customers) { ?>
-							<input type="text" value="<?= $allowance_period; ?>" class="form-control" disabled />
+							<input type="text" name="allowance_period" value="<?= $allowance_period; ?>" class="form-control" readonly />
 							<?php } else { ?>
 							<div class="input-group date">
 								<input type="text" name="allowance_period" value="<?= $allowance_period; ?>"

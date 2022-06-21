@@ -1,5 +1,12 @@
 # hsdm software
 
+2.5.3	21/06/2022
+Modify: Framework Updated
+MOdify: Filemanager: Generate image filename
+
+2.5.2	23/04/2022
+Bug Fixed: Editing allowance can not be saved.
+
 2.5.1	31/03/2022
 Bug Fixed: Error save presence/presence if no modify permission.
 Bug Fixed: New Employee not saved.
@@ -8,6 +15,7 @@ Modify: Schedule > Print: Need access role only to print schedule
 Modify: Cutoff: Modify some language.
 Bug Fixed: Finger Device list if no results
 Modify: Allowance: Add components option in Setting for allowance calculation
+Refactoring: Setting
 
 2.5.0	03/01/2022
 Modul: Report - User Activity
