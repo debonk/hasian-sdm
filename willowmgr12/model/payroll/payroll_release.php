@@ -180,8 +180,8 @@ class ModelPayrollPayrollRelease extends Model
 	}
 
 	public function getMethodReleases($presence_period_id)
-	{ //Used by: payroll_release
-		$sql = "SELECT p.presence_period_id, pm.name AS payroll_method, count(p.customer_id) AS count, (SUM(p.gaji_pokok + p.tunj_jabatan + p.tunj_hadir + p.tunj_pph + p.total_uang_makan - p.pot_sakit - p.pot_bolos - p.pot_tunj_hadir - p.pot_gaji_pokok - p.pot_terlambat) + (SELECT SUM(pcv.value) FROM " . DB_PREFIX . "payroll_component_value pcv LEFT JOIN " . DB_PREFIX . "customer c2 ON (c2.customer_id = pcv.customer_id) WHERE pcv.presence_period_id = p.presence_period_id AND c2.payroll_method_id = c.payroll_method_id)) as total FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE p.presence_period_id = '" . (int)$presence_period_id . "' GROUP BY c.payroll_method_id";
+	{
+		$sql = "SELECT p.presence_period_id, pm.name AS payroll_method, count(p.customer_id) AS count, (SUM(p.gaji_pokok + p.tunj_jabatan + p.tunj_hadir + p.tunj_pph + p.total_uang_makan - p.pot_sakit - p.pot_bolos - p.pot_tunj_hadir - p.pot_gaji_pokok - p.pot_terlambat) + (SELECT IFNULL(SUM(pcv.value), 0) FROM " . DB_PREFIX . "payroll_component_value pcv LEFT JOIN " . DB_PREFIX . "customer c2 ON (c2.customer_id = pcv.customer_id) WHERE pcv.presence_period_id = p.presence_period_id AND c2.payroll_method_id = c.payroll_method_id)) as total FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE p.presence_period_id = '" . (int)$presence_period_id . "' GROUP BY c.payroll_method_id";
 
 		$query = $this->db->query($sql);
 

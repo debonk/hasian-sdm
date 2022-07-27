@@ -1,5 +1,11 @@
 # hsdm software
 
+2.5.4	27/07/2022
+Loan > Loan: Loan Input can not be deleted
+Bug Fixed: Released > Info: Release Summary show 0 for method "Tunai"
+Bug Fixed: Released > Edit: Modify date not working
+Bug Fixed: Customer > Edit: Not logged in customer history
+
 2.5.3	21/06/2022
 Modify: Framework Updated
 MOdify: Filemanager: Generate image filename

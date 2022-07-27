@@ -95,7 +95,7 @@ class ControllerCustomerCustomer extends Controller {
 		$this->load->model('customer/customer');
 		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			// $this->customerHistory();
+			$this->customerHistory();
 			
 			$this->model_customer_customer->editCustomer($this->request->get['customer_id'], $this->request->post);
 

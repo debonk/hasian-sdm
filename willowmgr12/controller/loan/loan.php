@@ -969,7 +969,7 @@ class ControllerLoanLoan extends Controller {
 	}
 
 	protected function validateDelete() {
-		if (!$this->user->hasPermission('modify', 'loan/loan')) {
+		if (!$this->user->hasPermission('bypass', 'loan/loan')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
