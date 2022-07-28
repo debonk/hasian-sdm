@@ -448,7 +448,7 @@ class ControllerCustomerCustomer extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . $url, true)
+			'href' => $this->url->link('customer/customer', 'token=' . $this->session->data['token'], true)
 		);
 
 		$data['add'] = $this->url->link('customer/customer/add', 'token=' . $this->session->data['token'] . $url, true);

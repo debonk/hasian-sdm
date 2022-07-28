@@ -389,7 +389,7 @@ class ModelPayrollPayrollRelease extends Model
 			$sql .= " AND " . implode(" AND ", $implode);
 		}
 
-		$sql .= " ORDER BY name ASC";
+		$sql .= " ORDER BY c.lastname ASC";
 
 		$query = $this->db->query($sql);
 

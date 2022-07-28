@@ -346,12 +346,11 @@ class ModelPresenceSchedule extends Model {
 		$logs_info = $this->getLogs($customer_id, $range_date);
 		
 		foreach ($logs_info as $log_info) {
-			// if ( $schedules_data[$log_info['date']]['time_in'] != '0000-00-00 00:00:00') {
-
-			if (isset($schedules_data[$log_info['date']]) && $schedules_data[$log_info['date']]['time_in'] != '0000-00-00 00:00:00') {
+			// if (isset($schedules_data[$log_info['date']]) && $schedules_data[$log_info['date']]['time_in'] != '0000-00-00 00:00:00') {
+			if (isset($log_info['date']) && $log_info['time_in'] != '0000-00-00 00:00:00') {
 				$logs_data = array(
-					'time_in'		=> $schedules_data[$log_info['date']]['time_in'],
-					'time_out'		=> $schedules_data[$log_info['date']]['time_out'],
+					'time_in'		=> $log_info['time_in'],
+					'time_out'		=> $log_info['time_out'],
 					'time_login'	=> $log_info['time_login'],
 					'time_logout'	=> $log_info['time_logout']
 				);

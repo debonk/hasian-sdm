@@ -1,25 +1,27 @@
 <?php
-class ModelCustomerCustomer extends Model {
-	public function addCustomer($data) {
+class ModelCustomerCustomer extends Model
+{
+	public function addCustomer($data)
+	{
 		$company_code = $this->config->get('config_nip_prefix'); //5:DSP, 7:WMA, 8:GK
 		$nip_prefix = $company_code . date('y', strtotime($data['date_start']));
-		
+
 		$nip_no = $this->getNipNoMax($nip_prefix);
-		
+
 		if ($nip_no) {
 			$nip_no++;
 		} else {
 			$nip_no = 100 + 1;
 		}
 
-		$nip = $nip_prefix . $nip_no . mt_rand(0,9);
+		$nip = $nip_prefix . $nip_no . mt_rand(0, 9);
 
 		if (!empty($data['date_birth'])) {
 			$data['date_birth'] = date('Y-m-j', strtotime($data['date_birth']));
 		} else {
 			$data['date_birth'] = null;
 		}
-		
+
 		$fields_data = [
 			'skip_trial_status',
 			'health_insurance',
@@ -61,27 +63,28 @@ class ModelCustomerCustomer extends Model {
 				}
 			}
 		}
-		
+
 		return $customer_id;
 	}
 
-	public function editCustomer($customer_id, $data) {
+	public function editCustomer($customer_id, $data)
+	{
 		$customer_info = $this->getCustomer($customer_id);
-		
+
 		//Sistem penomoran NIP
 		if (!$customer_info['nip_no']) {
 			$company_code = $this->config->get('config_nip_prefix'); //5:DSP, 7:WMA, 8:GK
 			$nip_prefix = $company_code . date('y', strtotime($customer_info['date_start']));
-			
+
 			$nip_no = $this->getNipNoMax($nip_prefix);
-			
+
 			if ($nip_no) {
 				$nip_no++;
 			} else {
 				$nip_no = 100 + 1;
 			}
 
-			$nip = $nip_prefix . $nip_no . mt_rand(0,9);
+			$nip = $nip_prefix . $nip_no . mt_rand(0, 9);
 
 			$this->db->query("UPDATE " . DB_PREFIX . "customer SET nip = '" . $this->db->escape($nip) . "', nip_no = '" . (int)$nip_no . "' WHERE customer_id = '" . (int)$customer_id . "'");
 		}
@@ -109,11 +112,11 @@ class ModelCustomerCustomer extends Model {
 		} else {
 			$sql .= ", date_birth = NULL";
 		}
-		
+
 		$sql .= " WHERE customer_id = '" . (int)$customer_id . "'";
 
 		$this->db->query($sql);
-		
+
 		if (isset($data['date_end'])) {
 			if ((!$data['date_end']) || $this->db->escape($data['date_end']) == '0000-00-00') {
 				$this->db->query("UPDATE " . DB_PREFIX . "customer SET date_end = NULL WHERE customer_id = '" . (int)$customer_id . "'");
@@ -155,36 +158,42 @@ class ModelCustomerCustomer extends Model {
 		}
 	}
 
-	public function editToken($customer_id, $token) {
+	public function editToken($customer_id, $token)
+	{
 		$this->db->query("UPDATE " . DB_PREFIX . "customer SET token = '" . $this->db->escape($token) . "' WHERE customer_id = '" . (int)$customer_id . "'");
 	}
 
-	public function deleteCustomer($customer_id) {
+	public function deleteCustomer($customer_id)
+	{
 		$this->db->query("DELETE FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "customer_ip WHERE customer_id = '" . (int)$customer_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "address WHERE customer_id = '" . (int)$customer_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "customer_add_data WHERE customer_id = '" . (int)$customer_id . "'");
 	}
 
-	public function getCustomer($customer_id) {
+	public function getCustomer($customer_id)
+	{
 		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON (cad.customer_id = c.customer_id) WHERE c.customer_id = '" . (int)$customer_id . "'");
 
 		return $query->row;
 	}
 
-	public function getCustomerByNik($nik) {
+	public function getCustomerByNik($nik)
+	{
 		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "customer WHERE nik = '" . $this->db->escape($nik) . "'");
 
 		return $query->row;
 	}
 
-	public function getCustomerByEmail($email) {
+	public function getCustomerByEmail($email)
+	{
 		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "customer WHERE LCASE(email) = '" . $this->db->escape(utf8_strtolower($email)) . "'");
 
 		return $query->row;
 	}
 
-	public function getCustomers($data = array()) { //Used by: dashboard/recent
+	public function getCustomers($data = array())
+	{ //Used by: dashboard/recent
 		$sql = "SELECT c.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cdd.name AS customer_department, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (c.customer_department_id = cdd.customer_department_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
 
 		$implode = array();
@@ -217,12 +226,12 @@ class ModelCustomerCustomer extends Model {
 			$implode[] = "DATE_FORMAT(c.date_start,'%b %y') = '" . $this->db->escape($data['filter_date_start']) . "'";
 		}
 
-		if (isset($data['filter_active'])) {
-			if ($data['filter_active']) {
-				$implode[] = "(c.date_end IS NULL OR c.date_end = '0000-00-00' OR c.date_end > CURDATE())";
-			} else {
+		if (isset($data['filter_active']) && !is_null($data['filter_active'])) {
+			if (!$data['filter_active']) {
 				$implode[] = "(c.date_end <> '0000-00-00' AND c.date_end <= CURDATE())";
 			}
+		} else {
+			$implode[] = "(c.date_end IS NULL OR c.date_end = '0000-00-00' OR c.date_end > CURDATE())";
 		}
 
 		if ($implode) {
@@ -269,7 +278,8 @@ class ModelCustomerCustomer extends Model {
 		return $query->rows;
 	}
 
-	public function getAddress($address_id) {
+	public function getAddress($address_id)
+	{
 		$address_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "address WHERE address_id = '" . (int)$address_id . "'");
 
 		if ($address_query->num_rows) {
@@ -327,7 +337,8 @@ class ModelCustomerCustomer extends Model {
 		}
 	}
 
-	public function getAddresses($customer_id) {
+	public function getAddresses($customer_id)
+	{
 		$address_data = array();
 
 		$query = $this->db->query("SELECT address_id FROM " . DB_PREFIX . "address WHERE customer_id = '" . (int)$customer_id . "'");
@@ -343,7 +354,8 @@ class ModelCustomerCustomer extends Model {
 		return $address_data;
 	}
 
-	public function getTotalCustomers($data = array()) {
+	public function getTotalCustomers($data = array())
+	{
 		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer";
 
 		$implode = array();
@@ -368,7 +380,7 @@ class ModelCustomerCustomer extends Model {
 			$implode[] = "location_id = '" . (int)$data['filter_location_id'] . "'";
 		}
 
-/* 		if (!empty($data['filter_ip'])) {
+		/* 		if (!empty($data['filter_ip'])) {
 			$implode[] = "customer_id IN (SELECT customer_id FROM " . DB_PREFIX . "customer_ip WHERE ip = '" . $this->db->escape($data['filter_ip']) . "')";
 		}
  */
@@ -397,7 +409,8 @@ class ModelCustomerCustomer extends Model {
 		return $query->row['total'];
 	}
 
-	public function getNipNoMax($nip_prefix) {
+	public function getNipNoMax($nip_prefix)
+	{
 		$sql = "SELECT MAX(nip_no) AS total FROM `" . DB_PREFIX . "customer` WHERE (nip DIV 10000) = '" . (int)$nip_prefix . "'";
 
 		$query = $this->db->query($sql);
@@ -405,61 +418,70 @@ class ModelCustomerCustomer extends Model {
 		return $query->row['total'];
 	}
 
-	public function getTotalCustomersAwaitingApproval() {
+	public function getTotalCustomersAwaitingApproval()
+	{
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer WHERE status = '0'");
 
 		return $query->row['total'];
 	}
 
-	public function getTotalAddressesByCustomerId($customer_id) {
+	public function getTotalAddressesByCustomerId($customer_id)
+	{
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "address WHERE customer_id = '" . (int)$customer_id . "'");
 
 		return $query->row['total'];
 	}
 
-	public function getTotalAddressesByCountryId($country_id) {
+	public function getTotalAddressesByCountryId($country_id)
+	{
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "address WHERE country_id = '" . (int)$country_id . "'");
 
 		return $query->row['total'];
 	}
 
-	public function getTotalAddressesByZoneId($zone_id) {
+	public function getTotalAddressesByZoneId($zone_id)
+	{
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "address WHERE zone_id = '" . (int)$zone_id . "'");
 
 		return $query->row['total'];
 	}
 
-	public function getTotalCustomersByCustomerDepartmentId($customer_department_id) { //used by customer/customer_department
+	public function getTotalCustomersByCustomerDepartmentId($customer_department_id)
+	{ //used by customer/customer_department
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer WHERE customer_department_id = '" . (int)$customer_department_id . "'");
 
 		return $query->row['total'];
 	}
 
-	public function getTotalCustomersByCustomerGroupId($customer_group_id) { //used by customer/customer_group
+	public function getTotalCustomersByCustomerGroupId($customer_group_id)
+	{ //used by customer/customer_group
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer WHERE customer_group_id = '" . (int)$customer_group_id . "'");
 
 		return $query->row['total'];
 	}
 
-	public function getTotalCustomersByPayrollMethodId($payroll_method_id) { //used by localisation/payroll_method
+	public function getTotalCustomersByPayrollMethodId($payroll_method_id)
+	{ //used by localisation/payroll_method
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer WHERE payroll_method_id = '" . (int)$payroll_method_id . "'");
 
 		return $query->row['total'];
 	}
 
-	public function getTotalCustomersByGenderId($gender_id) { //used by localisation/gender
+	public function getTotalCustomersByGenderId($gender_id)
+	{ //used by localisation/gender
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer_add_data WHERE gender_id = '" . (int)$gender_id . "'");
 
 		return $query->row['total'];
 	}
 
-	public function getTotalCustomersByMarriageStatusId($marriage_status_id) { //used by localisation/marriage_status
+	public function getTotalCustomersByMarriageStatusId($marriage_status_id)
+	{ //used by localisation/marriage_status
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer_add_data WHERE marriage_status_id = '" . (int)$marriage_status_id . "'");
 
 		return $query->row['total'];
 	}
 
-/* 	public function getIps($customer_id, $start = 0, $limit = 10) {
+	/* 	public function getIps($customer_id, $start = 0, $limit = 10) {
 		if ($start < 0) {
 			$start = 0;
 		}
@@ -472,25 +494,27 @@ class ModelCustomerCustomer extends Model {
 		return $query->rows;
 	}
 */
-/*  	public function getTotalIps($customer_id) {
+	/*  	public function getTotalIps($customer_id) {
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer_ip WHERE customer_id = '" . (int)$customer_id . "'");
 
 		return $query->row['total'];
 	}
  */
-/* 	public function getTotalCustomersByIp($ip) {
+	/* 	public function getTotalCustomersByIp($ip) {
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer_ip WHERE ip = '" . $this->db->escape($ip) . "'");
 
 		return $query->row['total'];
 	}
  */
-	public function getTotalLoginAttempts($email) {
+	public function getTotalLoginAttempts($email)
+	{
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "customer_login` WHERE `email` = '" . $this->db->escape($email) . "'");
 
 		return $query->row;
 	}
 
-	public function deleteLoginAttempts($email) {
+	public function deleteLoginAttempts($email)
+	{
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "customer_login` WHERE `email` = '" . $this->db->escape($email) . "'");
 	}
 }

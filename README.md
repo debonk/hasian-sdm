@@ -1,5 +1,10 @@
 # hsdm software
 
+2.5.5	28/07/2022
+Bug Fixed: Presence > Schedule: Presence Status calculation based on Schedule time in, not Log time in.
+Release > Export: Sort list by name
+Employee > Employee: Set Active Employee as default filter
+
 2.5.4	27/07/2022
 Loan > Loan: Loan Input can not be deleted
 Bug Fixed: Released > Info: Release Summary show 0 for method "Tunai"
