@@ -108,7 +108,7 @@
 			        <tr>
 				      <td>
 								<?php if ($document['href']) { ?>
-									<a href="<?php echo $document['href']; ?>" target="_blank">
+									<a href="<?php echo $document['href']; ?>" target="_blank" rel="noopener noreferrer">
 										<?php echo $document['mask']; ?>
 									</a>
 									<?php } else { ?>

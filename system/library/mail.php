@@ -166,7 +166,8 @@ class Mail {
 			}
 			
 		} elseif ($this->protocol == 'phpmailer') {
-			require_once(DIR_VENDOR . 'autoload.php');
+			// require_once(DIR_SYSTEM . '../../composer/vendor/autoload.php');
+			// require_once(DIR_VENDOR . 'autoload.php');
 
 			$mail = new PHPMailer(TRUE);
 			

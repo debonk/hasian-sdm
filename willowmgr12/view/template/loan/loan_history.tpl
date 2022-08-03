@@ -6,7 +6,7 @@
     <?php if ($loans) { ?>
       <?php foreach ($loans as $loan) { ?>
         <tr>
-		  <td style="width: 1%;"><a href="<?php echo $loan['edit']; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-info btn-xs"><i class="fa fa-pencil fa-fw"></i></a></td>
+		  <td style="width: 1%;"><a href="<?php echo $loan['edit']; ?>" target="_blank" rel="noopener noreferrer" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-info btn-xs"><i class="fa fa-pencil fa-fw"></i></a></td>
 		  <td class="text-left"><?php echo $loan['description']; ?></td>
 		  <td class="text-right nowrap"><?php echo $loan['total']; ?></td>
 		</tr>

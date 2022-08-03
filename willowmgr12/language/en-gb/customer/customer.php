@@ -20,6 +20,7 @@ $_['text_active']			= 'Masih Bekerja';
 $_['text_inactive']			= 'Berhenti Bekerja';
 
 // Column
+$_['column_image']			= 'Image';
 $_['column_nip']			= 'NIP';
 $_['column_name']			= 'Nama Karyawan';
 $_['column_customer_department'] = 'Divisi';

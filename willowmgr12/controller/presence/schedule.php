@@ -282,6 +282,7 @@ class ControllerPresenceSchedule extends Controller
 
 		$data['print'] = $this->url->link('presence/schedule/print', 'token=' . $this->session->data['token'] . $url, true);
 		$data['back'] = $this->url->link('presence/presence_period', 'token=' . $this->session->data['token'], true);
+		$data['presence'] = $this->url->link('presence/presence', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $presence_period_id, true);
 
 		$language_items = array(
 			'heading_title',
@@ -300,7 +301,8 @@ class ControllerPresenceSchedule extends Controller
 			'button_delete',
 			'button_back',
 			'button_apply_schedule',
-			'button_recap'
+			'button_recap',
+			'button_presence'
 		);
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);

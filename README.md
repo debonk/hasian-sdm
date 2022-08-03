@@ -1,7 +1,14 @@
 # hsdm software
 
+2.5.6	03/08/2022
+Common > Payroll Info: Add shortcut to jump to other period
+Presence > Schedule, Presence: Add shortcat between modul
+Employee > Document: Max size of document uploaded set to 1000x1000px
+Employee: Add image in employee list
+Incentive, Cutoff, Overtime: Employee list based on 1 month/2 weeks earlier active status
+
 2.5.5	28/07/2022
-Bug Fixed: Presence > Schedule: Presence Status calculation based on Schedule time in, not Log time in.
+Bug Fixed: Presence > Schedule: Presence Status calculation based on Schedule time in instead of Log time in
 Release > Export: Sort list by name
 Employee > Employee: Set Active Employee as default filter
 
@@ -13,7 +20,7 @@ Bug Fixed: Customer > Edit: Not logged in customer history
 
 2.5.3	21/06/2022
 Modify: Framework Updated
-MOdify: Filemanager: Generate image filename
+Modify: Filemanager: Generate image filename
 
 2.5.2	23/04/2022
 Bug Fixed: Editing allowance can not be saved.

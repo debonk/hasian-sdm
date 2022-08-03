@@ -58,15 +58,15 @@
 		  		<td class="text-right"><?php echo $uang_makan; ?></td>
 		  		<td class="text-right text-warning"><?php echo $gaji_dasar; ?></td>
 			    <?php if ($payroll_status_check) { ?>
-				  <td class="text-right"><a href="<?php echo $payroll_basic_edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary" target="_blank"><i class="fa fa-pencil"></i></a></td>
+				  <td class="text-right"><a href="<?php echo $payroll_basic_edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary" target="_blank" rel="noopener noreferrer"><i class="fa fa-pencil"></i></a></td>
 			    <?php } else { ?>
-				  <td class="text-right"><a href="<?php echo $payroll_basic_edit; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info" target="_blank"><i class="fa fa-eye"></i></a></td>
+				  <td class="text-right"><a href="<?php echo $payroll_basic_edit; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info" target="_blank" rel="noopener noreferrer"><i class="fa fa-eye"></i></a></td>
 			    <?php } ?>
 		  	  </tr>
 		  	  <?php } else { ?>
 		  	  <tr>
 		  		<td class="text-center" colspan="7"><?php echo $text_no_results; ?></td>
-                <td class="text-right"><a href="<?php echo $payroll_basic_edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary" target="_blank"><i class="fa fa-pencil"></i></a></td>
+                <td class="text-right"><a href="<?php echo $payroll_basic_edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary" target="_blank" rel="noopener noreferrer"><i class="fa fa-pencil"></i></a></td>
 		  	  </tr>
 		  	  <?php } ?>
 		  	</tbody>
@@ -104,7 +104,7 @@
 					  <?php } else { ?>
 				        <button type="button" class="btn btn-warning disabled"><i class="fa fa-pencil"></i></button>
 					  <?php } ?>
-					  <a href="<?php echo $presence_summary_edit; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-primary" target="_blank"><i class="fa fa-eye"></i></a>
+					  <a href="<?php echo $presence_summary_edit; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-primary" target="_blank" rel="noopener noreferrer"><i class="fa fa-eye"></i></a>
 					</td>
 		  	      </tr>
 		  	      <tr>
@@ -113,7 +113,7 @@
 		  	    <?php } else { ?>
 		  	      <tr>
 		  	  	  <td class="text-center" colspan="11"><?php echo $text_no_results; ?></td>
-                  <td class="text-right"><a href="<?php echo $presence_summary_edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary" target="_blank"><i class="fa fa-pencil"></i></a></td>
+                  <td class="text-right"><a href="<?php echo $presence_summary_edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary" target="_blank" rel="noopener noreferrer"><i class="fa fa-pencil"></i></a></td>
 		  	      </tr>
 		  	    <?php } ?>
 		  	  </tbody>

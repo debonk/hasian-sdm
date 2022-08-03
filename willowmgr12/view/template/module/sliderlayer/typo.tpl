@@ -21,7 +21,7 @@
 			<!-- START CONTENT TYPOS -->
 			<div class="typos">
 				<div class="note"> 
-					NOTE: <p>These Below Typos are getting in the file:<a href="<?php echo $typoFile ?>" target="_blank"><?php echo $typoFile; ?></a>
+					NOTE: <p>These Below Typos are getting in the file:<a href="<?php echo $typoFile ?>" target="_blank" rel="noopener noreferrer"><?php echo $typoFile; ?></a>
 					<br>you can open this file and add yours css style and it will be listed in here!!!</p>
 					<p>To Select One, You Click The Text Of Each Typo</p>
 				</div>

@@ -492,15 +492,6 @@ class ControllerCustomerDocument extends Controller
 
 			foreach ($files as $key => $file) {
 				if (!empty($file['name']) && is_file($file['tmp_name'])) {
-					// Sanitize the filename
-					$filename = basename(html_entity_decode($file['name'], ENT_QUOTES, 'UTF-8'));
-					$files[$key]['filename'] = $filename;
-
-					// Validate the filename length
-					if ((utf8_strlen($filename) < 3) || (utf8_strlen($filename) > 128)) {
-						$json['error'] = $this->language->get('error_filename');
-					}
-
 					// Allowed file extension types
 					$allowed = array(
 						'jpg',
@@ -509,7 +500,9 @@ class ControllerCustomerDocument extends Controller
 						'png'
 					);
 
-					if (!in_array(strtolower(substr(strrchr($filename, '.'), 1)), $allowed)) {
+					$extension = strtolower(substr(strrchr($file['name'], '.'), 1));
+
+					if (!in_array($extension, $allowed)) {
 						$json['error'] = $this->language->get('error_filetype');
 					}
 
@@ -552,11 +545,13 @@ class ControllerCustomerDocument extends Controller
 			}
 
 			foreach ($files as $key => $file) {
-				$mask = strtolower($customer_id . '_' . $document_type_id . '_' . $key . '_' . $file['filename']);
+				$mask = strtolower($customer_id . '_' . $document_type_id . '_' . $key . '_' . token(6) . '.' . $extension);
 				$filename = $mask . '.' . token(10);
 
-				move_uploaded_file($file['tmp_name'], DIR_DOCUMENT . $filename);
+				$file['filename'] = $filename;
 
+				$this->model_customer_document->getImage($file, 1000, 1000);
+				
 				$post_data = array(
 					'customer_id'		=> $customer_id,
 					'document_type_id'	=> $document_type_id,

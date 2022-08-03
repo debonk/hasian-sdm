@@ -71,7 +71,8 @@ $_['entry_t2']         		 	 = 'Terlambat 2';
 $_['entry_t3']         		 	 = 'Terlambat 3';
 
 // Button
-$_['button_presence_submit']     = 'Submit Presence Summary';
+$_['button_presence_submit']	= 'Submit Presence Summary';
+$_['button_schedule']			= 'Open Schedule Data';
 
 // Error
 $_['error_permission']           = 'Warning: You do not have permission to modify presences!';

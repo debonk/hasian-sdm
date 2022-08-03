@@ -146,7 +146,7 @@
                       <td class="text-left"><?php echo $overtime['username']; ?></td>
                       <td class="text-right nowrap">
 					    <?php if ($overtime['payment']) { ?>
-					      <a href="<?php echo $overtime['view']; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info" target="_blank"><i class="fa fa-eye"></i></a>
+					      <a href="<?php echo $overtime['view']; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info" target="_blank" rel="noopener noreferrer"><i class="fa fa-eye"></i></a>
 						<?php } ?>
                         <a href="<?php echo $overtime['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
 					  </td>

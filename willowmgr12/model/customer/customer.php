@@ -380,10 +380,6 @@ class ModelCustomerCustomer extends Model
 			$implode[] = "location_id = '" . (int)$data['filter_location_id'] . "'";
 		}
 
-		/* 		if (!empty($data['filter_ip'])) {
-			$implode[] = "customer_id IN (SELECT customer_id FROM " . DB_PREFIX . "customer_ip WHERE ip = '" . $this->db->escape($data['filter_ip']) . "')";
-		}
- */
 		if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
 			$implode[] = "status = '" . (int)$data['filter_status'] . "'";
 		}
@@ -392,12 +388,12 @@ class ModelCustomerCustomer extends Model
 			$implode[] = "DATE_FORMAT(date_start,'%b %y') = '" . $this->db->escape($data['filter_date_start']) . "'";
 		}
 
-		if (isset($data['filter_active'])) {
-			if ($data['filter_active']) {
-				$implode[] = "(date_end IS NULL OR date_end > NOW())";
-			} else {
-				$implode[] = "(date_end IS NOT NULL AND date_end <= NOW())";
+		if (isset($data['filter_active']) && !is_null($data['filter_active'])) {
+			if (!$data['filter_active']) {
+				$implode[] = "(date_end <> '0000-00-00' AND date_end <= CURDATE())";
 			}
+		} else {
+			$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end > CURDATE())";
 		}
 
 		if ($implode) {

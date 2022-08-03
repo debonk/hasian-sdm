@@ -50,15 +50,15 @@
 						<h4><?php echo $objlang->get('text_modules_setting');?></h4>
 						<ul>
 							<li>
-								<a target="_blank" href="<?php echo $objurl->link('module/pavblog/frontmodules','token='.$token.'#tab-module-pavblogcategory');?>">
+								<a target="_blank" rel="noopener noreferrer" href="<?php echo $objurl->link('module/pavblog/frontmodules','token='.$token.'#tab-module-pavblogcategory');?>">
 								<span class="icon-modules"></span><span><?php echo $objlang->get('module_latest');?></span></a>
 							</li>
 							<li>
-								<a target="_blank" href="<?php echo $objurl->link('module/pavblog/frontmodules','token='.$token.'#tab-module-pavblogcomment');?>">
+								<a target="_blank" rel="noopener noreferrer" href="<?php echo $objurl->link('module/pavblog/frontmodules','token='.$token.'#tab-module-pavblogcomment');?>">
 								<span class="icon-modules"></span><span><?php echo $objlang->get('module_comment');?></span></a>
 							</li>
 							<li>
-								<a target="_blank" href="<?php echo $objurl->link('module/pavblog/frontmodules','token='.$token.'#tab-module-pavbloglatest');?>">
+								<a target="_blank" rel="noopener noreferrer" href="<?php echo $objurl->link('module/pavblog/frontmodules','token='.$token.'#tab-module-pavbloglatest');?>">
 								<span class="icon-modules"></span><span><?php echo $objlang->get('module_category');?></span></a>
 							</li>
 						</ul>

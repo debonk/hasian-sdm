@@ -24,7 +24,7 @@
     </div>
     <div class="uk-width-1-3 uk-text-right">
         <div class="by-et">
-            By: <a href="http://www.echothemes.com" target="_blank">EchoThemes</a>
+            By: <a href="http://www.echothemes.com" target="_blank" rel="noopener noreferrer">EchoThemes</a>
         </div>
     </div>
 </div>
@@ -95,7 +95,7 @@
 
     <h2 class="uk-section"><?php echo $section_server_info; ?></h2>
     <div class="uk-float-right uk-text-small" style="margin-top:-30px">
-        <?php echo $text_full_phpinfo; ?> <a href="<?php echo $url_phpinfo; ?>" target="_blank">phpnfo()</a>
+        <?php echo $text_full_phpinfo; ?> <a href="<?php echo $url_phpinfo; ?>" target="_blank" rel="noopener noreferrer">phpnfo()</a>
     </div>
 
     <table class="uk-table uk-table-striped uk-table-hover">

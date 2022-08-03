@@ -105,7 +105,7 @@
 					  <?php } ?>
                       <td class="text-right">
 					    <?php if ($cutoff['payment']) { ?>
-					      <a href="<?php echo $cutoff['view']; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info" target="_blank"><i class="fa fa-eye"></i></a>
+					      <a href="<?php echo $cutoff['view']; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info" target="_blank" rel="noopener noreferrer"><i class="fa fa-eye"></i></a>
 						<?php } else { ?>
                           <a href="<?php echo $cutoff['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
 						<?php } ?>

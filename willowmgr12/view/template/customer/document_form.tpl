@@ -77,7 +77,7 @@
 								</td>
 								<td class="text-left">
 									<?php if ($document['href_view']) { ?>
-									<a href="<?php echo $document['href_view']; ?>" target="_blank" data-toggle="tooltip"
+									<a href="<?php echo $document['href_view']; ?>" target="_blank" rel="noopener noreferrer" data-toggle="tooltip"
 										title="<?php echo $button_view; ?>">
 										<?php echo $document['filename']; ?>
 									</a>
@@ -98,7 +98,7 @@
 								</td>
 								<td class="text-right">
 									<?php if ($document_list['href_info']) { ?>
-									<a href="<?php echo $document['href_info']; ?>" type="button" target="_blank" data-toggle="tooltip"
+									<a href="<?php echo $document['href_info']; ?>" type="button" target="_blank" rel="noopener noreferrer" data-toggle="tooltip"
 										title="<?php echo $button_print; ?>" class="btn btn-info"><i class="fa fa-print"></i></a>
 									<?php } ?>
 									<?php if ($document['filename'] != '-') { ?>

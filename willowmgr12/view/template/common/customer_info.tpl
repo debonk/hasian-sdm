@@ -9,7 +9,7 @@
 		  <td class="text-center thumb" rowspan="4"><img src="<?php echo $thumb; ?>" alt="<?php echo $name; ?>" title="" /></td>
 		  <td style="width: 1%;"><button data-toggle="tooltip" title="<?php echo $text_customer; ?>" class="btn btn-info btn-xs"><i class="fa fa-user fa-fw"></i></button></td>
 		  <td><?php if ($customer) { ?>
-			<a href="<?php echo $customer; ?>" target="_blank"><?php echo $name; ?></a>
+			<a href="<?php echo $customer; ?>" target="_blank" rel="noopener noreferrer"><?php echo $name; ?></a>
 			<?php } else { ?>
 			<?php echo $name; ?>
 			<?php } ?></td>

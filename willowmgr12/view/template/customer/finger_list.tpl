@@ -131,7 +131,7 @@
                     <button type="button" value="<?php echo $customer['customer_id']; ?>" id="button-delete<?php echo $customer['customer_id']; ?>" data-loading-text="<?php echo $text_loading; ?>" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
                     <button type="button" value="<?php echo $customer['customer_id']; ?>" id="button-verification<?php echo $customer['customer_id']; ?>" data-loading-text="<?php echo $text_loading; ?>" data-toggle="tooltip" title="<?php echo $button_verification; ?>" class="btn btn-default"><i class="fa fa-sign-in"></i></button>
 					<?php } ?>
-				    <a href="<?php echo $customer['view']; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info" target="_blank"><i class="fa fa-eye"></i></a>
+				    <a href="<?php echo $customer['view']; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info" target="_blank" rel="noopener noreferrer"><i class="fa fa-eye"></i></a>
 				  </td>
                  </tr>
                 <?php } ?>

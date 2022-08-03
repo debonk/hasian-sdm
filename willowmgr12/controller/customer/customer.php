@@ -474,7 +474,11 @@ class ControllerCustomerCustomer extends Controller {
 
 		$results = $this->model_customer_customer->getCustomers($filter_data);
 
+		$this->load->model('tool/image');
+
 		foreach ($results as $result) {
+			$image = $this->model_tool_image->resize($result['image'], 60, 60);
+
 			$login_info = $this->model_customer_customer->getTotalLoginAttempts($result['email']);
 
 			if ($login_info && $login_info['total'] >= $this->config->get('config_login_attempts')) {
@@ -485,6 +489,7 @@ class ControllerCustomerCustomer extends Controller {
 
 			$data['customers'][] = array(
 				'customer_id'    		=> $result['customer_id'],
+				'image'            		=> $image,
 				'nip'            		=> $result['nip'],
 				'name'           		=> $result['name'],
 				'customer_department'	=> $result['customer_department'],
@@ -519,6 +524,7 @@ class ControllerCustomerCustomer extends Controller {
 			'entry_status',
 			'entry_date_start',
 			'entry_active',
+			'column_image',
 			'column_nip',
 			'column_name',
 			'column_customer_department',

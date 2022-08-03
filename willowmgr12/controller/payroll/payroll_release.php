@@ -61,18 +61,20 @@ class ControllerPayrollPayrollRelease extends Controller
 		$this->load->model('common/payroll');
 		$this->load->model('payroll/payroll_release');
 
-		if (isset($this->request->get['presence_period_id'])) {
-			$presence_period_id = $this->request->get['presence_period_id'];
-		} else {
-			$presence_period_id = 0;
-		}
+		$this->getList();
 
-		$payroll_period = $this->model_common_payroll->getPeriod($presence_period_id);
-		if ($payroll_period && $payroll_period['fund_account_id']) {
-			$this->getList();
-		} else {
-			return new Action('error/not_found');
-		}
+		// if (isset($this->request->get['presence_period_id'])) {
+		// 	$presence_period_id = $this->request->get['presence_period_id'];
+		// } else {
+		// 	$presence_period_id = 0;
+		// }
+
+		// $payroll_period = $this->model_common_payroll->getPeriod($presence_period_id);
+		// if ($payroll_period && $payroll_period['fund_account_id']) {
+			// $this->getList();
+		// } else {
+		// 	return new Action('error/not_found');
+		// }
 	}
 
 	protected function getPeriod()

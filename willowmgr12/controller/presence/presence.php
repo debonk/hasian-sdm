@@ -271,7 +271,7 @@ class ControllerPresencePresence extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('presence/presence', 'token=' . $this->session->data['token'] . $url, true)
+			'href' => $this->url->link('presence/presence', 'token=' . $this->session->data['token'], true)
 		);
 
 		//Period Status Check
@@ -289,6 +289,7 @@ class ControllerPresencePresence extends Controller {
 
 		$data['delete'] = $this->url->link('presence/presence/delete', 'token=' . $this->session->data['token'] . $url, true);
 		$data['back'] = $this->url->link('presence/presence_period', 'token=' . $this->session->data['token'], true);
+		$data['schedule'] = $this->url->link('presence/schedule', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $presence_period_id, true);
 
 		$data['customers'] = array();
 
@@ -448,7 +449,8 @@ class ControllerPresencePresence extends Controller {
 			'button_back',
 			'button_delete',
 			'button_filter',
-			'button_export'
+			'button_export',
+			'button_schedule'
 		);
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
@@ -553,7 +555,7 @@ class ControllerPresencePresence extends Controller {
 
 		$data['pagination'] = $pagination->render();
 
-		$data['results'] = sprintf($this->language->get('text_pagination'), ($customer_total) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($customer_total - $this->config->get('config_limit_admin'))) ? $customer_total : ((($page - 1) * $this->config->get('config_limit_admin')) + $this->config->get('config_limit_admin')), $customer_total, ceil($customer_total / $this->config->get('config_limit_admin')));
+		$data['results'] = sprintf($this->language->get('text_pagination'), ($customer_total) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($customer_total - $this->config->get('config_limit_admin'))) ? $customer_total : ($page * $this->config->get('config_limit_admin')), $customer_total, ceil($customer_total / $this->config->get('config_limit_admin')));
 
 		$data['presence_periods'] = $this->model_presence_presence_period->getPresencePeriods();
 

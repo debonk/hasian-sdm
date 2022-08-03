@@ -139,10 +139,7 @@ class ControllerPayrollPayroll extends Controller {
 		$data['heading_title'] = $this->language->get('heading_title');
 
 		$data['text_add'] = $this->language->get('text_add');
-		$data['text_select'] = $this->language->get('text_select');
-		
 		$data['entry_name'] = $this->language->get('entry_name');
-
 		$data['button_back'] = $this->language->get('button_back');
 		$data['button_select'] = $this->language->get('button_select');
 

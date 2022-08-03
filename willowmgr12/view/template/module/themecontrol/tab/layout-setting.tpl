@@ -39,7 +39,7 @@
 						<?php  $i =1; foreach( $unhookmodules as $umod ){  $umodsname = $umod['name'];   ?>
 							<div class="module-pos" data-position="unhookpos" data-id="<?php echo $umod['index'];?>">
 								<div class="edit-module">
-									<a target="_blank" href="<?php echo $ourl->link('module/'.preg_replace( "#(\.[^.]+)#", "", $umod['code']),'module_id='.$umod['module_id'].'&token='.$token);?>"><b><?php echo $umodsname; ?></b></a>
+									<a target="_blank" rel="noopener noreferrer" href="<?php echo $ourl->link('module/'.preg_replace( "#(\.[^.]+)#", "", $umod['code']),'module_id='.$umod['module_id'].'&token='.$token);?>"><b><?php echo $umodsname; ?></b></a>
 								</div>
 							</div>
 
@@ -64,7 +64,7 @@
 			?>
 				   <div class="module-pos <?php if( !$modulepos['status']){ ?>mod-disable<?php } ?>" data-position="mainmenu" data-id="<?php echo $modulepos['index'];?>">
 						<div class="edit-module">
-							<a target="_blank" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
+							<a target="_blank" rel="noopener noreferrer" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
 						</div>
 					</div>
 			<?php } }?>
@@ -76,7 +76,7 @@
 			?>
 			<div class="module-pos <?php if( !$modulepos['status']){ ?>mod-disable<?php } ?>" data-position="slideshow" data-id="<?php echo $modulepos['index'];?>">
 				<div class="edit-module">
-					<a target="_blank" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
+					<a target="_blank" rel="noopener noreferrer" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
 				</div>
 			</div>
 			<?php } }?>
@@ -100,7 +100,7 @@
 			?>
 			<div class="module-pos <?php if( !$modulepos['status']){ ?>mod-disable<?php } ?>" data-position="showcase" data-id="<?php echo $modulepos['index'];?>">
 				<div class="edit-module">
-					<a target="_blank" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
+					<a target="_blank" rel="noopener noreferrer" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
 				</div>
 			</div>
 			<?php } }?>
@@ -126,7 +126,7 @@
 			?>
 			<div class="module-pos <?php if( !$modulepos['status']){ ?>mod-disable<?php } ?>" data-position="promotion" data-id="<?php echo $modulepos['index'];?>">
 				<div class="edit-module">
-					<a target="_blank" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
+					<a target="_blank" rel="noopener noreferrer" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
 				</div>
 			</div>
 			<?php } }?>
@@ -140,7 +140,7 @@
 				?>
 					<div class="module-pos <?php if( !$modulepos['status']){ ?>mod-disable<?php } ?>" data-position="column_left" data-id="<?php echo $modulepos['index'];?>">
 							<div class="edit-module">
-								<a target="_blank" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
+								<a target="_blank" rel="noopener noreferrer" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
 							</div>
 						</div>
 				<?php } }?>
@@ -154,7 +154,7 @@
 					?>
 						<div class="module-pos <?php if( !$modulepos['status']){ ?>mod-disable<?php } ?>" data-position="content_top" data-id="<?php echo $modulepos['index'];?>">
 							<div class="edit-module">
-								<a target="_blank" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
+								<a target="_blank" rel="noopener noreferrer" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
 							</div>
 						</div>
 
@@ -168,7 +168,7 @@
 					?>
 						<div class="module-pos <?php if( !$modulepos['status']){ ?>mod-disable<?php } ?>" data-position="content_bottom" data-id="<?php echo $modulepos['index'];?>">
 							<div class="edit-module">
-								<a target="_blank" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
+								<a target="_blank" rel="noopener noreferrer" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
 							</div>
 						</div>
 					<?php } }?>
@@ -182,7 +182,7 @@
 				?>
 				<div class="module-pos <?php if( !$modulepos['status']){ ?>mod-disable<?php } ?>" data-position="column_right" data-id="<?php echo $modulepos['index'];?>">
 						<div class="edit-module">
-							<a target="_blank" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
+							<a target="_blank" rel="noopener noreferrer" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
 						</div>
 					</div>
 				<?php } }?>
@@ -197,7 +197,7 @@
 			?>
 			<div class="module-pos <?php if( !$modulepos['status']){ ?>mod-disable<?php } ?>" data-position="mass_bottom" data-id="<?php echo $modulepos['index'];?>">
 				<div class="edit-module">
-					<a target="_blank" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
+					<a target="_blank" rel="noopener noreferrer" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
 				</div>
 			</div>
 			<?php } }?>
@@ -227,7 +227,7 @@
 				?>
 					<div class="module-pos <?php if( !$modulepos['status']){ ?>mod-disable<?php } ?>" data-position="footer_top" data-id="<?php echo $modulepos['index'];?>">
 							<div class="edit-module">
-								<a target="_blank" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
+								<a target="_blank" rel="noopener noreferrer" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
 							</div>
 						</div>
 				<?php } }?>
@@ -255,7 +255,7 @@
 				?>
 					<div class="module-pos <?php if( !$modulepos['status']){ ?>mod-disable<?php } ?>" data-position="footer_center" data-id="<?php echo $modulepos['index'];?>">
 						<div class="edit-module">
-							<a target="_blank" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
+							<a target="_blank" rel="noopener noreferrer" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
 						</div>
 					</div>
 				<?php } }?>
@@ -282,7 +282,7 @@
 				?>
 					<div class="module-pos <?php if( !$modulepos['status']){ ?>mod-disable<?php } ?>" data-position="footer_bottom" data-id="<?php echo $modulepos['index'];?>">
 						<div class="edit-module">
-							<a target="_blank" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
+							<a target="_blank" rel="noopener noreferrer" href="<?php echo $ourl->link('module/'.$modulepos['code'],'module_id='.$modulepos['module_id'].'&token='.$token);?>"><b><?php echo $modulepos['title']; ?></b></a>
 						</div>
 					</div>
 				<?php } }?>

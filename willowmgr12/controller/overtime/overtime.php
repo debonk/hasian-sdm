@@ -469,7 +469,16 @@ class ControllerOvertimeOvertime extends Controller
 		$data['customers'] = array();
 
 		$this->load->model('presence/presence');
-		$results = $this->model_presence_presence->getCustomers(['filter_customer_department_id' => $this->user->getCustomerDepartmentId()]);
+		$this->load->model('common/payroll');
+
+		$period_info = $this->model_common_payroll->getPeriodByDate(date('Y-m-d', strtotime('-1 month')));
+
+		$filter_data = array(
+			'presence_period_id'			=> $period_info['presence_period_id'],
+			'filter_customer_department_id' => $this->user->getCustomerDepartmentId()
+		);
+
+		$results = $this->model_presence_presence->getCustomers($filter_data);
 
 		foreach ($results as $result) {
 			$data['customers'][] = array(

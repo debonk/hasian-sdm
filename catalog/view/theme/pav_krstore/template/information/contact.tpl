@@ -38,7 +38,7 @@
 													<?php echo $location['address']; ?>
 												</address>
 												<?php if ($location['geocode']) { ?>
-													<a href="https://maps.google.com/maps?q=<?php echo urlencode($location['geocode']); ?>&hl=en&t=m&z=15" target="_blank" class="btn btn-info"><i class="fa fa-map-marker"></i> <?php echo $button_map; ?></a>
+													<a href="https://maps.google.com/maps?q=<?php echo urlencode($location['geocode']); ?>&hl=en&t=m&z=15" target="_blank" rel="noopener noreferrer" class="btn btn-info"><i class="fa fa-map-marker"></i> <?php echo $button_map; ?></a>
 												<?php } ?>
 											</div>
 											<div class="col-sm-3">
@@ -134,7 +134,7 @@
                                             <?php echo $address; ?>
                                             </address>
                                             <?php if ($geocode) { ?>
-                                            <a href="https://maps.google.com/maps?q=<?php echo urlencode($geocode); ?>&hl=en&t=m&z=15" target="_blank" class="btn btn-info"><i class="fa fa-map-marker"></i> <?php echo $button_map; ?></a>
+                                            <a href="https://maps.google.com/maps?q=<?php echo urlencode($geocode); ?>&hl=en&t=m&z=15" target="_blank" rel="noopener noreferrer" class="btn btn-info"><i class="fa fa-map-marker"></i> <?php echo $button_map; ?></a>
                                             <?php } ?>
                                       </div>
                                     </div>

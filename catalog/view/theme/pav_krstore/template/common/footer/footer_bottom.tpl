@@ -61,9 +61,9 @@
 						
 						<!-- Bonk: Social Icon List -->
 						    <div class="list-inline">
-								<a href="<?php echo $link_instagram; ?>" target="_blank" rel="nofollow"><i class="user-social-icon-list instagram"><i class="fa fa-instagram"></i></i></a>
-								<a href="<?php echo $link_facebook; ?>" target="_blank" rel="nofollow"><i class="user-social-icon-list facebook"><i class="fa fa-facebook"></i></i></a>
-								<a href="<?php echo $link_twitter; ?>" target="_blank" rel="nofollow"><i class="user-social-icon-list twitter"><i class="fa fa-twitter"></i></i></a>
+								<a href="<?php echo $link_instagram; ?>" target="_blank" rel="noopener noreferrer" rel="nofollow"><i class="user-social-icon-list instagram"><i class="fa fa-instagram"></i></i></a>
+								<a href="<?php echo $link_facebook; ?>" target="_blank" rel="noopener noreferrer" rel="nofollow"><i class="user-social-icon-list facebook"><i class="fa fa-facebook"></i></i></a>
+								<a href="<?php echo $link_twitter; ?>" target="_blank" rel="noopener noreferrer" rel="nofollow"><i class="user-social-icon-list twitter"><i class="fa fa-twitter"></i></i></a>
 							</div>
 						</div>
 					</div>

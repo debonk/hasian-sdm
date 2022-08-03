@@ -371,7 +371,7 @@
 								<td class="col-sm-4"><?php echo $objlang->get('entry_diquis_account');?></td>
 								<td class="col-sm-8"><input style="width:20%"class="form-control"name="pavblog[diquis_account]" value="<?php echo $general_setting['diquis_account'];?>" size="30"/>
 								<br>
-									<a href="https://disqus.com/admin/signup/" target="_blank"><?php echo $objlang->get('text_signup_diquis');?> </a>
+									<a href="https://disqus.com/admin/signup/" target="_blank" rel="noopener noreferrer"><?php echo $objlang->get('text_signup_diquis');?> </a>
 								</td>
 							</tr>
 							<tr>
@@ -379,7 +379,7 @@
 								<td class="col-sm-8">
 									<input style="width:20%"class="form-control"name="pavblog[facebook_appid]" value="<?php echo $general_setting['facebook_appid'];?>" size="30"/>
 									<p><i><?php echo $objlang->get('text_facebook_id_explain');?></i></p>
-									<a target="_blank" href="http://developers.facebook.com/docs/reference/plugins/comments/">http://developers.facebook.com/docs/reference/plugins/comments/</a>
+									<a target="_blank" rel="noopener noreferrer" href="http://developers.facebook.com/docs/reference/plugins/comments/">http://developers.facebook.com/docs/reference/plugins/comments/</a>
 								</td>
 							</tr>
 							<tr>

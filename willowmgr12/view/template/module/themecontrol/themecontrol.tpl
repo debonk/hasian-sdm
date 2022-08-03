@@ -24,7 +24,7 @@
 
 		<?php if( $refreshmodify ){ ?>
 		<div class="alert alert-warning">
-			Please <a href="<?php echo $refreshmodifylink; ?>" target="_blank" class="btn btn-sm btn-info">click here</a> to refesh modifycation which will create multiple layout positions to use for the theme
+			Please <a href="<?php echo $refreshmodifylink; ?>" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-info">click here</a> to refesh modifycation which will create multiple layout positions to use for the theme
 		</div>
 		<?php } ?>
 		<form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" class="form-horizontal" id="sform">

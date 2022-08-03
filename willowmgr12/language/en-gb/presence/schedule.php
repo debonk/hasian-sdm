@@ -71,7 +71,7 @@ $_['button_prev']				= 'Minggu Sebelumnya';
 $_['button_next']				= 'Minggu Berikutnya';
 $_['button_apply_schedule']	 	= 'Apply Schedule';
 $_['button_recap']    			= 'Summarize Presence';
-
+$_['button_presence']    		= 'Open Presence Data';
 
 // Error
 $_['error_customer_department']	 = 'Warning: You do not have permission to modify other division!';

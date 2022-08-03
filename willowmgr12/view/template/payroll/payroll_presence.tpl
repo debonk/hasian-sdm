@@ -50,7 +50,7 @@
             </div>
           </div>
         </div>
-        <form method="post" action="" enctype="multipart/form-data" target="_blank" id="form-order">
+        <form method="post" action="" enctype="multipart/form-data" target="_blank" rel="noopener noreferrer" id="form-order">
           <div class="table-responsive">
             <table class="table table-bordered table-hover">
               <thead>

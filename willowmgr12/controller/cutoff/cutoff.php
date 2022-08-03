@@ -336,10 +336,11 @@ class ControllerCutoffCutoff extends Controller {
 		$data['customers'] = array();
 
 		$this->load->model('presence/presence');
-		$results = $this->model_presence_presence->getCustomers();
-		
-		// $this->load->model('customer/customer');
-		// $results = $this->model_customer_customer->getCustomers();
+		$this->load->model('common/payroll');
+
+		$period_info = $this->model_common_payroll->getPeriodByDate(date('Y-m-d', strtotime('-2 weeks')));
+
+		$results = $this->model_presence_presence->getCustomers(['presence_period_id' => $period_info['presence_period_id']]);
 			
 		foreach ($results as $result) {
 			$data['customers'][] = array(

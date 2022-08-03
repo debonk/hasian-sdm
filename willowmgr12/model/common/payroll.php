@@ -20,6 +20,18 @@ class ModelCommonPayroll extends Model {
 		return $query->row;
 	}
 
+	public function getLatestPeriod() {
+		$query = $this->db->query("SELECT MAX(presence_period_id) AS presence_period_id FROM " . DB_PREFIX . "presence_period");
+
+		$period_data = [];
+
+		if ($query->num_rows) {
+			$period_data = $this->getPeriod($query->row['presence_period_id']);
+		}
+		
+		return $period_data;
+	}
+
 	public function getPeriodByDate($date) {
 		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "presence_period WHERE date_start <= '" . $this->db->escape($date) . "' AND date_end >= '" . $this->db->escape($date) . "'");
 

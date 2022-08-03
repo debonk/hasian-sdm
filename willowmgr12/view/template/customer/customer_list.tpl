@@ -48,8 +48,8 @@
 								<label class="control-label" for="input-name">
 									<?= $entry_name; ?>
 								</label>
-								<input type="text" name="filter_name" value="<?= $filter_name; ?>"
-									placeholder="<?= $entry_name; ?>" id="input-name" class="form-control" />
+								<input type="text" name="filter_name" value="<?= $filter_name; ?>" placeholder="<?= $entry_name; ?>"
+									id="input-name" class="form-control" />
 							</div>
 						</div>
 						<div class="col-sm-3">
@@ -221,6 +221,9 @@
 								<tr>
 									<td style="width: 1px;" class="text-center"><input type="checkbox"
 											onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
+									<td class="text-center">
+										<?= $column_image; ?>
+									</td>
 									<td class="text-left">
 										<?php if ($sort == 'c.nip') { ?>
 										<a href="<?= $sort_nip; ?>" class="<?= strtolower($order); ?>">
@@ -315,6 +318,13 @@
 										<input type="checkbox" name="selected[]" value="<?= $customer['customer_id']; ?>" />
 										<?php } ?>
 									</td>
+									<td class="text-center">
+										<?php if ($customer['image']) { ?>
+										<img src="<?= $customer['image']; ?>" alt="<?= $customer['name']; ?>" class="img-thumbnail" />
+										<?php } else { ?>
+										<span class="img-thumbnail list"><i class="fa fa-camera fa-2x"></i></span>
+										<?php } ?>
+									</td>
 									<td class="text-left">
 										<?= $customer['nip']; ?>
 									</td>
@@ -338,28 +348,28 @@
 									</td>
 									<td class="text-right nowrap">
 										<a href="<?= $customer['view']; ?>" data-toggle="tooltip" title="<?= $button_view; ?>"
-											class="btn btn-info" target="_blank"><i class="fa fa-eye"></i></a>
+											class="btn btn-info" target="_blank" rel="noopener noreferrer"><i class="fa fa-eye"></i></a>
 										<div class="btn-group" data-toggle="tooltip" title="<?= $button_login; ?>">
 											<button type="button" data-toggle="dropdown" class="btn btn-info dropdown-toggle"><i
 													class="fa fa-lock"></i></button>
 											<ul class="dropdown-menu pull-right">
 												<li><a
 														href="index.php?route=customer/customer/login&token=<?= $token; ?>&customer_id=<?= $customer['customer_id']; ?>&store_id=0"
-														target="_blank">
+														target="_blank" rel="noopener noreferrer">
 														<?= $text_default; ?>
 													</a></li>
 												<?php foreach ($stores as $store) { ?>
 												<li><a
 														href="index.php?route=customer/customer/login&token=<?= $token; ?>&customer_id=<?= $customer['customer_id']; ?>&store_id=<?= $store['store_id']; ?>"
-														target="_blank">
+														target="_blank" rel="noopener noreferrer">
 														<?= $store['name']; ?>
 													</a></li>
 												<?php } ?>
 											</ul>
 										</div>
 										<?php if ($customer['unlock']) { ?>
-										<a href="<?= $customer['unlock']; ?>" data-toggle="tooltip"
-											title="<?= $button_unlock; ?>" class="btn btn-warning"><i class="fa fa-unlock"></i></a>
+										<a href="<?= $customer['unlock']; ?>" data-toggle="tooltip" title="<?= $button_unlock; ?>"
+											class="btn btn-warning"><i class="fa fa-unlock"></i></a>
 										<?php } else { ?>
 										<button type="button" class="btn btn-warning" disabled><i class="fa fa-unlock"></i></button>
 										<?php } ?>
