@@ -68,12 +68,13 @@ class ControllerStartupStartup extends Controller {
 			$this->session->data['language'] = $code;
 		}
 				
-		$max_age = time() + 60 * 60 * 24 * 30;
+		$max_age = time() + 3600 * 24 * 30;
 		if (!isset($this->request->cookie['language']) || $this->request->cookie['language'] != $code) {
-			// setcookie('language', $code, time() + 60 * 60 * 24 * 30, '/', $this->request->server['HTTP_HOST']);
+			setcookie('language', $code, $max_age, '/', $this->request->server['HTTP_HOST']);
 			
 			//Memperbaiki SameSite cookies
-			header('Set-Cookie: language=' . $code . '; Max-Age=' . $max_age . '; path=/; Domain=' . $this->request->server['HTTP_HOST'] . '; SameSite=Lax');
+			// $max_age = 3600 * 24 * 30;
+			// header('Set-Cookie: language=' . $code . '; Max-Age=' . $max_age . '; path=/; Domain=' . $this->request->server['HTTP_HOST'] . '; SameSite=Lax');
 		}
 		
 		// Overwrite the default language object
@@ -101,11 +102,11 @@ class ControllerStartupStartup extends Controller {
 		
 		// Tracking Code
 		if (isset($this->request->get['tracking'])) {
-			// setcookie('tracking', $this->request->get['tracking'], time() + 3600 * 24 * 1000, '/');
+			setcookie('tracking', $this->request->get['tracking'], time() + 3600 * 24 * 1000, '/', $this->request->server['HTTP_HOST']);
 
 			//Memperbaiki SameSite cookies
-			$tracking_time = time() + 3600 * 24 * 1000;
-			header('Set-Cookie: tracking=' . $this->request->get['tracking'] . '; Max-Age=' . $tracking_time . '; path=/; SameSite=Lax');
+			// $tracking_time = 3600 * 24 * 1000;
+			// header('Set-Cookie: tracking=' . $this->request->get['tracking'] . '; Max-Age=' . $tracking_time . '; path=/; SameSite=Lax');
 		
 			$this->db->query("UPDATE `" . DB_PREFIX . "marketing` SET clicks = (clicks + 1) WHERE code = '" . $this->db->escape($this->request->get['tracking']) . "'");
 		}		
@@ -137,10 +138,10 @@ class ControllerStartupStartup extends Controller {
 		}
 		
 		if (!isset($this->request->cookie['currency']) || $this->request->cookie['currency'] != $code) {
-			// setcookie('currency', $code, time() + 60 * 60 * 24 * 30, '/', $this->request->server['HTTP_HOST']);
+			setcookie('currency', $code, $max_age, '/', $this->request->server['HTTP_HOST']);
 
 			//Memperbaiki SameSite cookies
-			header('Set-Cookie: currency=' . $code . '; Max-Age=' . $max_age . '; path=/; Domain=' . $this->request->server['HTTP_HOST'] . '; SameSite=Lax');
+			// header('Set-Cookie: currency=' . $code . '; Max-Age=' . $max_age . '; path=/; Domain=' . $this->request->server['HTTP_HOST'] . '; SameSite=Lax');
 		}		
 		
 		$this->registry->set('currency', new Cart\Currency($this->registry));

@@ -12,7 +12,7 @@ class ControllerCommonLogin extends Controller {
 		}
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-			$this->session->data['token'] = token(32);
+			// $this->session->data['token'] = token(32); # moved to system > user
 			
 			// Add to activity log
 			$this->load->model('user/activity');

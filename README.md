@@ -1,8 +1,18 @@
 # hsdm software
 
+2.5.7	08/08/2022
+Extend Customer expiration time (Hard Code: 2 days)
+	Modify Table: Customer
+		ALTER TABLE `oc_customer` ADD `cookie` VARCHAR(32) NOT NULL AFTER `code`;
+Extend Admin expiration time (Hard Code: 2 hours)
+	Modify Table: User
+		ALTER TABLE `oc_user` ADD `cookie` VARCHAR(32) NOT NULL AFTER `code`;
+
+APP > Startup > Startup: Replace header(Setcookie:) to setcookie
+
 2.5.6	03/08/2022
 Common > Payroll Info: Add shortcut to jump to other period
-Presence > Schedule, Presence: Add shortcat between modul
+Presence > Schedule, Presence: Add shortcut between modul
 Employee > Document: Max size of document uploaded set to 1000x1000px
 Employee: Add image in employee list
 Incentive, Cutoff, Overtime: Employee list based on 1 month/2 weeks earlier active status

@@ -196,18 +196,18 @@ class ControllerAccountLogin extends Controller {
 		// }
 
 		if (!$this->error) {
-			if (!$this->customer->login($this->request->post['email'], $this->request->post['password'])) {
+			# Prevent customer to log in. Uncomment this block if customer permitted to login
+			$this->error['warning'] = 'Login Disabled!';
+
+/* 			if (!$this->customer->login($this->request->post['email'], $this->request->post['password'])) {
 				$this->error['warning'] = $this->language->get('error_login');
 
 				$this->model_account_customer->addLoginAttempt($this->request->post['email']);
 			} else {
 				$this->model_account_customer->deleteLoginAttempts($this->request->post['email']);
 			}
-		}
+ */		}
 
-		// Lock Login, register, forgotten pass untuk mencegah customer login dengan error validate. Hapus utk menormalkan.
-		$this->error['warning'] = $this->language->get('error_login');
-		
 		return !$this->error;
 	}
 }
