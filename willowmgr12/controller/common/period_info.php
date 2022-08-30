@@ -56,20 +56,23 @@ class ControllerCommonPeriodInfo extends Controller
 
 			$periods[$period_data['presence_period_id']] = $period_data;
 
-			$period_data = $this->model_common_payroll->getPeriod();
+			$period_data = $this->model_common_payroll->getPeriodByDate(date('Y-m-d', strtotime('-1 week')));
 
 			$periods[$period_data['presence_period_id']] = $period_data;
 
 			$periods_count = count($periods);
 
-			$i = 1;
+			$i = -1;
+			
 			while ($periods_count < 4 && $i < $period_info['presence_period_id']) {
-				$period_data = $this->model_common_payroll->getPeriod($period_info['presence_period_id'] - $i);
+				if ($i) {
+					$period_data = $this->model_common_payroll->getPeriod($period_info['presence_period_id'] - $i);
 
-				if ($period_data && !isset($periods[$period_data['presence_period_id']])) {
-					$periods[$period_data['presence_period_id']] = $period_data;
+					if ($period_data && !isset($periods[$period_data['presence_period_id']])) {
+						$periods[$period_data['presence_period_id']] = $period_data;
 
-					$periods_count++;
+						$periods_count++;
+					}
 				}
 
 				$i++;

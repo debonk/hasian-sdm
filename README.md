@@ -1,5 +1,10 @@
 # hsdm software
 
+2.5.8	30/08/2022
+MODUL: Presence/Schedule: Import Schedule from excel
+	Presence/Schedule: Export excel template
+Period Info: Modify period shortcut.
+
 2.5.7	08/08/2022
 Extend Customer expiration time (Hard Code: 2 days)
 	Modify Table: Customer

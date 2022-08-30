@@ -104,8 +104,8 @@ class User {
 			if ($user_query->num_rows && md5($user_query->row['user_id'] . $this->request->get['token']) == $user_query->row['cookie']) {
 				$this->session->data['user_id'] = $user_query->row['user_id'];
 				$this->session->data['token'] = $this->request->get['token'];
-			} else {
-				$this->logout();
+			// } else {
+			// 	$this->logout();
 			}
 		}
 	}

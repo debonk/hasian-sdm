@@ -792,3 +792,35 @@ label.color-pick:hover, label.color-pick.active {
 	font-size: 18px;
 	margin-bottom: 15px;
 }
+
+input[type=file]::file-selector-button {
+	display: inline-block;
+	margin-bottom: 0;
+	font-weight: normal;
+	text-align: center;
+	vertical-align: middle;
+	touch-action: manipulation;
+	cursor: pointer;
+	background-image: none;
+	border: 1px solid transparent;
+	white-space: nowrap;
+	padding: 8px 13px;
+	font-size: 12px;
+	line-height: 1.42857;
+	border-radius: 3px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	color: #fff;
+	background-color: #5bc0de;
+	border-color: #39b3d7;
+}
+  
+  input[type=file]::file-selector-button:hover, input[type=file]::file-selector-button:focus {
+	color: #fff;
+    background-color: #31b0d5;
+    border-color: #2390b0;
+    text-decoration: none;
+}
+  

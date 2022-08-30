@@ -9,13 +9,15 @@
 					class="btn btn-info"><i class="fa fa-clipboard"></i>
 					<?= $button_apply_schedule; ?>
 				</button>
+				<a href="<?= $import; ?>" type="button" class="btn btn-warning" data-toggle="tooltip"
+					title="<?= $button_import; ?>" ><i class="fa fa-download"></i>
+				</a>
 				<button type="button" id="button-delete" data-toggle="tooltip" title="<?= $button_delete; ?>"
-					class="btn btn-danger"
-					onclick="confirm('<?= $text_confirm; ?>') ? $('#form-schedule').submit() : false;"><i
+					class="btn btn-danger" onclick="confirm('<?= $text_confirm; ?>') ? $('#form-schedule').submit() : false;"><i
 						class="fa fa-trash-o"></i></button>
 				<?php } else { ?>
-				<a href="<?= $presence; ?>" target="_blank" rel="noopener noreferrer" type="button"
-					class="btn btn-default"><i class="fa fa-external-link"></i>
+				<a href="<?= $presence; ?>" target="_blank" rel="noopener noreferrer" type="button" class="btn btn-default"><i
+						class="fa fa-external-link"></i>
 					<?= $button_presence; ?>
 				</a>
 				<?php if ($period_processing_check) { ?>
@@ -25,20 +27,20 @@
 						class="fa fa-share-square-o"></i>
 					<?= $button_recap; ?>
 				</button>
-				<button type="button" data-toggle="tooltip" title="<?= $button_delete; ?>"
-					class="btn btn-danger disabled"><i class="fa fa-trash-o"></i></button>
+				<button type="button" data-toggle="tooltip" title="<?= $button_delete; ?>" class="btn btn-danger disabled"><i
+						class="fa fa-trash-o"></i></button>
 				<?php } else { ?>
 				<button type="button" class="btn btn-warning disabled"><i class="fa fa-share-square-o"></i>
 					<?= $button_recap; ?>
 				</button>
-				<button type="button" data-toggle="tooltip" title="<?= $button_delete; ?>"
-					class="btn btn-danger disabled"><i class="fa fa-trash-o"></i></button>
+				<button type="button" data-toggle="tooltip" title="<?= $button_delete; ?>" class="btn btn-danger disabled"><i
+						class="fa fa-trash-o"></i></button>
 				<?php } ?>
 				<?php } ?>
-				<a href="<?= $print; ?>" target="_blank" rel="noopener noreferrer" data-toggle="tooltip" title="<?= $button_print; ?>"
-					class="btn btn-info"><i class="fa fa-print"></i></a>
-				<a href="<?= $back; ?>" data-toggle="tooltip" title="<?= $button_back; ?>"
-					class="btn btn-default"><i class="fa fa-reply"></i></a>
+				<a href="<?= $print; ?>" target="_blank" rel="noopener noreferrer" data-toggle="tooltip"
+					title="<?= $button_print; ?>" class="btn btn-info"><i class="fa fa-print"></i></a>
+				<a href="<?= $back; ?>" data-toggle="tooltip" title="<?= $button_back; ?>" class="btn btn-default"><i
+						class="fa fa-reply"></i></a>
 			</div>
 			<h1>
 				<?= $heading_title; ?>
@@ -83,7 +85,7 @@
 			<div class="panel-body">
 				<div class="well">
 					<div class="row">
-						<div class="col-sm-3">
+						<div class="col-sm-4">
 							<div class="form-group">
 								<label class="control-label" for="input-presence-period">
 									<?= $entry_presence_period; ?>
@@ -103,23 +105,23 @@
 								</select>
 							</div>
 						</div>
-						<div class="col-sm-3">
+						<div class="col-sm-4">
 							<div class="form-group">
 								<label class="control-label" for="input-name">
 									<?= $entry_name; ?>
 								</label>
-								<input type="text" name="filter_name" value="<?= $filter_name; ?>"
-									placeholder="<?= $entry_name; ?>" id="input-name" class="form-control" />
+								<input type="text" name="filter_name" value="<?= $filter_name; ?>" placeholder="<?= $entry_name; ?>"
+									id="input-name" class="form-control" />
 							</div>
 						</div>
-						<div class="col-sm-3">
+						<div class="col-sm-4">
 							<div class="form-group">
 								<label class="control-label" for="input-customer-group">
 									<?= $entry_customer_group; ?>
 								</label>
 								<select name="filter_customer_group_id" id="input-customer-group" class="form-control">
 									<option value="*">
-										<?= $text_all_customer_group ?>
+										<?= $text_all_customer_group; ?>
 									</option>
 									<?php foreach ($customer_groups as $customer_group) { ?>
 									<?php if ($customer_group['customer_group_id'] == $filter_customer_group_id) { ?>
@@ -135,7 +137,30 @@
 								</select>
 							</div>
 						</div>
-						<div class="col-sm-3">
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label class="control-label" for="input-customer-department">
+									<?= $entry_customer_department; ?>
+								</label>
+								<select name="filter_customer_department_id" id="input-customer-department" class="form-control">
+									<option value="*">
+										<?= $text_all_customer_department; ?>
+									</option>
+									<?php foreach ($customer_departments as $customer_department) { ?>
+									<?php if ($customer_department['customer_department_id'] == $filter_customer_department_id) { ?>
+									<option value="<?= $customer_department['customer_department_id']; ?>" selected="selected">
+										<?= $customer_department['name']; ?>
+									</option>
+									<?php } else { ?>
+									<option value="<?= $customer_department['customer_department_id']; ?>">
+										<?= $customer_department['name']; ?>
+									</option>
+									<?php } ?>
+									<?php } ?>
+								</select>
+							</div>
+						</div>
+						<div class="col-sm-4">
 							<div class="form-group">
 								<label class="control-label" for="input-location">
 									<?= $entry_location; ?>
@@ -157,6 +182,8 @@
 									<?php } ?>
 								</select>
 							</div>
+						</div>
+						<div class="col-sm-4">
 							<button type="button" id="button-filter" class="btn btn-primary pull-right"><i class="fa fa-search"></i>
 								<?= $button_filter; ?>
 							</button>
@@ -211,6 +238,12 @@
 				url += '&filter_customer_group_id=' + encodeURIComponent(filter_customer_group_id);
 			}
 
+			var filter_customer_department_id = $('select[name=\'filter_customer_department_id\']').val();
+
+			if (filter_customer_department_id != '*') {
+				url += '&filter_customer_department_id=' + encodeURIComponent(filter_customer_department_id);
+			}
+
 			var filter_location_id = $('select[name=\'filter_location_id\']').val();
 
 			if (filter_location_id != '*') {
@@ -252,6 +285,57 @@
 					}
 				});
 			}
+		});
+	</script>
+	<script type="text/javascript">
+		$('#button-import-bak').on('click', function (e) {
+			// var node = this;
+			// alert('galkdgjkd');
+			$('#form-import').remove();
+
+			$('body').prepend('<form enctype="multipart/form-data" id="form-import" style="display: none;"><input type="file" name="file" /></form>');
+
+			$('#form-import input[name=\'file\']').trigger('click');
+
+			if (typeof timer != 'undefined') {
+				clearInterval(timer);
+			}
+
+			timer = setInterval(function () {
+				if ($('#form-import input[name=\'file\']').val() != '') {
+					clearInterval(timer);
+
+					$.ajax({
+						url: 'index.php?route=presence/schedule/import&token=<?=$token; ?>&presence_period_id=<?=$presence_period_id; ?>',
+						type: 'post',
+						dataType: 'json',
+						data: new FormData($('#form-import')[0]),
+						cache: false,
+						contentType: false,
+						processData: false,
+						beforeSend: function () {
+							$('.alert').remove();
+							$('#button-import').button('loading');
+						},
+						success: function (json) {
+							$('#button-import').button('reset');
+							console.log(json['check']);
+
+							if (json['error']) {
+								$('#content > .container-fluid').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+							}
+
+							if (json['success']) {
+								// location.reload();
+							}
+						},
+						error: function (xhr, ajaxOptions, thrownError) {
+							alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+						}
+					});
+				}
+			}, 500);
 		});
 	</script>
 	<script type="text/javascript">
