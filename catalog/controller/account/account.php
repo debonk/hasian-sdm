@@ -1,6 +1,8 @@
 <?php
-class ControllerAccountAccount extends Controller {
-	public function index() {
+class ControllerAccountAccount extends Controller
+{
+	public function index()
+	{
 		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/account', '', true);
 
@@ -29,67 +31,126 @@ class ControllerAccountAccount extends Controller {
 			unset($this->session->data['success']);
 		} else {
 			$data['success'] = '';
-		} 
+		}
 
-		$data['heading_title'] = $this->language->get('heading_title');
-
-		$data['text_my_account'] = $this->language->get('text_my_account');
-		$data['text_my_presence'] = $this->language->get('text_my_presence');
-		$data['text_my_newsletter'] = $this->language->get('text_my_newsletter');
-		$data['text_edit'] = $this->language->get('text_edit');
-		$data['text_password'] = $this->language->get('text_password');
-		$data['text_address'] = $this->language->get('text_address');
-		// $data['text_credit_card'] = $this->language->get('text_credit_card');
-		$data['text_download'] = $this->language->get('text_download');
-		// $data['text_reward'] = $this->language->get('text_reward');
-		// $data['text_transaction'] = $this->language->get('text_transaction');
-		$data['text_newsletter'] = $this->language->get('text_newsletter');
-		// $data['text_recurring'] = $this->language->get('text_recurring');
+		$language_items = [
+			'heading_title',
+			'text_my_account',
+			'text_my_presence',
+			'text_my_newsletter',
+			'text_edit',
+			'text_password',
+			'text_download',
+			'text_newsletter',
+			'text_unsupport',
+			'entry_image',
+			'button_login',
+			'button_verify'
+		];
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
 
 		$data['edit'] = $this->url->link('account/edit', '', true);
 		$data['password'] = $this->url->link('account/password', '', true);
-		$data['address'] = $this->url->link('account/address', '', true);
-		
-		// $data['credit_cards'] = array();
-		
-		// $files = glob(DIR_APPLICATION . 'controller/credit_card/*.php');
-		
-		// foreach ($files as $file) {
-			// $code = basename($file, '.php');
-			
-			// if ($this->config->get($code . '_status') && $this->config->get($code)) {
-				// $this->load->language('credit_card/' . $code);
+		$data['login'] = $this->url->link('account/account/verify', '', true);
+		// $data['address'] = $this->url->link('account/address', '', true);
 
-				// $data['credit_cards'][] = array(
-					// 'name' => $this->language->get('heading_title'),
-					// 'href' => $this->url->link('credit_card/' . $code, '', true)
-				// );
-			// }
+		// $data['credit_cards'] = array();
+
+		// $files = glob(DIR_APPLICATION . 'controller/credit_card/*.php');
+
+		// foreach ($files as $file) {
+		// $code = basename($file, '.php');
+
+		// if ($this->config->get($code . '_status') && $this->config->get($code)) {
+		// $this->load->language('credit_card/' . $code);
+
+		// $data['credit_cards'][] = array(
+		// 'name' => $this->language->get('heading_title'),
+		// 'href' => $this->url->link('credit_card/' . $code, '', true)
+		// );
 		// }
-		
+		// }
+
 		$data['download'] = $this->url->link('account/download', '', true);
-		
+
 		// if ($this->config->get('reward_status')) {
-			// $data['reward'] = $this->url->link('account/reward', '', true);
+		// $data['reward'] = $this->url->link('account/reward', '', true);
 		// } else {
-			// $data['reward'] = '';
+		// $data['reward'] = '';
 		// }		
-		
+
 		// $data['transaction'] = $this->url->link('account/transaction', '', true);
 		$data['newsletter'] = $this->url->link('account/newsletter', '', true);
 		// $data['recurring'] = $this->url->link('account/recurring', '', true);
-		
+
+		// Temporary to cek log
+		$data['log'] = '';
+
+		$file = DIR_LOGS . 'presence.log';
+
+		if (file_exists($file)) {
+			$data['log'] = file_get_contents($file, FILE_USE_INCLUDE_PATH, null);
+		}
+
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
 		$data['content_top'] = $this->load->controller('common/content_top');
 		$data['content_bottom'] = $this->load->controller('common/content_bottom');
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
-		
+
 		$this->response->setOutput($this->load->view('account/account', $data));
 	}
 
-	public function country() {
+	public function location()
+	{
+		$this->load->language('account/account');
+
+		$json = [];
+
+		if (!$this->customer->isLogged()) {
+			$json['redirect'] = $this->url->link('account/login', '', true);
+		}
+
+		if (!$json) {
+			$latitude = isset($this->request->post['latitude']) ? trim($this->request->post['latitude']) : null;
+			$longitude = isset($this->request->post['longitude']) ? trim($this->request->post['longitude']) : null;
+
+			if ($this->request->server['REQUEST_METHOD'] == 'POST' && $latitude && $longitude) {
+
+				$json['location'] = 'Lat = ' . $latitude . ' & Long = ' . $longitude;
+
+				$this->log($json['location']);
+				// print_r($this->request->post);
+
+			} else {
+				$json['error'] = $this->language->get('error_retrieve');
+			}
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
+	public function log($message)
+	{
+		$log = new Log('presence.log');
+		$log->write($message);
+	}
+
+	public function verify()
+	{
+		// $file = $this->request->files['file'];
+		$file['tmp_name'] = DIR_DOWNLOAD . 'wilbex3.jpg';
+
+		$meta_data = exif_read_data($file['tmp_name'], 0, true);
+		var_dump($meta_data);
+	}
+
+	public function country()
+	{
 		$json = array();
 
 		$this->load->model('localisation/country');
@@ -115,7 +176,8 @@ class ControllerAccountAccount extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 	// Bonk
-		public function zone() {
+	public function zone()
+	{
 		$json = array();
 
 		$this->load->model('localisation/zone');

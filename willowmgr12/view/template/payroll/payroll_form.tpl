@@ -138,7 +138,7 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript"><!--
+  <script type="text/javascript">
 $('#period-info').load('index.php?route=common/period_info&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
 
 $('#customer-info').load('index.php?route=common/customer_info&token=<?php echo $token; ?>&customer_id=<?php echo $customer_id; ?>');
@@ -148,8 +148,8 @@ $('#payroll-detail-info').load('index.php?route=payroll/payroll/payrolldetailinf
 $('#payroll-old').load('index.php?route=payroll/payroll/getpayroll&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>&customer_id=<?php echo $customer_id; ?>');
 
 $('#absence-info').load('index.php?route=common/absence_info&token=<?php echo $token; ?>&customer_id=<?php echo $customer_id; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
-//--></script>
-  <script type="text/javascript"><!--
+</script>
+  <script type="text/javascript">
 $(document).on('click', '#button-presence', function() {
 	<?php foreach ($presence_items as $presence_item) { ?>
 		$('td[id=\'total-<?php echo $presence_item ?>\']').html('<input class="text-center form-control" type="text" name="total_<?php echo $presence_item ?>" value="<?php echo $total_item[$presence_item]; ?>" onkeyup="calchke()"  />');
@@ -213,8 +213,8 @@ $(document).on('click', '#button-presence-override', function() {
 	});
 	
 });
-//--></script>
-  <script type="text/javascript"><!--
+</script>
+  <script type="text/javascript">
 $('#absence-info').on('click', 'button[id^=\'button-action\']', function(e) {
 	if (confirm('<?php echo $text_confirm; ?>')) {
 		var node = this;
@@ -241,7 +241,7 @@ $('#absence-info').on('click', 'button[id^=\'button-action\']', function(e) {
 				}
 			},
 			error: function(xhr, ajaxOptions, thrownError) {
-			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
 			}
 		});
 	}
@@ -276,6 +276,6 @@ $('#button-payroll').on('click', function(e) {
 		}
 	});
 });
-//--></script>
+</script>
 </div>
 <?php echo $footer; ?>

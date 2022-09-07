@@ -46,7 +46,7 @@
 				<form action="<?= $import_data; ?>" method="post" enctype="multipart/form-data" id="form-import"
 					class="form-horizontal">
 					<div class="form-group">
-						<label class="col-sm-2 control-label" for="input-file">
+						<label class="col-sm-2 control-label">
 							<?= $entry_template; ?>
 						</label>
 						<div class="col-sm-10">

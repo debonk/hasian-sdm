@@ -1,5 +1,10 @@
 # hsdm software
 
+2.5.9_a
+MODUL: APP > Account: Login by location
+APP > Modify: login, forgotten
+	Remove: register
+
 2.5.8	30/08/2022
 MODUL: Presence/Schedule: Import Schedule from excel
 	Presence/Schedule: Export excel template

@@ -10,18 +10,18 @@ class ControllerAccountLogin extends Controller {
 			$this->customer->logout();
 			// $this->cart->clear();
 
-			unset($this->session->data['order_id']);
-			unset($this->session->data['payment_address']);
-			unset($this->session->data['payment_method']);
-			unset($this->session->data['payment_methods']);
+			// unset($this->session->data['order_id']);
+			// unset($this->session->data['payment_address']);
+			// unset($this->session->data['payment_method']);
+			// unset($this->session->data['payment_methods']);
 			// unset($this->session->data['shipping_address']);
 			// unset($this->session->data['shipping_method']);
 			// unset($this->session->data['shipping_methods']);
-			unset($this->session->data['comment']);
-			unset($this->session->data['coupon']);
-			unset($this->session->data['reward']);
-			unset($this->session->data['voucher']);
-			unset($this->session->data['vouchers']);
+			// unset($this->session->data['comment']);
+			// unset($this->session->data['coupon']);
+			// unset($this->session->data['reward']);
+			// unset($this->session->data['voucher']);
+			// unset($this->session->data['vouchers']);
 
 			$customer_info = $this->model_account_customer->getCustomerByToken($this->request->get['token']);
 
@@ -112,17 +112,12 @@ class ControllerAccountLogin extends Controller {
 
 		$data['heading_title'] = $this->language->get('heading_title');
 
-		$data['text_new_customer'] = $this->language->get('text_new_customer');
-		$data['text_register'] = $this->language->get('text_register');
-		$data['text_register_account'] = $this->language->get('text_register_account');
-		$data['text_returning_customer'] = $this->language->get('text_returning_customer');
-		$data['text_i_am_returning_customer'] = $this->language->get('text_i_am_returning_customer');
+		$data['text_login_detail'] = $this->language->get('text_login_detail');
 		$data['text_forgotten'] = $this->language->get('text_forgotten');
 
 		$data['entry_email'] = $this->language->get('entry_email');
 		$data['entry_password'] = $this->language->get('entry_password');
 
-		$data['button_continue'] = $this->language->get('button_continue');
 		$data['button_login'] = $this->language->get('button_login');
 
 		if (isset($this->session->data['error'])) {
@@ -136,7 +131,7 @@ class ControllerAccountLogin extends Controller {
 		}
 
 		$data['action'] = $this->url->link('account/login', '', true);
-		$data['register'] = $this->url->link('account/register', '', true);
+		// $data['register'] = $this->url->link('account/register', '', true);
 		$data['forgotten'] = $this->url->link('account/forgotten', '', true);
 
 		// Added strpos check to pass McAfee PCI compliance test (http://forum.opencart.com/viewtopic.php?f=10&t=12043&p=151494#p151295)
@@ -189,24 +184,24 @@ class ControllerAccountLogin extends Controller {
 		}
 
 		// Check if customer has been approved -> ubah ke apakah statusnya sudah enable
-		// $customer_info = $this->model_account_customer->getCustomerByEmail($this->request->post['email']);
+		$customer_info = $this->model_account_customer->getCustomerByEmail($this->request->post['email']);
 
-		// if ($customer_info) {
-			// $this->error['warning'] = $this->language->get('error_approved');
-		// }
+		if ($customer_info && !$customer_info['status']) {
+			$this->error['warning'] = $this->language->get('error_approved');
+		}
 
 		if (!$this->error) {
 			# Prevent customer to log in. Uncomment this block if customer permitted to login
-			$this->error['warning'] = 'Login Disabled!';
+			// $this->error['warning'] = 'Login Disabled!';
 
-/* 			if (!$this->customer->login($this->request->post['email'], $this->request->post['password'])) {
+			if (!$this->customer->login($this->request->post['email'], $this->request->post['password'])) {
 				$this->error['warning'] = $this->language->get('error_login');
 
 				$this->model_account_customer->addLoginAttempt($this->request->post['email']);
 			} else {
 				$this->model_account_customer->deleteLoginAttempts($this->request->post['email']);
 			}
- */		}
+		}
 
 		return !$this->error;
 	}

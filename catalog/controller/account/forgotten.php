@@ -128,7 +128,7 @@ class ControllerAccountForgotten extends Controller {
 			$this->error['warning'] = $this->language->get('error_approved');
 		}
 
-		// Lock Login, register, forgotten pass untuk mencegah customer login dengan error validate. Hapus utk menormalkan.
+		# Lock Login, register, forgotten pass untuk mencegah customer login dengan error validate. Hapus utk menormalkan.
 		$this->error['warning'] = $this->language->get('error_approved');
 		
 		return !$this->error;
