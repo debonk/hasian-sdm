@@ -282,4 +282,33 @@ class ModelPresencePresence extends Model {
 
 		return $query->row;
 	}
+
+	public function getPresenceSummary($presence_period_id, $customer_id) {
+		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "presence_total WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'";
+
+		$query = $this->db->query($sql);
+		
+		$presence_summary_data = [];
+
+		if ($query->num_rows) {
+			$presence_summary_data = [
+				'h' 					=> $query->row['total_h'],
+				's'     				=> $query->row['total_s'],
+				'i'    					=> $query->row['total_i'],
+				'ns'     				=> $query->row['total_ns'],
+				'ia'     				=> $query->row['total_ia'],
+				'a'     				=> $query->row['total_a'],
+				'c'     				=> $query->row['total_c'],
+				't1'     				=> $query->row['total_t1'],
+				't2'     				=> $query->row['total_t2'],
+				't3'     				=> $query->row['total_t3'],
+				'hke'     				=> $query->row['total_h'] + $query->row['total_s'] + $query->row['total_i'] + $query->row['total_ns'] + $query->row['total_ia'] + $query->row['total_a'],
+				'total_sakit'			=> $query->row['total_s'] + $query->row['total_i'],
+				'total_bolos'			=> $query->row['total_ns'] + $query->row['total_ia'] + $query->row['total_a'],
+				'total_t'    			=> $query->row['total_t1'] + $query->row['total_t2'] * 3 + $query->row['total_t3'] * 5
+			];
+		}
+		
+		return $presence_summary_data;
+	}
 }

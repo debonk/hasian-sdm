@@ -1,26 +1,6 @@
 <?php 
 class ControllerCommonHeader extends Controller {
 	public function index() {
-
-		//// Pavo 2.2 fix
-		// require_once( DIR_SYSTEM . 'pavothemes/loader.php' );
-
-		// $this->load->language('module/themecontrol');
-		// $data['objlang'] = $this->language;
-
-		// $config = $this->registry->get('config');
-		// $data['sconfig'] = $config;
-
-		// $helper = ThemeControlHelper::getInstance( $this->registry, $config->get('theme_default_directory') );
-		// $helper->triggerUserParams( array('header_layout','productlayout') );
-		// $data['helper'] = $helper;
-
-		// $themeConfig = (array)$config->get('themecontrol');
-
-		// $headerlayout = $helper->getConfig('header_layout','header-v1');
-		// $data['headerlayout'] = $headerlayout;
-		// Pavo 2.2 end fixheader
-		
 		// Analytics
 		$this->load->model('extension/extension');
 
@@ -66,46 +46,38 @@ class ControllerCommonHeader extends Controller {
 
 		$this->load->language('common/header');
 
-		$data['text_home'] = $this->language->get('text_home');
+		$language_items = [
+			'text_account',
+			'text_general',
+			'text_payroll_basic',
+			'text_payroll',
+			'text_password',
+			'text_schedule',
+			'text_login',
+			'text_logout',
+			'text_category'
+		];
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
 
-		// Welcome - Bonk
-/*		$data['text_greeting'] = $this->language->get('text_greeting');
-		$data['text_reward'] = '';
-		$data['text_balance'] = '';
-			
-		$reward_status = $this->config->get('reward_status');
-		$balance_status = $this->config->get('credit_status');
-*/
-		//Bonk06
-		$data['welcome'] = $this->load->controller('common/welcome');
-
-		// Wishlist
-		// if ($this->customer->isLogged()) {
-			// $this->load->model('account/wishlist');
-
-			// $data['text_wishlist'] = sprintf($this->language->get('text_wishlist'), $this->model_account_wishlist->getTotalWishlist());
-			
-		// } else {
-			// $data['text_wishlist'] = sprintf($this->language->get('text_wishlist'), (isset($this->session->data['wishlist']) ? count($this->session->data['wishlist']) : 0));
-		// }
-
-//		$data['text_logged'] = sprintf($this->language->get('text_logged'), $this->url->link('account/account', '', true), $this->customer->getFirstName(), $this->url->link('account/logout', '', true));
-
-		$data['text_account'] = $this->language->get('text_account');
-		$data['text_schedule'] = $this->language->get('text_schedule');
-		$data['text_login'] = $this->language->get('text_login');
-		$data['text_logout'] = $this->language->get('text_logout');
-		// $data['text_category'] = $this->language->get('text_category');
-		$data['text_all'] = $this->language->get('text_all');
+		if ($this->customer->isLogged()) {
+			$data['text_menu'] = sprintf($this->language->get('text_logged'), $this->customer->getFirstName());
+		} else {
+			$data['text_menu'] = $this->language->get('text_account');
+		}
+		
+		$data['logged'] = $this->customer->isLogged();
 
 		$data['home'] = $this->url->link('common/home');
-		$data['logged'] = $this->customer->isLogged();
 		$data['account'] = $this->url->link('account/account', '', true);
+		$data['edit'] = $this->url->link('account/edit', '', true);
+		$data['payroll_basic'] = $this->url->link('account/payroll_basic', '', true);
+		$data['payroll'] = $this->url->link('account/payroll', '', true);
+		$data['password'] = $this->url->link('account/password', '', true);
 		$data['login'] = $this->url->link('account/login', '', true);
 		$data['schedule'] = $this->url->link('account/schedule', '', true);
 		$data['logout'] = $this->url->link('account/logout', '', true);
-		$data['contact'] = $this->url->link('information/contact');
-		$data['telephone'] = $this->config->get('config_telephone');
 
 		// Menu
 		$this->load->model('catalog/category');
@@ -124,11 +96,6 @@ class ControllerCommonHeader extends Controller {
 				$children = $this->model_catalog_category->getCategories($category['category_id']);
 
 				foreach ($children as $child) {
-					$filter_data = array(
-						'filter_category_id'  => $child['category_id'],
-						'filter_sub_category' => true
-					);
-
 					$children_data[] = array(
 						'name'  => $child['name'],
 						'href'  => $this->url->link('product/category', 'path=' . $category['category_id'] . '_' . $child['category_id'])
@@ -144,10 +111,6 @@ class ControllerCommonHeader extends Controller {
 				);
 			}
 		}
-
-		// $data['language'] = $this->load->controller('common/language');
-		// $data['currency'] = $this->load->controller('common/currency');
-		// $data['search'] = $this->load->controller('common/search');
 
 		// For page specific css
 		if (isset($this->request->get['route'])) {

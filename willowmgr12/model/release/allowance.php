@@ -28,7 +28,7 @@ class ModelReleaseAllowance extends Model
 		$date_allowance = date_create($allowance_period);
 
 		foreach ($customers as $customer) {
-			$payroll_basic_info = $this->model_payroll_payroll_basic->getPayrollBasic($customer['customer_id']);
+			$payroll_basic_info = $this->model_payroll_payroll_basic->getPayrollBasicByCustomer($customer['customer_id']);
 
 			if ($payroll_basic_info) {
 				$amount = 0;

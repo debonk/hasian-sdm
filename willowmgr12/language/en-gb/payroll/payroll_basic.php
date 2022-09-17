@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title']              = 'Pengaturan Komponen Gaji';
+$_['heading_title']              = 'Komponen Gaji';
 
 // Text
 $_['text_success']          	 = 'Success: You have modified payroll basics!';

@@ -244,7 +244,7 @@ class ModelPayrollPayroll extends Model {
 
 		$this->load->model('payroll/payroll_basic');
 		
-		$payroll_basic_info = $this->model_payroll_payroll_basic->getPayrollBasic($customer_id);
+		$payroll_basic_info = $this->model_payroll_payroll_basic->getPayrollBasicByCustomer($customer_id);
 		
 		$full_overtime_status = $this->getOvertimeStatus($customer_id);
 

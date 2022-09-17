@@ -1,7 +1,19 @@
 # hsdm software
 
+2.6.0
+MODUL: APP > Account: Login by location (Progress)
+
+2.5.9
+MODUL: APP > Account > Payroll Basic
+MODUL: APP > Account > Payroll
+MODUL: APP > Account > Schedule
+MODUL: APP > Account > My Account Info
+Modify: Payroll Basic, attach active payroll basic to customer
+	ALTER TABLE `oc_customer` ADD `payroll_basic_id` INT(11) NOT NULL DEFAULT '0' AFTER `date_end`;
+Payroll Basic List: Add filter and sort 
+
 2.5.9_a
-MODUL: APP > Account: Login by location
+MODUL: APP > Account: Login by location (Progress)
 APP > Modify: login, forgotten
 	Remove: register
 

@@ -24,36 +24,7 @@
 		<div id="content" class="<?= $class; ?>">
 			<?= $content_top; ?>
 			<div class="row">
-				<div class="col-sm-4">
-					<h2>
-						<?= $text_my_presence; ?>
-					</h2>
-					<ul class="list-unstyled">
-						<li><a href="">
-								<?= $text_download; ?>
-							</a></li>
-					</ul>
-					<h2>
-						<?= $text_my_account; ?>
-					</h2>
-					<ul class="list-unstyled">
-						<li><a href="">
-								<?= $text_edit; ?>
-							</a></li>
-						<li><a href="<?= $password; ?>">
-								<?= $text_password; ?>
-							</a></li>
-					</ul>
-					<h2>
-						<?= $text_my_newsletter; ?>
-					</h2>
-					<ul class="list-unstyled">
-						<li><a href="">
-								<?= $text_newsletter; ?>
-							</a></li>
-					</ul>
-				</div>
-				<div class="col-sm-8">
+				<div class="col-sm-12">
 					<div>
 						<button type="button" data-toggle="tooltip" title="<?= $button_login; ?>" class="btn btn-primary"
 							id="get-location"><i class="fa fa-map-marker"></i>
@@ -71,15 +42,27 @@
 	</div>
 </div>
 <script type="text/javascript">
+	let id;
+	// let counter = 0;
+
 	function success(position) {
-		let lat = position.coords.latitude;
-		let long = position.coords.longitude;
+		// let lat = position.coords.latitude;
+		// let long = position.coords.longitude;
+		
+		// if (counter >= 2) {
+		// 	navigator.geolocation.clearWatch(id);
+		// } else {
+		// 	counter++;
+		// }
+
+		navigator.geolocation.clearWatch(id);
 
 		$.ajax({
 			url: 'index.php?route=account/account/location',
 			type: 'post',
 			dataType: 'json',
-			data: 'latitude=' + lat + '&longitude=' + long,
+			// data: 'latitude=' + lat + '&longitude=' + long,
+			data: position,
 			crossDomain: false,
 			beforeSend: function () {
 				$('#get-location').button('loading');
@@ -89,15 +72,13 @@
 			},
 			success: function (json) {
 				$('.alert').remove();
-
+				
 				if (json['redirect']) {
 					location = json['redirect'];
 				}
 
 				if (json['location']) {
 					location.reload();
-					// $('#location').html(json['location']);
-					// console.log(json['location']);
 				} else if (json['error']) {
 					$('#content').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 				}
@@ -109,17 +90,27 @@
 	}
 
 	function error(err) {
-		console.warn(`ERROR(${err.code}): ${err.message}`);
+		console.error(`ERROR(${err.code}): ${err.message}`);
+
+		// if (counter >= 2) {
+		// 	navigator.geolocation.clearWatch(id);
+		// } else {
+		// 	counter++;
+		// }
+
+		navigator.geolocation.clearWatch(id);
 	}
 
 	$('#get-location').on('click', function () {
 		if (navigator.geolocation) {
 			const options = {
 				enableHighAccuracy: true,
-				timeout: 5000
+				maximumAge: 5000,
+				timeout: Infinity
 			};
 
-			navigator.geolocation.getCurrentPosition(success, error, options);
+			id = navigator.geolocation.watchPosition(success, error, options);
+			// navigator.geolocation.getCurrentPosition(success, error, options);
 
 		} else {
 			$('#content').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?= $text_unsupport; ?></div>');

@@ -5,6 +5,7 @@ class Customer {
 	private $firstname;
 	private $lastname;
 	private $customer_group_id;
+	private $location_id;
 	private $email;
 	private $telephone;
 	// private $newsletter;
@@ -26,6 +27,7 @@ class Customer {
 				$this->firstname = $customer_query->row['firstname'];
 				$this->lastname = $customer_query->row['lastname'];
 				$this->customer_group_id = $customer_query->row['customer_group_id'];
+				$this->location_id = $customer_query->row['location_id'];
 				$this->email = $customer_query->row['email'];
 				$this->telephone = $customer_query->row['telephone'];
 				// $this->newsletter = $customer_query->row['newsletter'];
@@ -136,6 +138,10 @@ class Customer {
 
 	public function getGroupId() {
 		return $this->customer_group_id;
+	}
+
+	public function getLocationId() {
+		return $this->location_id;
 	}
 
 	public function getEmail() {

@@ -252,7 +252,7 @@
 												<?php } ?>
 											</td>
 											<?php } else { ?>
-											<td class="text-center calendar-day-np"></td>
+											<td class="text-center bg-light-dark"></td>
 											<?php } ?>
 											<?php } ?>
 										</tr>

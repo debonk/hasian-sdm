@@ -34,6 +34,7 @@ $_['text_incentive']				   = 'Incentives';
 $_['text_information']				   = 'Information';
 $_['text_installer']				   = 'Extension Installer';
 $_['text_language']					   = 'Languages';
+$_['text_layout']					   = 'Layouts';
 $_['text_loan']						   = 'Loans';
 $_['text_localisation']				   = 'Localisation';
 $_['text_location']					   = 'Work Location';

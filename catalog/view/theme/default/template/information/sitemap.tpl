@@ -41,7 +41,6 @@
         </div>
         <div class="col-sm-6">
           <ul>
-            <li><a href="<?php echo $special; ?>"><?php echo $text_special; ?></a></li>
             <li><a href="<?php echo $account; ?>"><?php echo $text_account; ?></a>
               <ul>
                 <li><a href="<?php echo $edit; ?>"><?php echo $text_edit; ?></a></li>

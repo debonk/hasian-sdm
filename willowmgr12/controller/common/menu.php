@@ -49,7 +49,7 @@ class ControllerCommonMenu extends Controller
 				'user'		=> ['report/user_activity']
 			],
 			'information'	=> ['module/information', 'catalog/download'],
-			'extension'		=> ['extension/installer', 'extension/modification', 'extension/theme', 'extension/component', 'extension/module'],
+			'extension'		=> ['extension/installer', 'extension/modification', 'extension/component', 'extension/module', 'design/layout', 'extension/theme'],
 			'themecontrol'	=> ['module/themecontrol', 'module/pavmegamenu', 'module/pavblog'],
 			'system'		=> [
 				'setting/store',

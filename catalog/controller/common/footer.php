@@ -57,8 +57,8 @@ class ControllerCommonFooter extends Controller {
 
 		$data['contact'] = $this->url->link('information/contact');
 		$data['return'] = $this->url->link('account/return/add', '', true);
-		$data['sitemap'] = $this->url->link('information/sitemap');
 		$data['presence_log'] = $this->url->link('presence/login');
+		// $data['sitemap'] = $this->url->link('information/sitemap');
 		// $data['manufacturer'] = $this->url->link('product/manufacturer');
 		// $data['voucher'] = $this->url->link('account/voucher', '', true);
 		// $data['affiliate'] = $this->url->link('affiliate/account', '', true);
@@ -67,6 +67,7 @@ class ControllerCommonFooter extends Controller {
 		$data['account'] = '#';
 		$data['schedule'] = '#';
 		$data['newsletter'] = '#';
+		$data['sitemap'] = '#';
 		// $data['order'] = $this->url->link('account/order', '', true);
 		// $data['wishlist'] = $this->url->link('account/wishlist', '', true);
 		// $data['newsletter'] = $this->url->link('account/newsletter', '', true);

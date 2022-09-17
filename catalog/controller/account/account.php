@@ -35,55 +35,14 @@ class ControllerAccountAccount extends Controller
 
 		$language_items = [
 			'heading_title',
-			'text_my_account',
-			'text_my_presence',
-			'text_my_newsletter',
-			'text_edit',
-			'text_password',
-			'text_download',
-			'text_newsletter',
 			'text_unsupport',
-			'entry_image',
 			'button_login',
-			'button_verify'
 		];
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
 		}
 
-		$data['edit'] = $this->url->link('account/edit', '', true);
-		$data['password'] = $this->url->link('account/password', '', true);
-		$data['login'] = $this->url->link('account/account/verify', '', true);
-		// $data['address'] = $this->url->link('account/address', '', true);
-
-		// $data['credit_cards'] = array();
-
-		// $files = glob(DIR_APPLICATION . 'controller/credit_card/*.php');
-
-		// foreach ($files as $file) {
-		// $code = basename($file, '.php');
-
-		// if ($this->config->get($code . '_status') && $this->config->get($code)) {
-		// $this->load->language('credit_card/' . $code);
-
-		// $data['credit_cards'][] = array(
-		// 'name' => $this->language->get('heading_title'),
-		// 'href' => $this->url->link('credit_card/' . $code, '', true)
-		// );
-		// }
-		// }
-
-		$data['download'] = $this->url->link('account/download', '', true);
-
-		// if ($this->config->get('reward_status')) {
-		// $data['reward'] = $this->url->link('account/reward', '', true);
-		// } else {
-		// $data['reward'] = '';
-		// }		
-
-		// $data['transaction'] = $this->url->link('account/transaction', '', true);
 		$data['newsletter'] = $this->url->link('account/newsletter', '', true);
-		// $data['recurring'] = $this->url->link('account/recurring', '', true);
 
 		// Temporary to cek log
 		$data['log'] = '';
@@ -114,20 +73,33 @@ class ControllerAccountAccount extends Controller
 			$json['redirect'] = $this->url->link('account/login', '', true);
 		}
 
-		if (!$json) {
-			$latitude = isset($this->request->post['latitude']) ? trim($this->request->post['latitude']) : null;
-			$longitude = isset($this->request->post['longitude']) ? trim($this->request->post['longitude']) : null;
+		if (!$json && $this->request->server['REQUEST_METHOD'] == 'POST' && $this->request->post) {
+			$latitude = trim($this->request->post['coords']['latitude']);
+			$longitude = trim($this->request->post['coords']['longitude']);
+			$accuracy = trim($this->request->post['coords']['accuracy']);
+			$datetime = date('Y-m-d H:i:s', (int)($this->request->post['timestamp'] / 1000));
 
-			if ($this->request->server['REQUEST_METHOD'] == 'POST' && $latitude && $longitude) {
+			$config_latitude = -7.2802238;
+			$config_longitude = 112.7755689;
+			$config_tolerance = 0.00008;
 
-				$json['location'] = 'Lat = ' . $latitude . ' & Long = ' . $longitude;
-
-				$this->log($json['location']);
-				// print_r($this->request->post);
-
+			if ($latitude - $config_latitude > $config_tolerance || $longitude - $config_longitude > $config_tolerance) {
+				// $json['error'] = $this->language->get('error_login');
+				$status = 'Too Far!';
 			} else {
-				$json['error'] = $this->language->get('error_retrieve');
+				#login block
+				$status = 'Login Success!';
 			}
+// 
+			$json['location'] = 'Lat: ' . $latitude . ' & Long: ' . $longitude . ' & Acc: ' . $accuracy . ' & Time: ' . $datetime . ' (' . $status . ')';
+			$json['pos'] = 'Pos: @' . $latitude . ',' . $longitude . ',21z?hl=en';
+
+			$this->log($json['location']);
+			$this->log($json['pos']);
+			// print_r($this->request->post);
+
+		} else {
+			$json['error'] = $this->language->get('error_retrieve');
 		}
 
 		$this->response->addHeader('Content-Type: application/json');
@@ -140,63 +112,12 @@ class ControllerAccountAccount extends Controller
 		$log->write($message);
 	}
 
-	public function verify()
-	{
-		// $file = $this->request->files['file'];
-		$file['tmp_name'] = DIR_DOWNLOAD . 'wilbex3.jpg';
+	// public function verify()
+	// {
+	// 	// $file = $this->request->files['file'];
+	// 	$file['tmp_name'] = DIR_DOWNLOAD . 'wilbex3.jpg';
 
-		$meta_data = exif_read_data($file['tmp_name'], 0, true);
-		var_dump($meta_data);
-	}
-
-	public function country()
-	{
-		$json = array();
-
-		$this->load->model('localisation/country');
-
-		$country_info = $this->model_localisation_country->getCountry($this->request->get['country_id']);
-
-		if ($country_info) {
-			$this->load->model('localisation/zone');
-
-			$json = array(
-				'country_id'        => $country_info['country_id'],
-				'name'              => $country_info['name'],
-				'iso_code_2'        => $country_info['iso_code_2'],
-				'iso_code_3'        => $country_info['iso_code_3'],
-				'address_format'    => $country_info['address_format'],
-				'postcode_required' => $country_info['postcode_required'],
-				'zone'              => $this->model_localisation_zone->getZonesByCountryId($this->request->get['country_id']),
-				'status'            => $country_info['status']
-			);
-		}
-
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
-	}
-	// Bonk
-	public function zone()
-	{
-		$json = array();
-
-		$this->load->model('localisation/zone');
-
-		$zone_info = $this->model_localisation_zone->getZone($this->request->get['zone_id']);
-
-		if ($zone_info) {
-			$this->load->model('localisation/city');
-
-			$json = array(
-				'zone_id'        	=> $zone_info['zone_id'],
-				'name'              => $zone_info['name'],
-				'code'        		=> $zone_info['code'],
-				'city'              => $this->model_localisation_city->getCitiesByZoneId($this->request->get['zone_id']),
-				'status'            => $zone_info['status']
-			);
-		}
-
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
-	}
+	// 	$meta_data = exif_read_data($file['tmp_name'], 0, true);
+	// 	var_dump($meta_data);
+	// }
 }
