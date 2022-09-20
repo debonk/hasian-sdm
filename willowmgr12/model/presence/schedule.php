@@ -578,4 +578,19 @@ class ModelPresenceSchedule extends Model {
 
 		return $query->row['total'];
 	}
+	
+	public function getFinalSchedulesCountByScheduleTypeId($schedule_type_id, $range_date) {//used by: schedule_type
+		$schedule_count = 0;
+
+		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "schedule WHERE schedule_type_id = '" . (int)$schedule_type_id . "' AND date >= '" . $this->db->escape($range_date['start']) . "' AND date <= '" . $this->db->escape($range_date['end']) . "'");
+		$schedule_count += $query->row['total'];
+		
+		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "overtime WHERE schedule_type_id = '" . (int)$schedule_type_id . "' AND date >= '" . $this->db->escape($range_date['start']) . "' AND date <= '" . $this->db->escape($range_date['end']) . "'");
+		$schedule_count += $query->row['total'];
+		
+		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "exchange WHERE schedule_type_id = '" . (int)$schedule_type_id . "' AND ((date_from >= '" . $this->db->escape($range_date['start']) . "' AND date_from <= '" . $this->db->escape($range_date['end']) . "') OR (date_to >= '" . $this->db->escape($range_date['start']) . "' AND date_to <= '" . $this->db->escape($range_date['end']) . "'))");
+		$schedule_count += $query->row['total'];
+		
+		return $schedule_count;
+	}
 }

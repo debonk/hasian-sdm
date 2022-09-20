@@ -4,7 +4,7 @@ $_['heading_title']    = 'Account';
 
 // Text
 $_['text_logout']   		= 'Logout';
-$_['text_account']  		= 'Dashboard';
+$_['text_account']  		= 'My Account';
 $_['text_general']			= 'Informasi Karyawan';
 $_['text_password']  		= 'Password';
 $_['text_download']  		= 'Downloads';

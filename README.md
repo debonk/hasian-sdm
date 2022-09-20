@@ -1,9 +1,12 @@
 # hsdm software
 
-2.6.0
-MODUL: APP > Account: Login by location (Progress)
+2.6.0-a
+MODUL: APP > Account: Login by location (Trial & Progress)
 
-2.5.9
+2.5.10
+Schedule Type > List: Currently Used field now calculate overtime and exchange too.
+
+2.5.9	17/09/2022
 MODUL: APP > Account > Payroll Basic
 MODUL: APP > Account > Payroll
 MODUL: APP > Account > Schedule

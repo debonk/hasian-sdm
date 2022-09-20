@@ -10,19 +10,6 @@ class ModelPayrollPayrollBasic extends Model {
 		$this->db->query("UPDATE " . DB_PREFIX . "customer SET payroll_basic_id = '" . (int)$payroll_basic_id . "' WHERE customer_id = '" . (int)$customer_id . "'");
 	}
 
-	// public function getPayrollBasicTemp($customer_id) {
-	// 	$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "payroll_basic WHERE customer_id = '" . (int)$customer_id . "' ORDER BY date_added DESC LIMIT 1";
-
-	// 	$query = $this->db->query($sql);
-
-	// 	# Temporary for auto fill table: customer > payroll_basic_id column
-	// 	if ($query->num_rows) {
-	// 		$this->db->query("UPDATE " . DB_PREFIX . "customer SET payroll_basic_id = '" . (int)$query->row['payroll_basic_id'] . "' WHERE customer_id = '" . (int)$customer_id . "'");
-	// 	}
-
-	// 	return $query->row;
-	// }
-
 	public function getPayrollBasic($payroll_basic_id) {
 		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "payroll_basic WHERE payroll_basic_id = '" . (int)$payroll_basic_id . "'";
 
@@ -40,9 +27,9 @@ class ModelPayrollPayrollBasic extends Model {
 	}
 
 	public function getCustomerPayrollBasics($data = array()) {
-		$hke_default = $this->config->has('payroll_setting_default_hke') ? $this->config->get('payroll_setting_default_hke') : 0;
+		$hke_default = $this->config->has('payroll_setting_default_hke') ? $this->config->get('payroll_setting_default_hke') : 25;
 
-		$sql = "SELECT c.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.customer_department_id, cdd.name AS customer_department, c.customer_group_id, cgd.name AS customer_group, c.location_id, l.name AS location, pb.*, (gaji_pokok + tunj_jabatan + tunj_hadir + tunj_pph + (" . (int)$hke_default . " * uang_makan)) AS gaji_dasar FROM " . DB_PREFIX . "customer c LEFT JOIN (" . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (cdd.customer_department_id = c.customer_department_id) LEFT JOIN " . DB_PREFIX . "payroll_basic pb ON (pb.payroll_basic_id = c.payroll_basic_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND c.payroll_include = 1";
+		$sql = "SELECT pb.*, c.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.customer_department_id, cdd.name AS customer_department, c.customer_group_id, cgd.name AS customer_group, c.location_id, l.name AS location, (pb.gaji_pokok + pb.tunj_jabatan + pb.tunj_hadir + pb.tunj_pph + (" . (int)$hke_default . " * pb.uang_makan)) AS gaji_dasar FROM " . DB_PREFIX . "customer c LEFT JOIN (" . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (cdd.customer_department_id = c.customer_department_id) LEFT JOIN " . DB_PREFIX . "payroll_basic pb ON (pb.payroll_basic_id = c.payroll_basic_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND c.payroll_include = 1";
 
 		$implode = array();
 

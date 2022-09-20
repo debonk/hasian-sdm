@@ -145,11 +145,9 @@ class ControllerPayrollPayrollBasic extends Controller {
 
 		$data['customers'] = array();
 
-		// $customer_total = $this->model_presence_presence->getTotalCustomers($filter_data);
 		$customer_total = $this->model_payroll_payroll_basic->getCustomerPayrollBasicsCount($filter_data);
 
 		$results = $this->model_payroll_payroll_basic->getCustomerPayrollBasics($filter_data);
-		// $results = $this->model_presence_presence->getCustomers($filter_data);
 		
 		foreach ($results as $result) {
 			if ($result['payroll_basic_id']) {
@@ -312,10 +310,6 @@ class ControllerPayrollPayrollBasic extends Controller {
 		$this->load->model('customer/customer_group');
 		$data['customer_groups'] = $this->model_customer_customer_group->getCustomerGroups();
 
-//		$this->load->model('setting/store');
-
-//		$data['stores'] = $this->model_setting_store->getStores();
-
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -422,7 +416,6 @@ class ControllerPayrollPayrollBasic extends Controller {
 
 		if (isset($this->request->get['customer_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
 			$payroll_basic_info = $this->model_payroll_payroll_basic->getPayrollBasicByCustomer($this->request->get['customer_id']);
-			// $payroll_basic_info = $this->model_payroll_payroll_basic->getPayrollBasicTemp($this->request->get['customer_id']); // Utk Update tabel customer
 		}
 		
 		$payroll_basic_items = array(

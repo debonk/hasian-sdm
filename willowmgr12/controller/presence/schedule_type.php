@@ -352,6 +352,11 @@ class ControllerPresenceScheduleType extends Controller {
 		$this->load->model('common/payroll');
 		$period_info = $this->model_common_payroll->getPeriod(); //get current presence_period_id
 
+		$range_date = array(
+			'start'	=> $period_info['date_start'],
+			'end'	=> $period_info['date_end']
+		);
+
 		foreach ($results as $result) {
 			if ($result['location_ids']) {
 				$result_locations = array_intersect_key($locations_data,array_flip(json_decode($result['location_ids'])));
@@ -360,7 +365,9 @@ class ControllerPresenceScheduleType extends Controller {
 			}
 
 			if ($period_info) {
-				$period_schedule_type_count = $this->model_presence_schedule->getSchedulesCountByScheduleTypeId($result['schedule_type_id'], $period_info['presence_period_id']);
+				$period_schedule_type_count = $this->model_presence_schedule->getFinalSchedulesCountByScheduleTypeId($result['schedule_type_id'], $range_date);
+				
+				// $period_schedule_type_count = $this->model_presence_schedule->getSchedulesCountByScheduleTypeId($result['schedule_type_id'], $period_info['presence_period_id']);
 			} 
 			
 			$data['schedule_types'][] = array(
