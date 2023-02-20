@@ -3,6 +3,9 @@
 2.6.0-a
 MODUL: APP > Account: Login by location (Trial & Progress)
 
+2.5.11b	20/02/2023
+Bug Fixed: Front Login not working
+
 2.5.11	20/02/2023
 Bug Fixed: Phpmailer SMTP connect failed.
 Bug Fixed: Period Info

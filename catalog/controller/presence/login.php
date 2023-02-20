@@ -153,8 +153,10 @@ class ControllerPresenceLogin extends Controller
 
 		$data['store_name'] = $this->config->get('config_name');
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
+		// $data['column_left'] = $this->load->controller('common/column_left');
+		// $data['column_right'] = $this->load->controller('common/column_right');
+		$data['column_left'] = false;
+		$data['column_right'] = false;
 		$data['content_top'] = $this->load->controller('common/content_top');
 		$data['content_bottom'] = $this->load->controller('common/content_bottom');
 		$data['footer'] = $this->load->controller('common/footer');
