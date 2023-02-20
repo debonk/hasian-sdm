@@ -48,7 +48,7 @@ class ControllerAccountPayrollBasic extends Controller
 
 		$payroll_basic_info = $this->model_account_payroll->getPayrollBasicByCustomer($this->customer->getId());
 
-		if ($payroll_basic_info) {
+		if (!empty($payroll_basic_info)) {
 			$data['gaji_pokok'] = $this->currency->format($payroll_basic_info['gaji_pokok'], $this->session->data['currency']);
 			$data['tunj_jabatan'] = $this->currency->format($payroll_basic_info['tunj_jabatan'], $this->session->data['currency']);
 			$data['tunj_hadir'] = $this->currency->format($payroll_basic_info['tunj_hadir'], $this->session->data['currency']);

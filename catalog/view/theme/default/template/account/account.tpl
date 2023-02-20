@@ -41,8 +41,6 @@
 						</button>
 						<?php }?>
 					</div>
-						<!-- <p id="location"></p> -->
-						<!-- <textarea wrap="off" rows="15" readonly class="form-control"><?= $log; ?></textarea> -->
 
 				</div>
 			</div>

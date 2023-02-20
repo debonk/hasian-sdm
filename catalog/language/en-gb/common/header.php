@@ -2,7 +2,7 @@
 // Text
 $_['text_category']			= 'Categories';
 $_['text_login']   			= 'Login';
-$_['text_account'] 			= 'Dashboard';
+$_['text_account'] 			= 'My Account';
 $_['text_general']			= 'Informasi Karyawan';
 $_['text_password']  		= 'Password';
 $_['text_download']  		= 'Downloads';

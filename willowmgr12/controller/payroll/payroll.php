@@ -426,6 +426,7 @@ class ControllerPayrollPayroll extends Controller {
 							'tunj_pph'    		=> $payroll_calculation['tunj_pph'],
 							'uang_makan'    	=> $payroll_calculation['uang_makan'],
 							'total_uang_makan'	=> $payroll_calculation['total_uang_makan'],
+							'date_added'		=> $payroll_calculation['date_added'],
 							'pot_sakit'			=> $payroll_calculation['pot_sakit'],
 							'pot_bolos'			=> $payroll_calculation['pot_bolos'],
 							'pot_tunj_hadir'	=> $payroll_calculation['pot_tunj_hadir'],
@@ -1235,13 +1236,14 @@ class ControllerPayrollPayroll extends Controller {
 					'tunj_pph'    		=> $payroll_calculation['tunj_pph'],
 					'uang_makan'    	=> $payroll_calculation['uang_makan'],
 					'total_uang_makan'	=> $payroll_calculation['total_uang_makan'],
+					'date_added'		=> $payroll_calculation['date_added'],
 					'pot_sakit'			=> $payroll_calculation['pot_sakit'],
 					'pot_bolos'			=> $payroll_calculation['pot_bolos'],
 					'pot_tunj_hadir'	=> $payroll_calculation['pot_tunj_hadir'],
 					'pot_gaji_pokok'	=> $payroll_calculation['pot_gaji_pokok'],
 					'pot_terlambat'		=> $payroll_calculation['pot_terlambat']
 				);
-				
+					
 				$this->model_payroll_payroll->addPayroll($this->request->post['presence_period_id'], $this->request->post['customer_id'], $payroll_data);
 				
 				// Payroll Components

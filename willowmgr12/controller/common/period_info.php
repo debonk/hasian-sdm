@@ -58,7 +58,9 @@ class ControllerCommonPeriodInfo extends Controller
 
 			$period_data = $this->model_common_payroll->getPeriodByDate(date('Y-m-d', strtotime('-1 week')));
 
-			$periods[$period_data['presence_period_id']] = $period_data;
+			if ($period_data) {
+				$periods[$period_data['presence_period_id']] = $period_data;
+			}
 
 			$periods_count = count($periods);
 

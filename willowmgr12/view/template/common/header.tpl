@@ -43,7 +43,9 @@
 	</div>
   <?php if ($logged) { ?>
   <ul class="nav pull-right">
+		<?php if ($text_framework_update) { ?>
 		<li><a><?php echo $text_framework_update; ?></a></li>
+		<?php } ?>
     <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown"><span class="label label-danger pull-left"><?php echo $alerts; ?></span> <i class="fa fa-bell fa-lg"></i></a>
       <ul class="dropdown-menu dropdown-menu-right alerts-dropdown">
         <li class="dropdown-header"><?php echo $text_customer; ?></li>

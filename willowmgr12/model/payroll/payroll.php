@@ -78,7 +78,7 @@ class ModelPayrollPayroll extends Model {
 	
 	public function addPayroll($presence_period_id, $customer_id, $data = array()) {
 		if ($presence_period_id && $customer_id) {
-			$this->db->query("INSERT INTO " . DB_PREFIX . "payroll SET presence_period_id = '" . (int)$presence_period_id . "', customer_id = '" . (int)$customer_id . "', gaji_pokok = '" . (int)$data['gaji_pokok'] . "', tunj_jabatan = '" . (int)$data['tunj_jabatan'] . "', tunj_hadir = '" . (int)$data['tunj_hadir'] . "', tunj_pph = '" . (int)$data['tunj_pph'] . "', uang_makan = '" . (int)$data['uang_makan'] . "', total_uang_makan = '" . (int)$data['total_uang_makan'] . "', pot_sakit = '" . (int)$data['pot_sakit'] . "', pot_bolos = '" . (int)$data['pot_bolos'] . "', pot_tunj_hadir = '" . (int)$data['pot_tunj_hadir'] . "', pot_gaji_pokok = '" . (int)$data['pot_gaji_pokok'] . "', pot_terlambat = '" . (int)$data['pot_terlambat'] . "', statement_sent = 0, date_added = NOW()");
+			$this->db->query("INSERT INTO " . DB_PREFIX . "payroll SET presence_period_id = '" . (int)$presence_period_id . "', customer_id = '" . (int)$customer_id . "', gaji_pokok = '" . (int)$data['gaji_pokok'] . "', tunj_jabatan = '" . (int)$data['tunj_jabatan'] . "', tunj_hadir = '" . (int)$data['tunj_hadir'] . "', tunj_pph = '" . (int)$data['tunj_pph'] . "', uang_makan = '" . (int)$data['uang_makan'] . "', total_uang_makan = '" . (int)$data['total_uang_makan'] . "', pot_sakit = '" . (int)$data['pot_sakit'] . "', pot_bolos = '" . (int)$data['pot_bolos'] . "', pot_tunj_hadir = '" . (int)$data['pot_tunj_hadir'] . "', pot_gaji_pokok = '" . (int)$data['pot_gaji_pokok'] . "', pot_terlambat = '" . (int)$data['pot_terlambat'] . "', statement_sent = 0, date_added = '" . $this->db->escape($data['date_added']) . "'");
 		} else {
 			return;
 		}
@@ -350,7 +350,7 @@ class ModelPayrollPayroll extends Model {
 			);
 			
 			$payroll_info = $this->calculatePayrollBasic($customer_id, $presence_data);
-			
+		
 			$payroll_basic_check = $payroll_info['payroll_basic_check'];
 			$payroll_id = 0;
 		}

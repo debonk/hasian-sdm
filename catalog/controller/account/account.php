@@ -73,7 +73,9 @@ class ControllerAccountAccount extends Controller
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
 
-		$this->response->setOutput($this->load->view('account/account', $data));
+		// Change this template when login by phone is active
+		// $this->response->setOutput($this->load->view('account/account', $data));
+		$this->response->setOutput($this->load->view('account/account_wo_login', $data));
 	}
 
 	public function validateLog()
@@ -212,7 +214,7 @@ class ControllerAccountAccount extends Controller
 			$config_longitude = 112.7755675;
 			$config_tolerance = 0.00008;
 
-			if ($latitude - $config_latitude > $config_tolerance || $longitude - $config_longitude > $config_tolerance) {
+			if (abs($latitude - $config_latitude) > $config_tolerance || abs($longitude - $config_longitude) > $config_tolerance) {
 				$json['error'] = $this->language->get('error_login');
 				
 				$status = 'Too Far!';
@@ -242,7 +244,7 @@ class ControllerAccountAccount extends Controller
 
 			# Add long-lat location history block here 
 
-			$json['location'] = 'Lat: ' . $latitude . ' & Long: ' . $longitude . ' & Acc: ' . $accuracy . ' & Time: ' . $datetime . ' (' . $status . ')';
+			$json['location'] = 'Name: ' . $this->customer->getFirstname() . ' - Lat: ' . $latitude . ' & Long: ' . $longitude . ' & Acc: ' . $accuracy . ' & Time: ' . $datetime . ' (' . $status . ')';
 			$json['pos'] = 'Pos: @' . $latitude . ',' . $longitude . ',21z?hl=en';
 
 			$this->log($json['location']);

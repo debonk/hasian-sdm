@@ -3,6 +3,12 @@
 2.6.0-a
 MODUL: APP > Account: Login by location (Trial & Progress)
 
+2.5.11	20/02/2023
+Bug Fixed: Phpmailer SMTP connect failed.
+Bug Fixed: Period Info
+Bug Fixed: Payroll: Last update not show the right data.
+Front Dashboard: Remove Login Button
+
 2.5.10
 Schedule Type > List: Currently Used field now calculate overtime and exchange too.
 

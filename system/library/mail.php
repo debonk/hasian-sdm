@@ -1,8 +1,10 @@
 <?php
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 
-class Mail {
+class Mail
+{
 	protected $to;
 	protected $from;
 	protected $sender;
@@ -20,49 +22,59 @@ class Mail {
 	public $verp = false;
 	public $parameter = '';
 
-	public function __construct($config = array()) {
+	public function __construct($config = array())
+	{
 		foreach ($config as $key => $value) {
 			$this->$key = $value;
 		}
 	}
 
-	public function setTo($to) {
+	public function setTo($to)
+	{
 		$this->to = $to;
 	}
 
-	public function setFrom($from) {
+	public function setFrom($from)
+	{
 		$this->from = $from;
 	}
 
-	public function setSender($sender) {
+	public function setSender($sender)
+	{
 		$this->sender = $sender;
 	}
 
-	public function setReplyTo($reply_to) {
+	public function setReplyTo($reply_to)
+	{
 		$this->reply_to = $reply_to;
 	}
 
-	public function setSubject($subject) {
+	public function setSubject($subject)
+	{
 		$this->subject = $subject;
 	}
 
-	public function setText($text) {
+	public function setText($text)
+	{
 		$this->text = $text;
 	}
 
-	public function setHtml($html) {
+	public function setHtml($html)
+	{
 		if ($html) {
 			$html .= PHP_EOL;
 		}
-		
+
 		$this->html = $html;
 	}
 
-	public function addAttachment($filename) {
+	public function addAttachment($filename)
+	{
 		$this->attachments[] = $filename;
 	}
 
-	public function send() {
+	public function send()
+	{
 		if (!$this->to) {
 			throw new \Exception('Error: E-Mail to required!');
 		}
@@ -100,13 +112,13 @@ class Mail {
 
 		$header .= 'Date: ' . date('D, d M Y H:i:s O') . PHP_EOL;
 		$header .= 'From: =?UTF-8?B?' . base64_encode($this->sender) . '?= <' . $this->from . '>' . PHP_EOL;
-		
+
 		if (!$this->reply_to) {
 			$header .= 'Reply-To: =?UTF-8?B?' . base64_encode($this->sender) . '?= <' . $this->from . '>' . PHP_EOL;
 		} else {
 			$header .= 'Reply-To: =?UTF-8?B?' . base64_encode($this->reply_to) . '?= <' . $this->reply_to . '>' . PHP_EOL;
 		}
-		
+
 		$header .= 'Return-Path: ' . $this->from . PHP_EOL;
 		$header .= 'X-Mailer: PHP/' . phpversion() . PHP_EOL;
 		$header .= 'Content-Type: multipart/related; boundary="' . $boundary . '"' . PHP_EOL . PHP_EOL;
@@ -164,13 +176,12 @@ class Mail {
 			} else {
 				mail($to, '=?UTF-8?B?' . base64_encode($this->subject) . '?=', $message, $header);
 			}
-			
 		} elseif ($this->protocol == 'phpmailer') {
 			// require_once(DIR_SYSTEM . '../../composer/vendor/autoload.php');
 			// require_once(DIR_VENDOR . 'autoload.php');
 
 			$mail = new PHPMailer(TRUE);
-			
+
 			$smtp_arr = explode('://', $this->smtp_hostname);
 			$smtp_secure = $smtp_arr[0];
 
@@ -184,14 +195,14 @@ class Mail {
 			try {
 				/* Set the mail sender. */
 				$mail->setFrom($this->from, $this->sender);
-				
+
 				/* Add a recipient. */
 				$mail->addAddress($this->to);
 
 				if ($this->reply_to) {
 					$mail->addReplyTo($this->reply_to, $this->sender);
 				}
-				
+
 				$mail->Subject = $this->subject;
 
 				if ($this->html) {
@@ -201,42 +212,46 @@ class Mail {
 				} else {
 					$mail->Body = $this->text;
 				}
-				
+
 				/* SMTP parameters. */
 				$mail->isSMTP();
-				
+
 				/* SMTP server address. */
 				$mail->Host = $hostname;
-				
+
 				/* Use SMTP authentication. */
 				$mail->SMTPAuth = TRUE;
-				
+
 				/* Set the encryption system. */
 				$mail->SMTPSecure = $smtp_secure;
-				
+
 				/* SMTP authentication username. */
 				$mail->Username = $this->smtp_username;
-				
+
 				/* SMTP authentication password. */
 				$mail->Password = $this->smtp_password;
-				
+
 				/* Set the SMTP port. */
 				$mail->Port = $this->smtp_port;
 
+				$mail->SMTPOptions = array(
+					'ssl' => array(
+						'verify_peer' 		=> false,
+						'verify_peer_name' 	=> false,
+						'allow_self_signed' => true
+					)
+				);
+
 				/* Finally send the mail. */
 				$mail->send();
-			}
-
-			catch (PHPMailerException $ep)
-			{
+				
+			} catch (PHPMailerException $ep) {
 				return $ep->errorMessage();
-			}
-			catch (\Exception $e)
-			{
+			} catch (\Exception $e) {
 				return $e->getMessage();
 			}
-			
-		// Bonk16
+
+			// Bonk16
 		} elseif ($this->protocol == 'mail_api') {
 			$url = 'https://api.elasticemail.com/v2/email/send';
 
@@ -245,8 +260,8 @@ class Mail {
 			} else {
 				$api_from = $this->reply_to;
 			}
-			
-			try{
+
+			try {
 				$post = array(
 					'from' => $api_from,
 					'fromName' => $this->sender,
@@ -256,8 +271,9 @@ class Mail {
 					'charset' => 'utf-8',
 					'bodyHtml' => $this->html,
 					'bodyText' => $this->text . PHP_EOL,
-					'isTransactional' => true);
-				
+					'isTransactional' => true
+				);
+
 				$ch = curl_init();
 				curl_setopt_array($ch, array(
 					CURLOPT_URL => $url,
@@ -267,15 +283,14 @@ class Mail {
 					CURLOPT_HEADER => false,
 					CURLOPT_SSL_VERIFYPEER => false
 				));
-				
-				$result=curl_exec ($ch);
-				curl_close ($ch);
-			}
-			catch(Exception $ex){
+
+				$result = curl_exec($ch);
+				curl_close($ch);
+			} catch (Exception $ex) {
 				return $ex->getMessage();
 			}
-		// Bonk16 End
-		
+			// Bonk16 End
+
 		} elseif ($this->protocol == 'smtp') {
 			if (substr($this->smtp_hostname, 0, 3) == 'tls') {
 				$hostname = substr($this->smtp_hostname, 6);
@@ -291,8 +306,8 @@ class Mail {
 				if (substr(PHP_OS, 0, 3) != 'WIN') {
 					socket_set_timeout($handle, $this->smtp_timeout, 0);
 				}
-	
-		
+
+
 				while ($line = fgets($handle, 515)) {
 					if (substr($line, 3, 1) == ' ') {
 						break;

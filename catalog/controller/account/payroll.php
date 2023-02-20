@@ -60,7 +60,7 @@ class ControllerAccountPayroll extends Controller
 			$payroll_info = $this->model_account_payroll->getPayrollDetail($period_info['presence_period_id'], $this->customer->getId());
 		}
 		
-		if ($payroll_info) {
+		if (!empty($payroll_info)) {
 			$data['payroll_check'] = true;
 
 			$data['text_period'] = sprintf($this->language->get('text_period'), date($this->language->get('date_format_m_y'), strtotime($period_info['period'])));
