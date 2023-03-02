@@ -3,6 +3,9 @@
 2.6.0-a
 MODUL: APP > Account: Login by location (Trial & Progress)
 
+2.5.12	02/03/2023
+Mail: Add Mailtrap protocol for mail service
+
 2.5.11b	20/02/2023
 Bug Fixed: Front Login not working
 

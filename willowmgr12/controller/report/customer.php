@@ -521,7 +521,6 @@ class ControllerReportCustomer extends Controller {
 		$data['documents'] = array();
 		
 		$results = $this->model_customer_document->getDocumentsByCustomer($this->request->get['customer_id']);
-		// var_dump($results);die('---breakpoint---');
 
 		foreach ($results as $result) {
 			if (is_file(DIR_DOCUMENT . $result['filename'])) {

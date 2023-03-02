@@ -361,6 +361,7 @@ class ModelPayrollPayrollRelease extends Model
 			$mail->setSender(html_entity_decode($store_name, ENT_QUOTES, 'UTF-8'));
 			$mail->setSubject($subject);
 			$mail->setText($message);
+			$mail->setCategory('Payroll Statement');
 			$error_status = $mail->send();
 
 			if (!$error_status) {

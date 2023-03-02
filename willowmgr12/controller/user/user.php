@@ -170,7 +170,6 @@ class ControllerUserUser extends Controller {
 		$user_total = $this->model_user_user->getTotalUsers();
 
 		$results = $this->model_user_user->getUsers($filter_data);
-		// var_dump($results);die;
 
 
 		foreach ($results as $result) {

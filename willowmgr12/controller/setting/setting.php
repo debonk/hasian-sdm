@@ -37,7 +37,8 @@ class ControllerSettingSetting extends Controller {
 			'text_error',
 			'text_general',
 			'text_item',
-			'text_mail_api',
+			'text_elasticmail_api',
+			'text_mailtrap_api',
 			'text_mail',
 			'text_no',
 			'text_none',
@@ -799,7 +800,7 @@ class ControllerSettingSetting extends Controller {
 
 		$data['mail_protocols'] = [];
 
-		$mail_protocols = ['mail', 'phpmailer', 'smtp', 'mail_api'];
+		$mail_protocols = ['mail', 'phpmailer', 'smtp', 'elasticmail_api', 'mailtrap_api'];
 		foreach ($mail_protocols as $protocol) {
 			$data['mail_protocols'][] = [
 				'protocol'	=> $protocol,

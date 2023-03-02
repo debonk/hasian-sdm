@@ -13,6 +13,7 @@ class Mail
 	protected $text;
 	protected $html;
 	protected $attachments = array();
+	protected $category = 'Transactional Mail';
 	public $protocol = 'mail';
 	public $smtp_hostname;
 	public $smtp_username;
@@ -71,6 +72,11 @@ class Mail
 	public function addAttachment($filename)
 	{
 		$this->attachments[] = $filename;
+	}
+
+	public function setCategory($category)
+	{
+		$this->category = $category;
 	}
 
 	public function send()
@@ -176,6 +182,59 @@ class Mail
 			} else {
 				mail($to, '=?UTF-8?B?' . base64_encode($this->subject) . '?=', $message, $header);
 			}
+		} elseif ($this->protocol == 'mailtrap_api') {
+			$url = 'https://send.api.mailtrap.io/api/send';
+
+			if (!$this->reply_to) {
+				$api_from = $this->from;
+			} else {
+				$api_from = $this->reply_to;
+			}
+
+			$post = array(
+				'from' 		=> [
+					'email'		=> $api_from,
+					'name'		=> $this->sender
+				],
+				'to' 		=> [[
+					'email'		=> $to
+				]],
+				'subject'	=> $this->subject,
+				'html' => $this->html,
+				'text' => $this->text . PHP_EOL,
+				'category'	=> $this->category
+			);
+
+			$header = array(
+				'Authorization: Bearer ' . $this->parameter,
+				'Content-Type: application/json'
+			);
+
+			$curl = curl_init();
+
+			curl_setopt_array($curl, array(
+				CURLOPT_URL =>	$url,
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_ENCODING => '',
+				CURLOPT_MAXREDIRS => 10,
+				CURLOPT_TIMEOUT => 0,
+				CURLOPT_FOLLOWLOCATION => true,
+				CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+				CURLOPT_CUSTOMREQUEST => 'POST',
+				CURLOPT_POSTFIELDS => json_encode($post),
+				CURLOPT_HTTPHEADER => $header
+			));
+
+			$response = curl_exec($curl);
+
+			curl_close($curl);
+
+			$array_response = json_decode($response, 1);
+
+			if (!isset($array_response['success']) || $array_response['success'] != 'true') {
+				return $response;
+			}
+
 		} elseif ($this->protocol == 'phpmailer') {
 			// require_once(DIR_SYSTEM . '../../composer/vendor/autoload.php');
 			// require_once(DIR_VENDOR . 'autoload.php');
@@ -234,17 +293,18 @@ class Mail
 				/* Set the SMTP port. */
 				$mail->Port = $this->smtp_port;
 
-				$mail->SMTPOptions = array(
-					'ssl' => array(
-						'verify_peer' 		=> false,
-						'verify_peer_name' 	=> false,
-						'allow_self_signed' => true
-					)
-				);
+				$mail->SMTPDebug = 2;
+
+				// $mail->SMTPOptions = array(
+				// 	'ssl' => array(
+				// 		'verify_peer' 		=> false,
+				// 		'verify_peer_name' 	=> false,
+				// 		'allow_self_signed' => true
+				// 	)
+				// );
 
 				/* Finally send the mail. */
 				$mail->send();
-				
 			} catch (PHPMailerException $ep) {
 				return $ep->errorMessage();
 			} catch (\Exception $e) {
@@ -252,7 +312,7 @@ class Mail
 			}
 
 			// Bonk16
-		} elseif ($this->protocol == 'mail_api') {
+		} elseif ($this->protocol == 'elasticmail_api') {
 			$url = 'https://api.elasticemail.com/v2/email/send';
 
 			if (!$this->reply_to) {
