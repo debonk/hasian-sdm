@@ -1,40 +1,76 @@
-<?php 
-class ModelComponentInsurance extends Model {    
-  	public function getQuote($presence_period_id, $customer_id) {
+<?php
+class ModelComponentInsurance extends Model
+{
+	public function getQuote($presence_period_id, $customer_id)
+	{
 		$this->load->language('component/insurance');
-		
+
 		if ($this->config->get('insurance_status')) {
 			$this->load->model('common/payroll');
 			$period = $this->model_common_payroll->getPeriod($presence_period_id)['period'];
-			
+
 			$customer_info = $this->model_common_payroll->getCustomer($customer_id);
-		
+
 			$quote_data = array();
-			
-			$wage = $this->config->get('insurance_min_wage');
-			$insurance_date_start = $this->config->get('insurance_date_start');
-			
+
 			if ($customer_info['skip_trial_status']) {
-				$date_start = date('Y-m-', strtotime('- 3 months', strtotime($customer_info['date_start']))) . '01';
-			} else {
 				$date_start = date('Y-m-', strtotime($customer_info['date_start'])) . '01';
+			} else {
+				$date_start = date('Y-m-', strtotime('+ 3 months', strtotime($customer_info['date_start']))) . '01';
 			}
-			
-			$health_insurance_check = strtotime($period) > strtotime('+ 14 months', strtotime($date_start)); # Dikurangi 1 bln krn BPJS Kes bayar di depan. 
-			$non_jht_insurance_check = strtotime($period) > strtotime('+ 3 months', strtotime($date_start));
-			$jht_insurance_check = strtotime($period) > strtotime('+ 27 months', strtotime($date_start));
-						
+
+			$health_insurance_check = strtotime($period) > strtotime('+ ' . $this->config->get('insurance_activation_health') . ' months', strtotime($date_start));
+			$non_jht_insurance_check = strtotime($period) > strtotime('+ ' . $this->config->get('insurance_activation_non_jht') . ' months', strtotime($date_start));
+			$jht_insurance_check = strtotime($period) > strtotime('+ ' . $this->config->get('insurance_activation_jht') . ' months', strtotime($date_start));
+
+			$calculation_base = $this->config->get('insurance_calculation_base');
+
+			$insurance_date_start = $this->config->get('insurance_date_start');
+
+			switch ($calculation_base) {
+				case 'wage_real':
+					$payroll_calculation = $this->model_payroll_payroll->getPayrollDetail($presence_period_id, $customer_id);
+
+					$wage_health = $payroll_calculation['gaji_dasar'] - $payroll_calculation['total_potongan'];
+					$wage_tk = $wage_health;
+
+					break;
+
+				case 'wage_both':
+					$payroll_calculation = $this->model_payroll_payroll->getPayrollDetail($presence_period_id, $customer_id);
+
+					# BPJS Kesehatan: Pembayaran di awal bulan (Pembayaran Maju)
+					if ($health_insurance_check) {
+						$wage_min = (strtotime('+1 month', strtotime($period)) < $insurance_date_start) ? $this->config->get('insurance_min_wage_old') : $this->config->get('insurance_min_wage');
+						$wage_health = max($payroll_calculation['gaji_dasar'] - $payroll_calculation['total_potongan'], $wage_min);
+					}
+
+					if ($non_jht_insurance_check) {
+						$wage_min = (strtotime($period) < $insurance_date_start) ? $this->config->get('insurance_min_wage_old') : $this->config->get('insurance_min_wage');
+						$wage_tk = max($payroll_calculation['gaji_dasar'] - $payroll_calculation['total_potongan'], $wage_min);
+					}
+
+					break;
+
+				default:
+					# BPJS Kesehatan: Pembayaran di awal bulan (Pembayaran Maju)
+					if ($health_insurance_check) {
+						$wage_health = (strtotime('+1 month', strtotime($period)) < $insurance_date_start) ? $this->config->get('insurance_min_wage_old') : $this->config->get('insurance_min_wage');
+					}
+
+					if ($non_jht_insurance_check) {
+						$wage_tk = (strtotime($period) < $insurance_date_start) ? $this->config->get('insurance_min_wage_old') : $this->config->get('insurance_min_wage');
+					}
+
+					break;
+			}
+
 			$values = array();
-			
+
 			if ($health_insurance_check && $customer_info['health_insurance']) {
-				# BPJS Kesehatan: Pembayaran di awal bulan (Pembayaran Maju)
-				if (strtotime('+1 month', strtotime($period)) < $insurance_date_start) {
-					$wage = $this->config->get('insurance_min_wage_old');
-				}
-				
-				$values[0] = -ceil($wage * 0.05);
-				$values[1] = ceil($wage * 0.04);
-				
+				$values[0] = -ceil($wage_health * 0.05);
+				$values[1] = ceil($wage_health * 0.04);
+
 				foreach ($values as $key => $value) {
 					$quote_data[] = array(
 						'type'		=> $key,
@@ -44,25 +80,20 @@ class ModelComponentInsurance extends Model {
 					);
 				}
 			}
-				
+
 			$values = array();
-			
+
 			if ($non_jht_insurance_check && $customer_info['life_insurance']) {
-				# BPJS TK: Pembayaran di akhir bulan (Pembayaran Mundur)
-				if (strtotime($period) < $insurance_date_start) {
-					$wage = $this->config->get('insurance_min_wage_old');
-				}
-				
 				if ($jht_insurance_check && $customer_info['employment_insurance']) {
-					$values[0] = -ceil($wage * 0.0624);
-					$values[1] = ceil($wage * 0.0424);
+					$values[0] = -ceil($wage_tk * 0.0624);
+					$values[1] = ceil($wage_tk * 0.0424);
 					$text = $this->language->get('text_jht');
 				} else {
-					$values[0] = -ceil($wage * 0.0054);
-					$values[1] = ceil($wage * 0.0054);
+					$values[0] = -ceil($wage_tk * 0.0054);
+					$values[1] = ceil($wage_tk * 0.0054);
 					$text = $this->language->get('text_non_jht');
 				}
-				
+
 				foreach ($values as $key => $value) {
 					$quote_data[] = array(
 						'type'		=> $key,
@@ -72,40 +103,40 @@ class ModelComponentInsurance extends Model {
 					);
 				}
 			}
-			
+
 			if (!empty($quote_data)) {
 				$status = true;
 			} else {
 				$status = false;
 			}
-			
 		} else {
 			$status = false;
-		}	
-		
-		$component_data = array();
-	
-		if ($status) {
-      		$component_data = array(
-        		'code'			=> 'insurance',
-				'heading_title'	=> $this->language->get('heading_title'),
-        		'quote'			=> $quote_data,
-				'sort_order'	=> $this->config->get('insurance_sort_order')
-      		);
-    	}
-   
-    	return $component_data;
- 	}
+		}
 
-  	public function getTitles() {
+		$component_data = array();
+
+		if ($status) {
+			$component_data = array(
+				'code'			=> 'insurance',
+				'heading_title'	=> $this->language->get('heading_title'),
+				'quote'			=> $quote_data,
+				'sort_order'	=> $this->config->get('insurance_sort_order')
+			);
+		}
+
+		return $component_data;
+	}
+
+	public function getTitles()
+	{
 		$this->load->language('component/insurance');
-		
+
 		$titles = array(
 			$this->language->get('text_health'),
 			$this->language->get('text_jht'),
 			$this->language->get('text_non_jht')
 		);
-		
+
 		return $titles;
 	}
 }

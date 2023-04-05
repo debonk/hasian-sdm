@@ -84,6 +84,23 @@ class ModelAccountPayroll extends Model
 
 		if ($this->checkPeriodStatus($presence_period_id, 'approved, released, completed')) {
 			$payroll_info = $this->getPayroll($presence_period_id, $customer_id);
+			
+			if (empty($payroll_info)) {
+				$payroll_info = [
+					'gaji_pokok'		=> 0,
+					'tunj_jabatan'		=> 0,
+					'tunj_hadir'		=> 0,
+					'tunj_pph'			=> 0,
+					'uang_makan'		=> 0,
+					'date_added'		=> '',
+					'total_uang_makan'	=> 0,
+					'pot_sakit'			=> 0,
+					'pot_bolos'			=> 0,
+					'pot_tunj_hadir'	=> 0,
+					'pot_gaji_pokok'	=> 0,
+					'pot_terlambat'		=> 0
+				];
+			}
 
 			return array(
 				'presence_period_id'    => $presence_period_id,

@@ -3,6 +3,10 @@
 2.6.0-a
 MODUL: APP > Account: Login by location (Trial & Progress)
 
+2.5.13	05/04/2023
+Bug Fixed: Textual change
+Insurance: Additional Setting for insurance modul
+
 2.5.12	02/03/2023
 Mail: Add Mailtrap protocol for mail service
 

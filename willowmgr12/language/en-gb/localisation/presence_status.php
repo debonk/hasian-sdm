@@ -6,7 +6,7 @@ $_['heading_title']    = 'Status Kehadiran';
 $_['text_success']     = 'Success: You have modified presence statuses!';
 $_['text_list']        = 'Daftar Status Kehadiran';
 $_['text_add']         = 'Tambah Status';
-$_['text_edit']        = 'Rubah Status';
+$_['text_edit']        = 'Ubah Status';
 
 // Column
 $_['column_name']      = 'Nama';

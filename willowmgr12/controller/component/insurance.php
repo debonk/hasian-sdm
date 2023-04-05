@@ -18,23 +18,32 @@ class ControllerComponentInsurance extends Controller {
 			$this->response->redirect($this->url->link('extension/component', 'token=' . $this->session->data['token'], true));
 		}
 
-		$data['heading_title'] = $this->language->get('heading_title');
-
-		$data['text_edit'] = $this->language->get('text_edit');
-		$data['text_enabled'] = $this->language->get('text_enabled');
-		$data['text_disabled'] = $this->language->get('text_disabled');
-
-		$data['text_earning'] = $this->language->get('text_earning');
-		$data['text_deduction'] = $this->language->get('text_deduction');
-
-		$data['entry_min_wage'] = $this->language->get('entry_min_wage');
-		$data['entry_min_wage_old'] = $this->language->get('entry_min_wage_old');
-		$data['entry_date_start'] = $this->language->get('entry_date_start');
-		$data['entry_status'] = $this->language->get('entry_status');
-		$data['entry_sort_order'] = $this->language->get('entry_sort_order');
-
-		$data['button_save'] = $this->language->get('button_save');
-		$data['button_cancel'] = $this->language->get('button_cancel');
+		$language_items = [
+			'heading_title',
+			'text_edit',
+			'text_enabled',
+			'text_disabled',
+			'text_earning',
+			'text_deduction',
+			'text_wage_min',
+			'text_wage_real',
+			'text_wage_both',
+			'entry_calculation_base',
+			'entry_activation_health',
+			'entry_activation_non_jht',
+			'entry_activation_jht',
+			'entry_min_wage',
+			'entry_min_wage_old',
+			'entry_date_start',
+			'entry_status',
+			'entry_sort_order',
+			'help_activation',
+			'button_save',
+			'button_cancel',		
+		];
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -63,35 +72,26 @@ class ControllerComponentInsurance extends Controller {
 
 		$data['cancel'] = $this->url->link('extension/component', 'token=' . $this->session->data['token'], true);
 
-		if (isset($this->request->post['insurance_min_wage'])) {
-			$data['insurance_min_wage'] = $this->request->post['insurance_min_wage'];
-		} else {
-			$data['insurance_min_wage'] = $this->config->get('insurance_min_wage');
+		$field_items = array(
+			'insurance_activation_health',
+			'insurance_activation_non_jht',
+			'insurance_activation_jht',
+			'insurance_calculation_base',
+			'insurance_min_wage',
+			'insurance_min_wage_old',
+			'insurance_date_start',
+			'insurance_status',
+			'insurance_sort_order'
+		);
+		foreach ($field_items as $field) {
+			if (isset($this->request->post[$field])) {
+				$data[$field] = $this->request->post[$field];
+			} else {
+				$data[$field] = $this->config->get($field);
+			}
 		}
 
-		if (isset($this->request->post['insurance_min_wage_old'])) {
-			$data['insurance_min_wage_old'] = $this->request->post['insurance_min_wage_old'];
-		} else {
-			$data['insurance_min_wage_old'] = $this->config->get('insurance_min_wage_old');
-		}
-
-		if (isset($this->request->post['insurance_date_start'])) {
-			$data['insurance_date_start'] = date('M Y', $this->request->post['insurance_date_start']);
-		} else {
-			$data['insurance_date_start'] = date('M Y', $this->config->get('insurance_date_start'));
-		}
-
-		if (isset($this->request->post['insurance_status'])) {
-			$data['insurance_status'] = $this->request->post['insurance_status'];
-		} else {
-			$data['insurance_status'] = $this->config->get('insurance_status');
-		}
-
-		if (isset($this->request->post['insurance_sort_order'])) {
-			$data['insurance_sort_order'] = $this->request->post['insurance_sort_order'];
-		} else {
-			$data['insurance_sort_order'] = $this->config->get('insurance_sort_order');
-		}
+		$data['insurance_date_start'] = date('M Y', $this->config->get('insurance_date_start'));
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
