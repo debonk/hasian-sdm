@@ -59,7 +59,7 @@ class ModelReleaseAllowance extends Model
 				$amount = 0;
 			}
 
-			$this->addAllowanceCustomer($allowance_id, $customer['customer_id'], $amount);
+			$this->db->query("INSERT INTO " . DB_PREFIX . "allowance_customer SET allowance_id = '" . (int)$allowance_id . "', customer_id = '" . (int)$customer['customer_id'] . "', amount = '" . (int)$amount . "'");
 		}
 
 		return $allowance_id;
@@ -133,7 +133,54 @@ class ModelReleaseAllowance extends Model
 		return $query->row['total'];
 	}
 
-	public function addAllowanceCustomer($allowance_id, $customer_id, $amount)
+	public function addAllowanceCustomer($allowance_id, $customer_id)
+	{
+		$allowance_info = $this->getAllowance($allowance_id);
+
+		$this->load->model('common/payroll');
+		$customer_info = $this->model_common_payroll->getCustomer($customer_id);
+
+		$this->load->model('payroll/payroll_basic');
+		$payroll_basic_info = $this->model_payroll_payroll_basic->getPayrollBasicByCustomer($customer_id);
+
+		$allowance_components = $this->config->get('config_components');
+
+		if ($payroll_basic_info) {
+			$amount = 0;
+
+			foreach ($payroll_basic_info as $key => $value) {
+				if (in_array($key, $allowance_components)) {
+					if ($key == 'uang_makan') {
+						$hke = $this->config->get('payroll_setting_default_hke');
+
+						$amount += $value * $hke;
+					} else {
+						$amount += $value;
+					}
+				}
+			}
+
+			$date_start = date_create($customer_info['date_start']);
+			$date_allowance = date_create($allowance_info['allowance_period']);
+			$diff = date_diff($date_start, $date_allowance);
+
+			if ($diff->format('%y')) {
+				$portion = 1;
+			} elseif ($diff->format('%m') > 2) {
+				$portion = $diff->format('%m') / 12;
+			} else {
+				$portion = 0;
+			}
+
+			$amount	= ceil($amount * $portion / 5000) * 5000;
+		} else {
+			$amount = 0;
+		}
+
+		$this->db->query("INSERT INTO " . DB_PREFIX . "allowance_customer SET allowance_id = '" . (int)$allowance_id . "', customer_id = '" . (int)$customer_id . "', amount = '" . (int)$amount . "'");
+	}
+
+	public function addAllowanceCustomerBak($allowance_id, $customer_id, $amount)
 	{
 		$this->db->query("INSERT INTO " . DB_PREFIX . "allowance_customer SET allowance_id = '" . (int)$allowance_id . "', customer_id = '" . (int)$customer_id . "', amount = '" . (int)$amount . "'");
 	}
@@ -230,5 +277,18 @@ class ModelReleaseAllowance extends Model
 		} else {
 			return false;
 		}
+	}
+
+	public function getBlankAllowanceCustomers($allowance_id) {
+		$allowance_info = $this->getAllowance($allowance_id);
+
+		$this->load->model('common/payroll');
+		$period_info = $this->model_common_payroll->getPeriodByDate($allowance_info['allowance_period']);
+
+		$sql = "SELECT c.customer_id, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN (" . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "allowance_customer ac ON (ac.customer_id = c.customer_id AND ac.allowance_id = '" . (int)$allowance_id . "') WHERE c.status = 1 AND c.payroll_include = 1 AND c.date_start <= '" . $period_info['date_end'] . "' AND (date_end IS NULL OR date_end = '0000-00-00' OR date_end > '" . $period_info['date_start'] . "') AND ac.allowance_id IS NULL";
+
+		$query = $this->db->query($sql);
+		
+		return $query->rows;
 	}
 }

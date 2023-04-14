@@ -3,7 +3,8 @@
 $_['heading_title']				= 'THR';
 
 // Text
-$_['text_select_customer']		= '-- Pilih Karyawan --';
+$_['text_customer_add']			= 'Tambah THR Karyawan Baru';
+$_['text_customer_select']		= '-- Pilih Karyawan --';
 $_['text_list']					= 'Daftar THR';
 $_['text_add']					= 'Daftar THR Baru';
 $_['text_calculate']			= 'Rincian THR karyawan akan dihitung otomatis setelah data THR disimpan.';
@@ -27,15 +28,18 @@ $_['column_amount']				= 'Jumlah';
 $_['entry_allowance_period']	= 'Periode THR';
 $_['entry_date_process']		= 'Tanggal Proses';
 $_['entry_fund_account']		= 'Sumber Dana';
+$_['entry_name']				= 'Nama Karyawan';
 
 //Button
 $_['button_calculate']			= 'Hitung THR Karyawan';
+$_['button_customer_add']		= 'Tambah Karyawan';
 $_['button_export_csv']			= 'Export CIMB CSV';
 
 // Error
 $_['error_allowance_period']	 = 'Periode THR harus diisi';
 $_['error_presence_period']		 = 'Periode Penggajian masih belum berjalan';
 
+$_['error_allowance']			 = 'Warning: Data THR tidak ditemukan!';
 $_['error_customer']			 = 'Warning: Tentukan karyawan penerima THR!';
 $_['error_customer_not_found']	 = 'Warning: Data karyawan tidak ditemukan!';
 $_['error_date_process']		 = 'Tanggal proses harus diisi dan belum berlalu!';

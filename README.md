@@ -3,6 +3,9 @@
 2.6.0-a
 MODUL: APP > Account: Login by location (Trial & Progress)
 
+2.5.14	14/04/2023
+Release > Allowance: Abilitiy to add more customer
+
 2.5.13	05/04/2023
 Bug Fixed: Textual change
 Insurance: Additional Setting for insurance modul

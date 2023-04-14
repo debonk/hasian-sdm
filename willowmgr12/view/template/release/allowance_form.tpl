@@ -4,10 +4,14 @@
 	<div class="page-header">
 		<div class="container-fluid">
 			<div class="pull-right">
+				<?php if ($add) { ?>
+				<a href="<?= $add; ?>" data-toggle="tooltip" title="<?= $button_customer_add; ?>"
+					class="btn btn-primary" id="button-add"><i class="fa fa-plus"></i></a>
+				<?php } ?>
 				<button type="submit" form="form-allowance" data-toggle="tooltip" title="<?= $button_save; ?>"
 					class="btn btn-primary"><i class="fa fa-save"></i></button>
-				<a href="<?= $cancel; ?>" data-toggle="tooltip" title="<?= $button_cancel; ?>"
-					class="btn btn-default"><i class="fa fa-reply"></i></a>
+				<a href="<?= $cancel; ?>" data-toggle="tooltip" title="<?= $button_cancel; ?>" class="btn btn-default"><i
+						class="fa fa-reply"></i></a>
 			</div>
 			<h1>
 				<?= $heading_title; ?>
@@ -46,7 +50,8 @@
 						</label>
 						<div class="col-sm-10">
 							<?php if ($allowance_customers) { ?>
-							<input type="text" name="allowance_period" value="<?= $allowance_period; ?>" class="form-control" readonly />
+							<input type="text" name="allowance_period" value="<?= $allowance_period; ?>" class="form-control"
+								readonly />
 							<?php } else { ?>
 							<div class="input-group date">
 								<input type="text" name="allowance_period" value="<?= $allowance_period; ?>"
@@ -157,9 +162,8 @@
 								<?= $allowance_customer['amount']; ?>
 							</td>
 							<td class="text-right">
-								<button id="button-save-<?= $allowance_customer['customer_id']; ?>"
-									class="btn btn-warning collapse" type="button"
-									value="<?= $allowance_customer['customer_id']; ?>" data-toggle="tooltip"
+								<button id="button-save-<?= $allowance_customer['customer_id']; ?>" class="btn btn-warning collapse"
+									type="button" value="<?= $allowance_customer['customer_id']; ?>" data-toggle="tooltip"
 									title="<?= $button_save; ?>"><i class="fa fa-check"></i></button>
 								<button id="button-edit-<?= $allowance_customer['customer_id']; ?>" class="btn btn-primary"
 									type="button" value="<?= $allowance_customer['customer_id']; ?>" data-toggle="tooltip"
