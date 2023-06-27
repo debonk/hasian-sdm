@@ -883,7 +883,7 @@ class ControllerPresencePresence extends Controller {
 			$filter_data = array(
 				'filter_name'  => $filter_name,
 				'start'        => 0,
-				'limit'        => 5
+				'limit'        => 15
 			);
 
 			$results = $this->model_presence_presence->getCustomers($filter_data);

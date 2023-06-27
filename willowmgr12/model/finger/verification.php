@@ -7,6 +7,8 @@ if (isset($_GET['customer_id']) && !empty($_GET['customer_id'])) {
 	
 	$finger	= getFinger($conn, $customer_id);
 
+	$time_limit_ver = 10;
+
 	echo "$customer_id;" . $finger[0]['finger_data'] . ";SecurityKey;" . $time_limit_ver . ";" . $base_path . "process_verification.php;" . $base_path . "getac.php;extraParams";
 
 	include 'include/close.php';

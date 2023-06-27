@@ -1,4 +1,5 @@
 <?php
+#[\AllowDynamicProperties]
 class Proxy {
 	public function __get($key) {
 		return $this->{$key};

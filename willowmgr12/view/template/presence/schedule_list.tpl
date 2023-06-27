@@ -12,6 +12,8 @@
 				<a href="<?= $import; ?>" type="button" class="btn btn-warning" data-toggle="tooltip"
 					title="<?= $button_import; ?>" ><i class="fa fa-download"></i>
 				</a>
+				<a href="<?= $print; ?>" target="_blank" rel="noopener noreferrer" data-toggle="tooltip"
+					title="<?= $button_print; ?>" class="btn btn-info"><i class="fa fa-print"></i></a>
 				<button type="button" id="button-delete" data-toggle="tooltip" title="<?= $button_delete; ?>"
 					class="btn btn-danger" onclick="confirm('<?= $text_confirm; ?>') ? $('#form-schedule').submit() : false;"><i
 						class="fa fa-trash-o"></i></button>
@@ -27,18 +29,16 @@
 						class="fa fa-share-square-o"></i>
 					<?= $button_recap; ?>
 				</button>
-				<button type="button" data-toggle="tooltip" title="<?= $button_delete; ?>" class="btn btn-danger disabled"><i
-						class="fa fa-trash-o"></i></button>
 				<?php } else { ?>
 				<button type="button" class="btn btn-warning disabled"><i class="fa fa-share-square-o"></i>
 					<?= $button_recap; ?>
 				</button>
-				<button type="button" data-toggle="tooltip" title="<?= $button_delete; ?>" class="btn btn-danger disabled"><i
-						class="fa fa-trash-o"></i></button>
-				<?php } ?>
 				<?php } ?>
 				<a href="<?= $print; ?>" target="_blank" rel="noopener noreferrer" data-toggle="tooltip"
 					title="<?= $button_print; ?>" class="btn btn-info"><i class="fa fa-print"></i></a>
+				<button type="button" data-toggle="tooltip" title="<?= $button_delete; ?>" class="btn btn-danger disabled"><i
+						class="fa fa-trash-o"></i></button>
+				<?php } ?>
 				<a href="<?= $back; ?>" data-toggle="tooltip" title="<?= $button_back; ?>" class="btn btn-default"><i
 						class="fa fa-reply"></i></a>
 			</div>

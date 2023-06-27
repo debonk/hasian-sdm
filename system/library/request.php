@@ -1,4 +1,5 @@
 <?php
+#[\AllowDynamicProperties]
 class Request {
 	public $get = array();
 	public $post = array();

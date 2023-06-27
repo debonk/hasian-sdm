@@ -1,8 +1,10 @@
 <?php
-class ControllerPayrollPayroll extends Controller {
+class ControllerPayrollPayroll extends Controller
+{
 	private $error = array();
 
-	public function index() {
+	public function index()
+	{
 		$this->load->language('payroll/payroll');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -13,7 +15,8 @@ class ControllerPayrollPayroll extends Controller {
 		$this->getPeriod();
 	}
 
-	public function info() {
+	public function info()
+	{
 		$this->load->language('payroll/payroll');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -28,6 +31,7 @@ class ControllerPayrollPayroll extends Controller {
 		}
 
 		$payroll_period = $this->model_common_payroll->getPeriod($presence_period_id);
+
 		if ($payroll_period && $this->registry->has('framework_load')) {
 			$this->getList();
 		} else {
@@ -35,7 +39,8 @@ class ControllerPayrollPayroll extends Controller {
 		}
 	}
 
-	public function edit() {
+	public function edit()
+	{
 		$this->load->language('payroll/payroll');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -57,7 +62,7 @@ class ControllerPayrollPayroll extends Controller {
 
 		$payroll_period = $this->model_common_payroll->getPeriod($presence_period_id);
 		$customer_info = $this->model_common_payroll->checkCustomer($customer_id);
-		
+
 		if ($payroll_period && $customer_info) {
 			$this->getForm();
 		} else {
@@ -65,7 +70,8 @@ class ControllerPayrollPayroll extends Controller {
 		}
 	}
 
-	public function add() {
+	public function add()
+	{
 		$this->load->language('payroll/payroll');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -92,6 +98,10 @@ class ControllerPayrollPayroll extends Controller {
 
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 		}
 
 		if (isset($this->request->get['sort'])) {
@@ -124,7 +134,7 @@ class ControllerPayrollPayroll extends Controller {
 		);
 
 		$data['back'] = $this->url->link('payroll/payroll/info', 'token=' . $this->session->data['token'] . $url, true);
-		
+
 		$data['customers'] = array();
 
 		$results = $this->model_payroll_payroll->getBlankPayrollCustomers($presence_period_id);
@@ -144,7 +154,7 @@ class ControllerPayrollPayroll extends Controller {
 		$data['button_select'] = $this->language->get('button_select');
 
 		$data['token'] = $this->session->data['token'];
-		
+
 		$data['presence_period_id'] = $presence_period_id;
 		$data['url'] = $url;
 
@@ -155,7 +165,8 @@ class ControllerPayrollPayroll extends Controller {
 		$this->response->setOutput($this->load->view('payroll/payroll_add', $data));
 	}
 
-	public function delete() {
+	public function delete()
+	{
 		$this->load->language('payroll/payroll');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -185,6 +196,10 @@ class ControllerPayrollPayroll extends Controller {
 				$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
 			}
 
+			if (isset($this->request->get['filter_location_id'])) {
+				$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
+			}
+
 			if (isset($this->request->get['sort'])) {
 				$url .= '&sort=' . $this->request->get['sort'];
 			}
@@ -210,7 +225,8 @@ class ControllerPayrollPayroll extends Controller {
 		$this->getList();
 	}
 
-	protected function getPeriod() {
+	protected function getPeriod()
+	{
 		if (isset($this->request->get['filter_payroll_status'])) {
 			$filter_payroll_status = $this->request->get['filter_payroll_status'];
 		} else {
@@ -256,7 +272,7 @@ class ControllerPayrollPayroll extends Controller {
 		);
 
 		$filter_data = array(
-			'filter_payroll_status'=> $filter_payroll_status,
+			'filter_payroll_status' => $filter_payroll_status,
 			'filter_period' 	   => $filter_period,
 			'start'                => ($page - 1) * $this->config->get('config_limit_admin'),
 			'limit'                => $this->config->get('config_limit_admin')
@@ -273,16 +289,16 @@ class ControllerPayrollPayroll extends Controller {
 			$net_salary = $total_payroll['total_earning'] - $total_payroll['total_deduction'];
 
 			//Payroll Component
-			$component_info = $this->model_payroll_payroll->getPayrollComponentTotal($result['presence_period_id'],0,'type');
-			
+			$component_info = $this->model_payroll_payroll->getPayrollComponentTotal($result['presence_period_id'], 0, 'type');
+
 			$component_grandtotal = $component_info['grandtotal'];
-			
+
 			//Period Status Check
 			$payroll_status_check = $this->model_common_payroll->checkPeriodStatus($result['presence_period_id'], 'submitted');
 			$payroll_total = $this->model_payroll_payroll->getTotalPayrolls($result['presence_period_id']);
-			
+
 			$data['payroll_periods'][] = array(
-				'presence_period_id'=> $result['presence_period_id'],
+				'presence_period_id' => $result['presence_period_id'],
 				'period'        	=> date($this->language->get('date_format_m_y'), strtotime($result['period'])),
 				'payroll_status' 	=> $result['payroll_status'],
 				'date_start'    	=> date($this->language->get('date_format_short'), strtotime($result['date_start'])),
@@ -349,10 +365,10 @@ class ControllerPayrollPayroll extends Controller {
 		$this->load->model('localisation/payroll_status');
 		$data['payroll_statuses'] = $this->model_localisation_payroll_status->getPayrollStatuses();
 
-//		$data['store_url'] = $this->request->server['HTTPS'] ? HTTPS_CATALOG : HTTP_CATALOG;
+		//		$data['store_url'] = $this->request->server['HTTPS'] ? HTTPS_CATALOG : HTTP_CATALOG;
 
 		// API login
-/*		$this->load->model('user/api');
+		/*		$this->load->model('user/api');
 
 		$api_info = $this->model_user_api->getApi($this->config->get('config_api_id'));
 
@@ -373,7 +389,8 @@ class ControllerPayrollPayroll extends Controller {
 		$this->response->setOutput($this->load->view('payroll/payroll_period', $data));
 	}
 
-	public function generate() {
+	public function generate()
+	{
 		$this->load->language('payroll/payroll');
 
 		$this->load->model('common/payroll');
@@ -403,22 +420,22 @@ class ControllerPayrollPayroll extends Controller {
 				$component_data = array();
 
 				$filter_data = array(
-					'filter_payroll_include'=> 1,
+					'filter_payroll_include' => 1,
 					'presence_period_id'	=> $presence_period_id
 				);
-				
+
 				$results = $this->model_presence_presence->getCustomers($filter_data);
-				
+
 				$result_total = $this->model_presence_presence->getTotalCustomers($filter_data);
-				
+
 				$count = 0;
-				
+
 				foreach ($results as $result) {
 					$payroll_calculation = $this->model_payroll_payroll->getPayrollDetail($presence_period_id, $result['customer_id']);
-			
+
 					if ($payroll_calculation['payroll_basic_check'] && $payroll_calculation['presence_summary_check']) {
 						$payroll_data = array(
-							'presence_period_id'=> $payroll_calculation['presence_period_id'],
+							'presence_period_id' => $payroll_calculation['presence_period_id'],
 							'customer_id' 		=> $payroll_calculation['customer_id'],
 							'gaji_pokok'    	=> $payroll_calculation['gaji_pokok'],
 							'tunj_jabatan'  	=> $payroll_calculation['tunj_jabatan'],
@@ -433,10 +450,10 @@ class ControllerPayrollPayroll extends Controller {
 							'pot_gaji_pokok'	=> $payroll_calculation['pot_gaji_pokok'],
 							'pot_terlambat'		=> $payroll_calculation['pot_terlambat']
 						);
-						
+
 						$this->model_payroll_payroll->addPayroll($presence_period_id, $result['customer_id'], $payroll_data);
 						$count++;
-						
+
 						// Payroll Components
 						$components = $this->model_payroll_payroll->calculatePayrollComponent($presence_period_id, $result['customer_id']);
 
@@ -450,7 +467,7 @@ class ControllerPayrollPayroll extends Controller {
 									'type' 				=> $quote['type'],
 									'sort_order' 		=> $component['sort_order']
 								);
-								
+
 								if ($component_data) {
 									$this->model_payroll_payroll->addPayrollComponent($presence_period_id, $result['customer_id'], $component_data);
 								}
@@ -472,15 +489,48 @@ class ControllerPayrollPayroll extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
-	protected function getList() {
-/* 		if (isset($this->request->get['presence_period_id'])) {
+	protected function getList()
+	{
+		$language_items = array(
+			'heading_title',
+			'text_list',
+			'text_confirm',
+			'text_no_results',
+			'text_all_customer_group',
+			'text_all_location',
+			'text_approve_confirm',
+			'text_loading',
+			'text_subtotal',
+			'column_nip',
+			'column_name',
+			'column_customer_group',
+			'column_location',
+			'column_action',
+			'column_net_salary',
+			'column_component',
+			'column_grandtotal',
+			'column_note',
+			'entry_name',
+			'entry_customer_group',
+			'entry_location',
+			'button_add',
+			'button_edit',
+			'button_delete',
+			'button_back',
+			'button_filter',
+			'button_export',
+			'button_payroll_approve'
+		);
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
+
+		if (isset($this->request->get['presence_period_id'])) {
 			$presence_period_id = $this->request->get['presence_period_id'];
 		} else {
 			$presence_period_id = 0;
 		}
- */
-		$presence_period_id = $this->request->get['presence_period_id'];
-		
+
 		if (isset($this->request->get['filter_name'])) {
 			$filter_name = $this->request->get['filter_name'];
 		} else {
@@ -491,6 +541,12 @@ class ControllerPayrollPayroll extends Controller {
 			$filter_customer_group_id = $this->request->get['filter_customer_group_id'];
 		} else {
 			$filter_customer_group_id = null;
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$filter_location_id = $this->request->get['filter_location_id'];
+		} else {
+			$filter_location_id = null;
 		}
 
 		if (isset($this->request->get['sort'])) {
@@ -511,8 +567,7 @@ class ControllerPayrollPayroll extends Controller {
 			$page = 1;
 		}
 
-		$url = '';
-		$url .= '&presence_period_id=' . $presence_period_id;
+		$url = '&presence_period_id=' . $presence_period_id;
 
 		if (isset($this->request->get['filter_name'])) {
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
@@ -520,6 +575,10 @@ class ControllerPayrollPayroll extends Controller {
 
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 		}
 
 		if (isset($this->request->get['sort'])) {
@@ -548,10 +607,11 @@ class ControllerPayrollPayroll extends Controller {
 
 		$data['add'] = $this->url->link('payroll/payroll/add', 'token=' . $this->session->data['token'] . $url, true);
 		$data['delete'] = $this->url->link('payroll/payroll/delete', 'token=' . $this->session->data['token'] . $url, true);
+		$data['export'] = $this->url->link('payroll/payroll/export', 'token=' . $this->session->data['token'] . $url, true);
 		$data['back'] = $this->url->link('payroll/payroll', 'token=' . $this->session->data['token'], true);
 
 		$data['payroll_status_check'] = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'generated');
-		
+
 		$data['information'] = null;
 		if ($data['payroll_status_check']) {
 			$blank_data = $this->model_payroll_payroll->getBlankPayrollCustomers($presence_period_id);
@@ -561,48 +621,49 @@ class ControllerPayrollPayroll extends Controller {
 				$data['information'] = sprintf($this->language->get('info_no_data'), $blank_data_total);
 			}
 		}
-		
+
 		$data['customers'] = array();
 
 		$filter_data = array(
-			'filter_name'	   	   => $filter_name,
-			'filter_customer_group_id' => $filter_customer_group_id,
-			'sort'                 => $sort,
-			'order'                => $order,
-			'start'                => ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit'                => $this->config->get('config_limit_admin')
+			'filter_name'	   	   		=> $filter_name,
+			'filter_customer_group_id'	=> $filter_customer_group_id,
+			'filter_location_id'		=> $filter_location_id,
+			'sort'              		=> $sort,
+			'order'             		=> $order,
+			'start'             		=> ($page - 1) * $this->config->get('config_limit_admin'),
+			'limit'             		=> $this->config->get('config_limit_admin')
 		);
 
-		//Payroll Components
+		# Payroll Components
 		$data['component_codes'] = $this->model_payroll_payroll->getPayrollComponentCodes($presence_period_id);
-	
+
 		$component_total = array('net_salary' => 0, 'grandtotal' => 0);
-		
+
 		foreach ($data['component_codes'] as $code) {
 			$data['text_component'][$code] = $this->language->get('text_' . $code);
 			$component_total[$code] = 0;
 		}
-		
+
 		$customer_total = $this->model_payroll_payroll->getTotalPayrolls($presence_period_id, $filter_data);
 
 		$results = $this->model_payroll_payroll->getPayrolls($presence_period_id, $filter_data);
-		
+
 		//Get absence Note
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 
 		$this->load->model('presence/absence');
 		//End GetNote Block
-		
+
 		foreach ($results as $result) {
 			$earning = $result['gaji_pokok'] + $result['tunj_jabatan'] + $result['tunj_hadir'] + $result['tunj_pph'] + $result['total_uang_makan'];
 			$deduction = $result['pot_sakit'] + $result['pot_bolos'] + $result['pot_tunj_hadir'] + $result['pot_gaji_pokok'] + $result['pot_terlambat'];
-			
+
 			$net_salary = $earning - $deduction;
 			$component_total['net_salary'] += $net_salary;
 
 			//Payroll Component
 			$component_data = array();
-			
+
 			$component_info = $this->model_payroll_payroll->getPayrollComponentTotal($presence_period_id, $result['customer_id'], 'code');
 
 			foreach ($data['component_codes'] as $code) {
@@ -611,28 +672,29 @@ class ControllerPayrollPayroll extends Controller {
 			}
 
 			$component_total['grandtotal'] += $component_info['grandtotal'];
-			
+
 			//Get Note
 			$range_date = array(
 				'start'	=> $period_info['date_start'],
 				'end'	=> $period_info['date_end']
 			);
-			
+
 			$range_date['start'] = max($range_date['start'], $result['date_start']);
-			
+
 			if ($result['date_end']) {
 				$range_date['end'] = min($range_date['end'], $result['date_end']);
 			}
-	
+
 			$absences_info = $this->model_presence_absence->getAbsencesByCustomerDate($result['customer_id'], $range_date);
-			
+
 			$note = implode(', ', array_filter(array_column($absences_info, 'note')));
-			
+
 			$data['customers'][] = array(
 				'customer_id' 		=> $result['customer_id'],
 				'nip' 				=> $result['nip'],
 				'name' 				=> $result['name'],
 				'customer_group' 	=> $result['customer_group'],
+				'location' 			=> $result['location'],
 				'net_salary'    	=> $this->currency->format($net_salary, $this->config->get('config_currency')),
 				'component_data'	=> $component_data,
 				'grandtotal'    	=> $this->currency->format($net_salary + $component_info['grandtotal'], $this->config->get('config_currency')),
@@ -640,47 +702,21 @@ class ControllerPayrollPayroll extends Controller {
 				'edit'          	=> $this->url->link('payroll/payroll/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true)
 			);
 		}
-		
+
 		foreach ($data['component_codes'] as $code) {
 			$data['component_total'][$code] = $this->currency->format($component_total[$code], $this->config->get('config_currency'));
 		}
 		$data['component_total']['net_salary'] = $this->currency->format($component_total['net_salary'], $this->config->get('config_currency'));
 		$data['component_total']['grandtotal'] = $this->currency->format($component_total['net_salary'] + $component_total['grandtotal'], $this->config->get('config_currency'));
-		
-		$language_items = array(
-			'heading_title',
-			'text_list',
-			'text_confirm',
-			'text_no_results',
-			'text_all_customer_group',
-			'text_approve_confirm',
-			'text_loading',
-			'text_subtotal',
-			'column_nip',
-			'column_name',
-			'column_customer_group',
-			'column_action',
-			'column_net_salary',
-			'column_component',
-			'column_grandtotal',
-			'column_note',
-			'entry_name',
-			'entry_customer_group',
-			'button_add',
-			'button_edit',
-			'button_delete',
-			'button_back',
-			'button_filter',
-			'button_payroll_approve'
-		);
-		foreach ($language_items as $language_item) {
-			$data[$language_item] = $this->language->get($language_item);
-		}
 
 		$data['token'] = $this->session->data['token'];
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
+		} elseif (isset($this->session->data['warning'])) {
+			$data['error_warning'] = $this->session->data['warning'];
+
+			unset($this->session->data['warning']);
 		} else {
 			$data['error_warning'] = '';
 		}
@@ -699,8 +735,7 @@ class ControllerPayrollPayroll extends Controller {
 			$data['selected'] = array();
 		}
 
-		$url = '';
-		$url .= '&presence_period_id=' . $presence_period_id;
+		$url = '&presence_period_id=' . $presence_period_id;
 
 		if (isset($this->request->get['filter_name'])) {
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
@@ -708,6 +743,10 @@ class ControllerPayrollPayroll extends Controller {
 
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 		}
 
 		if ($order == 'ASC') {
@@ -723,9 +762,9 @@ class ControllerPayrollPayroll extends Controller {
 		$data['sort_nip'] = $this->url->link('payroll/payroll/info', 'token=' . $this->session->data['token'] . '&sort=nip' . $url, true);
 		$data['sort_name'] = $this->url->link('payroll/payroll/info', 'token=' . $this->session->data['token'] . '&sort=name' . $url, true);
 		$data['sort_customer_group'] = $this->url->link('payroll/payroll/info', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
+		$data['sort_location'] = $this->url->link('payroll/payroll/info', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
 
-		$url = '';
-		$url .= '&presence_period_id=' . $presence_period_id;
+		$url = '&presence_period_id=' . $presence_period_id;
 
 		if (isset($this->request->get['filter_name'])) {
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
@@ -733,6 +772,10 @@ class ControllerPayrollPayroll extends Controller {
 
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 		}
 
 		if (isset($this->request->get['sort'])) {
@@ -756,15 +799,19 @@ class ControllerPayrollPayroll extends Controller {
 		$data['presence_period_id'] = $presence_period_id;
 		$data['filter_name'] = $filter_name;
 		$data['filter_customer_group_id'] = $filter_customer_group_id;
+		$data['filter_location_id'] = $filter_location_id;
 		$data['sort'] = $sort;
 		$data['order'] = $order;
 
 		$this->load->model('customer/customer_group');
 		$data['customer_groups'] = $this->model_customer_customer_group->getCustomerGroups();
 
-//		$this->load->model('setting/store');
+		$this->load->model('localisation/location');
+		$data['locations'] = $this->model_localisation_location->getLocations();
 
-//		$data['stores'] = $this->model_setting_store->getStores();
+		//		$this->load->model('setting/store');
+
+		//		$data['stores'] = $this->model_setting_store->getStores();
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -773,9 +820,10 @@ class ControllerPayrollPayroll extends Controller {
 		$this->response->setOutput($this->load->view('payroll/payroll_list', $data));
 	}
 
-	protected function getForm() {
+	protected function getForm()
+	{
 		$data['text_form'] = !isset($this->request->get['customer_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
-		
+
 		$language_items = array(
 			'heading_title',
 			'text_loading',
@@ -839,8 +887,7 @@ class ControllerPayrollPayroll extends Controller {
 			$data['success'] = '';
 		}
 
-		$url = '';
-		$url .= '&presence_period_id=' . $presence_period_id;
+		$url = '&presence_period_id=' . $presence_period_id;
 
 		if (isset($this->request->get['filter_name'])) {
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
@@ -848,6 +895,10 @@ class ControllerPayrollPayroll extends Controller {
 
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 		}
 
 		if (isset($this->request->get['sort'])) {
@@ -883,8 +934,8 @@ class ControllerPayrollPayroll extends Controller {
 
 		//Start Rincian Gaji
 		$payroll_calculation = $this->model_payroll_payroll->getPayrollDetail($presence_period_id, $customer_id);
-		
- 		$presence_items = array(
+
+		$presence_items = array(
 			'h',
 			's',
 			'i',
@@ -899,7 +950,7 @@ class ControllerPayrollPayroll extends Controller {
 		foreach ($presence_items as $presence_item) {
 			$data['total_item'][$presence_item] = $payroll_calculation[$presence_item];
 		}
-		
+
 		$data['hke'] = $payroll_calculation['hke'];
 
 		$data['gaji_pokok']     		= $this->currency->format($payroll_calculation['gaji_pokok'], $this->config->get('config_currency'));
@@ -907,7 +958,7 @@ class ControllerPayrollPayroll extends Controller {
 		$data['tunj_hadir']     		= $this->currency->format($payroll_calculation['tunj_hadir'], $this->config->get('config_currency'));
 		$data['tunj_pph']       		= $this->currency->format($payroll_calculation['tunj_pph'], $this->config->get('config_currency'));
 		$data['uang_makan']     		= $this->currency->format($payroll_calculation['uang_makan'], $this->config->get('config_currency'));
-		
+
 		$gaji_dasar = $payroll_calculation['gaji_pokok'] + $payroll_calculation['tunj_jabatan'] + $payroll_calculation['tunj_hadir'] + $payroll_calculation['tunj_pph'] + $payroll_calculation['uang_makan'] * 25;
 		$data['gaji_dasar']     		= $this->currency->format($gaji_dasar, $this->config->get('config_currency'));
 		$data['basic_date_added']		= date($this->language->get('date_format_jMY'), strtotime($payroll_calculation['date_added']));
@@ -923,12 +974,12 @@ class ControllerPayrollPayroll extends Controller {
 		$data['presence_summary_check'] = $payroll_calculation['presence_summary_check'];
 
 		$data['payroll_status_check'] = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'generated');
-		
+
 		$data['presence_period_id'] = $presence_period_id;
 		$data['customer_id'] = $customer_id;
-		
+
 		$data['presence_items'] = $presence_items;
-		
+
 		$data['token'] = $this->session->data['token'];
 
 		$data['header'] = $this->load->controller('common/header');
@@ -937,8 +988,9 @@ class ControllerPayrollPayroll extends Controller {
 
 		$this->response->setOutput($this->load->view('payroll/payroll_form', $data));
 	}
-	
-	public function payrollDetailInfo() {
+
+	public function payrollDetailInfo()
+	{
 		$this->load->language('payroll/payroll');
 
 		$this->load->model('common/payroll');
@@ -968,16 +1020,16 @@ class ControllerPayrollPayroll extends Controller {
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
 		}
-		
+
 		$presence_period_id = $this->request->get['presence_period_id'];
 		$customer_id = $this->request->get['customer_id'];
-		
+
 		$payroll_calculation = $this->model_payroll_payroll->getPayrollDetail($presence_period_id, $customer_id);
-			
+
 		$total_sakit			= $payroll_calculation['total_sakit'];
 		$total_bolos   			= $payroll_calculation['total_bolos'];
 		$total_t   				= $payroll_calculation['total_t'];
-		
+
 		$data['gaji_pokok']     		= $this->currency->format($payroll_calculation['gaji_pokok'], $this->config->get('config_currency'));
 		$data['tunj_jabatan']   		= $this->currency->format($payroll_calculation['tunj_jabatan'], $this->config->get('config_currency'));
 		$data['tunj_hadir']     		= $this->currency->format($payroll_calculation['tunj_hadir'], $this->config->get('config_currency'));
@@ -993,7 +1045,7 @@ class ControllerPayrollPayroll extends Controller {
 
 		$data['payroll_basic_check']    = $payroll_calculation['payroll_basic_check'];
 		$data['presence_summary_check'] = $payroll_calculation['presence_summary_check'];
-		
+
 		if ($payroll_calculation['full_overtimes_count']) {
 			$text_hke = '(' . $payroll_calculation['hke'] . ' - ' . $payroll_calculation['full_overtimes_count'] . ' (' . $this->language->get('code_full_overtime') . '))';
 		} else {
@@ -1012,57 +1064,55 @@ class ControllerPayrollPayroll extends Controller {
 		$data['earning_components'] = array();
 		$data['deduction_components'] = array();
 		$result_component = array();
-		
+
 		$always_view['overtime'] = 1; //Masukkan ke setting. Tetap di view walaupun nilainya 0.
-			
+
 		if ($this->model_common_payroll->checkPeriodStatus($presence_period_id, 'generated')) {
 			$components = $this->model_payroll_payroll->calculatePayrollComponent($presence_period_id, $customer_id);
 			// $components = $this->model_payroll_payroll->calculatePayrollComponent($presence_period_id, $customer_id, ['wage_real' => $earning - $deduction]);
-			
+
 			foreach ($components as $component) {
 				if (isset($always_view[$component['code']]) && $always_view[$component['code']]) {
 					foreach ($component['quote'] as $quote) {
 						if ($quote['type']) {
 							$earning += $quote['value'];
-							
+
 							$data['earning_components'][] = array(
 								'title'	=> $quote['title'],
 								'value' => $this->currency->format($quote['value'], $this->config->get('config_currency'))
 							);
 						} else {
 							$deduction -= $quote['value'];
-							
+
 							$data['deduction_components'][] = array(
 								'title'	=> $quote['title'],
 								'value' => $this->currency->format(-$quote['value'], $this->config->get('config_currency'))
 							);
 						}
 					}
-					
 				} else {
 					foreach ($component['quote'] as $quote) {
 						if (!isset($result_component[$quote['title']])) {
 							$result_component[$quote['title']] = 0;
 						}
-						
+
 						$result_component[$quote['title']] += $quote['value'];
 					}
 				}
 			}
-			
+
 			if ($result_component) {
 				foreach ($result_component as $key => $value) {
 					if ($value < 0) {
 						$deduction -= $value;
-						
+
 						$data['deduction_components'][] = array(
 							'title'	=> $key,
 							'value' => $this->currency->format(-$value, $this->config->get('config_currency'))
 						);
-						
 					} elseif ($value > 0) {
 						$earning += $value;
-						
+
 						$data['earning_components'][] = array(
 							'title'	=> $key,
 							'value' => $this->currency->format($value, $this->config->get('config_currency'))
@@ -1070,49 +1120,47 @@ class ControllerPayrollPayroll extends Controller {
 					}
 				}
 			}
-			
 		} else {
 			$components = $this->model_payroll_payroll->getPayrollComponents($presence_period_id, $customer_id);
-			
+
 			foreach ($components as $component) {
 				if (isset($always_view[$component['code']]) && $always_view[$component['code']]) {
 					if ($component['type']) {
 						$earning += $component['value'];
-						
+
 						$data['earning_components'][] = array(
 							'title'	=> $component['title'],
 							'value' => $this->currency->format($component['value'], $this->config->get('config_currency'))
 						);
 					} else {
 						$deduction -= $component['value'];
-						
+
 						$data['deduction_components'][] = array(
 							'title'	=> $component['title'],
 							'value' => $this->currency->format(-$component['value'], $this->config->get('config_currency'))
 						);
 					}
-						
 				} else {
 					if (!isset($result_component[$component['title']])) {
 						$result_component[$component['title']] = 0;
 					}
-					
+
 					$result_component[$component['title']] += $component['value'];
 				}
 			}
-				
+
 			if ($result_component) {
 				foreach ($result_component as $key => $value) {
 					if ($value < 0) {
 						$deduction -= $value;
-						
+
 						$data['deduction_components'][] = array(
 							'title'	=> $key,
 							'value' => $this->currency->format(-$value, $this->config->get('config_currency'))
 						);
 					} elseif ($value > 0) {
 						$earning += $value;
-						
+
 						$data['earning_components'][] = array(
 							'title'	=> $key,
 							'value' => $this->currency->format($value, $this->config->get('config_currency'))
@@ -1121,15 +1169,16 @@ class ControllerPayrollPayroll extends Controller {
 				}
 			}
 		}
-		
+
 		$data['earning']     	= $this->currency->format($earning, $this->config->get('config_currency'));
 		$data['deduction']     	= $this->currency->format($deduction, $this->config->get('config_currency'));
 		$data['grandtotal']  	= $this->currency->format($earning - $deduction, $this->config->get('config_currency'));
-		
+
 		$this->response->setOutput($this->load->view('payroll/payroll_detail_info', $data));
 	}
 
-	protected function validateForm() {
+	protected function validateForm()
+	{
 		if (!$this->user->hasPermission('modify', 'payroll/payroll')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
@@ -1140,7 +1189,7 @@ class ControllerPayrollPayroll extends Controller {
 
 		$customer_info = $this->model_common_payroll->getCustomer($this->request->post['customer_id']);
 		$period_info = $this->model_common_payroll->getPeriod($this->request->post['presence_period_id']);
-		
+
 		if (empty($customer_info)) {
 			$this->error['warning'] = $this->language->get('error_not_found');
 		} elseif (!$customer_info['status'] || !$customer_info['payroll_include']) {
@@ -1151,8 +1200,9 @@ class ControllerPayrollPayroll extends Controller {
 
 		return !$this->error;
 	}
-	
-	protected function validateDelete() {
+
+	protected function validateDelete()
+	{
 		if (!$this->user->hasPermission('modify', 'payroll/payroll')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
@@ -1163,14 +1213,319 @@ class ControllerPayrollPayroll extends Controller {
 
 		return !$this->error;
 	}
+
+	public function export()
+	{
+		$this->load->language('payroll/payroll');
+
+		$this->load->model('payroll/payroll');
+		$this->load->model('common/payroll');
+
+		$presence_period_id = isset($this->request->get['presence_period_id']) ? $this->request->get['presence_period_id'] : 0;
+
+		$filter_name = isset($this->request->get['filter_name']) ? $this->request->get['filter_name'] : '';
+		$filter_customer_group_id = isset($this->request->get['filter_customer_group_id']) ? $this->request->get['filter_customer_group_id'] : 0;
+		$filter_location_id = isset($this->request->get['filter_location_id']) ? $this->request->get['filter_location_id'] : 0;
+		$filter_customer_department_id = isset($this->request->get['filter_customer_department_id']) ? $this->request->get['filter_customer_department_id'] : 0;
+		$sort = isset($this->request->get['sort']) ? $this->request->get['sort'] : 'name';
+		$order = isset($this->request->get['order']) ? $this->request->get['order'] : 'ASC';
+
+		$title_color = 'FF76933c';
+		$table_head_format = [
+			'fill' => [
+				'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+				'startColor' => [
+					'argb' => 'FF9bbb59',
+				],
+			],
+			'font' => [
+				'color' => [
+					'argb' => 'FFFFFFFF',
+				],
+			],
+		];
+
+		switch ($this->error) {
+			case false:
+				if (!$this->user->hasPermission('modify', 'payroll/payroll')) {
+					$this->error = $this->language->get('error_permission');
+
+					break;
+				}
+
+				$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
+
+				if (!$period_info) {
+					$this->error = $this->language->get('error_period');
+
+					break;
+				}
+
+				if (!$this->model_common_payroll->checkPeriodStatus($presence_period_id, 'generated')) {
+					$this->error = $this->language->get('error_status');
+
+					break;
+				}
+
+				if ($this->user->getCustomerDepartmentId() && $filter_customer_department_id && $this->user->getCustomerDepartmentId() != $filter_customer_department_id) {
+					$this->error = $this->language->get('error_customer_department');
+
+					break;
+				}
+
+				break;
+
+			default:
+				break;
+		}
+
+		if ($this->error) {
+			$this->session->data['warning'] = $this->error;
+			
+			$url = '&presence_period_id=' . $presence_period_id;
+
+			if (isset($this->request->get['filter_name'])) {
+				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
+			}
+
+			if (isset($this->request->get['filter_customer_group_id'])) {
+				$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
+			}
+
+			if (isset($this->request->get['filter_customer_department_id'])) {
+				$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+			}
+
+			if (isset($this->request->get['filter_location_id'])) {
+				$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
+			}
+
+			if (isset($this->request->get['sort'])) {
+				$url .= '&sort=' . $this->request->get['sort'];
+			}
+
+			if (isset($this->request->get['order'])) {
+				$url .= '&order=' . $this->request->get['order'];
+			}
+
+			if (isset($this->request->get['page'])) {
+				$url .= '&page=' . $this->request->get['page'];
+			}
+
+			if (isset($this->request->get['schedule_start'])) {
+				$url .= '&schedule_start=' . $this->request->get['schedule_start'];
+			}
+
+			$this->response->redirect($this->url->link('payroll/payroll/info', 'token=' . $this->session->data['token'] . $url, true));
+		} else {
+			$php_spreadsheet = new Spreadsheet('Xlsx');
+
+			$spreadsheet = $php_spreadsheet->loadSpreadsheet(DIR_DOWNLOAD . 'Payroll Detail.xlsx');
+
+			# Sheet: Setting
+			# Set Cell Format because PhpSpreadsheet Bug losing color data from template
+			$spreadsheet->getSheetByName('Setting')->getStyle('A1')->getFont()->getColor()->setARGB($title_color);
+
+			$setting = [
+				'store'				=> $this->config->get('config_name'),
+				'date_start'		=> $period_info['date_start'],
+				'date_end'			=> $period_info['date_end'],
+				'user_id'			=> $this->user->getId(),
+				'division'			=> $this->user->getCustomerDepartmentId(),
+				'security_token'	=> '4gBjUpFX2t'
+			];
+
+			if ($this->user->getCustomerDepartmentId()) {
+				$this->load->model('customer/customer_department');
+
+				$division_info = $this->model_customer_customer_department->getCustomerDepartment($this->user->getCustomerDepartmentId());
+
+				$division = $division_info['name'];
+			} else {
+				$division = $this->language->get('text_all_division');
+			}
+
+			$setting_data = [
+				md5(implode('', $setting)),
+				null,
+				htmlspecialchars_decode($this->config->get('config_name')),
+				\PhpOffice\PhpSpreadsheet\Shared\Date::stringToExcel($period_info['period']),
+				\PhpOffice\PhpSpreadsheet\Shared\Date::stringToExcel($period_info['date_start']),
+				\PhpOffice\PhpSpreadsheet\Shared\Date::stringToExcel($period_info['date_end']),
+				null,
+				$this->user->getUsername(),
+				$division
+			];
+
+			$setting_data = array_chunk($setting_data, 1);
+
+			$spreadsheet->getActiveSheet()->fromArray($setting_data, NULL, 'B2');
+
+			# Sheet: Payroll
+			# Set Cell Format because PhpSpreadsheet Bug losing color data from template
+			$spreadsheet->getSheetByName('Payroll')->getStyle('A1')->getFont()->getColor()->setARGB($title_color);
+			$spreadsheet->getActiveSheet()->getStyle('A2:O3')->applyFromArray($table_head_format);
+
+			$header_data = [
+				'NO',
+				'NAMA',
+				'JABATAN',
+				'DIVISI',
+				'LOKASI',
+				'ID',
+				'GAJI BERSIH'
+			];
+
+			# Payroll Components
+			$component_codes = $this->model_payroll_payroll->getPayrollComponentCodes($presence_period_id);
+
+			$component_total = array('net_salary' => 0, 'grandtotal' => 0);
+
+			foreach ($component_codes as $code) {
+				$header_data[] = utf8_strtoupper($this->language->get('text_' . $code));
+				$component_total[$code] = 0;
+			}
+
+			$header_data[] = 'TAKE HOME PAY';
+
+			# Set Column for SUM
+			$component_count = count($component_codes);
+			$column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($component_count + 7);
+
+			# Payroll Data
+			$filter_data = array(
+				'filter_name'	   	   			=> $filter_name,
+				'filter_customer_group_id'		=> $filter_customer_group_id,
+				'filter_location_id'			=> $filter_location_id,
+				'filter_customer_department_id'	=> $this->user->getCustomerDepartmentId() ? $this->user->getCustomerDepartmentId() : $filter_customer_department_id,
+				'sort'              			=> $sort,
+				'order'             			=> $order
+			);
 	
-	public function getPayroll() {
+			$customer_data = [];
+
+			$customer_count = $this->model_payroll_payroll->getTotalPayrolls($presence_period_id, $filter_data);
+
+			$results = $this->model_payroll_payroll->getPayrolls($presence_period_id, $filter_data);
+	
+			# Get absence Note
+			$this->load->model('presence/absence');
+	
+			foreach ($results as $key => $result) {
+				$earning = $result['gaji_pokok'] + $result['tunj_jabatan'] + $result['tunj_hadir'] + $result['tunj_pph'] + $result['total_uang_makan'];
+				$deduction = $result['pot_sakit'] + $result['pot_bolos'] + $result['pot_tunj_hadir'] + $result['pot_gaji_pokok'] + $result['pot_terlambat'];
+	
+				$net_salary = $earning - $deduction;
+				$component_total['net_salary'] += $net_salary;
+	
+				//Payroll Component
+				$component_data = array();
+	
+				$component_info = $this->model_payroll_payroll->getPayrollComponentTotal($presence_period_id, $result['customer_id'], 'code');
+	
+				foreach ($component_codes as $code) {
+					$component_data[$code] = $component_info[$code];
+					$component_total[$code] += $component_info[$code];
+				}
+	
+				$component_total['grandtotal'] += $component_info['grandtotal'];
+	
+				# Get Note
+				$range_date = array(
+					'start'	=> $period_info['date_start'],
+					'end'	=> $period_info['date_end']
+				);
+	
+				$range_date['start'] = max($range_date['start'], $result['date_start']);
+	
+				if ($result['date_end']) {
+					$range_date['end'] = min($range_date['end'], $result['date_end']);
+				}
+	
+				$absences_info = $this->model_presence_absence->getAbsencesByCustomerDate($result['customer_id'], $range_date);
+	
+				$note = implode(', ', array_filter(array_column($absences_info, 'note')));
+	
+				$customer_data[$key] = [
+					$key + 1,
+					$result['name'],
+					$result['customer_group'],
+					$result['customer_department'],
+					$result['location'],
+					$result['customer_id'],
+					$net_salary,
+				];
+
+				$total_ref = '=SUM(G' . ($key + 4) . ':' . $column . ($key + 4) . ')';
+
+				$customer_data[$key] = array_merge($customer_data[$key], array_values($component_data), [$total_ref, $note]);
+			}	
+	
+			# Remove Unneded Column (Max column available = 6)
+			$component_count = count($component_codes);
+			$column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($component_count + 7);
+
+			if ($component_count < 6) {
+				$cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow($component_count + 8, 3);
+
+				$spreadsheet->getActiveSheet()->removeColumn($cell->getColumn(), 6 - $component_count);
+			}
+
+			if ($customer_count > 1) {
+				$spreadsheet->getActiveSheet()->insertNewRowBefore(5, $customer_count - 1);
+			}
+
+			$spreadsheet->getSheetByName('Payroll')
+				->fromArray($header_data, NULL, 'A3')
+				->fromArray($customer_data, NULL, 'A4');
+
+			$spreadsheet->setActiveSheetIndexByName('Setting');
+
+			# Force to download
+			$new_file = DIR_DOWNLOAD . 'Payroll Detail ' . date('Y_M', strtotime($period_info['period'])) . '.xlsx';
+
+			$writer = $php_spreadsheet->writer('Xlsx');
+			$writer->setPreCalculateFormulas(false);
+
+			$writer->save($new_file);
+
+			$spreadsheet->disconnectWorksheets();
+			unset($spreadsheet);
+
+			if (!headers_sent()) {
+				if (is_file($new_file)) {
+					header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+					header('Content-Disposition: attachment; filename=' . basename($new_file));
+					header('Expires: 0');
+					header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+					header('Pragma: public');
+					header('Content-Length: ' . filesize($new_file));
+
+					if (ob_get_level()) {
+						ob_end_clean();
+					}
+
+					readfile($new_file, 'rb');
+
+					exit();
+				} else {
+					exit('Error: Could not find file ' . $new_file . '!');
+				}
+			} else {
+				exit('Error: Headers already sent out!');
+			}
+		}
+
+	}
+
+	public function getPayroll()
+	{
 		$this->load->language('payroll/payroll');
 
 		$this->load->model('payroll/payroll');
 
 		$data['text_payroll_old'] = $this->language->get('text_payroll_old');
-		
+
 		$data['column_date_added'] = $this->language->get('column_date_added');
 		$data['column_net_salary'] = $this->language->get('column_net_salary');
 		$data['column_grandtotal'] = $this->language->get('column_grandtotal');
@@ -1182,16 +1537,16 @@ class ControllerPayrollPayroll extends Controller {
 		if (!empty($payroll_info)) {
 			$earning = $payroll_info['gaji_pokok'] + $payroll_info['tunj_jabatan'] + $payroll_info['tunj_hadir'] + $payroll_info['tunj_pph'] + $payroll_info['total_uang_makan'];
 			$deduction = $payroll_info['pot_sakit'] + $payroll_info['pot_bolos'] + $payroll_info['pot_tunj_hadir'] + $payroll_info['pot_gaji_pokok'] + $payroll_info['pot_terlambat'];
-			
+
 			$net_salary = $earning - $deduction;
-			
+
 			//Payroll Component
 			$data['component_codes'] = $this->model_payroll_payroll->getPayrollComponentCodes($this->request->get['presence_period_id'], $this->request->get['customer_id']);
-	
+
 			foreach ($data['component_codes'] as $code) {
 				$data['text_component'][$code] = $this->language->get('text_' . $code);
 			}
-			
+
 			$components_info = $this->model_payroll_payroll->getPayrollComponentTotal($this->request->get['presence_period_id'], $this->request->get['customer_id'], 'code');
 
 			foreach ($data['component_codes'] as $code) {
@@ -1199,7 +1554,7 @@ class ControllerPayrollPayroll extends Controller {
 			}
 
 			$grandtotal = $net_salary + $components_info['grandtotal'];
-			
+
 			$data['net_salary'] = $this->currency->format($net_salary, $this->config->get('config_currency'));
 			$data['grandtotal'] = $this->currency->format($grandtotal, $this->config->get('config_currency'));
 			$data['payroll_date_added']	= date($this->language->get('date_format_jMY'), strtotime($payroll_info['date_added']));
@@ -1210,18 +1565,19 @@ class ControllerPayrollPayroll extends Controller {
 		$this->response->setOutput($this->load->view('payroll/payroll_summary', $data));
 	}
 
-	public function addPayroll() {
+	public function addPayroll()
+	{
 		$this->load->language('payroll/payroll');
 
 		$this->load->model('common/payroll');
-		
+
 		$json = array();
 
 		if (!$this->validateForm()) {
 			$json['error'] = $this->error['warning'];
 		} else {
 			$this->load->model('payroll/payroll');
-			
+
 			$this->model_payroll_payroll->deletePayroll($this->request->post['presence_period_id'], $this->request->post['customer_id']);
 			$this->model_payroll_payroll->deletePayrollComponent($this->request->post['presence_period_id'], $this->request->post['customer_id']);
 
@@ -1229,7 +1585,7 @@ class ControllerPayrollPayroll extends Controller {
 
 			if ($payroll_calculation['payroll_basic_check'] && $payroll_calculation['presence_summary_check']) {
 				$payroll_data = array(
-					'presence_period_id'=> $payroll_calculation['presence_period_id'],
+					'presence_period_id' => $payroll_calculation['presence_period_id'],
 					'customer_id' 		=> $payroll_calculation['customer_id'],
 					'gaji_pokok'    	=> $payroll_calculation['gaji_pokok'],
 					'tunj_jabatan'  	=> $payroll_calculation['tunj_jabatan'],
@@ -1244,9 +1600,9 @@ class ControllerPayrollPayroll extends Controller {
 					'pot_gaji_pokok'	=> $payroll_calculation['pot_gaji_pokok'],
 					'pot_terlambat'		=> $payroll_calculation['pot_terlambat']
 				);
-					
+
 				$this->model_payroll_payroll->addPayroll($this->request->post['presence_period_id'], $this->request->post['customer_id'], $payroll_data);
-				
+
 				// Payroll Components
 				$components = $this->model_payroll_payroll->calculatePayrollComponent($this->request->post['presence_period_id'], $this->request->post['customer_id']);
 
@@ -1260,7 +1616,7 @@ class ControllerPayrollPayroll extends Controller {
 							'type' 			=> $quote['type'],
 							'sort_order' 	=> $component['sort_order']
 						);
-						
+
 						if ($component_data) {
 							$this->model_payroll_payroll->addPayrollComponent($this->request->post['presence_period_id'], $this->request->post['customer_id'], $component_data);
 						}
@@ -1271,12 +1627,13 @@ class ControllerPayrollPayroll extends Controller {
 				$json['error'] = $this->language->get('error_not_found');
 			}
 		}
-		
+
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
 
-	public function approvePayroll() {
+	public function approvePayroll()
+	{
 		$this->load->language('payroll/payroll');
 
 		$json = array();
@@ -1299,21 +1656,21 @@ class ControllerPayrollPayroll extends Controller {
 			if (!$payroll_total) {
 				$json['error'] = $this->language->get('error_not_found');
 			} elseif (!$payroll_status_check) {
-				$json['error'] = $this->language->get('error_status');				
+				$json['error'] = $this->language->get('error_status');
 			} else {
 				$total_payroll = $this->model_payroll_payroll->getTotalPayroll($presence_period_id);
 
 				$grandtotal = $total_payroll['total_earning'] - $total_payroll['total_deduction'];
-				
+
 				//Payroll Component
 				$total_component = $this->model_payroll_payroll->getPayrollComponentTotal($this->request->get['presence_period_id']);
-				
+
 				$grandtotal += $total_component['grandtotal'];
-				
+
 				$period_data = array(
 					'total_payroll' 	=> $grandtotal
 				);
-				
+
 				$this->load->model('common/payroll');
 				$this->model_common_payroll->setPeriodStatus($presence_period_id, 'approved', $period_data);
 
@@ -1324,14 +1681,14 @@ class ControllerPayrollPayroll extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
-	
+
 	// public function payrollInfo() {
 	// 	$this->load->language('payroll/payroll');
 
 	// 	$this->load->model('payroll/payroll');
 
 	// 	$presence_period_id = $this->request->get['presence_period_id'];
-		
+
 	// 	$total_payroll = $this->model_payroll_payroll->getTotalPayroll($presence_period_id);
 	// 	$net_salary = $total_payroll['total_earning'] - $total_payroll['total_deduction'];
 
@@ -1346,7 +1703,7 @@ class ControllerPayrollPayroll extends Controller {
 	// 		$data['text_component'][$code] = $this->language->get('text_' . $code) . ' :';
 	// 		$data['component'][$code] = $this->currency->format($total_component[$code], $this->config->get('config_currency'));
 	// 	}
-		
+
 	// 	$data['text_net_salary'] = $this->language->get('column_net_salary') . ' :';
 	// 	$data['text_grandtotal'] = $this->language->get('text_grandtotal') . ' :';
 	// 	$data['text_total_customer'] = $this->language->get('text_total_customer') . ' :';

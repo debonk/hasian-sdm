@@ -365,7 +365,7 @@ class ControllerReleaseAllowance extends Controller
 			'href' => $data['action']
 		);
 
-		$data['cancel'] = $this->url->link('release/allowance/edit', 'token=' . $this->session->data['token'], true);
+		$data['cancel'] = $this->url->link('release/allowance', 'token=' . $this->session->data['token'], true);
 
 		$data['allowance_customers'] = array();
 

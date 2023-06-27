@@ -12,6 +12,16 @@ class ControllerStartupStartup extends Controller {
 			}
 		}
 		
+		if (!$this->registry->has('framework_load') || $this->registry->get('framework_registry') != $this->config->get('fw_version')) {
+			$query = $this->db->query("DELETE FROM " . DB_PREFIX . "setting WHERE code = 'framework'");
+		} else {
+			$this->registry->set('framework_registry', null);
+		}
+
+		if (!$this->config->has('fw_version')) {
+			die();
+		}
+
 		// Language
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "language` WHERE code = '" . $this->db->escape($this->config->get('config_admin_language')) . "'");
 		

@@ -1037,7 +1037,7 @@ class ControllerPresenceSchedule extends Controller
 
 		$presence_period_id = isset($this->request->get['presence_period_id']) ? (int)$this->request->get['presence_period_id'] : 0;
 
-		$filter_name = isset($this->request->get['filter_name']) ? (int)$this->request->get['filter_name'] : '';
+		$filter_name = isset($this->request->get['filter_name']) ? $this->request->get['filter_name'] : '';
 		$filter_customer_group_id = isset($this->request->get['filter_customer_group_id']) ? (int)$this->request->get['filter_customer_group_id'] : 0;
 		$filter_customer_department_id = isset($this->request->get['filter_customer_department_id']) ? (int)$this->request->get['filter_customer_department_id'] : 0;
 		$filter_location_id = isset($this->request->get['filter_location_id']) ? (int)$this->request->get['filter_location_id'] : 0;

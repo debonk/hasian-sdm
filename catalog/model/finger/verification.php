@@ -6,6 +6,8 @@ if (isset($_GET['customer_id']) && !empty($_GET['customer_id']) && isset($_GET['
 	$customer_id = $_GET['customer_id'];
 	$schedule_date = $_GET['schedule_date'];
 	$action = $_GET['action'];
+
+	$time_limit_ver = 10;
 	
 	$finger	= getFinger($conn, $customer_id);
 

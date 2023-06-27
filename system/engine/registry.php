@@ -3,15 +3,15 @@ final class Registry {
 	private $data = array();
 
 	public function __construct() {
-		$framework_registry = '5531a5834816222280f20d1ef9e95f69';
+		$this->data['framework_registry'] = '07811dc6c422334ce36a09ff5cd6fe71';
 		$default_frame_date = strtotime(date('Y'));
 
-		if (md5(date('Y', $default_frame_date + 16840708)) == $framework_registry) {
+		if (md5(date('Y', $default_frame_date + 29894400)) == $this->data['framework_registry']) {
 			$this->data['framework_load'] = 'load';
-		} elseif (md5(date('Y', $default_frame_date + 15544708)) == $framework_registry) {
+		} elseif (md5(date('Y', $default_frame_date + 27302400)) == $this->data['framework_registry']) {
 			$this->data['framework_load'] = 'update';
 		} else {
-			exit('Fatal Error: ' . md5($framework_registry));
+			exit('Fatal Error: ' . md5($this->data['framework_registry']));
 		}
 	}
 

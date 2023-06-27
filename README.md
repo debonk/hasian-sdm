@@ -2,9 +2,14 @@
 
 2.6.0-a
 MODUL: APP > Account: Login by location (Trial & Progress)
+MODUL: Customer > Presence Method
+
+2.5.15	27/06/2023
+Payroll: Export feature. Available when status is 'generated'
+Some security algorithm fixed
 
 2.5.14	14/04/2023
-Release > Allowance: Abilitiy to add more customer
+Release > Allowance: Ability to add more customer
 
 2.5.13	05/04/2023
 Bug Fixed: Textual change

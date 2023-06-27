@@ -9,7 +9,7 @@ class ControllerApiLogin extends Controller {
 
 		// Login with API Key
 		$api_info = $this->model_account_api->getApiByKey($this->request->post['key']);
-
+		
 		if ($api_info) {
 			// Check if IP is allowed
 			$ip_data = array();

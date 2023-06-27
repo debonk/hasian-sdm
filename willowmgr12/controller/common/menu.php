@@ -18,6 +18,7 @@ class ControllerCommonMenu extends Controller
 			'customer'		=> [
 				'customer/customer',
 				'customer/document',
+				'customer/presence_method',
 				'customer/finger',
 				'option'		=> ['localisation/location', 'customer/customer_department', 'customer/customer_group', 'localisation/gender', 'localisation/marriage_status', 'localisation/payroll_method', 'customer/custom_field', 'customer/document_type', 'localisation/finger_device'],
 			],

@@ -54,6 +54,7 @@ $_['text_payroll_setting']			   = 'Payroll Settings';
 $_['text_payroll_status']			   = 'Payroll Statuses';
 $_['text_payroll_tax']	   	           = 'Payroll Taxes';
 $_['text_payroll']					   = 'Payrolls';
+$_['text_presence_method']			   = 'Presence Methods';
 $_['text_presence_period']			   = 'Presence Periods';
 $_['text_presence_status']			   = 'Presence Statuses';
 $_['text_presence']					   = 'Presences';

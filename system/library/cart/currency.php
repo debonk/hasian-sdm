@@ -1,5 +1,6 @@
 <?php
 namespace Cart;
+#[\AllowDynamicProperties]
 class Currency {
 	private $currencies = array();
 

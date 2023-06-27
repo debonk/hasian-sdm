@@ -6,6 +6,7 @@ $_['heading_title']              = 'Penggajian';
 $_['code_full_overtime']		 = 'LH';
 $_['text_add']                   = 'Add Gaji Karyawan';
 $_['text_all_customer_group'] 	 = 'Semua Jabatan';
+$_['text_all_location'] 		 = 'Semua Lokasi';
 $_['text_approve_confirm']       = 'Setelah diapprove, Data tidak bisa diedit lagi.\nApprove?';
 $_['text_approve_success']       = 'Success: Daftar Gaji Karyawan telah disetujui!';
 $_['text_edit']                  = 'Edit Gaji Karyawan';
@@ -34,6 +35,7 @@ $_['text_total_uang_makan'] 	 = 'Total Uang Makan (%s x %s)';
 $_['text_tunj_hadir'] 		     = 'Tunjangan Kehadiran';
 $_['text_tunj_jabatan'] 		 = 'Tunjangan Jabatan';
 $_['text_tunj_pph'] 			 = 'Premi Prestasi Hadir';
+$_['text_all_division']				= 'Semua Divisi';
 
 $_['text_insurance']       		 = 'BPJS';
 $_['text_loan']    		   		 = 'Pinjaman';
@@ -51,6 +53,7 @@ $_['column_action']              = 'Action';
 $_['column_nip']            	 = 'NIP';
 $_['column_name']       		 = 'Nama Karyawan';
 $_['column_customer_group']      = 'Jabatan';
+$_['column_location']			 = 'Lokasi Kerja';
 $_['column_net_salary']       	 = 'Gaji Bersih';
 $_['column_earning']       	 	 = 'Pendapatan';
 $_['column_deduction']           = 'Potongan';
@@ -80,20 +83,21 @@ $_['column_t3']         		 = 'T3';
 $_['column_note']        	 	 = 'Catatan';
 
 // Entry
-$_['entry_payroll_status']       = 'Payroll Status';
-$_['entry_period']         		 = 'Periode Absensi';
-$_['entry_name']      			 = 'Nama Karyawan';
-$_['entry_customer_group']       = 'Jabatan';
+$_['entry_payroll_status']		= 'Payroll Status';
+$_['entry_period']        		= 'Periode Absensi';
+$_['entry_name']      			= 'Nama Karyawan';
+$_['entry_customer_group']		= 'Jabatan';
+$_['entry_location']      		= 'Lokasi Kerja';
 
 
 // Button
-$_['button_payroll_update']      = 'Update Payroll';
-$_['button_generate']            = 'Generate Payrolls';
-$_['button_payroll_basic_edit']  = 'Edit Gaji Dasar';
-$_['button_presence_summary_edit'] = 'Edit Absensi';
-$_['button_select'] 			 = 'Pilih Karyawan';
-$_['button_payroll_approve'] 	 = 'Approve Payroll';
-$_['button_override'] 	 		 = 'Override';
+$_['button_payroll_update']    		= 'Update Payroll';
+$_['button_generate']          		= 'Generate Payrolls';
+$_['button_payroll_basic_edit']		= 'Edit Gaji Dasar';
+$_['button_presence_summary_edit']	= 'Edit Absensi';
+$_['button_select'] 				= 'Pilih Karyawan';
+$_['button_payroll_approve']		= 'Approve Payroll';
+$_['button_override'] 	 			= 'Override';
 
 // Error
 $_['error_permission']          = 'Warning: You do not have permission to modify payrolls!';
@@ -102,6 +106,7 @@ $_['error_data']            	= 'Warning: Data Gaji harus dihapus terlebih dahulu
 $_['error_status']              = 'Warning: Wrong Status! Could not complete this action!';
 $_['error_payroll_include']     = 'Warning: Status karyawan tidak aktif atau tidak termasuk dalam sistem payroll!';
 $_['error_inactive']     		= 'Warning: Karyawan belum atau telah berhenti bekerja!';
+$_['error_period']    			= 'Warning: Data Periode tidak ditemukan!';
 
 //Info
 $_['info_no_data']				= 'Info: Data Gaji %d orang karyawan masih kosong!';
