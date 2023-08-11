@@ -20,8 +20,10 @@ class ControllerCustomerCustomer extends Controller {
 		$this->load->model('customer/customer');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$customer_id = $this->model_customer_customer->addCustomer($this->request->post);
-
+			$customer_id = $this->db->transaction(function () {
+				return $this->model_customer_customer->addCustomer($this->request->post);
+			});
+			
 			// Add to customer_history log
 			$this->load->model('customer/history');
 			$this->load->model('common/payroll');
@@ -34,7 +36,7 @@ class ControllerCustomerCustomer extends Controller {
 				'customer_department'	=> $this->model_common_payroll->getCustomerDepartment($this->request->post['customer_department_id']),
 				'location'				=> $this->model_common_payroll->getLocation($this->request->post['location_id'])
 			);
-			
+
 			$this->model_customer_history->addHistory('register2', $history_data);
 
 			$this->session->data['success'] = $this->language->get('text_success');
@@ -97,7 +99,9 @@ class ControllerCustomerCustomer extends Controller {
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
 			$this->customerHistory();
 			
-			$this->model_customer_customer->editCustomer($this->request->get['customer_id'], $this->request->post);
+			$this->db->transaction(function () {
+				$this->model_customer_customer->editCustomer($this->request->get['customer_id'], $this->request->post);
+			});
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
@@ -952,7 +956,7 @@ class ControllerCustomerCustomer extends Controller {
 		} elseif (!empty($customer_info) && $customer_info['date_end']) {
 			$data['date_end'] = date($this->language->get('date_format_jMY'), strtotime($customer_info['date_end']));
 		} else {
-			$data['date_end'] = null;
+			$data['date_end'] = '';
 		}
 
 		if (isset($this->request->post['date_birth'])) {

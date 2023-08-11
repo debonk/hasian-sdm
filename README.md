@@ -4,6 +4,9 @@
 MODUL: APP > Account: Login by location (Trial & Progress)
 MODUL: Customer > Presence Method
 
+2.5.16	08/11/23
+Bug Fixed: Customer: Add new customer did not save birth date
+
 2.5.15	27/06/2023
 Payroll: Export feature. Available when status is 'generated'
 Some security algorithm fixed

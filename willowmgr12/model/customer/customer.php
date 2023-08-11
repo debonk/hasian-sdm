@@ -16,12 +16,6 @@ class ModelCustomerCustomer extends Model
 
 		$nip = $nip_prefix . $nip_no . mt_rand(0, 9);
 
-		if (!empty($data['date_birth'])) {
-			$data['date_birth'] = date('Y-m-j', strtotime($data['date_birth']));
-		} else {
-			$data['date_birth'] = null;
-		}
-
 		$fields_data = [
 			'skip_trial_status',
 			'health_insurance',
