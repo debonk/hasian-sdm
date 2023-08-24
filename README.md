@@ -4,14 +4,14 @@
 MODUL: APP > Account: Login by location (Trial & Progress)
 MODUL: Customer > Presence Method
 
-2.5.17
+2.5.17	24/08/2023
 Payroll Setting: Add option for Presence Card.
 Payroll Export: Split Name and Longname in Export file, Add NIP column.
 Bug Fixed: Customer: Health insurance save bug. 
 Payroll, Release, Payroll Basic: Add Division Filter
 Release: Add Email Filter
 
-2.5.16	08/11/23
+2.5.16	11/08/2023
 Bug Fixed: Customer: Add new customer did not save birth date
 
 2.5.15	27/06/2023

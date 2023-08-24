@@ -127,9 +127,6 @@ class ControllerPresenceLogin extends Controller
 				);
 			}
 		}
-		var_dump($data['presence_card']);
-		var_dump($data['customers']);
-		// die('---breakpoint---');
 
 		$language_items = array(
 			'heading_title',
