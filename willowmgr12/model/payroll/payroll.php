@@ -98,7 +98,6 @@ class ModelPayrollPayroll extends Model {
 		
 		$this->createView();
 		
-		// $sql = "SELECT DISTINCT p.*, c.nip, c.email, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.acc_no, c.date_start, c.date_end, cgd.name AS customer_group, pm.name AS payroll_method FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.presence_period_id = '" . (int)$presence_period_id . "'";
 		$sql = "SELECT * FROM " . DB_PREFIX . "v_payroll WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
 		$implode = array();
@@ -109,6 +108,10 @@ class ModelPayrollPayroll extends Model {
 
 		if (!empty($data['filter_customer_group_id'])) {
 			$implode[] = "customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+		}
+
+		if (!empty($data['filter_customer_department_id'])) {
+			$implode[] = "customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
 		}
 
 		if (!empty($data['filter_location_id'])) {
@@ -123,6 +126,7 @@ class ModelPayrollPayroll extends Model {
 			'nip',
 			'name',
 			'customer_group',
+			'customer_department',
 			'location'
 		);
 
@@ -169,6 +173,10 @@ class ModelPayrollPayroll extends Model {
 
 		if (!empty($data['filter_customer_group_id'])) {
 			$implode[] = "customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+		}
+
+		if (!empty($data['filter_customer_department_id'])) {
+			$implode[] = "customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
 		}
 
 		if (!empty($data['filter_location_id'])) {
@@ -559,6 +567,10 @@ class ModelPayrollPayroll extends Model {
 			$implode[] = "c.customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
 		}
 
+		if (!empty($data['filter_customer_department_id'])) {
+			$implode[] = "c.customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
+		}
+
 		if (!empty($data['filter_location_id'])) {
 			$implode[] = "c.location_id = '" . (int)$data['filter_location_id'] . "'";
 		}
@@ -582,12 +594,11 @@ class ModelPayrollPayroll extends Model {
 		return $query->rows;
 	}
 
-
 	public function createView($view_name = 'v_payroll')
 	{
 		$view_name = DB_PREFIX . $view_name;
 		
-		$sql = "SELECT DISTINCT p.*, c.nip, c.email, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.acc_no, c.date_start, c.date_end, c.customer_group_id, cgd.name AS customer_group, c.customer_department_id, cdd.name AS customer_department, c.location_id, l.name AS location, pm.name AS payroll_method FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (cdd.customer_department_id = c.customer_department_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+		$sql = "SELECT DISTINCT p.*, c.firstname, c.lastname, c.nip, c.email, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.acc_no, c.date_start, c.date_end, c.customer_group_id, cgd.name AS customer_group, c.customer_department_id, cdd.name AS customer_department, c.location_id, l.name AS location, pm.name AS payroll_method FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (cdd.customer_department_id = c.customer_department_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
 
 		return $this->db->createView($view_name, $sql);
 	}

@@ -241,6 +241,45 @@ class ControllerPayrollPayrollRelease extends Controller
 
 	protected function getList()
 	{
+		$language_items = [
+			'heading_title',
+			'text_list',
+			'text_confirm',
+			'text_confirm_send_all',
+			'text_no_results',
+			'text_all',
+			'text_yes',
+			'text_no',
+			'text_loading',
+			'text_period_list',
+			'column_nip',
+			'column_name',
+			'column_customer_group',
+			'column_customer_department',
+			'column_location',
+			'column_email',
+			'column_acc_no',
+			'column_payroll_method',
+			'column_net_salary',
+			'column_statement_sent',
+			'entry_name',
+			'entry_email',
+			'entry_customer_group',
+			'entry_customer_department',
+			'entry_location',
+			'entry_payroll_method',
+			'entry_statement_sent',
+			'button_back',
+			'button_filter',
+			'button_payroll_complete',
+			'button_export_cimb',
+			'button_send_all',
+			'button_send'		
+		];
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
+
 		$presence_period_id = isset($this->request->get['presence_period_id']) ? $this->request->get['presence_period_id'] : 0;
 
 		if (isset($this->request->get['filter_name'])) {
@@ -249,10 +288,28 @@ class ControllerPayrollPayrollRelease extends Controller
 			$filter_name = null;
 		}
 
+		if (isset($this->request->get['filter_email'])) {
+			$filter_email = $this->request->get['filter_email'];
+		} else {
+			$filter_email = null;
+		}
+
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$filter_customer_group_id = $this->request->get['filter_customer_group_id'];
 		} else {
 			$filter_customer_group_id = null;
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$filter_customer_department_id = $this->request->get['filter_customer_department_id'];
+		} else {
+			$filter_customer_department_id = null;
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$filter_location_id = $this->request->get['filter_location_id'];
+		} else {
+			$filter_location_id = null;
 		}
 
 		if (isset($this->request->get['filter_payroll_method_id'])) {
@@ -292,8 +349,20 @@ class ControllerPayrollPayrollRelease extends Controller
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 		}
 
+		if (isset($this->request->get['filter_email'])) {
+			$url .= '&filter_email=' . urlencode(html_entity_decode($this->request->get['filter_email'], ENT_QUOTES, 'UTF-8'));
+		}
+
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 		}
 
 		if (isset($this->request->get['filter_payroll_method_id'])) {
@@ -324,8 +393,13 @@ class ControllerPayrollPayrollRelease extends Controller
 		);
 
 		$data['breadcrumbs'][] = array(
-			'text' => $this->language->get('heading_title'),
+			'text' => $data['text_period_list'],
 			'href' => $this->url->link('payroll/payroll_release', 'token=' . $this->session->data['token'] . $url, true)
+		);
+
+		$data['breadcrumbs'][] = array(
+			'text' => $data['text_list'],
+			'href' => $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $presence_period_id, true)
 		);
 
 		$data['export_cimb'] = $this->url->link('payroll/payroll_release/exportCimb', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $presence_period_id, true);
@@ -335,14 +409,17 @@ class ControllerPayrollPayrollRelease extends Controller
 		$data['payroll_releases'] = array();
 
 		$filter_data = array(
-			'filter_name'	   	   		=> $filter_name,
-			'filter_customer_group_id'	=> $filter_customer_group_id,
-			'filter_payroll_method_id'	=> $filter_payroll_method_id,
-			'filter_statement_sent'		=> $filter_statement_sent,
-			'sort'                 		=> $sort,
-			'order'                		=> $order,
-			'start'                		=> ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit'                		=> $this->config->get('config_limit_admin')
+			'filter_name'	   	   			=> $filter_name,
+			'filter_email'	   	   			=> $filter_email,
+			'filter_customer_group_id'		=> $filter_customer_group_id,
+			'filter_customer_department_id'	=> $filter_customer_department_id,
+			'filter_location_id'			=> $filter_location_id,
+			'filter_payroll_method_id'		=> $filter_payroll_method_id,
+			'filter_statement_sent'			=> $filter_statement_sent,
+			'sort'                 			=> $sort,
+			'order'                			=> $order,
+			'start'                			=> ($page - 1) * $this->config->get('config_limit_admin'),
+			'limit'                			=> $this->config->get('config_limit_admin')
 		);
 
 		$payroll_release_count = $this->model_payroll_payroll_release->getReleasesCount($presence_period_id, $filter_data);
@@ -353,55 +430,22 @@ class ControllerPayrollPayrollRelease extends Controller
 			$grandtotal = $result['net_salary'] + $result['component'];
 
 			$data['payroll_releases'][] = array(
-				'customer_id' 		=> $result['customer_id'],
-				'nip' 				=> $result['nip'],
-				'name' 				=> $result['name'],
-				'customer_group' 	=> $result['customer_group'],
-				'email' 			=> $result['email'],
-				'payroll_method'	=> $result['payroll_method'],
-				'acc_no' 			=> $result['acc_no'],
-				'grandtotal'    	=> $this->currency->format($grandtotal, $this->config->get('config_currency')),
-				'statement_sent' 	=> $result['statement_sent']
+				'customer_id' 			=> $result['customer_id'],
+				'nip' 					=> $result['nip'],
+				'name' 					=> $result['name'],
+				'customer_group' 		=> $result['customer_group'],
+				'customer_department' 	=> $result['customer_department'],
+				'location' 				=> $result['location'],
+				'email' 				=> $result['email'],
+				'payroll_method'		=> $result['payroll_method'],
+				'acc_no' 				=> $result['acc_no'],
+				'grandtotal'    		=> $this->currency->format($grandtotal, $this->config->get('config_currency')),
+				'statement_sent' 		=> $result['statement_sent']
 			);
 		}
 
 		//Status Check 
 		$data['released_status_check'] = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'released');
-
-		$data['heading_title'] = $this->language->get('heading_title');
-
-		$data['text_list'] = $this->language->get('text_list');
-		$data['text_confirm'] = $this->language->get('text_confirm');
-		$data['text_confirm_send_all'] = $this->language->get('text_confirm_send_all');
-		$data['text_no_results'] = $this->language->get('text_no_results');
-		$data['text_all'] = $this->language->get('text_all');
-		$data['text_yes'] = $this->language->get('text_yes');
-		$data['text_no'] = $this->language->get('text_no');
-
-		$data['text_all_customer_group'] = $this->language->get('text_all_customer_group');
-		$data['text_all_payroll_method'] = $this->language->get('text_all_payroll_method');
-		$data['text_loading'] = $this->language->get('text_loading');
-
-		$data['column_nip'] = $this->language->get('column_nip');
-		$data['column_name'] = $this->language->get('column_name');
-		$data['column_customer_group'] = $this->language->get('column_customer_group');
-		$data['column_email'] = $this->language->get('column_email');
-		$data['column_acc_no'] = $this->language->get('column_acc_no');
-		$data['column_payroll_method'] = $this->language->get('column_payroll_method');
-		$data['column_grandtotal'] = $this->language->get('column_grandtotal');
-		$data['column_statement_sent'] = $this->language->get('column_statement_sent');
-
-		$data['entry_name'] = $this->language->get('entry_name');
-		$data['entry_customer_group'] = $this->language->get('entry_customer_group');
-		$data['entry_payroll_method'] = $this->language->get('entry_payroll_method');
-		$data['entry_statement_sent'] = $this->language->get('entry_statement_sent');
-
-		$data['button_back'] = $this->language->get('button_back');
-		$data['button_filter'] = $this->language->get('button_filter');
-		$data['button_payroll_complete'] = $this->language->get('button_payroll_complete');
-		$data['button_export_cimb'] = $this->language->get('button_export_cimb');
-		$data['button_send_all'] = $this->language->get('button_send_all');
-		$data['button_send'] = $this->language->get('button_send');
 
 		$data['token'] = $this->session->data['token'];
 
@@ -432,8 +476,20 @@ class ControllerPayrollPayrollRelease extends Controller
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 		}
 
+		if (isset($this->request->get['filter_email'])) {
+			$url .= '&filter_email=' . urlencode(html_entity_decode($this->request->get['filter_email'], ENT_QUOTES, 'UTF-8'));
+		}
+
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 		}
 
 		if (isset($this->request->get['filter_payroll_method_id'])) {
@@ -456,8 +512,13 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		$data['sort_nip'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=nip' . $url, true);
 		$data['sort_name'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=name' . $url, true);
+		$data['sort_email'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=email' . $url, true);
 		$data['sort_customer_group'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
+		$data['sort_customer_department'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=customer_department' . $url, true);
+		$data['sort_location'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
+		$data['sort_acc_no'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=acc_no' . $url, true);
 		$data['sort_payroll_method'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=payroll_method' . $url, true);
+		$data['sort_net_salary'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=net_salary' . $url, true);
 		$data['sort_statement_sent'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=statement_sent' . $url, true);
 
 		$url = '';
@@ -467,8 +528,20 @@ class ControllerPayrollPayrollRelease extends Controller
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 		}
 
+		if (isset($this->request->get['filter_email'])) {
+			$url .= '&filter_email=' . urlencode(html_entity_decode($this->request->get['filter_email'], ENT_QUOTES, 'UTF-8'));
+		}
+
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 		}
 
 		if (isset($this->request->get['filter_payroll_method_id'])) {
@@ -499,7 +572,10 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		$data['presence_period_id'] = $presence_period_id;
 		$data['filter_name'] = $filter_name;
+		$data['filter_email'] = $filter_email;
 		$data['filter_customer_group_id'] = $filter_customer_group_id;
+		$data['filter_customer_department_id'] = $filter_customer_department_id;
+		$data['filter_location_id'] = $filter_location_id;
 		$data['filter_payroll_method_id'] = $filter_payroll_method_id;
 		$data['filter_statement_sent'] = $filter_statement_sent;
 		$data['sort'] = $sort;
@@ -507,6 +583,12 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		$this->load->model('customer/customer_group');
 		$data['customer_groups'] = $this->model_customer_customer_group->getCustomerGroups();
+
+		$this->load->model('customer/customer_department');
+		$data['customer_departments'] = $this->model_customer_customer_department->getCustomerDepartments();
+
+		$this->load->model('localisation/location');
+		$data['locations'] = $this->model_localisation_location->getLocations();
 
 		$this->load->model('localisation/payroll_method');
 		$data['payroll_methods'] = $this->model_localisation_payroll_method->getPayrollMethods();
@@ -667,10 +749,22 @@ class ControllerPayrollPayrollRelease extends Controller
 				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 			}
 
+			if (isset($this->request->get['filter_email'])) {
+				$url .= '&filter_email=' . urlencode(html_entity_decode($this->request->get['filter_email'], ENT_QUOTES, 'UTF-8'));
+			}
+	
 			if (isset($this->request->get['filter_customer_group_id'])) {
 				$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
 			}
 
+			if (isset($this->request->get['filter_customer_department_id'])) {
+				$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+			}
+	
+			if (isset($this->request->get['filter_location_id'])) {
+				$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
+			}
+	
 			if (isset($this->request->get['sort'])) {
 				$url .= '&sort=' . $this->request->get['sort'];
 			}

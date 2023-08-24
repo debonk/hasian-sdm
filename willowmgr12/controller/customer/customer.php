@@ -929,6 +929,20 @@ class ControllerCustomerCustomer extends Controller {
 			}
 		}
 
+		if (isset($this->request->post['firstname'])) {
+			$fields_data = [
+				'skip_trial_status',
+				'health_insurance',
+				'employment_insurance',
+				'life_insurance'
+			];
+			foreach ($fields_data as $field_data) {
+				if (!isset($this->request->post[$field_data])) {
+					$data[$field_data] = 0;
+				}
+			}
+		}
+
 		if (!empty($customer_info)) {
 			$data['nip'] = $customer_info['nip'];
 		} else {

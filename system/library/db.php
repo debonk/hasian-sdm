@@ -17,6 +17,10 @@ class DB {
 	}
 
 	public function escape($value) {
+		if ($value) {
+			$value = trim($value);
+		}
+		
 		return $this->adaptor->escape($value);
 	}
 

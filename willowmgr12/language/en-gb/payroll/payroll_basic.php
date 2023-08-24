@@ -6,15 +6,15 @@ $_['heading_title']              = 'Komponen Gaji';
 $_['text_success']          	 = 'Success: You have modified payroll basics!';
 $_['text_list']                  = 'Ringkasan Komponen Gaji Karyawan';
 $_['text_edit']                  = 'Edit Komponen Gaji';
-$_['text_all_customer_group'] 	 = 'Semua Jabatan';
 $_['text_active']				 = 'Masih Bekerja';
 $_['text_inactive']				 = 'Berhenti Bekerja';
-$_['text_all_status']			 = 'Semua Karyawan';
 
 // Column
 $_['column_nip']            	 = 'NIP';
 $_['column_name']       		 = 'Nama Karyawan';
 $_['column_customer_group']      = 'Jabatan';
+$_['column_customer_department'] = 'Divisi';
+$_['column_location'] 			 = 'Lokasi Kerja';
 $_['column_action']              = 'Action';
 $_['column_gaji_pokok']			 = 'Gaji Pokok';
 $_['column_tunj_jabatan']		 = 'Tunjangan Jabatan';
@@ -27,6 +27,8 @@ $_['column_gaji_dasar']			 = 'Gaji Dasar';
 // Entry
 $_['entry_name']      			 = 'Nama Karyawan';
 $_['entry_customer_group']       = 'Jabatan';
+$_['entry_customer_department']	 = 'Divisi';
+$_['entry_location']	 		 = 'Lokasi Kerja';
 $_['entry_gaji_pokok']      	 = 'Gaji Pokok';
 $_['entry_tunj_jabatan']    	 = 'Tunjangan Jabatan';
 $_['entry_tunj_hadir']      	 = 'Tunjangan Hadir';

@@ -29,6 +29,9 @@ class ControllerPayrollPayrollSetting extends Controller {
 			'text_select',
 			'text_yes',
 			'text_no',
+			'text_firstname',
+			'text_lastname',
+			'text_image',
 			'entry_pending_status',
 			'entry_processing_status',
 			'entry_submitted_status',
@@ -46,7 +49,7 @@ class ControllerPayrollPayrollSetting extends Controller {
 			'entry_login_end',
 			'entry_logout_start',
 			'entry_use_fingerprint',
-			'entry_use_customer_image',
+			'entry_presence_card',
 			'entry_schedule_check',
 			'entry_completed_after',
 			'entry_presence_statuses',
@@ -69,7 +72,7 @@ class ControllerPayrollPayrollSetting extends Controller {
 			'help_login_end',
 			'help_logout_start',
 			'help_use_fingerprint',
-			'help_use_customer_image',
+			'help_presence_card',
 			'help_schedule_check',
 			'help_presence_statuses',
 			'tab_general',
@@ -306,10 +309,10 @@ class ControllerPayrollPayrollSetting extends Controller {
 			$data['payroll_setting_use_fingerprint'] = $this->config->get('payroll_setting_use_fingerprint');
 		}
 		
-		if (isset($this->request->post['payroll_setting_use_customer_image'])) {
-			$data['payroll_setting_use_customer_image'] = $this->request->post['payroll_setting_use_customer_image'];
+		if (isset($this->request->post['payroll_setting_presence_card'])) {
+			$data['payroll_setting_presence_card'] = $this->request->post['payroll_setting_presence_card'];
 		} else {
-			$data['payroll_setting_use_customer_image'] = $this->config->get('payroll_setting_use_customer_image');
+			$data['payroll_setting_presence_card'] = $this->config->get('payroll_setting_presence_card');
 		}
 		
 		if (isset($this->request->post['payroll_setting_schedule_check'])) {
@@ -318,6 +321,23 @@ class ControllerPayrollPayrollSetting extends Controller {
 			$data['payroll_setting_schedule_check'] = $this->config->get('payroll_setting_schedule_check');
 		}
 		
+		$data['presence_cards'] = [];
+
+		$data['presence_cards'][] = [
+			'value'	=> 'firstname',
+			'text'	=> $data['text_firstname']
+		];
+
+		$data['presence_cards'][] = [
+			'value'	=> 'lastname',
+			'text'	=> $data['text_lastname']
+		];
+
+		$data['presence_cards'][] = [
+			'value'	=> 'image',
+			'text'	=> $data['text_image']
+		];
+
 		$this->load->model('localisation/location');
 		$data['locations'] = $this->model_localisation_location->getLocations();
 

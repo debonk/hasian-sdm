@@ -100,6 +100,10 @@ class ControllerPayrollPayroll extends Controller
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
 		}
 
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+		}
+
 		if (isset($this->request->get['filter_location_id'])) {
 			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 		}
@@ -196,6 +200,10 @@ class ControllerPayrollPayroll extends Controller
 				$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
 			}
 
+			if (isset($this->request->get['filter_customer_department_id'])) {
+				$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+			}
+	
 			if (isset($this->request->get['filter_location_id'])) {
 				$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 			}
@@ -496,13 +504,13 @@ class ControllerPayrollPayroll extends Controller
 			'text_list',
 			'text_confirm',
 			'text_no_results',
-			'text_all_customer_group',
-			'text_all_location',
+			'text_all',
 			'text_approve_confirm',
 			'text_loading',
 			'text_subtotal',
 			'column_nip',
 			'column_name',
+			'column_customer_department',
 			'column_customer_group',
 			'column_location',
 			'column_action',
@@ -511,6 +519,7 @@ class ControllerPayrollPayroll extends Controller
 			'column_grandtotal',
 			'column_note',
 			'entry_name',
+			'entry_customer_department',
 			'entry_customer_group',
 			'entry_location',
 			'button_add',
@@ -541,6 +550,12 @@ class ControllerPayrollPayroll extends Controller
 			$filter_customer_group_id = $this->request->get['filter_customer_group_id'];
 		} else {
 			$filter_customer_group_id = null;
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$filter_customer_department_id = $this->request->get['filter_customer_department_id'];
+		} else {
+			$filter_customer_department_id = null;
 		}
 
 		if (isset($this->request->get['filter_location_id'])) {
@@ -575,6 +590,10 @@ class ControllerPayrollPayroll extends Controller
 
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
 		}
 
 		if (isset($this->request->get['filter_location_id'])) {
@@ -625,13 +644,14 @@ class ControllerPayrollPayroll extends Controller
 		$data['customers'] = array();
 
 		$filter_data = array(
-			'filter_name'	   	   		=> $filter_name,
-			'filter_customer_group_id'	=> $filter_customer_group_id,
-			'filter_location_id'		=> $filter_location_id,
-			'sort'              		=> $sort,
-			'order'             		=> $order,
-			'start'             		=> ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit'             		=> $this->config->get('config_limit_admin')
+			'filter_name'	   	   			=> $filter_name,
+			'filter_customer_group_id'		=> $filter_customer_group_id,
+			'filter_customer_department_id'	=> $filter_customer_department_id,
+			'filter_location_id'			=> $filter_location_id,
+			'sort'              			=> $sort,
+			'order'             			=> $order,
+			'start'             			=> ($page - 1) * $this->config->get('config_limit_admin'),
+			'limit'             			=> $this->config->get('config_limit_admin')
 		);
 
 		# Payroll Components
@@ -690,16 +710,17 @@ class ControllerPayrollPayroll extends Controller
 			$note = implode(', ', array_filter(array_column($absences_info, 'note')));
 
 			$data['customers'][] = array(
-				'customer_id' 		=> $result['customer_id'],
-				'nip' 				=> $result['nip'],
-				'name' 				=> $result['name'],
-				'customer_group' 	=> $result['customer_group'],
-				'location' 			=> $result['location'],
-				'net_salary'    	=> $this->currency->format($net_salary, $this->config->get('config_currency')),
-				'component_data'	=> $component_data,
-				'grandtotal'    	=> $this->currency->format($net_salary + $component_info['grandtotal'], $this->config->get('config_currency')),
-				'note' 				=> strlen($note) > 30 ? substr($note, 0, 28) . '..' : $note,
-				'edit'          	=> $this->url->link('payroll/payroll/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true)
+				'customer_id' 			=> $result['customer_id'],
+				'nip' 					=> $result['nip'],
+				'name' 					=> $result['name'],
+				'customer_group' 		=> $result['customer_group'],
+				'customer_department' 	=> $result['customer_department'],
+				'location' 				=> $result['location'],
+				'net_salary'    		=> $this->currency->format($net_salary, $this->config->get('config_currency')),
+				'component_data'		=> $component_data,
+				'grandtotal'    		=> $this->currency->format($net_salary + $component_info['grandtotal'], $this->config->get('config_currency')),
+				'note' 					=> strlen($note) > 30 ? substr($note, 0, 28) . '..' : $note,
+				'edit'          		=> $this->url->link('payroll/payroll/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true)
 			);
 		}
 
@@ -745,6 +766,10 @@ class ControllerPayrollPayroll extends Controller
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
 		}
 
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+		}
+
 		if (isset($this->request->get['filter_location_id'])) {
 			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 		}
@@ -762,6 +787,7 @@ class ControllerPayrollPayroll extends Controller
 		$data['sort_nip'] = $this->url->link('payroll/payroll/info', 'token=' . $this->session->data['token'] . '&sort=nip' . $url, true);
 		$data['sort_name'] = $this->url->link('payroll/payroll/info', 'token=' . $this->session->data['token'] . '&sort=name' . $url, true);
 		$data['sort_customer_group'] = $this->url->link('payroll/payroll/info', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
+		$data['sort_customer_department'] = $this->url->link('payroll/payroll/info', 'token=' . $this->session->data['token'] . '&sort=customer_department' . $url, true);
 		$data['sort_location'] = $this->url->link('payroll/payroll/info', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
 
 		$url = '&presence_period_id=' . $presence_period_id;
@@ -772,6 +798,10 @@ class ControllerPayrollPayroll extends Controller
 
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
 		}
 
 		if (isset($this->request->get['filter_location_id'])) {
@@ -799,12 +829,16 @@ class ControllerPayrollPayroll extends Controller
 		$data['presence_period_id'] = $presence_period_id;
 		$data['filter_name'] = $filter_name;
 		$data['filter_customer_group_id'] = $filter_customer_group_id;
+		$data['filter_customer_department_id'] = $filter_customer_department_id;
 		$data['filter_location_id'] = $filter_location_id;
 		$data['sort'] = $sort;
 		$data['order'] = $order;
 
 		$this->load->model('customer/customer_group');
 		$data['customer_groups'] = $this->model_customer_customer_group->getCustomerGroups();
+
+		$this->load->model('customer/customer_department');
+		$data['customer_departments'] = $this->model_customer_customer_department->getCustomerDepartments();
 
 		$this->load->model('localisation/location');
 		$data['locations'] = $this->model_localisation_location->getLocations();
@@ -895,6 +929,10 @@ class ControllerPayrollPayroll extends Controller
 
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
 		}
 
 		if (isset($this->request->get['filter_location_id'])) {
@@ -1368,7 +1406,9 @@ class ControllerPayrollPayroll extends Controller
 
 			$header_data = [
 				'NO',
+				'NIP',
 				'NAMA',
+				'NAMA LENGKAP',
 				'JABATAN',
 				'DIVISI',
 				'LOKASI',
@@ -1396,6 +1436,7 @@ class ControllerPayrollPayroll extends Controller
 			$filter_data = array(
 				'filter_name'	   	   			=> $filter_name,
 				'filter_customer_group_id'		=> $filter_customer_group_id,
+				'filter_customer_department_id'	=> $filter_customer_department_id,
 				'filter_location_id'			=> $filter_location_id,
 				'filter_customer_department_id'	=> $this->user->getCustomerDepartmentId() ? $this->user->getCustomerDepartmentId() : $filter_customer_department_id,
 				'sort'              			=> $sort,
@@ -1448,7 +1489,9 @@ class ControllerPayrollPayroll extends Controller
 	
 				$customer_data[$key] = [
 					$key + 1,
-					$result['name'],
+					$result['nip'],
+					$result['firstname'],
+					$result['lastname'],
 					$result['customer_group'],
 					$result['customer_department'],
 					$result['location'],

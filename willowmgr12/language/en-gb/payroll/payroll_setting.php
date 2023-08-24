@@ -3,8 +3,11 @@
 $_['heading_title']              = 'Payroll Setting';
 
 // Text
-$_['text_edit']                  = 'Edit Payroll Setting';
-$_['text_success']          	 = 'Success: You have modified payroll settings!';
+$_['text_edit']					= 'Edit Payroll Setting';
+$_['text_firstname']			= 'Nama';
+$_['text_lastname']				= 'Nama Lengkap';
+$_['text_image']				= 'Foto Karyawan';
+$_['text_success']				= 'Success: You have modified payroll settings!';
 
 // Tab
 $_['tab_presence_status']        = 'Presence Status';
@@ -31,6 +34,7 @@ $_['entry_generated_status']     = 'Generated Status';
 $_['entry_approved_status']      = 'Approved Status';
 $_['entry_released_status']      = 'Released Status';
 $_['entry_completed_status']     = 'Completed Status';
+
 $_['entry_default_hke']  	 	 = 'HKE Default';
 $_['entry_vacation_limit']  	 = 'Batas Cuti Maksimal';
 $_['entry_schedule_lock']  	 	 = 'Kunci Jadwal';
@@ -40,8 +44,8 @@ $_['entry_login_start']  	 	 = 'Awal Login (menit)';
 $_['entry_login_end']  	 	 	 = 'Akhir Login (menit)';
 $_['entry_logout_start']  	 	 = 'Awal Logout (menit)';
 $_['entry_schedule_check']  	 = 'Validasi Jadwal';
+$_['entry_presence_card']  	 	 = 'Kartu Absensi';
 $_['entry_use_fingerprint']  	 = 'Gunakan Fingerprint';
-$_['entry_use_customer_image']   = 'Gunakan Foto Karyawan';
 $_['entry_vacation_status']  	 = 'Status Cuti';
 $_['entry_completed_after']  	 = 'Proteksi Status Completed (bulan)';
 
@@ -70,6 +74,6 @@ $_['help_login_start']     		= 'Waktu awal mulai login yang diizinkan(dalam meni
 $_['help_login_end']     		= 'Waktu akhir login yang diizinkan(dalam menit). Set 0 untuk menonaktifkan.';
 $_['help_logout_start']     	= 'Waktu awal mulai logout yang diizinkan(dalam menit). Set 0 untuk menonaktifkan.';
 $_['help_use_fingerprint']     	= 'Gunakan peralatan fingerprint untuk login/logout';
-$_['help_use_customer_image']   = 'Gunakan foto karyawan pada halaman absensi. Jika tidak, maka nama karyawan yang digunakan.';
+$_['help_presence_card']   		= 'Kartu pengenal karyawan yang digunakan pada halaman absensi.';
 $_['help_schedule_check']     	= 'Jika diset No, login akan diproses tanpa validasi jadwal.';
 $_['help_presence_statuses']    = 'Status Ketidakhadiran dengan pemberitahuan';

@@ -35,6 +35,14 @@ class ControllerPayrollPayrollBasic extends Controller {
 				$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
 			}
 
+			if (isset($this->request->get['filter_customer_department_id'])) {
+				$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+			}
+
+			if (isset($this->request->get['filter_location_id'])) {
+				$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
+			}
+
 			if (isset($this->request->get['filter_active'])) {
 				$url .= '&filter_active=' . $this->request->get['filter_active'];
 			}
@@ -68,6 +76,18 @@ class ControllerPayrollPayrollBasic extends Controller {
 			$filter_customer_group_id = $this->request->get['filter_customer_group_id'];
 		} else {
 			$filter_customer_group_id = null;
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$filter_customer_department_id = $this->request->get['filter_customer_department_id'];
+		} else {
+			$filter_customer_department_id = null;
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$filter_location_id = $this->request->get['filter_location_id'];
+		} else {
+			$filter_location_id = null;
 		}
 
 		if (isset($this->request->get['filter_active'])) {
@@ -104,6 +124,14 @@ class ControllerPayrollPayrollBasic extends Controller {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
 		}
 
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
+		}
+
 		if (isset($this->request->get['filter_active'])) {
 			$url .= '&filter_active=' . $this->request->get['filter_active'];
 		}
@@ -134,13 +162,15 @@ class ControllerPayrollPayrollBasic extends Controller {
 
 		$filter_data = array(
 			'filter_payroll_include'=> 1,
-			'filter_name'	   	   => $filter_name,
-			'filter_customer_group_id' => $filter_customer_group_id,
-			'filter_active' 	   => $filter_active,
-			'sort'                 => $sort,
-			'order'                => $order,
-			'start'                => ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit'                => $this->config->get('config_limit_admin')
+			'filter_name'	   	   			=> $filter_name,
+			'filter_customer_group_id' 		=> $filter_customer_group_id,
+			'filter_customer_department_id' => $filter_customer_department_id,
+			'filter_location_id' 			=> $filter_location_id,
+			'filter_active' 	   			=> $filter_active,
+			'sort'                 			=> $sort,
+			'order'                			=> $order,
+			'start'                			=> ($page - 1) * $this->config->get('config_limit_admin'),
+			'limit'                			=> $this->config->get('config_limit_admin')
 		);
 
 		$data['customers'] = array();
@@ -152,33 +182,37 @@ class ControllerPayrollPayrollBasic extends Controller {
 		foreach ($results as $result) {
 			if ($result['payroll_basic_id']) {
 				$data['customers'][] = array(
-					'customer_id' 		=> $result['customer_id'],
-					'nip' 				=> $result['nip'],
-					'name' 				=> $result['name'],
-					'customer_group' 	=> $result['customer_group'],
-					'gaji_pokok'    	=> $this->currency->format($result['gaji_pokok'], $this->config->get('config_currency')),
-					'tunj_jabatan'  	=> $this->currency->format($result['tunj_jabatan'], $this->config->get('config_currency')),
-					'tunj_hadir'    	=> $this->currency->format($result['tunj_hadir'], $this->config->get('config_currency')),
-					'tunj_pph'    		=> $this->currency->format($result['tunj_pph'], $this->config->get('config_currency')),
-					'uang_makan'    	=> $this->currency->format($result['uang_makan'], $this->config->get('config_currency')),
-					'gaji_dasar'    	=> $this->currency->format($result['gaji_dasar'], $this->config->get('config_currency')),
-					'date_added'        => date($this->language->get('date_format_jMY'), strtotime($result['date_added'])),
-					'edit'          	=> $this->url->link('payroll/payroll_basic/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
+					'customer_id' 			=> $result['customer_id'],
+					'nip' 					=> $result['nip'],
+					'name' 					=> $result['name'],
+					'customer_group' 		=> $result['customer_group'],
+					'customer_department' 	=> $result['customer_department'],
+					'location' 				=> $result['location'],
+					'gaji_pokok'    		=> $this->currency->format($result['gaji_pokok'], $this->config->get('config_currency')),
+					'tunj_jabatan'  		=> $this->currency->format($result['tunj_jabatan'], $this->config->get('config_currency')),
+					'tunj_hadir'    		=> $this->currency->format($result['tunj_hadir'], $this->config->get('config_currency')),
+					'tunj_pph'    			=> $this->currency->format($result['tunj_pph'], $this->config->get('config_currency')),
+					'uang_makan'    		=> $this->currency->format($result['uang_makan'], $this->config->get('config_currency')),
+					'gaji_dasar'    		=> $this->currency->format($result['gaji_dasar'], $this->config->get('config_currency')),
+					'date_added'        	=> date($this->language->get('date_format_jMY'), strtotime($result['date_added'])),
+					'edit'          		=> $this->url->link('payroll/payroll_basic/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
 				);
 			} else {
 				$data['customers'][] = array(
-					'customer_id' 		=> $result['customer_id'],
-					'nip' 				=> $result['nip'],
-					'name' 				=> $result['name'],
-					'customer_group' 	=> $result['customer_group'],
-					'gaji_pokok' 		=> '',
-					'tunj_jabatan'      => '',
-					'tunj_hadir'        => '',
-					'tunj_pph'         	=> '',
-					'uang_makan'        => '',
-					'gaji_dasar'        => '',
-					'date_added'        => '',
-					'edit'          	=> $this->url->link('payroll/payroll_basic/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
+					'customer_id' 			=> $result['customer_id'],
+					'nip' 					=> $result['nip'],
+					'name' 					=> $result['name'],
+					'customer_group' 		=> $result['customer_group'],
+					'customer_department' 	=> $result['customer_department'],
+					'location' 				=> $result['location'],
+					'gaji_pokok' 			=> '',
+					'tunj_jabatan'      	=> '',
+					'tunj_hadir'        	=> '',
+					'tunj_pph'         		=> '',
+					'uang_makan'        	=> '',
+					'gaji_dasar'        	=> '',
+					'date_added'        	=> '',
+					'edit'          		=> $this->url->link('payroll/payroll_basic/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
 				);
 			}
 		}
@@ -188,18 +222,21 @@ class ControllerPayrollPayrollBasic extends Controller {
 			'text_list',
 			'text_no_results',
 			'text_confirm',
-			'text_all_customer_group',
+			'text_all',
 			'text_active',
 			'text_inactive',
-			'text_all_status',
 			'entry_name',
 			'entry_customer_group',
+			'entry_customer_department',
+			'entry_location',
 			'entry_status',
 			'column_date',
 			'column_inv_no',
 			'column_nip',
 			'column_name',
 			'column_customer_group',
+			'column_customer_department',
+			'column_location',
 			'column_action',
 			'column_gaji_pokok',
 			'column_tunj_jabatan',
@@ -244,6 +281,14 @@ class ControllerPayrollPayrollBasic extends Controller {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
 		}
 
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
+		}
+
 		if (isset($this->request->get['filter_active'])) {
 			$url .= '&filter_active=' . $this->request->get['filter_active'];
 		}
@@ -261,6 +306,8 @@ class ControllerPayrollPayrollBasic extends Controller {
 		$data['sort_nip'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=c.nip' . $url, true);
 		$data['sort_name'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=name' . $url, true);
 		$data['sort_customer_group'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
+		$data['sort_customer_department'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=customer_department' . $url, true);
+		$data['sort_location'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
 		$data['sort_gaji_pokok'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=pb.gaji_pokok' . $url, true);
 		$data['sort_tunj_jabatan'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=pb.tunj_jabatan' . $url, true);
 		$data['sort_tunj_hadir'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=pb.tunj_hadir' . $url, true);
@@ -277,6 +324,14 @@ class ControllerPayrollPayrollBasic extends Controller {
 
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 		}
 
 		if (isset($this->request->get['filter_active'])) {
@@ -303,12 +358,20 @@ class ControllerPayrollPayrollBasic extends Controller {
 
 		$data['filter_name'] = $filter_name;
 		$data['filter_customer_group_id'] = $filter_customer_group_id;
+		$data['filter_customer_department_id'] = $filter_customer_department_id;
+		$data['filter_location_id'] = $filter_location_id;
 		$data['filter_active'] = $filter_active;
 		$data['sort'] = $sort;
 		$data['order'] = $order;
 
 		$this->load->model('customer/customer_group');
 		$data['customer_groups'] = $this->model_customer_customer_group->getCustomerGroups();
+
+		$this->load->model('customer/customer_department');
+		$data['customer_departments'] = $this->model_customer_customer_department->getCustomerDepartments();
+
+		$this->load->model('localisation/location');
+		$data['locations'] = $this->model_localisation_location->getLocations();
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -371,6 +434,14 @@ class ControllerPayrollPayrollBasic extends Controller {
 
 		if (isset($this->request->get['filter_customer_group_id'])) {
 			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 		}
 
 		if (isset($this->request->get['filter_active'])) {

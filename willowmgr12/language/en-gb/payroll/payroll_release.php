@@ -3,7 +3,7 @@
 $_['heading_title']              = 'Pembagian Gaji';
 
 // Text
-$_['text_period_list']           = 'Daftar Periode';
+$_['text_period_list']           = 'Daftar Periode Pembagian Gaji';
 $_['text_list']                  = 'Daftar Gaji';
 $_['text_edit']                  = 'Edit Akun Sumber Dana';
 $_['text_success']          	 = 'Success: You have modified payroll releases!';
@@ -16,8 +16,6 @@ $_['text_fund_email'] 	  	   	 = 'Email :';
 $_['text_fund_date_release'] 	 = 'Tanggal Proses :';
 $_['text_method'] 	 			 = '%s (%d orang) :';
 $_['text_complete_success']      = 'Success: Penggajian karyawan periode ini telah selesai!';
-$_['text_all_customer_group'] 	 = 'Semua Jabatan';
-$_['text_all_payroll_method'] 	 = 'Semua Metode/Bank';
 $_['text_information'] 	 		 = 'Sebagian data payroll telah lebih dari %s bulan. Silahkan set status menjadi Complete untuk mengurangi data aktif.';
 $_['text_confirm_send_all'] 	 = 'Send Payroll Statement to All Employees?';
 
@@ -32,10 +30,12 @@ $_['column_fund_acc_no']      	 = 'No. Rekening';
 $_['column_nip']            	 = 'NIP';
 $_['column_name']       		 = 'Nama Karyawan';
 $_['column_customer_group']      = 'Jabatan';
+$_['column_customer_department'] = 'Divisi';
+$_['column_location'] 			 = 'Lokasi Kerja';
 $_['column_acc_no']      	 	 = 'No. Rekening';
 $_['column_email']      		 = 'Email';
 $_['column_payroll_method']      = 'Metode/Bank';
-$_['column_grandtotal']          = 'Jumlah Gaji';
+$_['column_net_salary']          = 'Jumlah Gaji';
 $_['column_action']              = 'Action';
 $_['column_sum_grandtotal'] 	 = 'Total Gaji';
 $_['column_statement_sent'] 	 = 'Statement Sent';
@@ -47,7 +47,10 @@ $_['entry_period']         		= 'Periode Absensi';
 $_['entry_fund_account']		= 'Sumber Dana';
 $_['entry_date_release']        = 'Tanggal Proses';
 $_['entry_name']      			= 'Nama Karyawan';
+$_['entry_email']				= 'E-Mail';
 $_['entry_customer_group']      = 'Jabatan';
+$_['entry_customer_department']	= 'Divisi';
+$_['entry_location']			= 'Lokasi Kerja';
 $_['entry_payroll_method']      = 'Metode/Bank';
 $_['entry_statement_sent'] 	 	= 'Statement Sent';
 

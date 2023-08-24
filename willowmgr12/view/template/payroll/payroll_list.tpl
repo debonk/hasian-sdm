@@ -72,7 +72,7 @@
       <div class="panel-body">
         <div class="well">
           <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-3">
               <div class="form-group">
                 <label class="control-label" for="input-name">
                   <?= $entry_name; ?>
@@ -81,14 +81,14 @@
                   id="input-name" class="form-control" />
               </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
               <div class="form-group">
                 <label class="control-label" for="input-customer-group">
                   <?= $entry_customer_group; ?>
                 </label>
                 <select name="filter_customer_group_id" id="input-customer-group" class="form-control">
                   <option value="*">
-                    <?= $text_all_customer_group ?>
+                    <?= $text_all ?>
                   </option>
                   <?php foreach ($customer_groups as $customer_group) { ?>
                   <?php if ($customer_group['customer_group_id'] == $filter_customer_group_id) { ?>
@@ -104,14 +104,37 @@
                 </select>
               </div>
             </div>
-            <div class="col-sm-4">
+						<div class="col-sm-3">
+							<div class="form-group">
+								<label class="control-label" for="input-customer-department">
+									<?= $entry_customer_department; ?>
+								</label>
+								<select name="filter_customer_department_id" id="input-customer-department" class="form-control">
+									<option value="*">
+										<?= $text_all; ?>
+									</option>
+									<?php foreach ($customer_departments as $customer_department) { ?>
+									<?php if ($customer_department['customer_department_id'] == $filter_customer_department_id) { ?>
+									<option value="<?= $customer_department['customer_department_id']; ?>" selected="selected">
+										<?= $customer_department['name']; ?>
+									</option>
+									<?php } else { ?>
+									<option value="<?= $customer_department['customer_department_id']; ?>">
+										<?= $customer_department['name']; ?>
+									</option>
+									<?php } ?>
+									<?php } ?>
+								</select>
+							</div>
+						</div>
+            <div class="col-sm-3">
               <div class="form-group">
                 <label class="control-label" for="input-location">
                   <?= $entry_location; ?>
                 </label>
                 <select name="filter_location_id" id="input-location" class="form-control">
                   <option value="*">
-                    <?= $text_all_location ?>
+                    <?= $text_all ?>
                   </option>
                   <?php foreach ($locations as $location) { ?>
                   <?php if ($location['location_id'] == $filter_location_id) { ?>
@@ -220,6 +243,17 @@
                     <?php } ?>
                   </td>
                   <td class="text-left">
+                    <?php if ($sort == 'customer_department') { ?>
+                    <a href="<?= $sort_customer_department; ?>" class="<?= strtolower($order); ?>">
+                      <?= $column_customer_department; ?>
+                    </a>
+                    <?php } else { ?>
+                    <a href="<?= $sort_customer_department; ?>">
+                      <?= $column_customer_department; ?>
+                    </a>
+                    <?php } ?>
+                  </td>
+                  <td class="text-left">
                     <?php if ($sort == 'location') { ?>
                     <a href="<?= $sort_location; ?>" class="<?= strtolower($order); ?>">
                       <?= $column_location; ?>
@@ -267,6 +301,9 @@
                   </td>
                   <td class="text-left">
                     <?= $customer['customer_group']; ?>
+                  </td>
+                  <td class="text-left">
+                    <?= $customer['customer_department']; ?>
                   </td>
                   <td class="text-left">
                     <?= $customer['location']; ?>
@@ -327,19 +364,25 @@
     $('#button-filter').on('click', function () {
       url = 'index.php?route=payroll/payroll/info&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>';
 
-      var filter_name = $('input[name=\'filter_name\']').val();
+      let filter_name = $('input[name=\'filter_name\']').val();
 
       if (filter_name) {
         url += '&filter_name=' + encodeURIComponent(filter_name);
       }
 
-      var filter_customer_group_id = $('select[name=\'filter_customer_group_id\']').val();
+      let filter_customer_group_id = $('select[name=\'filter_customer_group_id\']').val();
 
       if (filter_customer_group_id != '*') {
         url += '&filter_customer_group_id=' + encodeURIComponent(filter_customer_group_id);
       }
 
-      var filter_location_id = $('select[name=\'filter_location_id\']').val();
+      let filter_customer_department_id = $('select[name=\'filter_customer_department_id\']').val();
+
+      if (filter_customer_department_id != '*') {
+        url += '&filter_customer_department_id=' + encodeURIComponent(filter_customer_department_id);
+      }
+
+      let filter_location_id = $('select[name=\'filter_location_id\']').val();
 
       if (filter_location_id != '*') {
         url += '&filter_location_id=' + encodeURIComponent(filter_location_id);

@@ -66,7 +66,7 @@
 				<?php } else { ?>
 				<?php if ($customers) { ?>
 				<?php foreach ($customers as $customer) { ?>
-				<div class="<?= $use_customer_image ? 'col-md-2 col-sm-3 col-xs-4' : 'col-md-4 col-sm-6 col-xs-12'; ?>">
+				<div class="<?= $presence_card == 'image' ? 'col-md-2 col-sm-3 col-xs-4' : 'col-md-4 col-sm-6 col-xs-12'; ?>">
 					<div class="tile tile-<?= $customer['log_class']; ?>">
 						<a href="#" id="customer<?= $customer['customer_id']; ?>" value="<?= $customer['customer_id']; ?>">
 							<div class="tile-body" title="<?= $customer['longname']; ?>">

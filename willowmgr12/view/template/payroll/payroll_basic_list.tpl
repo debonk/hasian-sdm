@@ -45,15 +45,13 @@
 								<input type="text" name="filter_name" value="<?= $filter_name; ?>" placeholder="<?= $entry_name; ?>"
 									id="input-name" class="form-control" />
 							</div>
-						</div>
-						<div class="col-sm-4">
 							<div class="form-group">
 								<label class="control-label" for="input-customer-group">
 									<?= $entry_customer_group; ?>
 								</label>
 								<select name="filter_customer_group_id" id="input-customer-group" class="form-control">
 									<option value="*">
-										<?= $text_all_customer_group ?>
+										<?= $text_all; ?>
 									</option>
 									<?php foreach ($customer_groups as $customer_group) { ?>
 									<?php if ($customer_group['customer_group_id'] == $filter_customer_group_id) { ?>
@@ -69,6 +67,50 @@
 								</select>
 							</div>
 						</div>
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label class="control-label" for="input-customer-department">
+									<?= $entry_customer_department; ?>
+								</label>
+								<select name="filter_customer_department_id" id="input-customer-department" class="form-control">
+									<option value="*">
+										<?= $text_all; ?>
+									</option>
+									<?php foreach ($customer_departments as $customer_department) { ?>
+									<?php if ($customer_department['customer_department_id'] == $filter_customer_department_id) { ?>
+									<option value="<?= $customer_department['customer_department_id']; ?>" selected="selected">
+										<?= $customer_department['name']; ?>
+									</option>
+									<?php } else { ?>
+									<option value="<?= $customer_department['customer_department_id']; ?>">
+										<?= $customer_department['name']; ?>
+									</option>
+									<?php } ?>
+									<?php } ?>
+								</select>
+							</div>
+							<div class="form-group">
+								<label class="control-label" for="input-location">
+								  <?= $entry_location; ?>
+								</label>
+								<select name="filter_location_id" id="input-location" class="form-control">
+								  <option value="*">
+									<?= $text_all ?>
+								  </option>
+								  <?php foreach ($locations as $location) { ?>
+								  <?php if ($location['location_id'] == $filter_location_id) { ?>
+								  <option value="<?= $location['location_id']; ?>" selected="selected">
+									<?= $location['name']; ?>
+								  </option>
+								  <?php } else { ?>
+								  <option value="<?= $location['location_id']; ?>">
+									<?= $location['name']; ?>
+								  </option>
+								  <?php } ?>
+								  <?php } ?>
+								</select>
+							  </div>
+										</div>
 						<div class="col-sm-4">
 							<div class="form-group">
 								<label class="control-label" for="input-status">
@@ -89,11 +131,11 @@
 									<?php } ?>
 									<?php if (!$filter_active && !is_null($filter_active)) { ?>
 									<option value="0" selected="selected">
-										<?= $text_all_status; ?>
+										<?= $text_all; ?>
 									</option>
 									<?php } else { ?>
 									<option value="0">
-										<?= $text_all_status; ?>
+										<?= $text_all; ?>
 									</option>
 									<?php } ?>
 								</select>
@@ -122,6 +164,18 @@
 									<a href="<?= $sort_customer_group; ?>" <?=($sort=='customer_group' ) ? 'class="' . strtolower($order)
 										. '"' : '' ; ?> >
 										<?= $column_customer_group; ?>
+									</a>
+								</td>
+								<td>
+									<a href="<?= $sort_customer_department; ?>" <?=($sort=='customer_department' ) ? 'class="' . strtolower($order)
+										. '"' : '' ; ?> >
+										<?= $column_customer_department; ?>
+									</a>
+								</td>
+								<td>
+									<a href="<?= $sort_location; ?>" <?=($sort=='location' ) ? 'class="' . strtolower($order)
+										. '"' : '' ; ?> >
+										<?= $column_location; ?>
 									</a>
 								</td>
 								<td class="text-right">
@@ -184,6 +238,12 @@
 								<td>
 									<?= $customer['customer_group']; ?>
 								</td>
+								<td>
+									<?= $customer['customer_department']; ?>
+								</td>
+								<td>
+									<?= $customer['location']; ?>
+								</td>
 								<td class="text-right">
 									<?= $customer['gaji_pokok']; ?>
 								</td>
@@ -240,19 +300,31 @@
 		$('#button-filter').on('click', function () {
 			url = 'index.php?route=payroll/payroll_basic&token=<?= $token; ?>';
 
-			var filter_name = $('input[name=\'filter_name\']').val();
+			let filter_name = $('input[name=\'filter_name\']').val();
 
 			if (filter_name) {
 				url += '&filter_name=' + encodeURIComponent(filter_name);
 			}
 
-			var filter_customer_group_id = $('select[name=\'filter_customer_group_id\']').val();
+			let filter_customer_group_id = $('select[name=\'filter_customer_group_id\']').val();
 
 			if (filter_customer_group_id != '*') {
 				url += '&filter_customer_group_id=' + encodeURIComponent(filter_customer_group_id);
 			}
 
-			var filter_active = $('select[name=\'filter_active\']').val();
+			let filter_customer_department_id = $('select[name=\'filter_customer_department_id\']').val();
+
+			if (filter_customer_department_id != '*') {
+				url += '&filter_customer_department_id=' + encodeURIComponent(filter_customer_department_id);
+			}
+
+			let filter_location_id = $('select[name=\'filter_location_id\']').val();
+
+			if (filter_location_id != '*') {
+				url += '&filter_location_id=' + encodeURIComponent(filter_location_id);
+			}
+
+			let filter_active = $('select[name=\'filter_active\']').val();
 
 			if (filter_active != '*') {
 				url += '&filter_active=' + encodeURIComponent(filter_active);

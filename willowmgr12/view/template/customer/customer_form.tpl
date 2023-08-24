@@ -164,7 +164,7 @@
 											</div>
 										</div>
 									</div>
-									<div class="form-group">
+									<div class="form-group required">
 										<label class="col-sm-3 control-label" for="input-customer-department">
 											<?= $entry_customer_department; ?>
 										</label>
@@ -190,7 +190,7 @@
 											<?php } ?>
 									</div>
 									</div>
-									<div class="form-group">
+									<div class="form-group required">
 										<label class="col-sm-3 control-label" for="input-customer-group">
 											<?= $entry_customer_group; ?>
 										</label>

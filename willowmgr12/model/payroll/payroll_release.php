@@ -85,37 +85,57 @@ class ModelPayrollPayrollRelease extends Model
 
 	public function getReleases($presence_period_id, $data = array())
 	{
-		$sql = "SELECT DISTINCT p.presence_period_id, p.customer_id, p.statement_sent, (p.gaji_pokok + p.tunj_jabatan + p.tunj_hadir + p.tunj_pph + p.total_uang_makan - p.pot_sakit - p.pot_bolos - p.pot_tunj_hadir - p.pot_gaji_pokok - p.pot_terlambat) as net_salary, SUM(pcv.value) as component, c.nip, c.email, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.acc_no, cgd.name AS customer_group, pm.name AS payroll_method FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.customer_id = p.customer_id AND pcv.presence_period_id = '" . (int)$presence_period_id . "') LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.presence_period_id = '" . (int)$presence_period_id . "'";
+		$this->createView();
+		
+		// $sql = "SELECT DISTINCT p.presence_period_id, p.customer_id, p.statement_sent, (p.gaji_pokok + p.tunj_jabatan + p.tunj_hadir + p.tunj_pph + p.total_uang_makan - p.pot_sakit - p.pot_bolos - p.pot_tunj_hadir - p.pot_gaji_pokok - p.pot_terlambat) as net_salary, SUM(pcv.value) as component, c.nip, c.email, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.acc_no, cgd.name AS customer_group, pm.name AS payroll_method FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.customer_id = p.customer_id AND pcv.presence_period_id = '" . (int)$presence_period_id . "') LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.presence_period_id = '" . (int)$presence_period_id . "'";
+		$sql = "SELECT * FROM " . DB_PREFIX . "v_release WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
 		$implode = array();
 
 		if (!empty($data['filter_name'])) {
-			$implode[] = "CONCAT(c.firstname, ' [', c.lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+			$implode[] = "CONCAT(firstname, ' [', lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		}
+
+		if (!empty($data['filter_email'])) {
+			$implode[] = "email LIKE '%" . $this->db->escape($data['filter_email']) . "%'";
 		}
 
 		if (!empty($data['filter_customer_group_id'])) {
-			$implode[] = "c.customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+			$implode[] = "customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+		}
+
+		if (!empty($data['filter_customer_department_id'])) {
+			$implode[] = "customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
+		}
+
+		if (!empty($data['filter_location_id'])) {
+			$implode[] = "location_id = '" . (int)$data['filter_location_id'] . "'";
 		}
 
 		if (!empty($data['filter_payroll_method_id'])) {
-			$implode[] = "c.payroll_method_id = '" . (int)$data['filter_payroll_method_id'] . "'";
+			$implode[] = "payroll_method_id = '" . (int)$data['filter_payroll_method_id'] . "'";
 		}
 
 		if (isset($data['filter_statement_sent']) && !is_null($data['filter_statement_sent'])) {
-			$implode[] = "p.statement_sent = '" . (int)$data['filter_statement_sent'] . "'";
+			$implode[] = "statement_sent = '" . (int)$data['filter_statement_sent'] . "'";
 		}
 
 		if ($implode) {
 			$sql .= " AND " . implode(" AND ", $implode);
 		}
 
-		$sql .= "  GROUP BY p.customer_id";
+		// $sql .= "  GROUP BY customer_id";
 
 		$sort_data = array(
 			'nip',
 			'name',
+			'email',
 			'customer_group',
+			'customer_department',
+			'location',
+			'acc_no',
 			'payroll_method',
+			'net_salary',
 			'statement_sent'
 		);
 
@@ -150,24 +170,39 @@ class ModelPayrollPayrollRelease extends Model
 
 	public function getReleasesCount($presence_period_id, $data = array())
 	{
-		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) WHERE p.presence_period_id = '" . (int)$presence_period_id . "'";
+		$this->createView();
+
+		// $sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) WHERE p.presence_period_id = '" . (int)$presence_period_id . "'";
+		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "v_release WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
 		$implode = array();
 
 		if (!empty($data['filter_name'])) {
-			$implode[] = "CONCAT(c.firstname, ' [', c.lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+			$implode[] = "CONCAT(firstname, ' [', lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		}
+
+		if (!empty($data['filter_email'])) {
+			$implode[] = "email LIKE '%" . $this->db->escape($data['filter_email']) . "%'";
 		}
 
 		if (!empty($data['filter_customer_group_id'])) {
-			$implode[] = "c.customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+			$implode[] = "customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+		}
+
+		if (!empty($data['filter_customer_department_id'])) {
+			$implode[] = "customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
+		}
+
+		if (!empty($data['filter_location_id'])) {
+			$implode[] = "location_id = '" . (int)$data['filter_location_id'] . "'";
 		}
 
 		if (!empty($data['filter_payroll_method_id'])) {
-			$implode[] = "c.payroll_method_id = '" . (int)$data['filter_payroll_method_id'] . "'";
+			$implode[] = "payroll_method_id = '" . (int)$data['filter_payroll_method_id'] . "'";
 		}
 
 		if (isset($data['filter_statement_sent']) && !is_null($data['filter_statement_sent'])) {
-			$implode[] = "p.statement_sent = '" . (int)$data['filter_statement_sent'] . "'";
+			$implode[] = "statement_sent = '" . (int)$data['filter_statement_sent'] . "'";
 		}
 
 		if ($implode) {
@@ -310,11 +345,11 @@ class ModelPayrollPayrollRelease extends Model
 
 			$uang_makan = $this->currency->format($payroll_info['uang_makan'], $this->config->get('config_currency'));
 			$message .= $this->language->get('text_earning') . "\n";
-			// $message .= sprintf($this->language->get('text_gaji_pokok'), $this->currency->format($payroll_info['gaji_pokok'], $this->config->get('config_currency'))) . "\n";
-			// $message .= sprintf($this->language->get('text_tunj_jabatan'), $this->currency->format($payroll_info['tunj_jabatan'], $this->config->get('config_currency'))) . "\n";
-			// $message .= sprintf($this->language->get('text_tunj_hadir'), $this->currency->format($payroll_info['tunj_hadir'], $this->config->get('config_currency'))) . "\n";
-			// $message .= sprintf($this->language->get('text_tunj_pph'), $this->currency->format($payroll_info['tunj_pph'], $this->config->get('config_currency'))) . "\n";
-			// $message .= sprintf($this->language->get('text_total_uang_makan'), $payroll_info['hke'], $uang_makan, $this->currency->format($payroll_info['total_uang_makan'], $this->config->get('config_currency'))) . "\n";
+			$message .= sprintf($this->language->get('text_gaji_pokok'), $this->currency->format($payroll_info['gaji_pokok'], $this->config->get('config_currency'))) . "\n";
+			$message .= sprintf($this->language->get('text_tunj_jabatan'), $this->currency->format($payroll_info['tunj_jabatan'], $this->config->get('config_currency'))) . "\n";
+			$message .= sprintf($this->language->get('text_tunj_hadir'), $this->currency->format($payroll_info['tunj_hadir'], $this->config->get('config_currency'))) . "\n";
+			$message .= sprintf($this->language->get('text_tunj_pph'), $this->currency->format($payroll_info['tunj_pph'], $this->config->get('config_currency'))) . "\n";
+			$message .= sprintf($this->language->get('text_total_uang_makan'), $payroll_info['hke'], $uang_makan, $this->currency->format($payroll_info['total_uang_makan'], $this->config->get('config_currency'))) . "\n";
 			$message .= sprintf($this->language->get('text_gaji_dasar'), $this->currency->format($payroll_info['gaji_dasar'], $this->config->get('config_currency'))) . "\n";
 
 			foreach ($earning_components as $earning_component) {
@@ -477,5 +512,14 @@ class ModelPayrollPayrollRelease extends Model
 		$this->db->query("COMMIT;");
 
 		$this->closeDbArchive();
+	}
+
+	public function createView($view_name = 'v_release')
+	{
+		$view_name = DB_PREFIX . $view_name;
+		
+		$sql = "SELECT DISTINCT p.presence_period_id, p.customer_id, p.statement_sent, (p.gaji_pokok + p.tunj_jabatan + p.tunj_hadir + p.tunj_pph + p.total_uang_makan - p.pot_sakit - p.pot_bolos - p.pot_tunj_hadir - p.pot_gaji_pokok - p.pot_terlambat) as net_salary, SUM(pcv.value) as component, c.nip, c.email, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.acc_no, c.customer_group_id, cgd.name AS customer_group, c.customer_department_id, cdd.name AS customer_department, c.location_id, l.name AS location, pm.name AS payroll_method FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.customer_id = p.customer_id AND pcv.presence_period_id = p.presence_period_id) LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (cdd.customer_department_id = c.customer_department_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' GROUP BY p.customer_id, p.presence_period_id;";
+		
+		return $this->db->createView($view_name, $sql);
 	}
 }

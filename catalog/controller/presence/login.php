@@ -78,12 +78,12 @@ class ControllerPresenceLogin extends Controller
 
 			$results = $this->model_presence_presence->getCustomers($filter_data);
 
-			$data['use_customer_image'] = $this->config->get('payroll_setting_use_customer_image');
+			$data['presence_card'] = $this->config->get('payroll_setting_presence_card');
 
 			$this->load->model('tool/image');
 
 			foreach ($results as $result) {
-				if ($data['use_customer_image']) {
+				if ($data['presence_card'] == 'image') {
 					if ($result['image'] && file_exists(DIR_IMAGE . $result['image'])) {
 						$image = $this->model_tool_image->resize($result['image'], 140, 140);
 						$name = '';
@@ -94,8 +94,13 @@ class ControllerPresenceLogin extends Controller
 
 					$longname = '';
 				} else {
+					if ($data['presence_card'] == 'lastname') {
+						$name = $result['lastname'];
+					} else {
+						$name = $result['firstname'];
+					}
+
 					$image = '';
-					$name = $result['firstname'];
 					$longname = $result['lastname'];
 				}
 
@@ -122,6 +127,9 @@ class ControllerPresenceLogin extends Controller
 				);
 			}
 		}
+		var_dump($data['presence_card']);
+		var_dump($data['customers']);
+		// die('---breakpoint---');
 
 		$language_items = array(
 			'heading_title',
