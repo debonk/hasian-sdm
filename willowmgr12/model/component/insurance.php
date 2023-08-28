@@ -22,6 +22,7 @@ class ModelComponentInsurance extends Model
 			$health_insurance_check = strtotime($period) > strtotime('+ ' . $this->config->get('insurance_activation_health') . ' months', strtotime($date_start));
 			$non_jht_insurance_check = strtotime($period) > strtotime('+ ' . $this->config->get('insurance_activation_non_jht') . ' months', strtotime($date_start));
 			$jht_insurance_check = strtotime($period) > strtotime('+ ' . $this->config->get('insurance_activation_jht') . ' months', strtotime($date_start));
+			$jp_insurance_check = strtotime($period) > strtotime('+ ' . $this->config->get('insurance_activation_jp') . ' months', strtotime($date_start));
 
 			$calculation_base = $this->config->get('insurance_calculation_base');
 
@@ -29,10 +30,12 @@ class ModelComponentInsurance extends Model
 
 			switch ($calculation_base) {
 				case 'wage_real':
-					$payroll_calculation = $this->model_payroll_payroll->getPayrollDetail($presence_period_id, $customer_id);
+					if ($health_insurance_check || $non_jht_insurance_check) {
+						$payroll_calculation = $this->model_payroll_payroll->getPayrollDetail($presence_period_id, $customer_id);
 
-					$wage_health = $payroll_calculation['gaji_dasar'] - $payroll_calculation['total_potongan'];
-					$wage_tk = $wage_health;
+						$wage_health = $payroll_calculation['gaji_dasar'] - $payroll_calculation['total_potongan'];
+						$wage_tk = $wage_health;
+					}
 
 					break;
 
@@ -67,6 +70,7 @@ class ModelComponentInsurance extends Model
 
 			$values = array();
 
+			# Index [0] = total, Index [1] = Perusahaan
 			if ($health_insurance_check && $customer_info['health_insurance']) {
 				$values[0] = -ceil($wage_health * 0.05);
 				$values[1] = ceil($wage_health * 0.04);
@@ -84,14 +88,22 @@ class ModelComponentInsurance extends Model
 			$values = array();
 
 			if ($non_jht_insurance_check && $customer_info['life_insurance']) {
+				$values[0] = -ceil($wage_tk * 0.0054);
+				$values[1] = ceil($wage_tk * 0.0054);
+				$text = $this->language->get('text_non_jht');
+
 				if ($jht_insurance_check && $customer_info['employment_insurance']) {
-					$values[0] = -ceil($wage_tk * 0.0624);
-					$values[1] = ceil($wage_tk * 0.0424);
+					$values[0] += -ceil($wage_tk * 0.057);
+					$values[1] += ceil($wage_tk * 0.037);
 					$text = $this->language->get('text_jht');
-				} else {
-					$values[0] = -ceil($wage_tk * 0.0054);
-					$values[1] = ceil($wage_tk * 0.0054);
-					$text = $this->language->get('text_non_jht');
+				}
+
+				if ($jp_insurance_check && $customer_info['pension_insurance']) {
+					$wage_tk = min($wage_tk, 9559600); # 9559600 adalah upah maksimal perhitungan jaminan pensiun
+
+					$values[0] += -ceil($wage_tk * 0.03);
+					$values[1] += ceil($wage_tk * 0.02);
+					$text = $this->language->get('text_jp');
 				}
 
 				foreach ($values as $key => $value) {
@@ -103,6 +115,31 @@ class ModelComponentInsurance extends Model
 					);
 				}
 			}
+
+			// if ($non_jht_insurance_check && $customer_info['life_insurance']) {
+			// 	if ($jp_insurance_check && $customer_info['pension_insurance']) {
+			// 		$values[0] = -ceil($wage_tk * 0.0924);
+			// 		$values[1] = ceil($wage_tk * 0.0624);
+			// 		$text = $this->language->get('text_jp');
+			// 	} elseif ($jht_insurance_check && $customer_info['employment_insurance']) {
+			// 		$values[0] = -ceil($wage_tk * 0.0624);
+			// 		$values[1] = ceil($wage_tk * 0.0424);
+			// 		$text = $this->language->get('text_jht');
+			// 	} else {
+			// 		$values[0] = -ceil($wage_tk * 0.0054);
+			// 		$values[1] = ceil($wage_tk * 0.0054);
+			// 		$text = $this->language->get('text_non_jht');
+			// 	}
+
+			// 	foreach ($values as $key => $value) {
+			// 		$quote_data[] = array(
+			// 			'type'		=> $key,
+			// 			'item'		=> (int)date('n', strtotime($period)),
+			// 			'title'		=> $text,
+			// 			'value'		=> ceil($value)
+			// 		);
+			// 	}
+			// }
 
 			if (!empty($quote_data)) {
 				$status = true;
@@ -133,6 +170,7 @@ class ModelComponentInsurance extends Model
 
 		$titles = array(
 			$this->language->get('text_health'),
+			$this->language->get('text_jp'),
 			$this->language->get('text_jht'),
 			$this->language->get('text_non_jht')
 		);

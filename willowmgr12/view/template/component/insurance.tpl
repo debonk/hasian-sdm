@@ -125,6 +125,17 @@
 						</div>
 					</div>
 					<div class="form-group">
+						<label class="col-sm-3 control-label" for="input-activation-jp"><span data-toggle="tooltip"
+								title="<?= $help_activation; ?>">
+								<?= $entry_activation_jp; ?>
+							</span>
+						</label>
+						<div class="col-sm-9">
+							<input type="text" name="insurance_activation_jp" value="<?= $insurance_activation_jp; ?>"
+								placeholder="<?= $entry_activation_jp; ?>" id="input-activation-jp" class="form-control" />
+						</div>
+					</div>
+					<div class="form-group">
 						<label class="col-sm-3 control-label" for="input-status">
 							<?= $entry_status; ?>
 						</label>

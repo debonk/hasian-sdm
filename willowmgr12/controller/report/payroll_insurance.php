@@ -1,6 +1,8 @@
 <?php
-class ControllerReportPayrollInsurance extends Controller {
-	public function index() {
+class ControllerReportPayrollInsurance extends Controller
+{
+	public function index()
+	{
 		$this->load->language('report/payroll_insurance');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -15,7 +17,7 @@ class ControllerReportPayrollInsurance extends Controller {
 		} else {
 			$presence_period_id = $presence_periods[0]['presence_period_id'];
 		}
-		
+
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
@@ -55,7 +57,8 @@ class ControllerReportPayrollInsurance extends Controller {
 		$this->response->setOutput($this->load->view('report/payroll_insurance', $data));
 	}
 
-	public function report() {
+	public function report()
+	{
 		$this->load->language('report/payroll_insurance');
 
 		if (isset($this->request->get['presence_period_id'])) {
@@ -70,9 +73,9 @@ class ControllerReportPayrollInsurance extends Controller {
 		$insurances_value = array();
 		$insurances_data = array();
 		$insurances_total = array();
-		
+
 		$this->load->model('common/payroll');
-		
+
 		$period_status = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'pending, processing, submitted, generated');
 
 		$this->load->model('component/insurance');
@@ -85,28 +88,28 @@ class ControllerReportPayrollInsurance extends Controller {
 			);
 
 			$this->load->model('presence/presence');
-		
+
 			$customers = $this->model_presence_presence->getCustomers($filter_data);
-		
+
 			foreach ($customers as $key => $customer) {
 				$result = $this->model_component_insurance->getQuote($presence_period_id, $customer['customer_id']);
+
 				if (!empty($result['quote'])) {
 					foreach ($result['quote'] as $quote) {
 						$insurances_value[$customer['customer_id']][$quote['title']][$quote['type']] = $quote['value'];
 					}
 				} else {
 					unset($customers[$key]);
-				} 
+				}
 			}
 			$customer_count = count($insurances_value);
-			
 		} else {
 			$filter_data = array(
 				'code'		=> 'insurance'
 			);
 
 			$customer_count = $this->model_report_payroll->getComponentCustomersCount($presence_period_id, 'insurance');
-			
+
 			$customers = $this->model_report_payroll->getComponentCustomers($presence_period_id, $filter_data);
 
 			$results = $this->model_report_payroll->getComponents($presence_period_id, 0, 'insurance');
@@ -115,20 +118,20 @@ class ControllerReportPayrollInsurance extends Controller {
 				$insurances_value[$result['customer_id']][$result['title']][$result['type']] = $result['value'];
 			}
 		}
-		
+
 		foreach ($insurance_titles as $title) {
 			$insurances_total[$title][1] = 0;
 			$insurances_total[$title][0] = 0;
 		}
-			
+
 		foreach ($customers as $customer) {
 			foreach ($insurance_titles as $title) {
 				if (!empty($insurances_value[$customer['customer_id']][$title][1])) {
 					$insurances_data[$title][1] = $this->currency->format($insurances_value[$customer['customer_id']][$title][1], $this->config->get('config_currency'));
-					$insurances_data[$title][0] = $this->currency->format(-($insurances_value[$customer['customer_id']][$title][0] + $insurances_value[$customer['customer_id']][$title][1]), $this->config->get('config_currency'));
+					$insurances_data[$title][0] = $this->currency->format(- ($insurances_value[$customer['customer_id']][$title][0] + $insurances_value[$customer['customer_id']][$title][1]), $this->config->get('config_currency'));
 
 					$insurances_total[$title][1] += $insurances_value[$customer['customer_id']][$title][1];
-					$insurances_total[$title][0] += -($insurances_value[$customer['customer_id']][$title][0] + $insurances_value[$customer['customer_id']][$title][1]);
+					$insurances_total[$title][0] += - ($insurances_value[$customer['customer_id']][$title][0] + $insurances_value[$customer['customer_id']][$title][1]);
 				} else {
 					// $insurances_data[$title][1] = $this->currency->format(0, $this->config->get('config_currency'));
 					// $insurances_data[$title][0] = $this->currency->format(0, $this->config->get('config_currency'));
@@ -137,29 +140,32 @@ class ControllerReportPayrollInsurance extends Controller {
 				}
 			}
 			$data['insurances'][] = array(
-				'customer_id' 		=> $customer['customer_id'],
-				'nip' 				=> $customer['nip'],
-				'name'				=> $customer['name'],
-				'customer_group'	=> $customer['customer_group'],
-				'insurances_data'	=> $insurances_data
+				'customer_id' 			=> $customer['customer_id'],
+				'nip' 					=> $customer['nip'],
+				'name'					=> $customer['name'],
+				'customer_group'		=> $customer['customer_group'],
+				'customer_department'	=> $customer['customer_department'],
+				'location'				=> $customer['location'],
+				'insurances_data'		=> $insurances_data
 			);
-
 		}
 
 		foreach ($insurance_titles as $title) {
 			$data['insurances_total'][$title][1] = $this->currency->format($insurances_total[$title][1], $this->config->get('config_currency'));
 			$data['insurances_total'][$title][0] = $this->currency->format($insurances_total[$title][0], $this->config->get('config_currency'));
 		}
-		
+
 		$data['titles'] = $insurance_titles;
-		
-		
+
+
 		$data['text_no_results'] = $this->language->get('text_no_results');
 
 		$language_list = array(
 			'column_nip',
 			'column_name',
 			'column_customer_group',
+			'column_customer_department',
+			'column_location',
 			'column_company',
 			'column_customer',
 			'text_total'
@@ -170,10 +176,10 @@ class ControllerReportPayrollInsurance extends Controller {
 
 		$data['token'] = $this->session->data['token'];
 
- 		$url = '';
+		$url = '';
 		$url .= '&presence_period_id=' . $presence_period_id;
 
-/* 		$pagination = new Pagination();
+		/* 		$pagination = new Pagination();
 		$pagination->total = $customer_count;
 		$pagination->page = $page;
 		$pagination->limit = $this->config->get('config_limit_admin');

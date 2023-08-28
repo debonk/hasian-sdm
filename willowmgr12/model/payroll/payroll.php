@@ -1,14 +1,17 @@
 <?php
-class ModelPayrollPayroll extends Model {
-	public function getOvertimeStatus($customer_id) {
+class ModelPayrollPayroll extends Model
+{
+	public function getOvertimeStatus($customer_id)
+	{
 		$query = $this->db->query("SELECT DISTINCT full_overtime FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "'");
 
 		return $query->row['full_overtime'];
 	}
 
-	public function getPayrollPeriods($data = array()) {
+	public function getPayrollPeriods($data = array())
+	{
 		$sql = "SELECT pp.*, ps.name AS payroll_status FROM " . DB_PREFIX . "presence_period pp LEFT JOIN " . DB_PREFIX . "payroll_status ps ON (ps.payroll_status_id = pp.payroll_status_id)";
-		
+
 		if (isset($data['filter_payroll_status'])) {
 			$implode = array();
 
@@ -48,7 +51,8 @@ class ModelPayrollPayroll extends Model {
 		return $query->rows;
 	}
 
-	public function getTotalPayrollPeriods($data = array()) {
+	public function getTotalPayrollPeriods($data = array())
+	{
 		$sql = "SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "presence_period`";
 
 		if (isset($data['filter_payroll_status'])) {
@@ -75,29 +79,32 @@ class ModelPayrollPayroll extends Model {
 
 		return $query->row['total'];
 	}
-	
-	public function addPayroll($presence_period_id, $customer_id, $data = array()) {
+
+	public function addPayroll($presence_period_id, $customer_id, $data = array())
+	{
 		if ($presence_period_id && $customer_id) {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "payroll SET presence_period_id = '" . (int)$presence_period_id . "', customer_id = '" . (int)$customer_id . "', gaji_pokok = '" . (int)$data['gaji_pokok'] . "', tunj_jabatan = '" . (int)$data['tunj_jabatan'] . "', tunj_hadir = '" . (int)$data['tunj_hadir'] . "', tunj_pph = '" . (int)$data['tunj_pph'] . "', uang_makan = '" . (int)$data['uang_makan'] . "', total_uang_makan = '" . (int)$data['total_uang_makan'] . "', pot_sakit = '" . (int)$data['pot_sakit'] . "', pot_bolos = '" . (int)$data['pot_bolos'] . "', pot_tunj_hadir = '" . (int)$data['pot_tunj_hadir'] . "', pot_gaji_pokok = '" . (int)$data['pot_gaji_pokok'] . "', pot_terlambat = '" . (int)$data['pot_terlambat'] . "', statement_sent = 0, date_added = '" . $this->db->escape($data['date_added']) . "'");
 		} else {
 			return;
 		}
 	}
-	
-	public function deletePayroll($presence_period_id, $customer_id) {
-		$this->db->query("DELETE FROM " . DB_PREFIX . "payroll WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'");		
+
+	public function deletePayroll($presence_period_id, $customer_id)
+	{
+		$this->db->query("DELETE FROM " . DB_PREFIX . "payroll WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'");
 	}
 
-	public function getPayroll($presence_period_id, $customer_id) {
-		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "payroll WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'");
+	public function getPayroll($presence_period_id, $customer_id)
+	{
+		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "v_payroll WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'");
 
 		return $query->row;
 	}
 
-	public function getPayrolls($presence_period_id, $data = array()) {
-		
+	public function getPayrolls($presence_period_id, $data = array())
+	{
 		$this->createView();
-		
+
 		$sql = "SELECT * FROM " . DB_PREFIX . "v_payroll WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
 		$implode = array();
@@ -159,7 +166,8 @@ class ModelPayrollPayroll extends Model {
 		return $query->rows;
 	}
 
-	public function getTotalPayrolls($presence_period_id, $data = array()) {
+	public function getTotalPayrolls($presence_period_id, $data = array())
+	{
 		$this->createView();
 
 		$sql = "SELECT COUNT(payroll_id) AS total FROM " . DB_PREFIX . "v_payroll WHERE presence_period_id = '" . (int)$presence_period_id . "'";
@@ -192,9 +200,10 @@ class ModelPayrollPayroll extends Model {
 		return $query->row['total'];
 	}
 
-	protected function calculatePresenceSummary($presence_period_id, $customer_id) {//getPayrollDetail
+	protected function calculatePresenceSummary($presence_period_id, $customer_id)
+	{ //getPayrollDetail
 		$this->load->model('presence/presence');
-		
+
 		$presence_summary_info = $this->model_presence_presence->getPresenceSummary($presence_period_id, $customer_id);
 
 		if (!empty($presence_summary_info)) {
@@ -213,9 +222,8 @@ class ModelPayrollPayroll extends Model {
 			$total_bolos			= $presence_summary_info['total_bolos'];
 			$total_t    			= $presence_summary_info['total_t'];
 			$full_overtimes_count	= $presence_summary_info['full_overtimes_count'];
-			
+
 			$presence_summary_check = 1;
-			
 		} else {
 			$h 					= 0;
 			$s     				= 0;
@@ -252,13 +260,14 @@ class ModelPayrollPayroll extends Model {
 			'total_bolos'       	=> $total_bolos,
 			'total_t'       		=> $total_t,
 			'full_overtimes_count'	=> $full_overtimes_count,
-			'presence_summary_check'=> $presence_summary_check,
+			'presence_summary_check' => $presence_summary_check,
 		);
 	}
 
-	public function calculatePayrollBasic($customer_id, $presence_data) {
+	public function calculatePayrollBasic($customer_id, $presence_data)
+	{
 		// $this->load->model('presence/presence');
-		
+
 		$hke     				= $presence_data['hke'];
 		$full_overtimes_count	= $presence_data['full_overtimes_count'];
 		$total_sakit			= $presence_data['total_sakit'];
@@ -267,9 +276,9 @@ class ModelPayrollPayroll extends Model {
 		$total_absen			= $total_sakit + $total_bolos;
 
 		$this->load->model('payroll/payroll_basic');
-		
+
 		$payroll_basic_info = $this->model_payroll_payroll_basic->getPayrollBasicByCustomer($customer_id);
-		
+
 		$full_overtime_status = $this->getOvertimeStatus($customer_id);
 
 		if (!empty($payroll_basic_info)) {
@@ -290,7 +299,7 @@ class ModelPayrollPayroll extends Model {
 			}
 
 			$payroll_basic_check = 1;
-			
+
 			//jika cuti melahirkan (1 bulan penuh), koreksi lagi jika cuti tidak penuh 1 bulan
 			if ($hke < 10) {
 				$tunj_pph       = 0;
@@ -306,7 +315,7 @@ class ModelPayrollPayroll extends Model {
 			} else {
 				$pot_bolos		= 0;
 			}
-			
+
 			$pot_tunj_hadir		= min(5, $total_absen) * 0.2 * $tunj_hadir;
 
 			if ($total_absen > 5) {
@@ -314,7 +323,7 @@ class ModelPayrollPayroll extends Model {
 			} else {
 				$pot_gaji_pokok		= 0;
 			}
-			
+
 			$pot_terlambat		= $total_t * $uang_makan;
 
 			$total_potongan		= $pot_sakit + $pot_bolos + $pot_tunj_hadir + $pot_gaji_pokok + $pot_terlambat;
@@ -356,14 +365,14 @@ class ModelPayrollPayroll extends Model {
 		);
 	}
 
-	public function getPayrollDetail($presence_period_id, $customer_id) {
+	public function getPayrollDetail($presence_period_id, $customer_id)
+	{
 		$presence_summary_info = $this->calculatePresenceSummary($presence_period_id, $customer_id);
 
 		if ($this->model_common_payroll->checkPeriodStatus($presence_period_id, 'approved, released, completed')) {
 			$payroll_info = $this->getPayroll($presence_period_id, $customer_id);
 			$payroll_basic_check = 1;
 			$payroll_id = $payroll_info['payroll_id'];
-		
 		} else {
 			$presence_data = array(
 				'hke'					=> $presence_summary_info['hke'],
@@ -372,9 +381,9 @@ class ModelPayrollPayroll extends Model {
 				'total_bolos'   		=> $presence_summary_info['total_bolos'],
 				'total_t'       		=> $presence_summary_info['total_t'],
 			);
-			
+
 			$payroll_info = $this->calculatePayrollBasic($customer_id, $presence_data);
-		
+
 			$payroll_basic_check = $payroll_info['payroll_basic_check'];
 			$payroll_id = 0;
 		}
@@ -401,7 +410,7 @@ class ModelPayrollPayroll extends Model {
 			'total_sakit'       	=> $presence_summary_info['total_sakit'],
 			'total_bolos'       	=> $presence_summary_info['total_bolos'],
 			'total_t'       		=> $presence_summary_info['total_t'],
-			'presence_summary_check'=> $presence_summary_info['presence_summary_check'],
+			'presence_summary_check' => $presence_summary_info['presence_summary_check'],
 			'gaji_pokok'            => $payroll_info['gaji_pokok'],
 			'tunj_jabatan'          => $payroll_info['tunj_jabatan'],
 			'tunj_hadir'            => $payroll_info['tunj_hadir'],
@@ -420,7 +429,8 @@ class ModelPayrollPayroll extends Model {
 		);
 	}
 
-	public function calculatePayrollComponent($presence_period_id, $customer_id) {
+	public function calculatePayrollComponent($presence_period_id, $customer_id)
+	{
 		$component_data = array();
 
 		$this->load->model('extension/extension');
@@ -436,7 +446,7 @@ class ModelPayrollPayroll extends Model {
 				if ($component) {
 					$component_data[$result['code']] = $component;
 				}
- 			}
+			}
 		}
 
 		$sort_order = array();
@@ -450,23 +460,26 @@ class ModelPayrollPayroll extends Model {
 		return $component_data;
 	}
 
-	public function addPayrollComponent($presence_period_id, $customer_id, $data = array()) {
+	public function addPayrollComponent($presence_period_id, $customer_id, $data = array())
+	{
 		if ($presence_period_id && $customer_id) {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "payroll_component_value SET presence_period_id = '" . (int)$presence_period_id . "', customer_id = '" . (int)$customer_id . "', code = '" . $this->db->escape($data['code']) . "', item = '" . (int)$data['item'] . "', title = '" . $this->db->escape($data['title']) . "', value = '" . (int)$data['value'] . "', type = '" . (int)$data['type'] . "', sort_order = '" . (int)$data['sort_order'] . "', user_id = '" . (int)$this->user->getId() . "', date_added = NOW()");
 		} else {
 			return;
 		}
 	}
-	
-	public function deletePayrollComponent($presence_period_id, $customer_id) {
+
+	public function deletePayrollComponent($presence_period_id, $customer_id)
+	{
 		if ($presence_period_id && $customer_id) {
-			$this->db->query("DELETE FROM " . DB_PREFIX . "payroll_component_value WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'");		
+			$this->db->query("DELETE FROM " . DB_PREFIX . "payroll_component_value WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'");
 		} else {
 			return;
 		}
 	}
-	
-	public function getPayrollComponents($presence_period_id, $customer_id = 0) {
+
+	public function getPayrollComponents($presence_period_id, $customer_id = 0)
+	{
 		$sql = "SELECT * FROM " . DB_PREFIX . "payroll_component_value WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
 		if ($customer_id) {
@@ -474,19 +487,20 @@ class ModelPayrollPayroll extends Model {
 		}
 
 		$sql .= " ORDER BY sort_order ASC";
-		
+
 		$query = $this->db->query($sql);
 
 		return $query->rows;
 	}
 
-	public function getPayrollComponentCodes($presence_period_id, $customer_id = 0) {
+	public function getPayrollComponentCodes($presence_period_id, $customer_id = 0)
+	{
 		$sql = "SELECT DISTINCT(code) FROM " . DB_PREFIX . "payroll_component_value WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
 		if ($customer_id) {
 			$sql .= " AND customer_id = '" . (int)$customer_id . "'";
 		}
-		
+
 		$sql .= " ORDER BY sort_order ASC";
 
 		$query = $this->db->query($sql);
@@ -496,11 +510,12 @@ class ModelPayrollPayroll extends Model {
 		foreach ($query->rows as $result) {
 			$component_codes[] = $result['code'];
 		}
-		
+
 		return $component_codes;
 	}
 
-	public function getPayrollComponentTotal($presence_period_id, $customer_id = 0, $group_by = 'code') { //used by payroll_release
+	public function getPayrollComponentTotal($presence_period_id, $customer_id = 0, $group_by = 'code')
+	{ //used by payroll_release
 		$group_data = array(
 			'code',
 			'type'
@@ -514,7 +529,6 @@ class ModelPayrollPayroll extends Model {
 			}
 
 			$sql .= " GROUP BY " . $group_by;
-
 		} else {
 			$sql = "SELECT SUM(value) as total FROM " . DB_PREFIX . "payroll_component_value WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
@@ -526,7 +540,7 @@ class ModelPayrollPayroll extends Model {
 		$query = $this->db->query($sql);
 
 		$component_total_data = array('grandtotal' => 0);
-		
+
 		switch ($group_by) {
 			case 'code':
 				$component_codes = $this->getPayrollComponentCodes($presence_period_id);
@@ -534,29 +548,30 @@ class ModelPayrollPayroll extends Model {
 				foreach ($component_codes as $component_code) {
 					$component_total_data[$component_code] = 0;
 				}
-				
+
 				break;
-				
+
 			case 'type':
 				$component_total_data[0] = 0;
 				$component_total_data[1] = 0;
-				
+
 				break;
-				
+
 			default:
 		}
-		
+
 		foreach ($query->rows as $result) {
 			$component_total_data[$result[$group_by]] = $result['total'];
 			$component_total_data['grandtotal'] += $result['total'];
 		}
-	
+
 		return $component_total_data;
 	}
 
-	public function getTotalPayroll($presence_period_id, $data = array()) {//Summary
+	public function getTotalPayroll($presence_period_id, $data = array())
+	{ //Summary
 		$sql = "SELECT presence_period_id, COUNT(*) as total_customer, SUM(gaji_pokok + tunj_jabatan + tunj_hadir + tunj_pph + total_uang_makan) AS total_earning, SUM(pot_sakit + pot_bolos + pot_tunj_hadir + pot_gaji_pokok + pot_terlambat) AS total_deduction FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id)WHERE presence_period_id = '" . (int)$presence_period_id . "'";
-		
+
 		$implode = array();
 
 		if (!empty($data['filter_name'])) {
@@ -584,21 +599,22 @@ class ModelPayrollPayroll extends Model {
 		return $query->row;
 	}
 
-	public function getBlankPayrollCustomers($presence_period_id) {
+	public function getBlankPayrollCustomers($presence_period_id)
+	{
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
-		
+
 		$sql = "SELECT c.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "payroll p ON (p.customer_id = c.customer_id AND p.presence_period_id = '" . (int)$presence_period_id . "') WHERE status = 1 AND payroll_include = 1 AND date_start <= '" . $period_info['date_end'] . "' AND (date_end IS NULL OR date_end = '0000-00-00' OR date_end > '" . $period_info['date_start'] . "') AND p.payroll_id IS NULL";
 
 		$query = $this->db->query($sql);
-		
+
 		return $query->rows;
 	}
 
 	public function createView($view_name = 'v_payroll')
 	{
 		$view_name = DB_PREFIX . $view_name;
-		
-		$sql = "SELECT DISTINCT p.*, c.firstname, c.lastname, c.nip, c.email, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.acc_no, c.date_start, c.date_end, c.customer_group_id, cgd.name AS customer_group, c.customer_department_id, cdd.name AS customer_department, c.location_id, l.name AS location, pm.name AS payroll_method FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (cdd.customer_department_id = c.customer_department_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+
+		$sql = "SELECT p.*, c.firstname, c.lastname, c.nip, c.email, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.acc_no, c.date_start, c.date_end, c.customer_group_id, cgd.name AS customer_group, c.customer_department_id, cdd.name AS customer_department, c.location_id, l.name AS location, pm.name AS payroll_method FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (cdd.customer_department_id = c.customer_department_id AND cdd.language_id = cgd.language_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
 
 		return $this->db->createView($view_name, $sql);
 	}

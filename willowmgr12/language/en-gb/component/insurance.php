@@ -12,11 +12,13 @@ $_['text_wage_both']        = 'Upah Karyawan dengan Upah Minimum';
 		
 $_['text_health'] 	   		= 'BPJS Kesehatan';
 $_['text_jht'] 	   	   		= 'BPJS Ketenagakerjaan (JHT)';
+$_['text_jp'] 		   		= 'BPJS Ketenagakerjaan (JP)';
 $_['text_non_jht'] 	   		= 'BPJS Ketenagakerjaan (JKK + JKM)';
 		
 # Entry		
 $_['entry_activation_health']	= 'Aktivasi BPJS Kesehatan';
 $_['entry_activation_jht']		= 'Aktivasi BPJS Ketenagakerjaan (JHT)';
+$_['entry_activation_jp']		= 'Aktivasi BPJS Ketenagakerjaan (JP)';
 $_['entry_activation_non_jht']	= 'Aktivasi BPJS Ketenagakerjaan (JKK + JKM)';
 $_['entry_calculation_base']	= 'Dasar Perhitungan Iuran';
 $_['entry_min_wage']   			= 'Upah Minimum';

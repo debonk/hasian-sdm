@@ -699,6 +699,8 @@ class ControllerCustomerCustomer extends Controller {
 	}
 
 	protected function getForm() {
+		$this->model_customer_customer->createView();
+
 		$data['text_form'] = !isset($this->request->get['customer_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
 
 		$language_items = array(
@@ -747,6 +749,7 @@ class ControllerCustomerCustomer extends Controller {
 			'entry_password',
 			'entry_payroll_include',
 			'entry_payroll_method',
+			'entry_pension_insurance',
 			'entry_postcode',
 			'entry_skip_trial_status',
 			'entry_status',
@@ -913,6 +916,7 @@ class ControllerCustomerCustomer extends Controller {
 			'health_insurance'			=> true,
 			'life_insurance'			=> true,
 			'employment_insurance'		=> false,
+			'pension_insurance'			=> false,
 			'health_insurance_id'		=> null,
 			'employment_insurance_id'	=> null,
 			'status'					=> true,
@@ -934,6 +938,7 @@ class ControllerCustomerCustomer extends Controller {
 				'skip_trial_status',
 				'health_insurance',
 				'employment_insurance',
+				'pension_insurance',
 				'life_insurance'
 			];
 			foreach ($fields_data as $field_data) {

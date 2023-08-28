@@ -5,6 +5,8 @@
 		<td class="text-left" rowspan="2"><?php echo $column_nip; ?></td>
 		<td class="text-left" rowspan="2"><?php echo $column_name; ?></td>
 		<td class="text-left" rowspan="2"><?php echo $column_customer_group; ?></td>
+		<td class="text-left" rowspan="2"><?php echo $column_customer_department; ?></td>
+		<td class="text-left" rowspan="2"><?php echo $column_location; ?></td>
 		<?php foreach ($titles as $title) { ?>
 		  <td class="text-center" colspan="2"><?php echo $title; ?></td>
 		<?php } ?>
@@ -23,6 +25,8 @@
 		<td class="text-left"><?php echo $insurance['nip']; ?></td>
 		<td class="text-left"><?php echo $insurance['name']; ?></td>
 		<td class="text-left"><?php echo $insurance['customer_group']; ?></td>
+		<td class="text-left"><?php echo $insurance['customer_department']; ?></td>
+		<td class="text-left"><?php echo $insurance['location']; ?></td>
 		<?php foreach ($titles as $title) { ?>
 		  <td class="text-right"><?php echo $insurance['insurances_data'][$title][1]; ?></td>
 		  <td class="text-right"><?php echo $insurance['insurances_data'][$title][0]; ?></td>

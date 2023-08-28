@@ -20,6 +20,7 @@ class ModelCustomerCustomer extends Model
 			'skip_trial_status',
 			'health_insurance',
 			'employment_insurance',
+			'pension_insurance',
 			'life_insurance'
 		];
 		foreach ($fields_data as $field_data) {
@@ -28,7 +29,7 @@ class ModelCustomerCustomer extends Model
 			}
 		}
 
-		$sql = "INSERT INTO " . DB_PREFIX . "customer SET customer_department_id = '" . (int)$data['customer_department_id'] . "', customer_group_id = '" . (int)$data['customer_group_id'] . "', location_id = '" . (int)$data['location_id'] . "', nip = '" . $this->db->escape($nip) . "', nip_no = '" . (int)$nip_no . "', nik = '" . $this->db->escape($data['nik']) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', date_start = STR_TO_DATE('" . $this->db->escape($data['date_start']) . "', '%e %b %Y'), image = '" . $this->db->escape($data['image']) . "', skip_trial_status = '" . (int)$data['skip_trial_status'] . "', payroll_include = '" . (int)$data['payroll_include'] . "', acc_no = '" . $this->db->escape($data['acc_no']) . "', payroll_method_id = '" . (int)$data['payroll_method_id'] . "', health_insurance = '" . (int)$data['health_insurance'] . "', life_insurance = '" . (int)$data['life_insurance'] . "', employment_insurance = '" . (int)$data['employment_insurance'] . "', health_insurance_id = '" . $this->db->escape($data['health_insurance_id']) . "', employment_insurance_id = '" . $this->db->escape($data['employment_insurance_id']) . "', full_overtime = '" . (int)$data['full_overtime'] . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "', salt = '" . $this->db->escape($salt = token(9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "', status = '" . (int)$data['status'] . "', date_added = NOW()";
+		$sql = "INSERT INTO " . DB_PREFIX . "customer SET customer_department_id = '" . (int)$data['customer_department_id'] . "', customer_group_id = '" . (int)$data['customer_group_id'] . "', location_id = '" . (int)$data['location_id'] . "', nip = '" . $this->db->escape($nip) . "', nip_no = '" . (int)$nip_no . "', nik = '" . $this->db->escape($data['nik']) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', date_start = STR_TO_DATE('" . $this->db->escape($data['date_start']) . "', '%e %b %Y'), image = '" . $this->db->escape($data['image']) . "', skip_trial_status = '" . (int)$data['skip_trial_status'] . "', payroll_include = '" . (int)$data['payroll_include'] . "', acc_no = '" . $this->db->escape($data['acc_no']) . "', payroll_method_id = '" . (int)$data['payroll_method_id'] . "', health_insurance = '" . (int)$data['health_insurance'] . "', life_insurance = '" . (int)$data['life_insurance'] . "', employment_insurance = '" . (int)$data['employment_insurance'] . "', pension_insurance = '" . (int)$data['pension_insurance'] . "', health_insurance_id = '" . $this->db->escape($data['health_insurance_id']) . "', employment_insurance_id = '" . $this->db->escape($data['employment_insurance_id']) . "', full_overtime = '" . (int)$data['full_overtime'] . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "', salt = '" . $this->db->escape($salt = token(9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "', status = '" . (int)$data['status'] . "', date_added = NOW()";
 
 		if (!empty($data['date_birth'])) {
 			$sql .= ", date_birth = STR_TO_DATE('" . $this->db->escape($data['date_birth']) . "', '%e %b %Y')";
@@ -91,6 +92,7 @@ class ModelCustomerCustomer extends Model
 			'skip_trial_status',
 			'health_insurance',
 			'employment_insurance',
+			'pension_insurance',
 			'life_insurance'
 		];
 		foreach ($fields_data as $field_data) {
@@ -99,7 +101,7 @@ class ModelCustomerCustomer extends Model
 			}
 		}
 
-		$sql = "UPDATE " . DB_PREFIX . "customer SET customer_department_id = '" . (int)$data['customer_department_id'] . "', customer_group_id = '" . (int)$data['customer_group_id'] . "', location_id = '" . (int)$data['location_id'] . "', nik = '" . $this->db->escape($data['nik']) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', image = '" . $this->db->escape($data['image']) . "', payroll_include = '" . (int)$data['payroll_include'] . "', acc_no = '" . $this->db->escape($data['acc_no']) . "', payroll_method_id = '" . (int)$data['payroll_method_id'] . "', health_insurance = '" . (int)$data['health_insurance'] . "', life_insurance = '" . (int)$data['life_insurance'] . "', employment_insurance = '" . (int)$data['employment_insurance'] . "', health_insurance_id = '" . $this->db->escape($data['health_insurance_id']) . "', employment_insurance_id = '" . $this->db->escape($data['employment_insurance_id']) . "', full_overtime = '" . (int)$data['full_overtime'] . "', skip_trial_status = '" . (int)$data['skip_trial_status'] . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "', status = '" . (int)$data['status'] . "'";
+		$sql = "UPDATE " . DB_PREFIX . "customer SET customer_department_id = '" . (int)$data['customer_department_id'] . "', customer_group_id = '" . (int)$data['customer_group_id'] . "', location_id = '" . (int)$data['location_id'] . "', nik = '" . $this->db->escape($data['nik']) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', image = '" . $this->db->escape($data['image']) . "', payroll_include = '" . (int)$data['payroll_include'] . "', acc_no = '" . $this->db->escape($data['acc_no']) . "', payroll_method_id = '" . (int)$data['payroll_method_id'] . "', health_insurance = '" . (int)$data['health_insurance'] . "', life_insurance = '" . (int)$data['life_insurance'] . "', employment_insurance = '" . (int)$data['employment_insurance'] . "', pension_insurance = '" . (int)$data['pension_insurance'] . "', health_insurance_id = '" . $this->db->escape($data['health_insurance_id']) . "', employment_insurance_id = '" . $this->db->escape($data['employment_insurance_id']) . "', full_overtime = '" . (int)$data['full_overtime'] . "', skip_trial_status = '" . (int)$data['skip_trial_status'] . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "', status = '" . (int)$data['status'] . "'";
 
 		if (!empty($data['date_birth'])) {
 			$sql .= ", date_birth = STR_TO_DATE('" . $this->db->escape($data['date_birth']) . "', '%e %b %Y')";
@@ -167,7 +169,7 @@ class ModelCustomerCustomer extends Model
 
 	public function getCustomer($customer_id)
 	{
-		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON (cad.customer_id = c.customer_id) WHERE c.customer_id = '" . (int)$customer_id . "'");
+		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON (cad.customer_id = c.customer_id) WHERE c.customer_id = '" . (int)$customer_id . "'");
 
 		return $query->row;
 	}
@@ -187,45 +189,48 @@ class ModelCustomerCustomer extends Model
 	}
 
 	public function getCustomers($data = array())
-	{ //Used by: dashboard/recent
-		$sql = "SELECT c.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cdd.name AS customer_department, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (c.customer_department_id = cdd.customer_department_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+	{
+		$this->createView();
+		
+		$sql = "SELECT * FROM " . DB_PREFIX . "v_customer";
+		// $sql = "SELECT c.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cdd.name AS customer_department, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (c.customer_department_id = cdd.customer_department_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
 
 		$implode = array();
 
 		if (!empty($data['filter_name'])) {
-			$implode[] = "CONCAT(c.firstname, ' [', c.lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+			$implode[] = "CONCAT(firstname, ' [', lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
 		}
 
 		if (!empty($data['filter_email'])) {
-			$implode[] = "c.email LIKE '%" . $this->db->escape($data['filter_email']) . "%'";
+			$implode[] = "email LIKE '%" . $this->db->escape($data['filter_email']) . "%'";
 		}
 
 		if (!empty($data['filter_customer_department_id'])) {
-			$implode[] = "c.customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
+			$implode[] = "customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
 		}
 
 		if (!empty($data['filter_customer_group_id'])) {
-			$implode[] = "c.customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+			$implode[] = "customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
 		}
 
 		if (!empty($data['filter_location_id'])) {
-			$implode[] = "c.location_id = '" . (int)$data['filter_location_id'] . "'";
+			$implode[] = "location_id = '" . (int)$data['filter_location_id'] . "'";
 		}
 
 		if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
-			$implode[] = "c.status = '" . (int)$data['filter_status'] . "'";
+			$implode[] = "status = '" . (int)$data['filter_status'] . "'";
 		}
 
 		if (!empty($data['filter_date_start'])) {
-			$implode[] = "DATE_FORMAT(c.date_start,'%b %y') = '" . $this->db->escape($data['filter_date_start']) . "'";
+			$implode[] = "DATE_FORMAT(date_start,'%b %y') = '" . $this->db->escape($data['filter_date_start']) . "'";
 		}
 
 		if (isset($data['filter_active']) && !is_null($data['filter_active'])) {
 			if (!$data['filter_active']) {
-				$implode[] = "(c.date_end <> '0000-00-00' AND c.date_end <= CURDATE())";
+				$implode[] = "(date_end <> '0000-00-00' AND date_end <= CURDATE())";
 			}
 		} else {
-			$implode[] = "(c.date_end IS NULL OR c.date_end = '0000-00-00' OR c.date_end > CURDATE())";
+			$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end > CURDATE())";
 		}
 
 		if ($implode) {
@@ -233,14 +238,14 @@ class ModelCustomerCustomer extends Model
 		}
 
 		$sort_data = array(
-			'c.nip',
+			'nip',
 			'name',
 			'customer_department',
 			'customer_group',
 			'location',
-			'c.email',
-			'c.date_start',
-			'c.date_end'
+			'email',
+			'date_start',
+			'date_end'
 		);
 
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
@@ -350,7 +355,9 @@ class ModelCustomerCustomer extends Model
 
 	public function getTotalCustomers($data = array())
 	{
-		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer";
+		$this->createView();
+		
+		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "v_customer";
 
 		$implode = array();
 
@@ -458,7 +465,7 @@ class ModelCustomerCustomer extends Model
 	}
 
 	public function getTotalCustomersByGenderId($gender_id)
-	{ //used by localisation/gender
+	{
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer_add_data WHERE gender_id = '" . (int)$gender_id . "'");
 
 		return $query->row['total'];
@@ -471,31 +478,6 @@ class ModelCustomerCustomer extends Model
 		return $query->row['total'];
 	}
 
-	/* 	public function getIps($customer_id, $start = 0, $limit = 10) {
-		if ($start < 0) {
-			$start = 0;
-		}
-		if ($limit < 1) {
-			$limit = 10;
-		}
-
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer_ip WHERE customer_id = '" . (int)$customer_id . "' ORDER BY date_added DESC LIMIT " . (int)$start . "," . (int)$limit);
-		
-		return $query->rows;
-	}
-*/
-	/*  	public function getTotalIps($customer_id) {
-		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer_ip WHERE customer_id = '" . (int)$customer_id . "'");
-
-		return $query->row['total'];
-	}
- */
-	/* 	public function getTotalCustomersByIp($ip) {
-		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer_ip WHERE ip = '" . $this->db->escape($ip) . "'");
-
-		return $query->row['total'];
-	}
- */
 	public function getTotalLoginAttempts($email)
 	{
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "customer_login` WHERE `email` = '" . $this->db->escape($email) . "'");
@@ -506,5 +488,14 @@ class ModelCustomerCustomer extends Model
 	public function deleteLoginAttempts($email)
 	{
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "customer_login` WHERE `email` = '" . $this->db->escape($email) . "'");
+	}
+
+	public function createView($view_name = 'v_customer')
+	{
+		$view_name = DB_PREFIX . $view_name;
+		
+		$sql = "SELECT c.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cdd.name AS customer_department, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (c.customer_department_id = cdd.customer_department_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id AND cdd.language_id = cgd.language_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+
+		return $this->db->createView($view_name, $sql);
 	}
 }

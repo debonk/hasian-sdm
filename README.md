@@ -4,6 +4,10 @@
 MODUL: APP > Account: Login by location (Trial & Progress)
 MODUL: Customer > Presence Method
 
+2.5.18	28/08/2023
+Component > Insurance: Menambah Jaminan Pensiun untuk BPJS TK
+Bug Fixed: Customer yg masuk pada tanggal akhir cutoff tidak terdaftar pada menu Presence
+
 2.5.17	24/08/2023
 Payroll Setting: Add option for Presence Card.
 Payroll Export: Split Name and Longname in Export file, Add NIP column.

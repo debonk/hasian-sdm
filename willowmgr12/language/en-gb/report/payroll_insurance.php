@@ -8,11 +8,13 @@ $_['text_total']         	= 'Total';
 $_['text_result_count']    	= 'Showing %d records';
 
 // Column
-$_['column_nip']			= 'NIP';
-$_['column_name']			= 'Nama Karyawan';
-$_['column_customer_group']	= 'Jabatan';
-$_['column_company']		= 'Perusahaan';
-$_['column_customer']		= 'Karyawan';
+$_['column_nip']					= 'NIP';
+$_['column_name']					= 'Nama Karyawan';
+$_['column_customer_group']			= 'Jabatan';
+$_['column_customer_department']	= 'Divisi';
+$_['column_location']				= 'Lokasi Kerja';
+$_['column_company']				= 'Perusahaan';
+$_['column_customer']				= 'Karyawan';
 
 // Entry
 $_['entry_presence_period']	= 'Periode Absensi';

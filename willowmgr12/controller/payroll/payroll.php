@@ -856,6 +856,8 @@ class ControllerPayrollPayroll extends Controller
 
 	protected function getForm()
 	{
+		$this->model_payroll_payroll->createView();
+
 		$data['text_form'] = !isset($this->request->get['customer_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
 
 		$language_items = array(

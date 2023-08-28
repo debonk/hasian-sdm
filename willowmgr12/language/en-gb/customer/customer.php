@@ -20,22 +20,22 @@ $_['text_active']			= 'Masih Bekerja';
 $_['text_inactive']			= 'Berhenti Bekerja';
 
 // Column
-$_['column_image']			= 'Image';
-$_['column_nip']			= 'NIP';
-$_['column_name']			= 'Nama Karyawan';
-$_['column_customer_department'] = 'Divisi';
-$_['column_customer_group'] = 'Jabatan';
-$_['column_location']		= 'Lokasi Kerja';
-$_['column_full_overtime']	= '12 Jam';
-$_['column_date_start']		= 'Mulai Bekerja';
-$_['column_date_end']		= 'Berhenti Bekerja';
-$_['column_date_added']		= 'Date Added';
-$_['column_action']			= 'Action';
-$_['column_gaji_pokok']		= 'Gaji Pokok';
-$_['column_tunj_jabatan']	= 'Tunjangan Jabatan';
-$_['column_tunj_hadir']		= 'Tunjangan Hadir';
-$_['column_tunj_pph']		= 'Tunjangan PPH';
-$_['column_uang_makan']		= 'Uang Makan';
+$_['column_image']					= 'Image';
+$_['column_nip']					= 'NIP';
+$_['column_name']					= 'Nama Karyawan';
+$_['column_customer_department']	= 'Divisi';
+$_['column_customer_group'] 		= 'Jabatan';
+$_['column_location']				= 'Lokasi Kerja';
+$_['column_full_overtime']			= '12 Jam';
+$_['column_date_start']				= 'Mulai Bekerja';
+$_['column_date_end']				= 'Berhenti Bekerja';
+$_['column_date_added']				= 'Date Added';
+$_['column_action']					= 'Action';
+$_['column_gaji_pokok']				= 'Gaji Pokok';
+$_['column_tunj_jabatan']			= 'Tunjangan Jabatan';
+$_['column_tunj_hadir']				= 'Tunjangan Hadir';
+$_['column_tunj_pph']				= 'Tunjangan PPH';
+$_['column_uang_makan']				= 'Uang Makan';
 
 // Entry
 $_['entry_customer_department']		= 'Divisi';
@@ -68,6 +68,7 @@ $_['entry_health_insurance_id']		= 'No. BPJS Kesehatan';
 $_['entry_life_insurance']			= 'BPJS Ketenagakerjaan (JKK & JKM)';
 $_['entry_employment_insurance']	= 'BPJS Ketenagakerjaan (JHT)';
 $_['entry_employment_insurance_id']	= 'No. BPJS Ketenagakerjaan';
+$_['entry_pension_insurance']		= 'BPJS Ketenagakerjaan (JP)';
 $_['entry_status']					= 'Status';
 $_['entry_password']				= 'Password';
 $_['entry_confirm']					= 'Confirm';

@@ -481,6 +481,12 @@
 														id="input-employment-insurance" <?=$employment_insurance ? 'checked' : '' ?> /> <?= $entry_employment_insurance; ?>
 												</label>
 											</div>
+											<div class="checkbox">
+												<label>
+													<input type="checkbox" name="pension_insurance" value="1" 
+														id="input-pension-insurance" <?=$pension_insurance ? 'checked' : '' ?> /> <?= $entry_pension_insurance; ?>
+												</label>
+											</div>
 										</div>
 									</div>
 									<div class="form-group">
@@ -1646,14 +1652,23 @@
 			$('#button-reactivate').remove();
 		});
 
+		$('#input-pension-insurance').on('click', function () {
+			if (this.checked == true) {
+				$('#input-employment-insurance').prop('checked', true);
+				$('#input-life-insurance').prop('checked', true);
+			}
+		});
 		$('#input-employment-insurance').on('click', function () {
 			if (this.checked == true) {
 				$('#input-life-insurance').prop('checked', true);
+			} else {
+				$('#input-pension-insurance').prop('checked', false);
 			}
 		});
 		$('#input-life-insurance').on('click', function () {
 			if (this.checked == false) {
 				$('#input-employment-insurance').prop('checked', false);
+				$('#input-pension-insurance').prop('checked', false);
 			}
 		});
 </script>
