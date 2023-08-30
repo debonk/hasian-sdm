@@ -10,12 +10,51 @@ class ControllerReportPayrollInsurance extends Controller
 		$this->load->model('common/payroll');
 		$this->load->model('presence/presence_period');
 
+		$language_items = [
+			'heading_title',
+			'text_list',
+			'text_all',
+			'entry_presence_period',
+			'entry_name',
+			'entry_customer_department',
+			'entry_customer_group',
+			'entry_location',
+			'button_filter'		
+		];
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
+
 		$presence_periods = $this->model_presence_presence_period->getPresencePeriods();
 
 		if (isset($this->request->get['presence_period_id'])) {
 			$presence_period_id = $this->request->get['presence_period_id'];
 		} else {
 			$presence_period_id = $presence_periods[0]['presence_period_id'];
+		}
+
+		if (isset($this->request->get['filter_name'])) {
+			$filter_name = $this->request->get['filter_name'];
+		} else {
+			$filter_name = null;
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$filter_customer_department_id = $this->request->get['filter_customer_department_id'];
+		} else {
+			$filter_customer_department_id = null;
+		}
+
+		if (isset($this->request->get['filter_customer_group_id'])) {
+			$filter_customer_group_id = $this->request->get['filter_customer_group_id'];
+		} else {
+			$filter_customer_group_id = null;
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$filter_location_id = $this->request->get['filter_location_id'];
+		} else {
+			$filter_location_id = null;
 		}
 
 		$data['breadcrumbs'] = array();
@@ -30,25 +69,27 @@ class ControllerReportPayrollInsurance extends Controller
 			'href' => $this->url->link('report/payroll_insurance', 'token=' . $this->session->data['token'], true)
 		);
 
-		$period_status = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'pending, processing, submitted, generated');
-		if ($period_status) {
-			$data['information'] = $this->language->get('info_simulation');
-		} else {
-			$data['information'] = null;
-		}
-		
-		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
-		$data['period_info'] = date($this->language->get('date_format_m_y'), strtotime($period_info['period']));
-
-		$data['heading_title'] = $this->language->get('heading_title');
-		$data['text_list'] = $this->language->get('text_list');
-		$data['button_filter'] = $this->language->get('button_filter');
+		// $period_info = $this->model_common_payroll->getPeriod($presence_period_id);
+		// $data['period_info'] = date($this->language->get('date_format_m_y'), strtotime($period_info['period']));
 
 		$data['token'] = $this->session->data['token'];
 
 		$data['presence_periods'] = $presence_periods;
 
 		$data['presence_period_id'] = $presence_period_id;
+		$data['filter_name'] = $filter_name;
+		$data['filter_customer_department_id'] = $filter_customer_department_id;
+		$data['filter_customer_group_id'] = $filter_customer_group_id;
+		$data['filter_location_id'] = $filter_location_id;
+
+		$this->load->model('customer/customer_department');
+		$data['customer_departments'] = $this->model_customer_customer_department->getCustomerDepartments();
+
+		$this->load->model('customer/customer_group');
+		$data['customer_groups'] = $this->model_customer_customer_group->getCustomerGroups();
+
+		$this->load->model('localisation/location');
+		$data['locations'] = $this->model_localisation_location->getLocations();
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -61,10 +102,49 @@ class ControllerReportPayrollInsurance extends Controller
 	{
 		$this->load->language('report/payroll_insurance');
 
+		$language_list = array(
+			'text_no_results',
+			'column_nip',
+			'column_name',
+			'column_customer_group',
+			'column_customer_department',
+			'column_location',
+			'column_company',
+			'column_customer',
+			'text_total'
+		);
+		foreach ($language_list as $item) {
+			$data[$item] = $this->language->get($item);
+		}
+
 		if (isset($this->request->get['presence_period_id'])) {
 			$presence_period_id = $this->request->get['presence_period_id'];
 		} else {
 			$presence_period_id = 0;
+		}
+
+		if (isset($this->request->get['filter_name'])) {
+			$filter_name = $this->request->get['filter_name'];
+		} else {
+			$filter_name = null;
+		}
+
+		if (isset($this->request->get['filter_customer_department_id'])) {
+			$filter_customer_department_id = $this->request->get['filter_customer_department_id'];
+		} else {
+			$filter_customer_department_id = null;
+		}
+
+		if (isset($this->request->get['filter_customer_group_id'])) {
+			$filter_customer_group_id = $this->request->get['filter_customer_group_id'];
+		} else {
+			$filter_customer_group_id = null;
+		}
+
+		if (isset($this->request->get['filter_location_id'])) {
+			$filter_location_id = $this->request->get['filter_location_id'];
+		} else {
+			$filter_location_id = null;
 		}
 
 		$this->load->model('report/payroll');
@@ -78,13 +158,23 @@ class ControllerReportPayrollInsurance extends Controller
 
 		$period_status = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'pending, processing, submitted, generated');
 
+		if ($period_status) {
+			$data['information'] = $this->language->get('info_simulation');
+		} else {
+			$data['information'] = null;
+		}
+
 		$this->load->model('component/insurance');
 		$insurance_titles = $this->model_component_insurance->getTitles();
 
 		if ($period_status && $this->config->get('insurance_status')) {
 			$filter_data = array(
-				'presence_period_id'   		=> $presence_period_id,
-				'filter_payroll_include' 	=> 1
+				'presence_period_id'   			=> $presence_period_id,
+				'filter_name'              		=> $filter_name,
+				'filter_customer_department_id' => $filter_customer_department_id,
+				'filter_customer_group_id' 		=> $filter_customer_group_id,
+				'filter_location_id'       		=> $filter_location_id,
+				'filter_payroll_include' 		=> 1
 			);
 
 			$this->load->model('presence/presence');
@@ -105,10 +195,14 @@ class ControllerReportPayrollInsurance extends Controller
 			$customer_count = count($insurances_value);
 		} else {
 			$filter_data = array(
-				'code'		=> 'insurance'
+				'code'							=> 'insurance',
+				'filter_name'              		=> $filter_name,
+				'filter_customer_department_id' => $filter_customer_department_id,
+				'filter_customer_group_id' 		=> $filter_customer_group_id,
+				'filter_location_id'       		=> $filter_location_id
 			);
 
-			$customer_count = $this->model_report_payroll->getComponentCustomersCount($presence_period_id, 'insurance');
+			$customer_count = $this->model_report_payroll->getComponentCustomersCount($presence_period_id, $filter_data);
 
 			$customers = $this->model_report_payroll->getComponentCustomers($presence_period_id, $filter_data);
 
@@ -157,23 +251,6 @@ class ControllerReportPayrollInsurance extends Controller
 
 		$data['titles'] = $insurance_titles;
 
-
-		$data['text_no_results'] = $this->language->get('text_no_results');
-
-		$language_list = array(
-			'column_nip',
-			'column_name',
-			'column_customer_group',
-			'column_customer_department',
-			'column_location',
-			'column_company',
-			'column_customer',
-			'text_total'
-		);
-		foreach ($language_list as $item) {
-			$data[$item] = $this->language->get($item);
-		}
-
 		$data['token'] = $this->session->data['token'];
 
 		$url = '';
@@ -190,6 +267,9 @@ class ControllerReportPayrollInsurance extends Controller
 		$data['result_count'] = sprintf($this->language->get('text_result_count'), $customer_count);
 
 		$data['customer_count'] = $customer_count;
+
+		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
+		$data['period_info'] = date($this->language->get('date_format_m_y'), strtotime($period_info['period']));
 
 		$this->response->setOutput($this->load->view('report/payroll_insurance_report', $data));
 	}

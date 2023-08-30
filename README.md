@@ -1,8 +1,13 @@
 # hsdm software
 
-2.6.0-a
+2.x.0-a
 MODUL: APP > Account: Login by location (Trial & Progress)
 MODUL: Customer > Presence Method
+
+2.6.0	30/08/2023
+Report > Payroll Insurance: Add filters
+Bug Fixed: Customer tanpa jabatan atau posisi tidak muncul dalam View
+Component > Insurance: Menambah Jaminan Pensiun untuk BPJS TK
 
 2.5.18	28/08/2023
 Component > Insurance: Menambah Jaminan Pensiun untuk BPJS TK

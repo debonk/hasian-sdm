@@ -25,7 +25,7 @@ class ControllerDashboardRecent extends Controller {
 		$data['customers'] = array();
 
 		$filter_data = array(
-			'sort'  => 'c.date_start',
+			'sort'  => 'date_start',
 			'order' => 'DESC',
 			'start' => 0,
 			'limit' => 5

@@ -17,7 +17,11 @@ $_['column_company']				= 'Perusahaan';
 $_['column_customer']				= 'Karyawan';
 
 // Entry
-$_['entry_presence_period']	= 'Periode Absensi';
+$_['entry_customer_department']		= 'Divisi';
+$_['entry_customer_group']			= 'Jabatan';
+$_['entry_location']				= 'Lokasi Kerja';
+$_['entry_name']					= 'Nama Karyawan';
+$_['entry_presence_period']			= 'Periode Absensi';
 
 //Information
 $_['info_simulation']		= 'Simulation Only! Data final bisa berubah jika ada perubahan status karyawan';

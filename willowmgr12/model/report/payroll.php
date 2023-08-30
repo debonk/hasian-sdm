@@ -126,15 +126,38 @@ class ModelReportPayroll extends Model {
 		return $query->rows;
 	}
 
-	public function getComponentCustomers($presence_period_id, $data = array()) { //Used by: report_payroll_insurance
-		$sql = "SELECT pcv.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cgd.name AS customer_group FROM " . DB_PREFIX . "payroll_component_value pcv LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = pcv.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) WHERE presence_period_id = '" . (int)$presence_period_id . "'";
+	public function getComponentCustomers($presence_period_id, $data = []) { //Used by: report_payroll_insurance
+		// $sql = "SELECT pcv.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cgd.name AS customer_group FROM " . DB_PREFIX . "payroll_component_value pcv LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = pcv.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) WHERE presence_period_id = '" . (int)$presence_period_id . "'";
+		$sql = "SELECT pcv.customer_id, c.nip, c.name, c.customer_group, c.customer_department, c.location FROM " . DB_PREFIX . "payroll_component_value pcv LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = pcv.customer_id) WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
-		if ($data['code']) {
-			$sql .= " AND pcv.code = '" . $this->db->escape($data['code']) . "'";
+		$implode = array();
+
+		if (!empty($data['code'])) {
+			$implode[] = "pcv.code = '" . $this->db->escape($data['code']) . "'";
+		}
+
+		if (!empty($data['filter_name'])) {
+			$implode[] = "c.name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		}
+
+		if (!empty($data['filter_customer_department_id'])) {
+			$implode[] = "c.customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
+		}
+		
+		if (!empty($data['filter_customer_group_id'])) {
+			$implode[] = "c.customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+		}
+		
+		if (!empty($data['filter_location_id'])) {
+			$implode[] = "c.location_id = '" . (int)$data['filter_location_id'] . "'";
+		}
+		
+		if ($implode) {
+			$sql .= " AND " . implode(" AND ", $implode);
 		}
 
 		$sql .= " GROUP BY pcv.customer_id ORDER BY name ASC";
-		
+
 		if (isset($data['start']) || isset($data['limit'])) {
 			if ($data['start'] < 0) {
 				$data['start'] = 0;
@@ -152,11 +175,34 @@ class ModelReportPayroll extends Model {
 		return $query->rows;
 	}
 
-	public function getComponentCustomersCount($presence_period_id, $code = '') { //Used by: report_payroll_insurance
-		$sql = "SELECT COUNT(DISTINCT customer_id) AS total FROM " . DB_PREFIX . "payroll_component_value WHERE presence_period_id = '" . (int)$presence_period_id . "'";
+	public function getComponentCustomersCount($presence_period_id, $data = []) { //Used by: report_payroll_insurance
+		// $sql = "SELECT COUNT(DISTINCT customer_id) AS total FROM " . DB_PREFIX . "payroll_component_value WHERE presence_period_id = '" . (int)$presence_period_id . "'";
+		$sql = "SELECT COUNT(DISTINCT pcv.customer_id) AS total FROM " . DB_PREFIX . "payroll_component_value pcv LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = pcv.customer_id) WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
-		if ($code) {
-			$sql .= " AND code = '" . $this->db->escape($code) . "'";
+		$implode = array();
+
+		if (!empty($data['code'])) {
+			$implode[] = "pcv.code = '" . $this->db->escape($data['code']) . "'";
+		}
+
+		if (!empty($data['filter_name'])) {
+			$implode[] = "c.name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		}
+
+		if (!empty($data['filter_customer_department_id'])) {
+			$implode[] = "c.customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
+		}
+		
+		if (!empty($data['filter_customer_group_id'])) {
+			$implode[] = "c.customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+		}
+		
+		if (!empty($data['filter_location_id'])) {
+			$implode[] = "c.location_id = '" . (int)$data['filter_location_id'] . "'";
+		}
+		
+		if ($implode) {
+			$sql .= " AND " . implode(" AND ", $implode);
 		}
 
 		$query = $this->db->query($sql);
