@@ -24,11 +24,20 @@ class ModelComponentInsurance extends Model
 			$jht_insurance_check = strtotime($period) > strtotime('+ ' . $this->config->get('insurance_activation_jht') . ' months', strtotime($date_start));
 			$jp_insurance_check = strtotime($period) > strtotime('+ ' . $this->config->get('insurance_activation_jp') . ' months', strtotime($date_start));
 
-			$calculation_base = $this->config->get('insurance_calculation_base');
+			$calculation_base = !empty($customer_info['registered_wage']) ? 'registered_wage' : $this->config->get('insurance_calculation_base');
+			// $calculation_base = $this->config->get('insurance_calculation_base');
 
 			$insurance_date_start = $this->config->get('insurance_date_start');
 
 			switch ($calculation_base) {
+				case 'registered_wage':
+					if ($health_insurance_check || $non_jht_insurance_check) {
+						$wage_health = $customer_info['registered_wage'];
+						$wage_tk = $wage_health;
+					}
+
+					break;
+
 				case 'wage_real':
 					if ($health_insurance_check || $non_jht_insurance_check) {
 						$payroll_calculation = $this->model_payroll_payroll->getPayrollDetail($presence_period_id, $customer_id);

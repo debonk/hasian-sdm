@@ -451,6 +451,16 @@
 											placeholder="<?= $entry_nip_prefix; ?>" id="input-nip-prefix" class="form-control" />
 									</div>
 								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-customer-last"><span data-toggle="tooltip"
+											title="<?= $help_customer_last; ?>">
+											<?= $entry_customer_last; ?>
+										</span></label>
+									<div class="col-sm-10">
+										<input type="text" name="config_customer_last" value="<?= $config_customer_last; ?>"
+											placeholder="<?= $entry_customer_last; ?>" id="input-customer-last" class="form-control" />
+									</div>
+								</div>
 							</fieldset>
 							<fieldset>
 								<legend>

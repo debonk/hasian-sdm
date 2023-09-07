@@ -6,8 +6,8 @@
 			<div class="pull-right">
 				<button type="submit" form="form-customer" data-toggle="tooltip" title="<?= $button_save; ?>"
 					class="btn btn-primary"><i class="fa fa-save"></i></button>
-				<a href="<?= $cancel; ?>" data-toggle="tooltip" title="<?= $button_cancel; ?>" class="btn btn-default"><i
-						class="fa fa-reply"></i></a>
+				<a href="<?= $cancel; ?>" data-toggle="tooltip" title="<?= $button_cancel; ?>"
+					class="btn btn-default"><i class="fa fa-reply"></i></a>
 			</div>
 			<h1>
 				<?= $heading_title; ?>
@@ -48,7 +48,8 @@
 									</a></li>
 								<?php $address_row = 1; ?>
 								<?php foreach ($addresses as $address) { ?>
-								<li><a href="#tab-address<?= $address_row; ?>" data-toggle="tab"><i class="fa fa-minus-circle"
+								<li><a href="#tab-address<?= $address_row; ?>" data-toggle="tab"><i
+											class="fa fa-minus-circle"
 											onclick="$('#address a:first').tab('show'); $('#address a[href=\'#tab-address<?= $address_row; ?>\']').parent().remove(); $('#tab-address<?= $address_row; ?>').remove();"></i>
 										<?= $tab_address . ' ' . $address_row; ?>
 									</a></li>
@@ -66,8 +67,9 @@
 										<label class="col-sm-3 control-label" for="input-image">
 											<?= $entry_image; ?>
 										</label>
-										<div class="col-sm-9"><a href="" id="thumb-image" data-toggle="image" class="img-thumbnail"><img
-													src="<?= $thumb; ?>" alt="" title="" data-placeholder="<?= $thumb; ?>" /></a>
+										<div class="col-sm-9"><a href="" id="thumb-image" data-toggle="image"
+												class="img-thumbnail"><img src="<?= $thumb; ?>" alt="" title=""
+													data-placeholder="<?= $thumb; ?>" /></a>
 											<input type="hidden" name="image" value="<?= $image; ?>" id="input-image" />
 										</div>
 									</div>
@@ -86,8 +88,8 @@
 											<?= $entry_nik; ?>
 										</label>
 										<div class="col-sm-9">
-											<input type="text" name="nik" value="<?= $nik; ?>" placeholder="<?= $entry_nik; ?>" id="input-nik"
-												class="form-control" />
+											<input type="text" name="nik" value="<?= $nik; ?>"
+												placeholder="<?= $entry_nik; ?>" id="input-nik" class="form-control" />
 											<?php if ($error_nik) { ?>
 											<div class="text-danger">
 												<?= $error_nik; ?>
@@ -101,7 +103,8 @@
 										</label>
 										<div class="col-sm-9">
 											<input type="text" name="firstname" value="<?= $firstname; ?>"
-												placeholder="<?= $entry_firstname; ?>" id="input-firstname" class="form-control" />
+												placeholder="<?= $entry_firstname; ?>" id="input-firstname"
+												class="form-control" />
 											<?php if ($error_firstname) { ?>
 											<div class="text-danger">
 												<?= $error_firstname; ?>
@@ -110,13 +113,14 @@
 										</div>
 									</div>
 									<div class="form-group required">
-										<label class="col-sm-3 control-label" for="input-lastname"><span data-toggle="tooltip"
-												title="<?= $help_lastname; ?>">
+										<label class="col-sm-3 control-label" for="input-lastname"><span
+												data-toggle="tooltip" title="<?= $help_lastname; ?>">
 												<?= $entry_lastname; ?>
 											</span></label>
 										<div class="col-sm-9">
-											<input type="text" name="lastname" value="<?= $lastname; ?>" placeholder="<?= $entry_lastname; ?>"
-												id="input-lastname" class="form-control" />
+											<input type="text" name="lastname" value="<?= $lastname; ?>"
+												placeholder="<?= $entry_lastname; ?>" id="input-lastname"
+												class="form-control" />
 											<?php if ($error_lastname) { ?>
 											<div class="text-danger">
 												<?= $error_lastname; ?>
@@ -129,13 +133,16 @@
 											<?= $entry_date_start; ?>
 										</label>
 										<!-- <div class="col-sm-9"> -->
-										<fieldset id="fieldset-date-start" class="col-sm-9" <?=$date_start_locked ? 'disabled' : '' ?>>
+										<fieldset id="fieldset-date-start" class="col-sm-9" <?=$date_start_locked
+											? 'disabled' : '' ?>>
 											<div class="input-group date">
 												<input type="text" name="date_start" value="<?= $date_start; ?>"
-													placeholder="<?= $entry_date_start; ?>" data-date-format="D MMM YYYY" id="input-date-start"
+													placeholder="<?= $entry_date_start; ?>"
+													data-date-format="D MMM YYYY" id="input-date-start"
 													class="form-control" readonly />
 												<span class="input-group-btn">
-													<button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+													<button type="button" class="btn btn-default"><i
+															class="fa fa-calendar"></i></button>
 												</span>
 											</div>
 											<?php if ($error_date_start) { ?>
@@ -146,19 +153,21 @@
 										</fieldset>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-skip-trial-status"><span data-toggle="tooltip"
-												title="<?= $help_skip_trial_status; ?>">
+										<label class="col-sm-3 control-label" for="input-skip-trial-status"><span
+												data-toggle="tooltip" title="<?= $help_skip_trial_status; ?>">
 												<?= $entry_skip_trial_status; ?>
 											</span></label>
 										<div class="col-sm-9">
 											<div class="checkbox">
 												<label>
 													<?php if ($skip_trial_status) { ?>
-													<input type="checkbox" name="skip_trial_status" value="1" checked="checked"
-														id="input-skip-trial-status" <?=$skip_trial_status_locked ? 'disabled' : '' ?> />
+													<input type="checkbox" name="skip_trial_status" value="1"
+														checked="checked" id="input-skip-trial-status"
+														<?=$skip_trial_status_locked ? 'disabled' : '' ?> />
 													<?php } else { ?>
-													<input type="checkbox" name="skip_trial_status" value="1" id="input-skip-trial-status" <?php
-														echo $skip_trial_status_locked ? 'disabled' : '' ?> />
+													<input type="checkbox" name="skip_trial_status" value="1"
+														id="input-skip-trial-status" <?php echo
+														$skip_trial_status_locked ? 'disabled' : '' ?> />
 													<?php } ?>
 												</label>
 											</div>
@@ -169,11 +178,15 @@
 											<?= $entry_customer_department; ?>
 										</label>
 										<div class="col-sm-9">
-											<select name="customer_department_id" id="input-customer-department" class="form-control">
-												<option value=""><?= $text_select; ?></option>
+											<select name="customer_department_id" id="input-customer-department"
+												class="form-control">
+												<option value="">
+													<?= $text_select; ?>
+												</option>
 												<?php foreach ($customer_departments as $customer_department) { ?>
 												<?php if ($customer_department['customer_department_id'] == $customer_department_id) { ?>
-												<option value="<?= $customer_department['customer_department_id']; ?>" selected="selected">
+												<option value="<?= $customer_department['customer_department_id']; ?>"
+													selected="selected">
 													<?= $customer_department['name']; ?>
 												</option>
 												<?php } else { ?>
@@ -184,22 +197,26 @@
 												<?php } ?>
 											</select>
 											<?php if ($error_customer_department) { ?>
-												<div class="text-danger">
-													<?= $error_customer_department; ?>
-												</div>
+											<div class="text-danger">
+												<?= $error_customer_department; ?>
+											</div>
 											<?php } ?>
-									</div>
+										</div>
 									</div>
 									<div class="form-group required">
 										<label class="col-sm-3 control-label" for="input-customer-group">
 											<?= $entry_customer_group; ?>
 										</label>
 										<div class="col-sm-9">
-											<select name="customer_group_id" id="input-customer-group" class="form-control">
-												<option value=""><?= $text_select; ?></option>
+											<select name="customer_group_id" id="input-customer-group"
+												class="form-control">
+												<option value="">
+													<?= $text_select; ?>
+												</option>
 												<?php foreach ($customer_groups as $customer_group) { ?>
 												<?php if ($customer_group['customer_group_id'] == $customer_group_id) { ?>
-												<option value="<?= $customer_group['customer_group_id']; ?>" selected="selected">
+												<option value="<?= $customer_group['customer_group_id']; ?>"
+													selected="selected">
 													<?= $customer_group['name']; ?>
 												</option>
 												<?php } else { ?>
@@ -210,9 +227,9 @@
 												<?php } ?>
 											</select>
 											<?php if ($error_customer_group) { ?>
-												<div class="text-danger">
-													<?= $error_customer_group; ?>
-												</div>
+											<div class="text-danger">
+												<?= $error_customer_group; ?>
+											</div>
 											<?php } ?>
 										</div>
 									</div>
@@ -222,7 +239,9 @@
 										</label>
 										<div class="col-sm-9">
 											<select name="location_id" id="input-location" class="form-control">
-												<option value=""><?= $text_select; ?></option>
+												<option value="">
+													<?= $text_select; ?>
+												</option>
 												<?php foreach ($locations as $location) { ?>
 												<?php if ($location['location_id'] == $location_id) { ?>
 												<option value="<?= $location['location_id']; ?>" selected="selected">
@@ -293,10 +312,12 @@
 											<fieldset id="fieldset-date-end" <?=$date_end_locked ? 'disabled' : '' ?>>
 												<div class="input-group date">
 													<input type="text" name="date_end" value="<?= $date_end; ?>"
-														placeholder="<?= $entry_date_end; ?>" data-date-format="D MMM YYYY" id="input-date-end"
+														placeholder="<?= $entry_date_end; ?>"
+														data-date-format="D MMM YYYY" id="input-date-end"
 														class="form-control" readonly />
 													<span class="input-group-btn">
-														<button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+														<button type="button" class="btn btn-default"><i
+																class="fa fa-calendar"></i></button>
 													</span>
 												</div>
 												<?php if ($error_date_end) { ?>
@@ -307,8 +328,8 @@
 											</fieldset>
 											<?php if ($date_end) { ?>
 											<br />
-											<button id="button-reactivate" type="button" class="btn btn-warning pull-right"><i
-													class="fa fa-refresh"></i>
+											<button id="button-reactivate" type="button"
+												class="btn btn-warning pull-right"><i class="fa fa-refresh"></i>
 												<?= $button_reactivate; ?>
 											</button>
 											<?php } ?>
@@ -343,10 +364,12 @@
 										<div class="col-sm-9">
 											<div class="input-group date">
 												<input type="text" name="date_birth" value="<?= $date_birth; ?>"
-													placeholder="<?= $entry_date_birth; ?>" data-date-format="D MMM YYYY" id="input-date-birth"
+													placeholder="<?= $entry_date_birth; ?>"
+													data-date-format="D MMM YYYY" id="input-date-birth"
 													class="form-control" />
 												<span class="input-group-btn">
-													<button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+													<button type="button" class="btn btn-default"><i
+															class="fa fa-calendar"></i></button>
 												</span>
 											</div>
 										</div>
@@ -356,10 +379,12 @@
 											<?= $entry_marriage_status; ?>
 										</label>
 										<div class="col-sm-9">
-											<select name="marriage_status_id" id="input-marriage-status" class="form-control">
+											<select name="marriage_status_id" id="input-marriage-status"
+												class="form-control">
 												<?php foreach ($marriage_statuses as $marriage_status) { ?>
 												<?php if ($marriage_status['marriage_status_id'] == $marriage_status_id) { ?>
-												<option value="<?= $marriage_status['marriage_status_id']; ?>" selected="selected">
+												<option value="<?= $marriage_status['marriage_status_id']; ?>"
+													selected="selected">
 													<?= $marriage_status['name']; ?>
 												</option>
 												<?php } else { ?>
@@ -376,8 +401,9 @@
 											<?= $entry_children; ?>
 										</label>
 										<div class="col-sm-9">
-											<input type="text" name="children" value="<?= $children; ?>" placeholder="<?= $entry_children; ?>"
-												id="input-children" class="form-control" />
+											<input type="text" name="children" value="<?= $children; ?>"
+												placeholder="<?= $entry_children; ?>" id="input-children"
+												class="form-control" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -385,18 +411,20 @@
 											<?= $entry_npwp; ?>
 										</label>
 										<div class="col-sm-9">
-											<input type="text" name="npwp" value="<?= $npwp; ?>" placeholder="<?= $entry_npwp; ?>"
-												id="input-npwp" class="form-control" />
+											<input type="text" name="npwp" value="<?= $npwp; ?>"
+												placeholder="<?= $entry_npwp; ?>" id="input-npwp"
+												class="form-control" />
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-npwp-address"><span data-toggle="tooltip"
-												title="<?= $help_npwp_address; ?>">
+										<label class="col-sm-3 control-label" for="input-npwp-address"><span
+												data-toggle="tooltip" title="<?= $help_npwp_address; ?>">
 												<?= $entry_npwp_address; ?>
 											</span></label>
 										<div class="col-sm-9">
 											<input type="text" name="npwp_address" value="<?= $npwp_address; ?>"
-												placeholder="<?= $entry_npwp_address; ?>" id="input-npwp-address" class="form-control" />
+												placeholder="<?= $entry_npwp_address; ?>" id="input-npwp-address"
+												class="form-control" />
 											<?php if ($error_npwp_address) { ?>
 											<div class="text-danger">
 												<?= $error_npwp_address; ?>
@@ -409,7 +437,8 @@
 											<?= $entry_payroll_include; ?>
 										</label>
 										<div class="col-sm-9">
-											<select name="payroll_include" id="input-payroll-include" class="form-control">
+											<select name="payroll_include" id="input-payroll-include"
+												class="form-control">
 												<?php if ($payroll_include) { ?>
 												<option value="1" selected="selected">
 													<?= $text_yes; ?>
@@ -433,10 +462,12 @@
 											<?= $entry_payroll_method; ?>
 										</label>
 										<div class="col-sm-9">
-											<select name="payroll_method_id" id="input-payroll-method" class="form-control">
+											<select name="payroll_method_id" id="input-payroll-method"
+												class="form-control">
 												<?php foreach ($payroll_methods as $payroll_method) { ?>
 												<?php if ($payroll_method['payroll_method_id'] == $payroll_method_id) { ?>
-												<option value="<?= $payroll_method['payroll_method_id']; ?>" selected="selected">
+												<option value="<?= $payroll_method['payroll_method_id']; ?>"
+													selected="selected">
 													<?= $payroll_method['name']; ?>
 												</option>
 												<?php } else { ?>
@@ -453,40 +484,60 @@
 											<?= $entry_acc_no; ?>
 										</label>
 										<div class="col-sm-9">
-											<input type="text" name="acc_no" value="<?= $acc_no; ?>" placeholder="<?= $entry_acc_no; ?>"
-												id="input-acc-no" class="form-control" />
+											<input type="text" name="acc_no" value="<?= $acc_no; ?>"
+												placeholder="<?= $entry_acc_no; ?>" id="input-acc-no"
+												class="form-control" />
 										</div>
 									</div>
 									<div class="form-group">
 										<label class="col-sm-3 control-label"><span data-toggle="tooltip"
-											title="<?= $help_health_insurance; ?>">
-											<?= $entry_insurance; ?>
-										</span></label>
+												title="<?= $help_health_insurance; ?>">
+												<?= $entry_insurance; ?>
+											</span></label>
 										<div class="col-sm-9">
 											<div class="checkbox">
 												<label>
-													<input type="checkbox" name="health_insurance" value="1" 
-														id="input-health-insurance" <?=$health_insurance ? 'checked' : '' ?> /> <?= $entry_health_insurance; ?>
+													<input type="checkbox" name="health_insurance" value="1"
+														id="input-health-insurance" <?=$health_insurance ? 'checked'
+														: '' ?> />
+													<?= $entry_health_insurance; ?>
 												</label>
 											</div>
 											<div class="checkbox">
 												<label>
-													<input type="checkbox" name="life_insurance" value="1" 
-														id="input-life-insurance" <?=$life_insurance ? 'checked' : '' ?> /> <?= $entry_life_insurance; ?>
+													<input type="checkbox" name="life_insurance" value="1"
+														id="input-life-insurance" <?=$life_insurance ? 'checked' : '' ?>
+													/>
+													<?= $entry_life_insurance; ?>
 												</label>
 											</div>
 											<div class="checkbox">
 												<label>
-													<input type="checkbox" name="employment_insurance" value="1" 
-														id="input-employment-insurance" <?=$employment_insurance ? 'checked' : '' ?> /> <?= $entry_employment_insurance; ?>
+													<input type="checkbox" name="employment_insurance" value="1"
+														id="input-employment-insurance" <?=$employment_insurance
+														? 'checked' : '' ?> />
+													<?= $entry_employment_insurance; ?>
 												</label>
 											</div>
 											<div class="checkbox">
 												<label>
-													<input type="checkbox" name="pension_insurance" value="1" 
-														id="input-pension-insurance" <?=$pension_insurance ? 'checked' : '' ?> /> <?= $entry_pension_insurance; ?>
+													<input type="checkbox" name="pension_insurance" value="1"
+														id="input-pension-insurance" <?=$pension_insurance ? 'checked'
+														: '' ?> />
+													<?= $entry_pension_insurance; ?>
 												</label>
 											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label" for="input-registered-wage"><span
+												data-toggle="tooltip" title="<?= $help_registered_wage; ?>">
+												<?= $entry_registered_wage; ?>
+											</span></label>
+										<div class="col-sm-9">
+											<input type="text" name="registered_wage" value="<?= $registered_wage; ?>"
+												placeholder="<?= $help_registered_wage_default; ?>" id="input-registered-wage"
+												class="form-control currency" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -494,13 +545,15 @@
 											<?= $entry_health_insurance_id; ?>
 										</label>
 										<div class="col-sm-9">
-											<input type="text" name="health_insurance_id" value="<?= $health_insurance_id; ?>" placeholder="<?= $entry_health_insurance_id; ?>"
+											<input type="text" name="health_insurance_id"
+												value="<?= $health_insurance_id; ?>"
+												placeholder="<?= $entry_health_insurance_id; ?>"
 												id="input-health-insurance-id" class="form-control" />
-												<?php if ($error_health_insurance_id) { ?>
-													<div class="text-danger">
-														<?= $error_health_insurance_id; ?>
-													</div>
-												<?php } ?>
+											<?php if ($error_health_insurance_id) { ?>
+											<div class="text-danger">
+												<?= $error_health_insurance_id; ?>
+											</div>
+											<?php } ?>
 										</div>
 									</div>
 									<div class="form-group">
@@ -508,13 +561,15 @@
 											<?= $entry_employment_insurance_id; ?>
 										</label>
 										<div class="col-sm-9">
-											<input type="text" name="employment_insurance_id" value="<?= $employment_insurance_id; ?>" placeholder="<?= $entry_employment_insurance_id; ?>"
+											<input type="text" name="employment_insurance_id"
+												value="<?= $employment_insurance_id; ?>"
+												placeholder="<?= $entry_employment_insurance_id; ?>"
 												id="input-employment-insurance-id" class="form-control" />
-												<?php if ($error_employment_insurance_id) { ?>
-													<div class="text-danger">
-														<?= $error_employment_insurance_id; ?>
-													</div>
-												<?php } ?>
+											<?php if ($error_employment_insurance_id) { ?>
+											<div class="text-danger">
+												<?= $error_employment_insurance_id; ?>
+											</div>
+											<?php } ?>
 										</div>
 									</div>
 									<div class="form-group required">
@@ -522,8 +577,9 @@
 											<?= $entry_email; ?>
 										</label>
 										<div class="col-sm-9">
-											<input type="text" name="email" value="<?= $email; ?>" placeholder="<?= $entry_email; ?>"
-												id="input-email" class="form-control" />
+											<input type="text" name="email" value="<?= $email; ?>"
+												placeholder="<?= $entry_email; ?>" id="input-email"
+												class="form-control" />
 											<?php if ($error_email) { ?>
 											<div class="text-danger">
 												<?= $error_email; ?>
@@ -537,7 +593,8 @@
 										</label>
 										<div class="col-sm-9">
 											<input type="text" name="telephone" value="<?= $telephone; ?>"
-												placeholder="<?= $entry_telephone; ?>" id="input-telephone" class="form-control" />
+												placeholder="<?= $entry_telephone; ?>" id="input-telephone"
+												class="form-control" />
 											<?php if ($error_telephone) { ?>
 											<div class="text-danger">
 												<?= $error_telephone; ?>
@@ -556,13 +613,15 @@
 										</label>
 										<div class="col-sm-9">
 											<select name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
-												id="input-custom-field<?= $custom_field['custom_field_id']; ?>" class="form-control">
+												id="input-custom-field<?= $custom_field['custom_field_id']; ?>"
+												class="form-control">
 												<option value="">
 													<?= $text_select; ?>
 												</option>
 												<?php foreach ($custom_field['custom_field_value'] as $custom_field_value) { ?>
 												<?php if (isset($account_custom_field[$custom_field['custom_field_id']]) && $custom_field_value['custom_field_value_id'] == $account_custom_field[$custom_field['custom_field_id']]) { ?>
-												<option value="<?= $custom_field_value['custom_field_value_id']; ?>" selected="selected">
+												<option value="<?= $custom_field_value['custom_field_value_id']; ?>"
+													selected="selected">
 													<?= $custom_field_value['name']; ?>
 												</option>
 												<?php } else { ?>
@@ -592,13 +651,16 @@
 												<div class="radio">
 													<?php if (isset($account_custom_field[$custom_field['custom_field_id']]) && $custom_field_value['custom_field_value_id'] == $account_custom_field[$custom_field['custom_field_id']]) { ?>
 													<label>
-														<input type="radio" name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
-															value="<?= $custom_field_value['custom_field_value_id']; ?>" checked="checked" />
+														<input type="radio"
+															name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
+															value="<?= $custom_field_value['custom_field_value_id']; ?>"
+															checked="checked" />
 														<?= $custom_field_value['name']; ?>
 													</label>
 													<?php } else { ?>
 													<label>
-														<input type="radio" name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
+														<input type="radio"
+															name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
 															value="<?= $custom_field_value['custom_field_value_id']; ?>" />
 														<?= $custom_field_value['name']; ?>
 													</label>
@@ -626,13 +688,16 @@
 												<div class="checkbox">
 													<?php if (isset($account_custom_field[$custom_field['custom_field_id']]) && in_array($custom_field_value['custom_field_value_id'], $account_custom_field[$custom_field['custom_field_id']])) { ?>
 													<label>
-														<input type="checkbox" name="custom_field[<?= $custom_field['custom_field_id']; ?>][]"
-															value="<?= $custom_field_value['custom_field_value_id']; ?>" checked="checked" />
+														<input type="checkbox"
+															name="custom_field[<?= $custom_field['custom_field_id']; ?>][]"
+															value="<?= $custom_field_value['custom_field_value_id']; ?>"
+															checked="checked" />
 														<?= $custom_field_value['name']; ?>
 													</label>
 													<?php } else { ?>
 													<label>
-														<input type="checkbox" name="custom_field[<?= $custom_field['custom_field_id']; ?>][]"
+														<input type="checkbox"
+															name="custom_field[<?= $custom_field['custom_field_id']; ?>][]"
 															value="<?= $custom_field_value['custom_field_value_id']; ?>" />
 														<?= $custom_field_value['name']; ?>
 													</label>
@@ -656,10 +721,12 @@
 											<?= $custom_field['name']; ?>
 										</label>
 										<div class="col-sm-9">
-											<input type="text" name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
+											<input type="text"
+												name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
 												value="<?= (isset($account_custom_field[$custom_field['custom_field_id']]) ? $account_custom_field[$custom_field['custom_field_id']] : $custom_field['value']); ?>"
 												placeholder="<?= $custom_field['name']; ?>"
-												id="input-custom-field<?= $custom_field['custom_field_id']; ?>" class="form-control" />
+												id="input-custom-field<?= $custom_field['custom_field_id']; ?>"
+												class="form-control" />
 											<?php if (isset($error_custom_field[$custom_field['custom_field_id']])) { ?>
 											<div class="text-danger">
 												<?= $error_custom_field[$custom_field['custom_field_id']]; ?>
@@ -676,8 +743,8 @@
 											<?= $custom_field['name']; ?>
 										</label>
 										<div class="col-sm-9">
-											<textarea name="custom_field[<?= $custom_field['custom_field_id']; ?>]" rows="5"
-												placeholder="<?= $custom_field['name']; ?>"
+											<textarea name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
+												rows="5" placeholder="<?= $custom_field['name']; ?>"
 												id="input-custom-field<?= $custom_field['custom_field_id']; ?>"
 												class="form-control"><?= (isset($account_custom_field[$custom_field['custom_field_id']]) ? $account_custom_field[$custom_field['custom_field_id']] : $custom_field['value']); ?></textarea>
 											<?php if (isset($error_custom_field[$custom_field['custom_field_id']])) { ?>
@@ -695,11 +762,14 @@
 											<?= $custom_field['name']; ?>
 										</label>
 										<div class="col-sm-9">
-											<button type="button" id="button-custom-field<?= $custom_field['custom_field_id']; ?>"
-												data-loading-text="<?= $text_loading; ?>" class="btn btn-default"><i class="fa fa-upload"></i>
+											<button type="button"
+												id="button-custom-field<?= $custom_field['custom_field_id']; ?>"
+												data-loading-text="<?= $text_loading; ?>" class="btn btn-default"><i
+													class="fa fa-upload"></i>
 												<?= $button_upload; ?>
 											</button>
-											<input type="hidden" name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
+											<input type="hidden"
+												name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
 												value="<?= (isset($account_custom_field[$custom_field['custom_field_id']]) ? $account_custom_field[$custom_field['custom_field_id']] : ''); ?>"
 												id="input-custom-field<?= $custom_field['custom_field_id']; ?>" />
 											<?php if (isset($error_custom_field[$custom_field['custom_field_id']])) { ?>
@@ -719,12 +789,16 @@
 										</label>
 										<div class="col-sm-9">
 											<div class="input-group date">
-												<input type="text" name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
+												<input type="text"
+													name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
 													value="<?= (isset($account_custom_field[$custom_field['custom_field_id']]) ? $account_custom_field[$custom_field['custom_field_id']] : $custom_field['value']); ?>"
-													placeholder="<?= $custom_field['name']; ?>" data-date-format="YYYY-MM-DD"
-													id="input-custom-field<?= $custom_field['custom_field_id']; ?>" class="form-control" />
+													placeholder="<?= $custom_field['name']; ?>"
+													data-date-format="YYYY-MM-DD"
+													id="input-custom-field<?= $custom_field['custom_field_id']; ?>"
+													class="form-control" />
 												<span class="input-group-btn">
-													<button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+													<button type="button" class="btn btn-default"><i
+															class="fa fa-calendar"></i></button>
 												</span>
 											</div>
 											<?php if (isset($error_custom_field[$custom_field['custom_field_id']])) { ?>
@@ -744,12 +818,15 @@
 										</label>
 										<div class="col-sm-9">
 											<div class="input-group time">
-												<input type="text" name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
+												<input type="text"
+													name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
 													value="<?= (isset($account_custom_field[$custom_field['custom_field_id']]) ? $account_custom_field[$custom_field['custom_field_id']] : $custom_field['value']); ?>"
 													placeholder="<?= $custom_field['name']; ?>" data-date-format="HH:mm"
-													id="input-custom-field<?= $custom_field['custom_field_id']; ?>" class="form-control" />
+													id="input-custom-field<?= $custom_field['custom_field_id']; ?>"
+													class="form-control" />
 												<span class="input-group-btn">
-													<button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+													<button type="button" class="btn btn-default"><i
+															class="fa fa-calendar"></i></button>
 												</span>
 											</div>
 											<?php if (isset($error_custom_field[$custom_field['custom_field_id']])) { ?>
@@ -769,12 +846,16 @@
 										</label>
 										<div class="col-sm-9">
 											<div class="input-group datetime">
-												<input type="text" name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
+												<input type="text"
+													name="custom_field[<?= $custom_field['custom_field_id']; ?>]"
 													value="<?= (isset($account_custom_field[$custom_field['custom_field_id']]) ? $account_custom_field[$custom_field['custom_field_id']] : $custom_field['value']); ?>"
-													placeholder="<?= $custom_field['name']; ?>" data-date-format="YYYY-MM-DD HH:mm"
-													id="input-custom-field<?= $custom_field['custom_field_id']; ?>" class="form-control" />
+													placeholder="<?= $custom_field['name']; ?>"
+													data-date-format="YYYY-MM-DD HH:mm"
+													id="input-custom-field<?= $custom_field['custom_field_id']; ?>"
+													class="form-control" />
 												<span class="input-group-btn">
-													<button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+													<button type="button" class="btn btn-default"><i
+															class="fa fa-calendar"></i></button>
 												</span>
 											</div>
 											<?php if (isset($error_custom_field[$custom_field['custom_field_id']])) { ?>
@@ -793,8 +874,8 @@
 										</label>
 										<div class="col-sm-9">
 											<input type="password" name="password" value="<?= $password; ?>"
-												placeholder="<?= $entry_password; ?>" id="input-password" class="form-control"
-												autocomplete="off" />
+												placeholder="<?= $entry_password; ?>" id="input-password"
+												class="form-control" autocomplete="off" />
 											<?php if ($error_password) { ?>
 											<div class="text-danger">
 												<?= $error_password; ?>
@@ -808,8 +889,8 @@
 										</label>
 										<div class="col-sm-9">
 											<input type="password" name="confirm" value="<?= $confirm; ?>"
-												placeholder="<?= $entry_confirm; ?>" autocomplete="off" id="input-confirm"
-												class="form-control" />
+												placeholder="<?= $entry_confirm; ?>" autocomplete="off"
+												id="input-confirm" class="form-control" />
 											<?php if ($error_confirm) { ?>
 											<div class="text-danger">
 												<?= $error_confirm; ?>
@@ -829,7 +910,8 @@
 										</label>
 										<div class="col-sm-9">
 											<input type="text" name="address[<?= $address_row; ?>][address_1]"
-												value="<?= $address['address_1']; ?>" placeholder="<?= $entry_address_1; ?>"
+												value="<?= $address['address_1']; ?>"
+												placeholder="<?= $entry_address_1; ?>"
 												id="input-address-1<?= $address_row; ?>" class="form-control" />
 											<?php if (isset($error_address[$address_row]['address_1'])) { ?>
 											<div class="text-danger">
@@ -844,7 +926,8 @@
 										</label>
 										<div class="col-sm-9">
 											<input type="text" name="address[<?= $address_row; ?>][address_2]"
-												value="<?= $address['address_2']; ?>" placeholder="<?= $entry_address_2; ?>"
+												value="<?= $address['address_2']; ?>"
+												placeholder="<?= $entry_address_2; ?>"
 												id="input-address-2<?= $address_row; ?>" class="form-control" />
 										</div>
 									</div>
@@ -854,7 +937,8 @@
 										</label>
 										<div class="col-sm-9">
 											<input type="text" name="address[<?= $address_row; ?>][postcode]"
-												value="<?= $address['postcode']; ?>" placeholder="<?= $entry_postcode; ?>"
+												value="<?= $address['postcode']; ?>"
+												placeholder="<?= $entry_postcode; ?>"
 												id="input-postcode<?= $address_row; ?>" class="form-control" />
 											<?php if (isset($error_address[$address_row]['postcode'])) { ?>
 											<div class="text-danger">
@@ -868,7 +952,8 @@
 											<?= $entry_country; ?>
 										</label>
 										<div class="col-sm-9">
-											<select name="address[<?= $address_row; ?>][country_id]" id="input-country<?= $address_row; ?>"
+											<select name="address[<?= $address_row; ?>][country_id]"
+												id="input-country<?= $address_row; ?>"
 												onchange="country(this, '<?= $address_row; ?>', `<?= $address['zone_id']; ?>`, `<?= $address['city']; ?>`);"
 												class="form-control">
 												<option value="">
@@ -899,8 +984,10 @@
 											<?= $entry_zone; ?>
 										</label>
 										<div class="col-sm-9">
-											<select name="address[<?= $address_row; ?>][zone_id]" id="input-zone<?= $address_row; ?>"
-												onchange="zone(this, '<?= $address_row; ?>', `<?= $address['city']; ?>`);" class="form-control">
+											<select name="address[<?= $address_row; ?>][zone_id]"
+												id="input-zone<?= $address_row; ?>"
+												onchange="zone(this, '<?= $address_row; ?>', `<?= $address['city']; ?>`);"
+												class="form-control">
 											</select>
 											<?php if (isset($error_address[$address_row]['zone'])) { ?>
 											<div class="text-danger">
@@ -915,8 +1002,8 @@
 										</label>
 										<div class="col-sm-9">
 											<!-- Bonk -->
-											<select name="address[<?= $address_row; ?>][city]" id="input-city<?= $address_row; ?>"
-												class="form-control">
+											<select name="address[<?= $address_row; ?>][city]"
+												id="input-city<?= $address_row; ?>" class="form-control">
 											</select>
 											<?php if (isset($error_address[$address_row]['city'])) { ?>
 											<div class="text-danger">
@@ -944,7 +1031,8 @@
 												</option>
 												<?php foreach ($custom_field['custom_field_value'] as $custom_field_value) { ?>
 												<?php if (isset($address['custom_field'][$custom_field['custom_field_id']]) && $custom_field_value['custom_field_value_id'] == $address['custom_field'][$custom_field['custom_field_id']]) { ?>
-												<option value="<?= $custom_field_value['custom_field_value_id']; ?>" selected="selected">
+												<option value="<?= $custom_field_value['custom_field_value_id']; ?>"
+													selected="selected">
 													<?= $custom_field_value['name']; ?>
 												</option>
 												<?php } else { ?>
@@ -976,7 +1064,8 @@
 													<label>
 														<input type="radio"
 															name="address[<?= $address_row; ?>][custom_field][<?= $custom_field['custom_field_id']; ?>]"
-															value="<?= $custom_field_value['custom_field_value_id']; ?>" checked="checked" />
+															value="<?= $custom_field_value['custom_field_value_id']; ?>"
+															checked="checked" />
 														<?= $custom_field_value['name']; ?>
 													</label>
 													<?php } else { ?>
@@ -1012,7 +1101,8 @@
 													<label>
 														<input type="checkbox"
 															name="address[<?= $address_row; ?>][custom_field][<?= $custom_field['custom_field_id']; ?>][]"
-															value="<?= $custom_field_value['custom_field_value_id']; ?>" checked="checked" />
+															value="<?= $custom_field_value['custom_field_value_id']; ?>"
+															checked="checked" />
 														<?= $custom_field_value['name']; ?>
 													</label>
 													<?php } else { ?>
@@ -1086,7 +1176,8 @@
 										<div class="col-sm-9">
 											<button type="button"
 												id="button-address<?= $address_row; ?>-custom-field<?= $custom_field['custom_field_id']; ?>"
-												data-loading-text="<?= $text_loading; ?>" class="btn btn-default"><i class="fa fa-upload"></i>
+												data-loading-text="<?= $text_loading; ?>" class="btn btn-default"><i
+													class="fa fa-upload"></i>
 												<?= $button_upload; ?>
 											</button>
 											<input type="hidden"
@@ -1112,11 +1203,13 @@
 												<input type="text"
 													name="address[<?= $address_row; ?>][custom_field][<?= $custom_field['custom_field_id']; ?>]"
 													value="<?= (isset($address['custom_field'][$custom_field['custom_field_id']]) ? $address['custom_field'][$custom_field['custom_field_id']] : $custom_field['value']); ?>"
-													placeholder="<?= $custom_field['name']; ?>" data-date-format="YYYY-MM-DD"
+													placeholder="<?= $custom_field['name']; ?>"
+													data-date-format="YYYY-MM-DD"
 													id="input-address<?= $address_row; ?>-custom-field<?= $custom_field['custom_field_id']; ?>"
 													class="form-control" />
 												<span class="input-group-btn">
-													<button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+													<button type="button" class="btn btn-default"><i
+															class="fa fa-calendar"></i></button>
 												</span>
 											</div>
 											<?php if (isset($error_address[$address_row]['custom_field'][$custom_field['custom_field_id']])) { ?>
@@ -1143,7 +1236,8 @@
 													id="input-address<?= $address_row; ?>-custom-field<?= $custom_field['custom_field_id']; ?>"
 													class="form-control" />
 												<span class="input-group-btn">
-													<button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+													<button type="button" class="btn btn-default"><i
+															class="fa fa-calendar"></i></button>
 												</span>
 											</div>
 											<?php if (isset($error_address[$address_row]['custom_field'][$custom_field['custom_field_id']])) { ?>
@@ -1166,11 +1260,13 @@
 												<input type="text"
 													name="address[<?= $address_row; ?>][custom_field][<?= $custom_field['custom_field_id']; ?>]"
 													value="<?= (isset($address['custom_field'][$custom_field['custom_field_id']]) ? $address['custom_field'][$custom_field['custom_field_id']] : $custom_field['value']); ?>"
-													placeholder="<?= $custom_field['name']; ?>" data-date-format="YYYY-MM-DD HH:mm"
+													placeholder="<?= $custom_field['name']; ?>"
+													data-date-format="YYYY-MM-DD HH:mm"
 													id="input-address<?= $address_row; ?>-custom-field<?= $custom_field['custom_field_id']; ?>"
 													class="form-control" />
 												<span class="input-group-btn">
-													<button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+													<button type="button" class="btn btn-default"><i
+															class="fa fa-calendar"></i></button>
 												</span>
 											</div>
 											<?php if (isset($error_address[$address_row]['custom_field'][$custom_field['custom_field_id']])) { ?>
@@ -1190,10 +1286,12 @@
 										<div class="col-sm-9">
 											<label class="radio">
 												<?php if (($address['address_id'] == $id_card_address_id) || !$addresses) { ?>
-												<input type="radio" name="address[<?= $address_row; ?>][id_card_address]"
+												<input type="radio"
+													name="address[<?= $address_row; ?>][id_card_address]"
 													value="<?= $address_row; ?>" checked="checked" />
 												<?php } else { ?>
-												<input type="radio" name="address[<?= $address_row; ?>][id_card_address]"
+												<input type="radio"
+													name="address[<?= $address_row; ?>][id_card_address]"
 													value="<?= $address_row; ?>" />
 												<?php } ?>
 											</label>
@@ -1206,8 +1304,8 @@
 										<div class="col-sm-9">
 											<label class="radio">
 												<?php if (($address['address_id'] == $address_id) || !$addresses) { ?>
-												<input type="radio" name="address[<?= $address_row; ?>][default]" value="<?= $address_row; ?>"
-													checked="checked" />
+												<input type="radio" name="address[<?= $address_row; ?>][default]"
+													value="<?= $address_row; ?>" checked="checked" />
 												<?php } else { ?>
 												<input type="radio" name="address[<?= $address_row; ?>][default]"
 													value="<?= $address_row; ?>" />
@@ -1652,24 +1750,24 @@
 			$('#button-reactivate').remove();
 		});
 
-		$('#input-pension-insurance').on('click', function () {
-			if (this.checked == true) {
-				$('#input-employment-insurance').prop('checked', true);
-				$('#input-life-insurance').prop('checked', true);
-			}
-		});
-		$('#input-employment-insurance').on('click', function () {
-			if (this.checked == true) {
-				$('#input-life-insurance').prop('checked', true);
-			} else {
-				$('#input-pension-insurance').prop('checked', false);
-			}
-		});
-		$('#input-life-insurance').on('click', function () {
-			if (this.checked == false) {
-				$('#input-employment-insurance').prop('checked', false);
-				$('#input-pension-insurance').prop('checked', false);
-			}
-		});
+	$('#input-pension-insurance').on('click', function () {
+		if (this.checked == true) {
+			$('#input-employment-insurance').prop('checked', true);
+			$('#input-life-insurance').prop('checked', true);
+		}
+	});
+	$('#input-employment-insurance').on('click', function () {
+		if (this.checked == true) {
+			$('#input-life-insurance').prop('checked', true);
+		} else {
+			$('#input-pension-insurance').prop('checked', false);
+		}
+	});
+	$('#input-life-insurance').on('click', function () {
+		if (this.checked == false) {
+			$('#input-employment-insurance').prop('checked', false);
+			$('#input-pension-insurance').prop('checked', false);
+		}
+	});
 </script>
 <?= $footer; ?>

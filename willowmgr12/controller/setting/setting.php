@@ -65,6 +65,7 @@ class ControllerSettingSetting extends Controller {
 			'entry_country',
 			'entry_currency_auto',
 			'entry_currency',
+			'entry_customer_last',
 			'entry_customer_online',
 			'entry_email',
 			'entry_encryption',
@@ -127,6 +128,7 @@ class ControllerSettingSetting extends Controller {
 			'help_compression',
 			'help_currency_auto',
 			'help_currency',
+			'help_customer_last',
 			'help_customer_online',
 			'help_encryption',
 			'help_file_ext_allowed',
@@ -524,6 +526,12 @@ class ControllerSettingSetting extends Controller {
 			$data['config_nip_prefix'] = $this->request->post['config_nip_prefix'];
 		} else {
 			$data['config_nip_prefix'] = $this->config->get('config_nip_prefix');
+		}
+
+		if (isset($this->request->post['config_customer_last'])) {
+			$data['config_customer_last'] = $this->request->post['config_customer_last'];
+		} else {
+			$data['config_customer_last'] = $this->config->get('config_customer_last');
 		}
 
 		$components = [

@@ -699,7 +699,8 @@ class ControllerCustomerCustomer extends Controller {
 	}
 
 	protected function getForm() {
-		$this->model_customer_customer->createView();
+		$this->db->createView('v_customer');
+		// $this->model_customer_customer->createView();
 
 		$data['text_form'] = !isset($this->request->get['customer_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
 
@@ -751,6 +752,7 @@ class ControllerCustomerCustomer extends Controller {
 			'entry_payroll_method',
 			'entry_pension_insurance',
 			'entry_postcode',
+			'entry_registered_wage',
 			'entry_skip_trial_status',
 			'entry_status',
 			'entry_telephone',
@@ -760,6 +762,7 @@ class ControllerCustomerCustomer extends Controller {
 			'help_health_insurance',
 			'help_employment_insurance',
 			'help_npwp_address',
+			'help_registered_wage',
 			'button_save',
 			'button_cancel',
 			'button_address_add',
@@ -917,6 +920,7 @@ class ControllerCustomerCustomer extends Controller {
 			'life_insurance'			=> true,
 			'employment_insurance'		=> false,
 			'pension_insurance'			=> false,
+			'registered_wage'			=> null,
 			'health_insurance_id'		=> null,
 			'employment_insurance_id'	=> null,
 			'status'					=> true,
@@ -1083,7 +1087,9 @@ class ControllerCustomerCustomer extends Controller {
 				$data['date_end_locked'] = true;
 			}
 		}
-			
+		
+		$data['help_registered_wage_default'] = sprintf($this->language->get('help_registered_wage_default'), $this->language->get('text_' . $this->config->get('insurance_calculation_base')));
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');

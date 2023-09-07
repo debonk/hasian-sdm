@@ -1,10 +1,10 @@
 <?php
 // Heading
-$_['heading_title']				 = 'Potongan';
+$_['heading_title']				 = 'Potongan Lain';
 
 // Text
 $_['text_select_customer']	 	 = '-- Pilih Karyawan --';
-$_['text_list']					 = 'Daftar Potongan';
+$_['text_list']					 = 'Daftar Potongan Lain';
 $_['text_add']					 = 'Data Potongan Baru';
 $_['text_edit']					 = 'Ubah Potongan';
 $_['text_paid']	 				 = 'Telah Dibayar';
@@ -25,12 +25,12 @@ $_['column_payment']			= 'Pembayaran';
 
 // Entry
 $_['entry_name']				= 'Nama Karyawan';
-$_['entry_date']				= 'Tanggal Nota';
+$_['entry_date']				= 'Tanggal';
 $_['entry_inv_no']      		= 'Deskripsi';
 $_['entry_principle']     		= 'Principle';
 $_['entry_business_name']		= 'Nama Toko';
 $_['entry_amount']				= 'Jumlah';
-$_['entry_status']				= 'Status Nota';
+$_['entry_status']				= 'Status';
 
 // Error
 $_['error_warning']				 = 'Warning: Please check the form carefully for errors!';

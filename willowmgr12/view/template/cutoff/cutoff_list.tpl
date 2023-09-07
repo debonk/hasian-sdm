@@ -72,8 +72,8 @@
                 <tr>
                   <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
 				  <td class="text-left"><?php echo $column_date; ?></td>
-				  <td class="text-left"><?php echo $column_inv_no; ?></td>
 				  <td class="text-left"><?php echo $column_name; ?></td>
+				  <td class="text-left"><?php echo $column_inv_no; ?></td>
 				  <td class="text-left"><?php echo $column_principle; ?></td>
 				  <td class="text-left"><?php echo $column_business_name; ?></td>
 				  <td class="text-right"><?php echo $column_amount; ?></td>
@@ -92,8 +92,8 @@
                         <input type="checkbox" name="selected[]" value="<?php echo $cutoff['cutoff_id']; ?>" />
                         <?php } ?></td>
                       <td class="text-left"><?php echo $cutoff['date']; ?></td>
-                      <td class="text-left"><?php echo $cutoff['inv_no']; ?></td>
                       <td class="text-left"><?php echo $cutoff['name']; ?></td>
+                      <td class="text-left"><?php echo $cutoff['inv_no']; ?></td>
 				      <td class="text-left"><?php echo $cutoff['principle']; ?></td>
 				      <td class="text-left"><?php echo $cutoff['business_name']; ?></td>
 				      <td class="text-right nowrap"><?php echo $cutoff['amount']; ?></td>

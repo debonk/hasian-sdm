@@ -31,6 +31,7 @@
 <?php foreach ($scripts as $script) { ?>
 <script type="text/javascript" src="<?php echo $script; ?>"></script>
 <?php } ?>
+<script type="text/javascript" src="view/javascript/number-format.js"></script>
 </head>
 <body>
 <div id="container">

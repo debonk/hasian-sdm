@@ -4,6 +4,13 @@
 MODUL: APP > Account: Login by location (Trial & Progress)
 MODUL: Customer > Presence Method
 
+2.6.1	07/09/2023
+Component > Incentive, Cutoff: Replace to Additions and Deductions
+Setting, Free Transfer, Allowance: Customer availability in selection, last for x months
+Insurance, Customer: Registered Wage untuk gaji yang terdaftar di BPJS
+Global: Currency Format
+DB: Create View terpusat.
+
 2.6.0	30/08/2023
 Report > Payroll Insurance: Add filters
 Bug Fixed: Customer tanpa jabatan atau posisi tidak muncul dalam View

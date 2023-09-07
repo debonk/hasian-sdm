@@ -37,8 +37,8 @@ $_['text_all_division']				= 'Semua Divisi';
 
 $_['text_insurance']       		 = 'BPJS';
 $_['text_loan']    		   		 = 'Pinjaman';
-$_['text_incentive']    		 = 'Insentif';
-$_['text_cutoff']    		   	 = 'Potongan Nota';
+$_['text_incentive']    		 = 'Pendapatan Lain';
+$_['text_cutoff']    		   	 = 'Potongan Lain';
 $_['text_overtime']				 = 'Lembur';
 $_['text_dayoff']				 = 'DRM';
 

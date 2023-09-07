@@ -18,6 +18,9 @@ $_['text_default']			= 'Default';
 $_['text_now']				= 'Sekarang';
 $_['text_active']			= 'Masih Bekerja';
 $_['text_inactive']			= 'Berhenti Bekerja';
+$_['text_wage_min']        	= 'Upah Minimum';
+$_['text_wage_real']        = 'Upah Karyawan';
+$_['text_wage_both']        = 'Upah Karyawan dengan Upah Minimum';
 
 // Column
 $_['column_image']					= 'Image';
@@ -69,6 +72,7 @@ $_['entry_life_insurance']			= 'BPJS Ketenagakerjaan (JKK & JKM)';
 $_['entry_employment_insurance']	= 'BPJS Ketenagakerjaan (JHT)';
 $_['entry_employment_insurance_id']	= 'No. BPJS Ketenagakerjaan';
 $_['entry_pension_insurance']		= 'BPJS Ketenagakerjaan (JP)';
+$_['entry_registered_wage']			= 'Gaji Terdaftar';
 $_['entry_status']					= 'Status';
 $_['entry_password']				= 'Password';
 $_['entry_confirm']					= 'Confirm';
@@ -88,6 +92,8 @@ $_['help_lastname']					= 'Sesuai KTP';
 $_['help_skip_trial_status']		= 'Centang untuk menentukan karyawan tidak perlu masa percobaan lagi. Hanya diisi sekali saat pendaftaran atau reaktivasi karyawan.';
 $_['help_health_insurance']			= 'BPJS TK - Non JHT berlaku sejak PKWT I, BPJS Kesehatan mulai berlaku setelah memasuki PKWT II, dan BPJS TK - JHT saat memasuki PKWT III';
 $_['help_employment_insurance']		= 'BPJS Ketenagakerjaan NON JHT berlaku sejak masuk dan JHT saat memasuki PKWT III (24 bulan masa kerja)';
+$_['help_registered_wage']			= 'Gaji yang terdaftar pada website BPJS. Kosongkan jika menggunakan nilai default.';
+$_['help_registered_wage_default']	= 'Default: %s.';
 $_['help_npwp_address']				= 'Harus diisi jika telah memiliki NPWP';
 
 // Error

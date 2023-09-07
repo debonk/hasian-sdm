@@ -285,7 +285,11 @@ class ModelReleaseAllowance extends Model
 		$this->load->model('common/payroll');
 		$period_info = $this->model_common_payroll->getPeriodByDate($allowance_info['allowance_period']);
 
-		$sql = "SELECT c.customer_id, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN (" . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "allowance_customer ac ON (ac.customer_id = c.customer_id AND ac.allowance_id = '" . (int)$allowance_id . "') WHERE c.status = 1 AND c.payroll_include = 1 AND c.date_start <= '" . $period_info['date_end'] . "' AND (date_end IS NULL OR date_end = '0000-00-00' OR date_end > '" . $period_info['date_start'] . "') AND ac.allowance_id IS NULL";
+		$availability = (int)$this->config->get('config_customer_last');
+
+		$date_end = date($this->language->get('Y-m-d'), strtotime('-' . $availability . ' months', strtotime($period_info['date_start']))); // Customer still available in selection until this month of custoemr's date_end.
+
+		$sql = "SELECT c.customer_id, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN (" . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "allowance_customer ac ON (ac.customer_id = c.customer_id AND ac.allowance_id = '" . (int)$allowance_id . "') WHERE c.status = 1 AND c.payroll_include = 1 AND c.date_start <= '" . $this->db->escape($period_info['date_end']) . "' AND (date_end IS NULL OR date_end = '0000-00-00' OR date_end >= '" . $this->db->escape($date_end) . "') AND ac.allowance_id IS NULL";
 
 		$query = $this->db->query($sql);
 		

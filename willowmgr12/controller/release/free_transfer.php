@@ -409,8 +409,17 @@ class ControllerReleaseFreeTransfer extends Controller {
 		$data['customers'] = array();
 
 		if (!$this->model_release_free_transfer->checkFreeTransferProcessed($free_transfer_id)) {
+			$availability = (int)$this->config->get('config_customer_last');
+
+			$filter_date_end = date($this->language->get('Y-m-d'), strtotime('-' . $availability . ' months')); // Customer still available in selection until this month of custoemr's date_end.
+						
 			$this->load->model('customer/customer');
-			$customers = $this->model_customer_customer->getCustomers();
+			
+			$filter_data = array(
+				'filter_date_end'	=> $filter_date_end
+			);
+
+			$customers = $this->model_customer_customer->getCustomers($filter_data);
 		} else {
 			$customers = $this->model_release_free_transfer->getFreeTransferCustomers($free_transfer_id);
 		}

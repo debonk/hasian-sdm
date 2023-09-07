@@ -41,7 +41,11 @@ class ModelCustomerCustomer extends Model
 
 		$customer_id = $this->db->getLastId();
 
-		$this->db->query("INSERT INTO " . DB_PREFIX . "customer_add_data SET customer_id = '" . (int)$customer_id . "', gender_id = '" . (int)$data['gender_id'] . "', marriage_status_id = '" . (int)$data['marriage_status_id'] . "', children = '" . (int)$data['children'] . "', npwp = '" . $this->db->escape($data['npwp']) . "', npwp_address = '" . $this->db->escape($data['npwp_address']) . "'");
+		$registered_wage = (float)getNumber($data['registered_wage']);
+
+		$registered_wage = !empty($registered_wage) ? $registered_wage : 'NULL';
+
+		$this->db->query("INSERT INTO " . DB_PREFIX . "customer_add_data SET customer_id = '" . (int)$customer_id . "', gender_id = '" . (int)$data['gender_id'] . "', marriage_status_id = '" . (int)$data['marriage_status_id'] . "', children = '" . (int)$data['children'] . "', npwp = '" . $this->db->escape($data['npwp']) . "', npwp_address = '" . $this->db->escape($data['npwp_address']) . "', registered_wage = " . $registered_wage);
 
 		if (isset($data['address'])) {
 			foreach ($data['address'] as $address) {
@@ -129,7 +133,11 @@ class ModelCustomerCustomer extends Model
 			$this->db->query("UPDATE " . DB_PREFIX . "customer SET salt = '" . $this->db->escape($salt = token(9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "' WHERE customer_id = '" . (int)$customer_id . "'");
 		}
 
-		$this->db->query("UPDATE " . DB_PREFIX . "customer_add_data SET gender_id = '" . (int)$data['gender_id'] . "', marriage_status_id = '" . (int)$data['marriage_status_id'] . "', children = '" . (int)$data['children'] . "', npwp = '" . $this->db->escape($data['npwp']) . "', npwp_address = '" . $this->db->escape($data['npwp_address']) . "' WHERE customer_id = '" . (int)$customer_id . "'");
+		$registered_wage = (float)getNumber($data['registered_wage']);
+
+		$registered_wage = !empty($registered_wage) ? $registered_wage : 'NULL';
+
+		$this->db->query("UPDATE " . DB_PREFIX . "customer_add_data SET gender_id = '" . (int)$data['gender_id'] . "', marriage_status_id = '" . (int)$data['marriage_status_id'] . "', children = '" . (int)$data['children'] . "', npwp = '" . $this->db->escape($data['npwp']) . "', npwp_address = '" . $this->db->escape($data['npwp_address']) . "', registered_wage = " . $registered_wage . " WHERE customer_id = '" . (int)$customer_id . "'");
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "address WHERE customer_id = '" . (int)$customer_id . "'");
 
@@ -190,9 +198,11 @@ class ModelCustomerCustomer extends Model
 
 	public function getCustomers($data = array())
 	{
-		$this->createView();
-		
-		$sql = "SELECT * FROM " . DB_PREFIX . "v_customer";
+		// $this->createView();
+
+		$this->db->createView('v_customer');
+
+		$sql = "SELECT * FROM " . DB_PREFIX . "v_customer WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 		// $sql = "SELECT c.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cdd.name AS customer_department, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (c.customer_department_id = cdd.customer_department_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
 
 		$implode = array();
@@ -230,13 +240,21 @@ class ModelCustomerCustomer extends Model
 				$implode[] = "(date_end <> '0000-00-00' AND date_end <= CURDATE())";
 			}
 		} else {
-			$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end > CURDATE())";
+			if (!empty($data['filter_date_end'])) {
+				// $date_end = date($this->language->get('Y-m-d'), strtotime('-2 months', strtotime('2023-09-05')));
+
+				$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end >= '" . $this->db->escape($data['filter_date_end']) . "')";
+			} else {
+				$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end >= CURDATE())";
+			}
 		}
 
 		if ($implode) {
-			$sql .= " WHERE " . implode(" AND ", $implode);
+			$sql .= " AND " . implode(" AND ", $implode);
 		}
-
+		// print_r($sql);
+		// die('---breakpoint---');
+		
 		$sort_data = array(
 			'nip',
 			'name',
@@ -355,9 +373,10 @@ class ModelCustomerCustomer extends Model
 
 	public function getTotalCustomers($data = array())
 	{
-		$this->createView();
-		
-		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "v_customer";
+		// $this->createView();
+		$this->db->createView('v_customer');
+
+		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "v_customer WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 
 		$implode = array();
 
@@ -398,7 +417,7 @@ class ModelCustomerCustomer extends Model
 		}
 
 		if ($implode) {
-			$sql .= " WHERE " . implode(" AND ", $implode);
+			$sql .= " AND " . implode(" AND ", $implode);
 		}
 
 		$query = $this->db->query($sql);
@@ -490,12 +509,13 @@ class ModelCustomerCustomer extends Model
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "customer_login` WHERE `email` = '" . $this->db->escape($email) . "'");
 	}
 
-	public function createView($view_name = 'v_customer')
-	{
-		$view_name = DB_PREFIX . $view_name;
-		
-		$sql = "SELECT c.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cdd.name AS customer_department, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (c.customer_department_id = cdd.customer_department_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id AND cdd.language_id = cgd.language_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' OR cgd.language_id IS NULL";
+	// public function createView($view_name = 'v_customer')
+	// {
+	// 	$view_name = DB_PREFIX . $view_name;
 
-		return $this->db->createView($view_name, $sql);
-	}
+	// 	$sql = "SELECT c.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cdd.name AS customer_department, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (c.customer_department_id = cdd.customer_department_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id AND cdd.language_id = cgd.language_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' OR cgd.language_id IS NULL";
+
+	// 	return $this->db->createView($view_name, $sql);
+	// 	// return $this->db->createView($view_name, $sql, 1);
+	// }
 }

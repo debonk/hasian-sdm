@@ -668,9 +668,9 @@ class ControllerReleaseAllowance extends Controller
 
 		$data['cancel'] = $this->url->link('release/allowance/edit', 'token=' . $this->session->data['token'] . '&allowance_id=' . $this->request->get['allowance_id'] . $url, true);
 
-		if (isset($this->request->get['allowance_id'])) {
-			$allowance_info = $this->model_release_allowance->getAllowance($this->request->get['allowance_id']);
-		}
+		// if (isset($this->request->get['allowance_id'])) {
+		// 	$allowance_info = $this->model_release_allowance->getAllowance($this->request->get['allowance_id']);
+		// }
 
 		$allowance_customer_items = array(
 			'customer_id',

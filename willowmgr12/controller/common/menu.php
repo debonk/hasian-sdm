@@ -23,9 +23,9 @@ class ControllerCommonMenu extends Controller
 				'option'		=> ['localisation/location', 'customer/customer_department', 'customer/customer_group', 'localisation/gender', 'localisation/marriage_status', 'localisation/payroll_method', 'customer/custom_field', 'customer/document_type', 'localisation/finger_device'],
 			],
 			'component'		=> [
-				'loan/loan',
-				'cutoff/cutoff',
 				'incentive/incentive',
+				'cutoff/cutoff',
+				'loan/loan',
 				'overtime/overtime',
 				'option'		=> ['overtime/overtime_type'],
 			],
