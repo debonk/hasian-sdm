@@ -612,13 +612,13 @@ class ControllerCustomerCustomer extends Controller {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 
-		$data['sort_nip'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=c.nip' . $url, true);
+		$data['sort_nip'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=nip' . $url, true);
 		$data['sort_name'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=name' . $url, true);
 		$data['sort_customer_department'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=customer_department' . $url, true);
 		$data['sort_customer_group'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
 		$data['sort_location'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
-		$data['sort_date_start'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=c.date_start' . $url, true);
-		$data['sort_date_end'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=c.date_end' . $url, true);
+		$data['sort_date_start'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=date_start' . $url, true);
+		$data['sort_date_end'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=date_end' . $url, true);
 
 		$url = '';
 
@@ -1383,10 +1383,11 @@ class ControllerCustomerCustomer extends Controller {
 			$this->load->model('customer/customer');
 
 			$filter_data = array(
-				'filter_name'  => $filter_name,
-				'filter_email' => $filter_email,
-				'start'        => 0,
-				'limit'        => 5
+				'filter_name'	=> $filter_name,
+				'filter_email'	=> $filter_email,
+				'filter_active'	=> '*',
+				'start'       	=> 0,
+				'limit'        	=> 15
 			);
 
 			$results = $this->model_customer_customer->getCustomers($filter_data);
@@ -1394,18 +1395,18 @@ class ControllerCustomerCustomer extends Controller {
 			foreach ($results as $result) {
 				$json[] = array(
 					'customer_id'       		=> $result['customer_id'],
-					'customer_department_id'	=> $result['customer_department_id'],
-					'customer_group_id' 		=> $result['customer_group_id'],
+					// 'customer_department_id'	=> $result['customer_department_id'],
+					// 'customer_group_id' 		=> $result['customer_group_id'],
 					'name'              		=> strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8')),
-					'customer_department'    	=> $result['customer_department'],
-					'customer_group'    		=> $result['customer_group'],
-					'nip'          				=> $result['nip'],
-					'firstname'         		=> $result['firstname'],
-					'lastname'          		=> $result['lastname'],
+					// 'customer_department'    	=> $result['customer_department'],
+					// 'customer_group'    		=> $result['customer_group'],
+					// 'nip'          				=> $result['nip'],
+					// 'firstname'         		=> $result['firstname'],
+					// 'lastname'          		=> $result['lastname'],
 					'email'             		=> $result['email'],
-					'telephone'         		=> $result['telephone'],
-					'custom_field'      		=> json_decode($result['custom_field'], true),
-					'address'           		=> $this->model_customer_customer->getAddresses($result['customer_id'])
+					// 'telephone'         		=> $result['telephone'],
+					// 'custom_field'      		=> json_decode($result['custom_field'], true),
+					// 'address'           		=> $this->model_customer_customer->getAddresses($result['customer_id'])
 				);
 			}
 		}

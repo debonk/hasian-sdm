@@ -277,8 +277,7 @@ class ControllerPresencePresencePeriod extends Controller {
 		} elseif (!empty($presence_period_info)) {
 			$data['date_start'] = $presence_period_info['date_start'];
 		} else {
-//			$data['date_start'] = $presence_period_last['date_end'];
-			$data['date_start'] = date('Y-m-d', strtotime("+1 day",strtotime($presence_period_last['date_end'])));
+			$data['date_start'] = !empty($presence_period_last) ? date('Y-m-d', strtotime("+1 day",strtotime($presence_period_last['date_end']))) : '';
 		}
 
 		if (isset($this->request->post['date_end'])) {

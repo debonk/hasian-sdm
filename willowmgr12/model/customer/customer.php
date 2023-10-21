@@ -252,8 +252,6 @@ class ModelCustomerCustomer extends Model
 		if ($implode) {
 			$sql .= " AND " . implode(" AND ", $implode);
 		}
-		// print_r($sql);
-		// die('---breakpoint---');
 		
 		$sort_data = array(
 			'nip',
@@ -413,7 +411,13 @@ class ModelCustomerCustomer extends Model
 				$implode[] = "(date_end <> '0000-00-00' AND date_end <= CURDATE())";
 			}
 		} else {
-			$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end > CURDATE())";
+			if (!empty($data['filter_date_end'])) {
+				// $date_end = date($this->language->get('Y-m-d'), strtotime('-2 months', strtotime('2023-09-05')));
+
+				$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end >= '" . $this->db->escape($data['filter_date_end']) . "')";
+			} else {
+				$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end >= CURDATE())";
+			}
 		}
 
 		if ($implode) {

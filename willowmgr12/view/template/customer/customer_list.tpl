@@ -225,7 +225,7 @@
 										<?= $column_image; ?>
 									</td>
 									<td class="text-left">
-										<?php if ($sort == 'c.nip') { ?>
+										<?php if ($sort == 'nip') { ?>
 										<a href="<?= $sort_nip; ?>" class="<?= strtolower($order); ?>">
 											<?= $column_nip; ?>
 										</a>
@@ -280,7 +280,7 @@
 										<?php } ?>
 									</td>
 									<td class="text-left">
-										<?php if ($sort == 'c.date_start') { ?>
+										<?php if ($sort == 'date_start') { ?>
 										<a href="<?= $sort_date_start; ?>" class="<?= strtolower($order); ?>">
 											<?= $column_date_start; ?>
 										</a>
@@ -291,7 +291,7 @@
 										<?php } ?>
 									</td>
 									<td class="text-left">
-										<?php if ($sort == 'c.date_end') { ?>
+										<?php if ($sort == 'date_end') { ?>
 										<a href="<?= $sort_date_end; ?>" class="<?= strtolower($order); ?>">
 											<?= $column_date_end; ?>
 										</a>

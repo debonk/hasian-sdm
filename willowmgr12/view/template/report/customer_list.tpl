@@ -115,7 +115,7 @@
             <table class="table table-bordered table-hover">
               <thead>
                 <tr>
-                  <td class="text-left"><?php if ($sort == 'c.nip') { ?>
+                  <td class="text-left"><?php if ($sort == 'nip') { ?>
                     <a href="<?php echo $sort_nip; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_nip; ?></a>
                     <?php } else { ?>
                     <a href="<?php echo $sort_nip; ?>"><?php echo $column_nip; ?></a>
@@ -135,12 +135,12 @@
                     <?php } else { ?>
                     <a href="<?php echo $sort_location; ?>"><?php echo $column_location; ?></a>
                     <?php } ?></td>
-                  <td class="text-left"><?php if ($sort == 'c.date_start') { ?>
+                  <td class="text-left"><?php if ($sort == 'date_start') { ?>
                     <a href="<?php echo $sort_date_start; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_date_start; ?></a>
                     <?php } else { ?>
                     <a href="<?php echo $sort_date_start; ?>"><?php echo $column_date_start; ?></a>
                     <?php } ?></td>
-                  <td class="text-left"><?php if ($sort == 'c.email') { ?>
+                  <td class="text-left"><?php if ($sort == 'email') { ?>
                     <a href="<?php echo $sort_email; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_email; ?></a>
                     <?php } else { ?>
                     <a href="<?php echo $sort_email; ?>"><?php echo $column_email; ?></a>

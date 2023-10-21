@@ -337,7 +337,7 @@ class ControllerLocalisationFingerDevice extends Controller {
 				$this->error['sn'] = $this->language->get('error_sn_exist');
 			}
 		} else {
-			if ($device_info && ($this->request->get['finger_device_id'] != $customer_by_nik_info['finger_device_id'])) {
+			if ($device_info && ($this->request->get['finger_device_id'] != $device_info['finger_device_id'])) {
 				$this->error['sn'] = $this->language->get('error_sn_exist');
 			}
 		}

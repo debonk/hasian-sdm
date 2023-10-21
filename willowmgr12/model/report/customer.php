@@ -7,39 +7,41 @@ class ModelReportCustomer extends Model {
 	}
 
 	public function getCustomers($data = array()) { //Used by: dashboard/recent
-		$sql = "SELECT c.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+		$this->db->createView('v_customer');
+
+		$sql = "SELECT * FROM " . DB_PREFIX . "v_customer WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 
 		$implode = array();
 
 		if (!empty($data['filter_name'])) {
-			$implode[] = "CONCAT(c.firstname, ' [', c.lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+			$implode[] = "name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
 		}
 
 		if (!empty($data['filter_email'])) {
-			$implode[] = "c.email LIKE '%" . $this->db->escape($data['filter_email']) . "%'";
+			$implode[] = "email LIKE '%" . $this->db->escape($data['filter_email']) . "%'";
 		}
 
 		if (!empty($data['filter_customer_group_id'])) {
-			$implode[] = "c.customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+			$implode[] = "customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
 		}
 
 		if (!empty($data['filter_location_id'])) {
-			$implode[] = "c.location_id = '" . (int)$data['filter_location_id'] . "'";
+			$implode[] = "location_id = '" . (int)$data['filter_location_id'] . "'";
 		}
 
 		if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
-			$implode[] = "c.status = '" . (int)$data['filter_status'] . "'";
+			$implode[] = "status = '" . (int)$data['filter_status'] . "'";
 		}
 
 		if (!empty($data['filter_date_start'])) {
-			$implode[] = "DATE_FORMAT(c.date_start,'%b %y') = '" . $this->db->escape($data['filter_date_start']) . "'";
+			$implode[] = "DATE_FORMAT(date_start,'%b %y') = '" . $this->db->escape($data['filter_date_start']) . "'";
 		}
 
 		if (isset($data['filter_active'])) {
 			if ($data['filter_active']) {
-				$implode[] = "(c.date_end IS NULL OR c.date_end > NOW())";
+				$implode[] = "(date_end IS NULL OR date_end > NOW())";
 			} else {
-				$implode[] = "(c.date_end IS NOT NULL AND c.date_end <= NOW())";
+				$implode[] = "(date_end IS NOT NULL AND date_end <= NOW())";
 			}
 		}
 
@@ -48,12 +50,12 @@ class ModelReportCustomer extends Model {
 		}
 
 		$sort_data = array(
-			'c.nip',
+			'nip',
 			'name',
 			'customer_group',
 			'location',
-			'c.email',
-			'c.date_start'
+			'email',
+			'date_start'
 		);
 
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
@@ -160,12 +162,12 @@ class ModelReportCustomer extends Model {
 	}
 
 	public function getTotalCustomers($data = array()) {
-		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer";
+		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "v_customer WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 
 		$implode = array();
 
 		if (!empty($data['filter_name'])) {
-			$implode[] = "CONCAT(firstname, ' [', lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+			$implode[] = "name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
 		}
 
 		if (!empty($data['filter_email'])) {

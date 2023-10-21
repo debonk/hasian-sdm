@@ -27,32 +27,32 @@ class ModelPresencePresence extends Model {
 	}
 
 	public function getCustomers($data = array()) { //Used by: dashboard/customer, payroll, report payroll insurance, payroll_basic, schedule
-		$sql = "SELECT c.customer_id, c.nip, c.firstname, c.lastname, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.image, c.date_added, c.customer_group_id, cgd.name AS customer_group, c.location_id, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN (" . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND status = 1";
+		$sql = "SELECT customer_id, nip, firstname, lastname, name, image, date_added, customer_group_id, customer_group, location_id, location FROM " . DB_PREFIX . "v_customer WHERE language_id = '" . (int)$this->config->get('config_language_id') . "' AND status = 1";
 
 		$implode = array();
 
 		if (!empty($data['filter_name'])) {
-			$implode[] = "CONCAT(c.firstname, ' [', c.lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+			$implode[] = "name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
 		}
 
 		if (!empty($data['filter_customer_group_id'])) {
-			$implode[] = "c.customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+			$implode[] = "customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
 		}
 
 		if (!empty($data['filter_location_id'])) {
-			$implode[] = "c.location_id = '" . (int)$data['filter_location_id'] . "'";
+			$implode[] = "location_id = '" . (int)$data['filter_location_id'] . "'";
 		}
 
 		if (isset($data['presence_period_id'])) {
 			$period_info = $this->getPeriod($data['presence_period_id']);
-			$implode[] = "c.date_start <= '" . $this->db->escape($period_info['date_end']) . "'";
-			$implode[] = "(c.date_end IS NULL OR c.date_end = '0000-00-00' OR c.date_end >= '" . $this->db->escape($period_info['date_start']) . "')";
+			$implode[] = "date_start <= '" . $this->db->escape($period_info['date_end']) . "'";
+			$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end >= '" . $this->db->escape($period_info['date_start']) . "')";
 		} elseif (isset($data['filter_status']) && !is_null($data['filter_status'])) {
 			if (!empty($data['filter_status'])) {
-				$implode[] = "(c.date_end <> '0000-00-00' AND c.date_end <= CURDATE())";
+				$implode[] = "(date_end <> '0000-00-00' AND date_end <= CURDATE())";
 			}
 		} else {
-			$implode[] = "(c.date_end IS NULL OR c.date_end = '0000-00-00' OR c.date_end >= CURDATE())";
+			$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end >= CURDATE())";
 		}
 
 		if ($implode) {
@@ -62,6 +62,7 @@ class ModelPresencePresence extends Model {
 		$sort_data = array(
 			'nip',
 			'name',
+			'lastname',
 			'customer_group',
 			'location',
 			'date_added'
@@ -90,7 +91,7 @@ class ModelPresencePresence extends Model {
 
 			$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
 		}
-
+				
 		$query = $this->db->query($sql);
 
 		return $query->rows;

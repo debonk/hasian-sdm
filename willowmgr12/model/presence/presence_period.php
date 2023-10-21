@@ -5,6 +5,10 @@ class ModelPresencePresencePeriod extends Model {
 			$data['period'] = $data['date_end'];
 		}
 		
+		if (!$data['date_start']) {
+			$data['date_start'] = date('Y-m-d', strtotime("-1 month +1 day",strtotime($data['date_end'])));
+		}
+				
 		$pending_status = $this->config->get('payroll_setting_pending_status_id');
 		$this->db->query("INSERT INTO " . DB_PREFIX . "presence_period SET period = '" . $this->db->escape($data['period']) . "',date_start = '" . $this->db->escape($data['date_start']) . "',date_end = '" . $this->db->escape($data['date_end']) . "',payroll_status_id = '" . (int)$pending_status . "'");
 

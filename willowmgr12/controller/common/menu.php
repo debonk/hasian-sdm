@@ -47,7 +47,7 @@ class ControllerCommonMenu extends Controller
 			'report'		=> [
 				'customer'		=> ['report/customer', 'report/customer_loan', 'report/customer_history'],
 				'payroll'		=> ['report/payroll', 'report/payroll_insurance', 'report/payroll_tax'],
-				'user'		=> ['report/user_activity']
+				'user'		=> ['report/user_activity', 'report/user_online']
 			],
 			'information'	=> ['module/information', 'catalog/download'],
 			'extension'		=> ['extension/installer', 'extension/modification', 'extension/component', 'extension/module', 'design/layout', 'extension/theme'],

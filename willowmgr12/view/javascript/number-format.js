@@ -4,7 +4,7 @@ $(document).ready(function () {
 		let element = this;
 
 		if ($(element).val()) {
-			$(element).val(getNumber($(element).val()).toLocaleString());
+			$(element).val(getNumber($(element).val()).toLocaleString('en-GB'));
 		}
 	});
 

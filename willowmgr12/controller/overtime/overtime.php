@@ -471,12 +471,16 @@ class ControllerOvertimeOvertime extends Controller
 		$this->load->model('presence/presence');
 		$this->load->model('common/payroll');
 
-		$period_info = $this->model_common_payroll->getPeriodByDate(date('Y-m-d', strtotime('-1 month')));
-
 		$filter_data = array(
-			'presence_period_id'			=> $period_info['presence_period_id'],
 			'filter_customer_department_id' => $this->user->getCustomerDepartmentId()
 		);
+
+		$availability = (int)$this->config->get('config_customer_last');
+		$period_info = $this->model_common_payroll->getPeriodByDate(date('Y-m-d', strtotime('-' . $availability . ' months')));
+
+		if ($period_info) {
+			$filter_data['presence_period_id'] = $period_info['presence_period_id'];
+		}
 
 		$results = $this->model_presence_presence->getCustomers($filter_data);
 

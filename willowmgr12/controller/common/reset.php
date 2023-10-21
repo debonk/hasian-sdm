@@ -30,14 +30,14 @@ class ControllerCommonReset extends Controller {
 				$this->model_user_user->editPassword($user_info['user_id'], $this->request->post['password']);
 
 				# Add to activity log
-				$this->load->model('user/activity');
+				$this->load->model('tool/activity');
 
 				$activity_data = array(
 					'user_id' => $user_info['user_id'],
 					'name'    => $user_info['username']
 				);
 	
-				$this->model_user_activity->addActivity('reset', $activity_data);
+				$this->model_tool_activity->addActivity('reset', $activity_data);
 
 				$this->session->data['success'] = $this->language->get('text_success');
 

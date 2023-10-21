@@ -53,14 +53,14 @@ class ControllerCommonForgotten extends Controller {
 			$user_info = $this->model_user_user->getUserByCode($code);
 
 			if ($user_info) {
-				$this->load->model('user/activity');
+				$this->load->model('tool/activity');
 
 				$activity_data = array(
 					'user_id' => $user_info['user_id'],
 					'name'    => $user_info['username']
 				);
 	
-				$this->model_user_activity->addActivity('forgotten', $activity_data);
+				$this->model_tool_activity->addActivity('forgotten', $activity_data);
 			}
 
 			$this->response->redirect($this->url->link('common/login', '', true));

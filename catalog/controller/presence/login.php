@@ -19,6 +19,8 @@ class ControllerPresenceLogin extends Controller
 
 	protected function getList()
 	{
+		$this->db->createView('v_customer');
+
 		if (isset($this->request->get['action']) && $this->request->get['action'] == 'logout') {
 			$action = 'logout';
 			$data['text_list'] = $this->language->get('text_logout');
@@ -72,14 +74,21 @@ class ControllerPresenceLogin extends Controller
 
 			$data['customers'] = array();
 
+			$data['presence_card'] = $this->config->get('payroll_setting_presence_card');
+
+			if ($data['presence_card'] == 'lastname') {
+				$sort = 'lastname';
+			} else {
+				$sort = 'name';
+			}
+
 			$filter_data = array(
-				'filter_location_id'       => $location_id
+				'filter_location_id'	=> $location_id,
+				'sort'       			=> $sort
 			);
 
 			$results = $this->model_presence_presence->getCustomers($filter_data);
-
-			$data['presence_card'] = $this->config->get('payroll_setting_presence_card');
-
+			
 			$this->load->model('tool/image');
 
 			foreach ($results as $result) {

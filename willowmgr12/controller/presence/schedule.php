@@ -1158,9 +1158,11 @@ class ControllerPresenceSchedule extends Controller
 
 				$schedule_type_data = [];
 
+				unset($filter_data['filter_name']);
+
 				foreach ($customer_groups as $customer_group) {
 					$filter_data['filter_customer_group_id'] = $customer_group;
-
+					
 					$schedule_types = $this->model_presence_schedule_type->getScheduleTypes($filter_data);
 
 					foreach ($schedule_types as $schedule_type) {

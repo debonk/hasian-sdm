@@ -83,12 +83,12 @@ class ModelPresencePresence extends Model {
 	}
 
 	public function getTotalCustomers($data = array()) { //Used by: dashboard/customer, report payroll insurance, payroll basic, schedule
-		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer WHERE status = '1'";
+		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "v_customer WHERE status = '1'";
 
 		$implode = array();
 
 		if (!empty($data['filter_name'])) {
-			$implode[] = "CONCAT(firstname, ' [', lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+			$implode[] = "name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
 		}
 
 		if (!empty($data['filter_customer_department_id'])) {
@@ -98,7 +98,7 @@ class ModelPresencePresence extends Model {
 		if (!empty($data['filter_customer_group_id'])) {
 			$implode[] = "customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
 		}
-
+		
 		if (!empty($data['filter_location_id'])) {
 			$implode[] = "location_id = '" . (int)$data['filter_location_id'] . "'";
 		}

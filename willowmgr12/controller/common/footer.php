@@ -11,6 +11,29 @@ class ControllerCommonFooter extends Controller {
 			$data['text_version'] = '';
 		}
 		
+		// Whos Online
+		$this->load->model('tool/activity');
+
+		if (isset($this->request->server['REMOTE_ADDR'])) {
+			$ip = $this->request->server['REMOTE_ADDR'];
+		} else {
+			$ip = '';
+		}
+
+		if (isset($this->request->server['HTTP_HOST']) && isset($this->request->server['REQUEST_URI'])) {
+			$url = 'http://' . $this->request->server['HTTP_HOST'] . $this->request->server['REQUEST_URI'];
+		} else {
+			$url = '';
+		}
+
+		if (isset($this->request->server['HTTP_REFERER'])) {
+			$referer = $this->request->server['HTTP_REFERER'];
+		} else {
+			$referer = '';
+		}
+
+		$this->model_tool_activity->addOnline($ip, $this->user->getId(), $url, $referer);
+
 		return $this->load->view('common/footer', $data);
 	}
 }

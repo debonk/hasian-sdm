@@ -1,10 +1,18 @@
 <?php
 class ModelLocalisationFingerDevice extends Model {
 	public function addFingerDevice($data) {
+		$data['vc'] = str_replace('-','',$data['vc']);
+		$data['ac'] = str_replace('-','',$data['ac']);
+		$data['vkey'] = str_replace('-','',$data['vkey']);
+
 		$this->db->query("INSERT INTO " . DB_PREFIX . "finger_device SET device_name = '" . $this->db->escape($data['device_name']) . "', sn = '" . $this->db->escape($data['sn']) . "', vc = '" . $this->db->escape($data['vc']) . "', ac = '" . $this->db->escape($data['ac']) . "', vkey = '" . $this->db->escape($data['vkey']) . "'");
 	}
 
 	public function editFingerDevice($finger_device_id, $data) {
+		$data['vc'] = str_replace('-','',$data['vc']);
+		$data['ac'] = str_replace('-','',$data['ac']);
+		$data['vkey'] = str_replace('-','',$data['vkey']);
+
 		$this->db->query("UPDATE " . DB_PREFIX . "finger_device SET device_name = '" . $this->db->escape($data['device_name']) . "', sn = '" . $this->db->escape($data['sn']) . "', vc = '" . $this->db->escape($data['vc']) . "', ac = '" . $this->db->escape($data['ac']) . "', vkey = '" . $this->db->escape($data['vkey']) . "' WHERE finger_device_id = '" . (int)$finger_device_id . "'");
 	}
 

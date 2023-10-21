@@ -4,6 +4,17 @@
 MODUL: APP > Account: Login by location (Trial & Progress)
 MODUL: Customer > Presence Method
 
+2.7.0	21/10/2023
+Modul: User Online
+App > Presence > Login: Correct sort for card when using lastname
+Incentive, Cut Off, Overtime: Customer List termasuk karyawan yang sudah berhenti sesuai pengaturan pada Setting
+Customer, Document, Finger Register: Autocomplete pada filter termasuk karyawan yang sudah berhenti
+Bug Fixed: Customer: Bbrp sort tidak berfungsi tepat
+Bug Fixed: Presence Period: Default date_start untuk input data pertama kali
+Bug Fixed: Schedule > Import: Schedule Type not list if employee is filtered by name
+Bug Fixed: Finger Device: Error SN used
+Bug Fixed: Release: Filter name not work
+
 2.6.1	07/09/2023
 Component > Incentive, Cutoff: Replace to Additions and Deductions
 Setting, Free Transfer, Allowance: Customer availability in selection, last for x months

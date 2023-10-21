@@ -58,35 +58,35 @@ class ControllerCustomerFinger extends Controller {
 			$page = 1;
 		}
 
-		$url = '';
+		// $url = '';
 
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
+		// if (isset($this->request->get['filter_name'])) {
+		// 	$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
+		// }
 
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
+		// if (isset($this->request->get['filter_customer_group_id'])) {
+		// 	$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
+		// }
 
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
+		// if (isset($this->request->get['filter_location_id'])) {
+		// 	$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
+		// }
 
-		if (isset($this->request->get['filter_status'])) {
-			$url .= '&filter_status=' . $this->request->get['filter_status'];
-		}
+		// if (isset($this->request->get['filter_status'])) {
+		// 	$url .= '&filter_status=' . $this->request->get['filter_status'];
+		// }
 
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
+		// if (isset($this->request->get['sort'])) {
+		// 	$url .= '&sort=' . $this->request->get['sort'];
+		// }
 
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
+		// if (isset($this->request->get['order'])) {
+		// 	$url .= '&order=' . $this->request->get['order'];
+		// }
 
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
+		// if (isset($this->request->get['page'])) {
+		// 	$url .= '&page=' . $this->request->get['page'];
+		// }
 
 		$data['breadcrumbs'] = array();
 
@@ -97,7 +97,7 @@ class ControllerCustomerFinger extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('customer/finger', 'token=' . $this->session->data['token'] . $url, true)
+			'href' => $this->url->link('customer/finger', 'token=' . $this->session->data['token'], true)
 		);
 
 		$filter_data = array(
@@ -454,16 +454,17 @@ class ControllerCustomerFinger extends Controller {
 				$filter_name = '';
 			}
 
-			$this->load->model('presence/presence');
+			$this->load->model('customer/customer');
 
 			$filter_data = array(
-				'filter_name'  => $filter_name,
-				'start'        => 0,
-				'limit'        => 5
+				'filter_name'	=> $filter_name,
+				'filter_active'	=> '*',
+				'start'       	=> 0,
+				'limit'        	=> 15
 			);
 
-			$results = $this->model_presence_presence->getCustomers($filter_data);
-
+			$results = $this->model_customer_customer->getCustomers($filter_data);
+			
 			foreach ($results as $result) {
 				$json[] = array(
 					'customer_id'       => $result['customer_id'],

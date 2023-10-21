@@ -258,12 +258,12 @@ class ControllerReportCustomer extends Controller {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 
-		$data['sort_nip'] = $this->url->link('report/customer', 'token=' . $this->session->data['token'] . '&sort=c.nip' . $url, true);
+		$data['sort_nip'] = $this->url->link('report/customer', 'token=' . $this->session->data['token'] . '&sort=nip' . $url, true);
 		$data['sort_name'] = $this->url->link('report/customer', 'token=' . $this->session->data['token'] . '&sort=name' . $url, true);
 		$data['sort_customer_group'] = $this->url->link('report/customer', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
 		$data['sort_location'] = $this->url->link('report/customer', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
-		$data['sort_email'] = $this->url->link('report/customer', 'token=' . $this->session->data['token'] . '&sort=c.email' . $url, true);
-		$data['sort_date_start'] = $this->url->link('report/customer', 'token=' . $this->session->data['token'] . '&sort=c.date_start' . $url, true);
+		$data['sort_email'] = $this->url->link('report/customer', 'token=' . $this->session->data['token'] . '&sort=email' . $url, true);
+		$data['sort_date_start'] = $this->url->link('report/customer', 'token=' . $this->session->data['token'] . '&sort=date_start' . $url, true);
 
 		$url = '';
 
@@ -577,16 +577,16 @@ class ControllerReportCustomer extends Controller {
 			foreach ($results as $result) {
 				$json[] = array(
 					'customer_id'       => $result['customer_id'],
-					'customer_group_id' => $result['customer_group_id'],
+					// 'customer_group_id' => $result['customer_group_id'],
 					'name'              => strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8')),
-					'customer_group'    => $result['customer_group'],
-					'nip'          		=> $result['nip'],
-					'firstname'         => $result['firstname'],
-					'lastname'          => $result['lastname'],
+					// 'customer_group'    => $result['customer_group'],
+					// 'nip'          		=> $result['nip'],
+					// 'firstname'         => $result['firstname'],
+					// 'lastname'          => $result['lastname'],
 					'email'             => $result['email'],
-					'telephone'         => $result['telephone'],
-					'custom_field'      => json_decode($result['custom_field'], true),
-					'address'           => $this->model_report_customer->getAddresses($result['customer_id'])
+					// 'telephone'         => $result['telephone'],
+					// 'custom_field'      => json_decode($result['custom_field'], true),
+					// 'address'           => $this->model_report_customer->getAddresses($result['customer_id'])
 				);
 			}
 		}

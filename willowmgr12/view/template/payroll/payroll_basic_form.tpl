@@ -102,7 +102,7 @@ $('input[id^=\'input\']').blur(function() {
 	var node = this;
 
 	if ($(node).val()) {
-		var value = parseInt($(node).val()).toLocaleString();
+		var value = parseInt($(node).val()).toLocaleString('en-GB');
 	}
 	
 	$(node).val(value);
@@ -117,7 +117,7 @@ $('input[id^=\'input\']').keyup(function() {
 	var total_uang_makan = parseInt($('input[name=\'uang_makan\']').val().replace(/(?!-)[^0-9.]/g, "")) * 25;
 	var gaji_dasar = gaji_pokok + tunj_jabatan + tunj_hadir + tunj_pph + total_uang_makan;
 
-	$('input[name=\'gaji_dasar\']').val(gaji_dasar.toLocaleString());
+	$('input[name=\'gaji_dasar\']').val(gaji_dasar.toLocaleString('en-GB'));
 });
  //--></script>
 </div>

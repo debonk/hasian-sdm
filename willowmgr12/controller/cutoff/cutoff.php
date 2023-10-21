@@ -338,9 +338,17 @@ class ControllerCutoffCutoff extends Controller {
 		$this->load->model('presence/presence');
 		$this->load->model('common/payroll');
 
-		$period_info = $this->model_common_payroll->getPeriodByDate(date('Y-m-d', strtotime('-2 weeks')));
+		$availability = (int)$this->config->get('config_customer_last');
 
-		$results = $this->model_presence_presence->getCustomers(['presence_period_id' => $period_info['presence_period_id']]);
+		$period_info = $this->model_common_payroll->getPeriodByDate(date('Y-m-d', strtotime('-' . $availability . ' months')));
+
+		$filter_data = [];
+
+		if ($period_info) {
+			$filter_data['presence_period_id'] = $period_info['presence_period_id'];
+		}
+
+		$results = $this->model_presence_presence->getCustomers($filter_data);
 			
 		foreach ($results as $result) {
 			$data['customers'][] = array(

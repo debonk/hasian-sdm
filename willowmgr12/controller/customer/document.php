@@ -111,7 +111,7 @@ class ControllerCustomerDocument extends Controller
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('customer/document', 'token=' . $this->session->data['token'] . $url, true)
+			'href' => $this->url->link('customer/document', 'token=' . $this->session->data['token'], true)
 		);
 
 		$filter_data = array(
@@ -621,15 +621,16 @@ class ControllerCustomerDocument extends Controller
 				$filter_name = '';
 			}
 
-			$this->load->model('presence/presence');
+			$this->load->model('customer/customer');
 
 			$filter_data = array(
-				'filter_name'  => $filter_name,
-				'start'        => 0,
-				'limit'        => 5
+				'filter_name'	=> $filter_name,
+				'filter_active'	=> '*',
+				'start'       	=> 0,
+				'limit'        	=> 15
 			);
 
-			$results = $this->model_presence_presence->getCustomers($filter_data);
+			$results = $this->model_customer_customer->getCustomers($filter_data);
 
 			foreach ($results as $result) {
 				$json[] = array(
