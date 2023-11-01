@@ -76,7 +76,9 @@ class ModelPresencePresence extends Model {
 
 			$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
 		}
-
+		// print_r($sql);
+		// die(' ---breakpoint--- ');
+		
 		$query = $this->db->query($sql);
 
 		return $query->rows;
@@ -128,6 +130,13 @@ class ModelPresencePresence extends Model {
 		$query = $this->db->query($sql);
 
 		return $query->row['total'];
+	}
+
+	public function getCustomerAddData($customer_id)
+	{
+		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "customer_add_data WHERE customer_id = '" . (int)$customer_id . "'");
+
+		return $query->row;
 	}
 
 	public function addPresence($presence_period_id, $customer_id, $date, $presence_status_id) {//Used by schedule

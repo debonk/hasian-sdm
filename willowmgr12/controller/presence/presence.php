@@ -872,18 +872,17 @@ class ControllerPresencePresence extends Controller {
 		$json = array();
 
 		if (isset($this->request->get['filter_name'])) {
-			if (isset($this->request->get['filter_name'])) {
-				$filter_name = $this->request->get['filter_name'];
-			} else {
-				$filter_name = '';
-			}
+			$filter_name = $this->request->get['filter_name'];
+
+			$presence_period_id = isset($this->request->get['presence_period_id']) ? $this->request->get['presence_period_id'] : 0;
 
 			$this->load->model('presence/presence');
 
 			$filter_data = array(
-				'filter_name'  => $filter_name,
-				'start'        => 0,
-				'limit'        => 15
+				'presence_period_id'	=> $presence_period_id,
+				'filter_name' 			=> $filter_name,
+				'start'       			=> 0,
+				'limit'       			=> 15
 			);
 
 			$results = $this->model_presence_presence->getCustomers($filter_data);

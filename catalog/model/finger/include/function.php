@@ -1,6 +1,8 @@
 <?php
 	function getFinger($conn, $customer_id) {
-		$sql 	= "SELECT * FROM oc_customer_finger WHERE customer_id = '" . (int)$customer_id . "'";
+		list($customer_id, $finger_index) = explode('x', $customer_id);
+
+		$sql 	= "SELECT * FROM oc_customer_finger WHERE customer_id = '" . (int)$customer_id . "' AND finger_index = '" . (int)$finger_index . "'";
 		$result	= mysqli_query($conn, $sql);
 		$arr 	= array();
 		$i	= 0;
@@ -74,6 +76,8 @@
 		// 	$datetime = date('Y-m-d H:i:s', strtotime($date_info));
 		// }
 		
+		$customer_id = explode('x', $customer_id)[0];
+
 		if ($action == 'login') {
 			$sql = "UPDATE oc_presence_log SET time_login = NOW() WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $schedule_date . "'";
 		} elseif ($action == 'logout') {

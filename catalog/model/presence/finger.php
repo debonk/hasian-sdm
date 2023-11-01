@@ -8,18 +8,6 @@ class ModelPresenceFinger extends Model {
 	// 	return $query->row;
 	// }
 
-	// function getFingersCount($customer_id) {
-	// 	$sql = "SELECT COUNT(finger_id) as total FROM " . DB_PREFIX . "customer_finger WHERE customer_id = '" . (int)$customer_id . "'";
-		
-	// 	$query = $this->db->query($sql);
-	
-	// 	return $query->row['total'];
-	// }
-	
-	// public function deleteFingerByCustomerId($customer_id) {
-	// 	$this->db->query("DELETE FROM " . DB_PREFIX . "customer_finger WHERE customer_id = '" . (int)$customer_id . "'");
-	// }
-
 	public function getFingers($data = array())
 	{
 		$this->createView();

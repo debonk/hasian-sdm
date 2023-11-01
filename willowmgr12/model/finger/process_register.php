@@ -11,6 +11,10 @@ if (isset($_POST['RegTemp']) && !empty($_POST['RegTemp']) && isset($_GET['user_i
 
 	// $token = $_GET['token']; //apply token verification later
 	
+	// $msg = $_POST['RegTemp'];
+	// echo HTTP_SERVER . 'model/finger/' . "messages.php?msg=$msg";
+	// die(' ---breakpoint--- ');
+	
 	$data 			= explode(";", $_POST['RegTemp']);
 	$vStamp 		= $data[0];
 	$sn 			= $data[1];

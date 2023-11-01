@@ -21,6 +21,30 @@ class ControllerPresenceLogin extends Controller
 	{
 		$this->db->createView('v_customer');
 
+		$language_items = array(
+			'heading_title',
+			'text_select',
+			'text_loading',
+			'text_no_results',
+			'text_left',
+			'text_right',
+			'text_index_old',
+			'text_thumbs',
+			'text_index',
+			'text_middle',
+			'text_ring',
+			'text_pinkie',
+			'entry_name',
+			'entry_search',
+			'button_clear',
+			'button_login',
+			'button_logout',
+			'error_verification'
+		);
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
+
 		if (isset($this->request->get['action']) && $this->request->get['action'] == 'logout') {
 			$action = 'logout';
 			$data['text_list'] = $this->language->get('text_logout');
@@ -75,6 +99,7 @@ class ControllerPresenceLogin extends Controller
 			$data['customers'] = array();
 
 			$data['presence_card'] = $this->config->get('payroll_setting_presence_card');
+			// $data['presence_card'] = 'image';
 
 			if ($data['presence_card'] == 'lastname') {
 				$sort = 'lastname';
@@ -88,7 +113,14 @@ class ControllerPresenceLogin extends Controller
 			);
 
 			$results = $this->model_presence_presence->getCustomers($filter_data);
-			
+
+			$finger_indexes = $this->model_presence_presence->getFingerIndexes();
+
+			$hands = [
+				'1'	=> $data['text_left'],
+				'2'	=> $data['text_right']
+			];
+
 			$this->load->model('tool/image');
 
 			foreach ($results as $result) {
@@ -113,6 +145,38 @@ class ControllerPresenceLogin extends Controller
 					$longname = $result['lastname'];
 				}
 
+				$scan_active = [];
+
+				if (!empty($result['active_finger'])) {
+					$active_fingers = $result['active_finger'] ? json_decode($result['active_finger'], true) : [];
+				} else {
+					$active_fingers = [
+						'1'	=> $result['customer_id'] . 'x0'
+					];
+				}
+
+				foreach ($active_fingers as $active_finger) {
+					if ($active_finger) {
+						$i = str_split(str_replace($result['customer_id'] . 'x', '', $active_finger));
+
+						if (!isset($i[1])) {
+							$scan_active[] = [
+								'index'	=> $active_finger,
+								'text'	=> $data['text_index_old']
+							];
+						} else {
+							$scan_active[] = [
+								'index'	=> $active_finger,
+								'text'	=> $data['text_' . $finger_indexes[$i[1]]] . ' ' . $hands[$i[0]]
+							];
+						}
+					}
+				}
+
+				if (!isset($scan_active[1])) {
+					$scan_active[1] = $scan_active[0];
+				}
+
 				$log_info = $this->model_presence_presence->getLog($result['customer_id'], $schedule_date);
 
 				if ($log_info) {
@@ -132,23 +196,10 @@ class ControllerPresenceLogin extends Controller
 					'name' 			=> $name,
 					'longname' 		=> $longname,
 					'image' 		=> $image,
+					'scan_active' 	=> $scan_active,
 					'log_class'		=> $log_class
 				);
 			}
-		}
-
-		$language_items = array(
-			'heading_title',
-			'text_select',
-			'text_loading',
-			'text_no_results',
-			'entry_name',
-			'button_login',
-			'button_logout',
-			'error_verification'
-		);
-		foreach ($language_items as $language_item) {
-			$data[$language_item] = $this->language->get($language_item);
 		}
 
 		$url = '';
@@ -181,11 +232,7 @@ class ControllerPresenceLogin extends Controller
 
 	public function verification()
 	{
-		if (isset($this->request->get['customer_id'])) {
-			$customer_id = $this->request->get['customer_id'];
-		} else {
-			$customer_id = 0;
-		}
+		$finger_index = isset($this->request->get['finger_index']) ? $this->request->get['finger_index'] : 0;
 
 		if (isset($this->request->get['action']) && $this->request->get['action'] == 'logout') {
 			$schedule_date = date('Y-m-d', strtotime($this->config->get('payroll_setting_logout_date') . ' hours')); //penentuan tgl jadwal
@@ -207,9 +254,9 @@ class ControllerPresenceLogin extends Controller
 		$verification_path	= HTTP_SERVER . 'catalog/model/finger/verification.php';
 		// $verification_path	= $server . 'catalog/model/finger/verification.php';
 
-		$url_verification	= base64_encode($verification_path . '?customer_id=' . $customer_id . '&schedule_date=' . $schedule_date . '&action=' . $action);
+		$url_verification	= base64_encode($verification_path . '?customer_id=' . $finger_index . '&schedule_date=' . $schedule_date . '&action=' . $action);
 		$verification = 'finspot:FingerspotVer;' . $url_verification;
-		// $url_verification = ($verification_path . '?customer_id=' . $customer_id . '&schedule_date=' . $schedule_date . '&action=' . $action);
+		// $url_verification = ($verification_path . '?customer_id=' . $finger_index . '&schedule_date=' . $schedule_date . '&action=' . $action);
 		// $verification = $url_verification;
 
 		$this->response->redirect($verification);
@@ -221,11 +268,7 @@ class ControllerPresenceLogin extends Controller
 
 		$json = array();
 
-		if (isset($this->request->post['customer_id'])) {
-			$customer_id = $this->request->post['customer_id'];
-		} else {
-			$customer_id = 0;
-		}
+		$finger_index = isset($this->request->post['finger_index']) ? $this->request->post['finger_index'] : 0;
 
 		if (isset($this->request->post['action']) && $this->request->post['action'] == 'logout') {
 			$schedule_date = date('Y-m-d', strtotime($this->config->get('payroll_setting_logout_date') . ' hours'));
@@ -242,6 +285,8 @@ class ControllerPresenceLogin extends Controller
 
 		switch ($json) {
 			case false:
+				list($customer_id, $finger_index) = explode('x', $finger_index);
+
 				$customer_info = $this->model_presence_presence->getCustomer($customer_id);
 
 				if (!$customer_info) { //Cek apakah karyawan msh aktif
@@ -250,10 +295,9 @@ class ControllerPresenceLogin extends Controller
 					break;
 				}
 
-
 				$use_fingerprint = $this->config->get('payroll_setting_use_fingerprint');
 
-				$finger_count = $this->model_presence_presence->getFingersCount($customer_id);
+				$finger_count = $this->model_presence_presence->getFingersCount($customer_id, $finger_index);
 
 				if ($use_fingerprint && !$finger_count) { //Cek apakah sudah rekam sidik jari
 					$json['error'] = $this->language->get('error_finger_not_found');
@@ -279,8 +323,10 @@ class ControllerPresenceLogin extends Controller
 						$time_out = date('Y-m-d H:i:s', strtotime('+1 day', strtotime($time_out)));
 					}
 				} else {
-					$time_in = '0000-00-00 00:00:00';
-					$time_out = '0000-00-00 00:00:00';
+					$time_in = '';
+					$time_out = '';
+					// $time_in = '0000-00-00 00:00:00';
+					// $time_out = '0000-00-00 00:00:00';
 				}
 
 				$log_info = $this->model_presence_presence->getLog($customer_id, $schedule_date);
@@ -348,6 +394,8 @@ class ControllerPresenceLogin extends Controller
 
 				$json['process_verification'] = 1;
 
+				break;
+
 			default:
 		}
 
@@ -361,11 +409,7 @@ class ControllerPresenceLogin extends Controller
 
 		$json = array();
 
-		if (isset($this->request->get['customer_id'])) {
-			$customer_id = $this->request->get['customer_id'];
-		} else {
-			$customer_id = 0;
-		}
+		$customer_id = isset($this->request->get['customer_id']) ? $this->request->get['customer_id'] : 0;
 
 		if (isset($this->request->get['action']) && $this->request->get['action'] == 'logout') {
 			$schedule_date = date('Y-m-d', strtotime($this->config->get('payroll_setting_logout_date') . ' hours'));
@@ -386,6 +430,28 @@ class ControllerPresenceLogin extends Controller
 				$json['success'] = sprintf($this->language->get('text_success_login'), date('j M Y H:i:s', strtotime($log_info['time_login'])));
 			} elseif ($action == 'logout' && $log_info['time_logout'] != '0000-00-00 00:00:00') {
 				$json['success'] = sprintf($this->language->get('text_success_logout'), date('j M Y H:i:s', strtotime($log_info['time_logout'])));
+			}
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
+	public function deleteScheduleTime()
+	{
+		$json = [];
+
+		$customer_id = isset($this->request->get['customer_id']) ? $this->request->get['customer_id'] : 0;
+
+		if (!isset($this->request->get['action']) || $this->request->get['action'] == 'login') {
+			$login_start = $this->config->get('payroll_setting_login_start');
+			$schedule_date = date('Y-m-d', strtotime('+' . $login_start . ' minutes'));
+
+			$this->load->model('presence/presence');
+			$log_info = $this->model_presence_presence->getLog($customer_id, $schedule_date);
+
+			if ($log_info && $log_info['time_login'] == '0000-00-00 00:00:00') {
+				$this->model_presence_presence->deleteScheduleTime($customer_id, $schedule_date);
 			}
 		}
 

@@ -73,6 +73,6 @@ $_['text_tools']					   = 'Tools';
 $_['text_upload']					   = 'Uploads';
 $_['text_user']						   = 'Users';
 $_['text_user_activity']			   = 'Users Activities';
-$_['text_user_online']				   = 'Users Activities';
+$_['text_user_online']				   = 'Users Online';
 $_['text_user_permission']			   = 'User Groups';
 $_['text_zone']						   = 'Region/Cities';

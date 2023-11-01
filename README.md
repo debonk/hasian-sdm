@@ -4,6 +4,11 @@
 MODUL: APP > Account: Login by location (Trial & Progress)
 MODUL: Customer > Presence Method
 
+2.7.1	01/11/2023
+Customer Finger: Add Search Feature
+Customer Finger: Add multiple finger for scan
+Bug Fixed: Schedule, Presence, Payroll, Release: Autocomplete pada filter termasuk karyawan yang sudah berhenti pada periode tersebut
+
 2.7.0	21/10/2023
 Modul: User Online
 App > Presence > Login: Correct sort for card when using lastname

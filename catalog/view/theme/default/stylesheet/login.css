@@ -1,3 +1,7 @@
+#content {
+	min-height: 600px;
+}
+
 /* Tiles */
 .tile {
 	margin-bottom: 15px;
@@ -6,6 +10,15 @@
 	transition: all 0.7s;
 	border-style: solid;
 	border-width: 1px;
+	display: flex;
+}
+
+.tile-main {
+	flex-basis: 90%;
+}
+
+.tile-alt {
+	flex-basis: 10%;
 }
 
 .tile-active {
@@ -59,8 +72,8 @@
 
 .form-control {
   display: block;
-  padding: 13px 15px;
-  height: 50px;
+  padding: 12px 15px;
+  height: 48px;
   border: 1px solid #ededed;
 }
 .form-control:focus {

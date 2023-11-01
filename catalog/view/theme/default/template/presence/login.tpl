@@ -36,29 +36,44 @@
 					</a>
 					<?php } ?>
 				</div>
-				<div class="col-sm-4 pull-right">
-					<select id="input-location" class="form-control">
-						<option value="0">
-							<?= $store_name ?>
-						</option>
-						<?php foreach ($locations as $location) { ?>
-						<?php if ($location['location_id'] == $location_id) { ?>
-						<option value="<?= $location['location_id']; ?>" selected="selected">
-							<?= $location['name']; ?>
-						</option>
-						<?php } else { ?>
-						<option value="<?= $location['location_id']; ?>">
-							<?= $location['name']; ?>
-						</option>
-						<?php } ?>
-						<?php } ?>
-					</select>
-				</div>
 				<h1>
 					<?= $text_list; ?>
 				</h1>
+				<div class="row">
+					<div class="col-md-4 col-sm-6 col-xs-12 pull-right">
+						<select id="input-location" class="form-control">
+							<option value="0">
+								<?= $store_name ?>
+							</option>
+							<?php foreach ($locations as $location) { ?>
+							<?php if ($location['location_id'] == $location_id) { ?>
+							<option value="<?= $location['location_id']; ?>" selected="selected">
+								<?= $location['name']; ?>
+							</option>
+							<?php } else { ?>
+							<option value="<?= $location['location_id']; ?>">
+								<?= $location['name']; ?>
+							</option>
+							<?php } ?>
+							<?php } ?>
+						</select>
+					</div>
+					<div class="col-md-5 col-sm-6 col-xs-12 pull-right">
+						<div class="form-group">
+							<div class="input-group">
+								<input type="text" name="search" value="" placeholder="<?php echo $entry_search; ?>"
+									id="input-search" class="form-control" />
+								<span class="input-group-btn"><button class="btn btn-default" type="button"
+										id="button-clear">
+										<?php echo $button_clear; ?>
+									</button></span>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
-			<div class="row">
+
+			<div class="row" id="customer-list">
 				<?php if ($error_session) { ?>
 				<h3 class="text-center">
 					<?= $error_session; ?>
@@ -66,23 +81,43 @@
 				<?php } else { ?>
 				<?php if ($customers) { ?>
 				<?php foreach ($customers as $customer) { ?>
-				<div class="<?= $presence_card == 'image' ? 'col-md-2 col-sm-3 col-xs-4' : 'col-md-4 col-sm-6 col-xs-12'; ?>">
+				<div class="<?= $presence_card == 'image' ? 'col-md-2 col-sm-3 col-xs-4' : 'col-md-4 col-sm-6 col-xs-12'; ?>"
+					id="customer<?= $customer['customer_id']; ?>">
 					<div class="tile tile-<?= $customer['log_class']; ?>">
-						<a href="#" id="customer<?= $customer['customer_id']; ?>" value="<?= $customer['customer_id']; ?>">
-							<div class="tile-body" title="<?= $customer['longname']; ?>">
-								<?php if ($customer['image']) { ?>
-								<img src="<?= $customer['image']; ?>" alt="<?= $customer['name']; ?>" title="<?= $customer['name']; ?>"
-									class="img-thumbnail" />
-								<h4 class="text-center">
-									<?= $customer['name']; ?>
-								</h4>
-								<?php } else { ?>
-								<h3>
-									<?= $customer['name']; ?>
-								</h3>
-								<?php } ?>
-							</div>
-						</a>
+						<?php if ($customer['image']) { ?>
+						<div>
+							<a href="#" id="scan_index<?= $customer['scan_active'][0]['index']; ?>"
+								value="<?= $customer['scan_active'][0]['index']; ?>">
+								<div class="tile-body" title="<?= $customer['scan_active'][0]['text']; ?>">
+									<img src="<?= $customer['image']; ?>" alt="<?= $customer['name']; ?>"
+										title="<?= $customer['scan_active'][0]['text']; ?>" class="img-thumbnail" />
+									<h4 class="text-center">
+										<?= $customer['name']; ?>
+									</h4>
+								</div>
+							</a>
+						</div>
+						<?php } else { ?>
+						<span class="tile-main">
+							<a href="#" id="scan_index<?= $customer['scan_active'][0]['index']; ?>"
+								value="<?= $customer['scan_active'][0]['index']; ?>">
+								<div class="tile-body" title="<?= $customer['scan_active'][0]['text']; ?>">
+									<h3>
+										<?= $customer['name']; ?>
+									</h3>
+								</div>
+							</a>
+						</span>
+						<span class="tile-alt">
+							<a href="##" id="scan_index<?=$customer['scan_active'][1]['index']; ?>"
+								value="<?= $customer['scan_active'][1]['index']; ?>">
+								<div class="tile-body" title="<?= $customer['scan_active'][1]['text']; ?>">
+									<h5><i class="fa fa-external-link"></i> Alt
+									</h5>
+								</div>
+							</a>
+						</span>
+						<?php } ?>
 					</div>
 				</div>
 				<?php } ?>
@@ -98,140 +133,87 @@
 			<?= $column_right; ?>
 		</div>
 	</div>
-	<script type="text/javascript">
-		$('select[id=\'input-location\']').on('change', function () {
-			url = 'index.php?route=presence/login&action=<?= $action; ?>';
+</div>
+<script type="text/javascript">
+	$('select[id=\'input-location\']').on('change', function () {
+		url = 'index.php?route=presence/login&action=<?= $action; ?>';
 
-			let location_id = $('select[id=\'input-location\']').val();
+		let location_id = $('select[id=\'input-location\']').val();
 
-			url += '&location_id=' + location_id;
+		url += '&location_id=' + location_id;
 
-			location = url;
-		});
-	</script>
-	<script type="text/javascript">
-		var log_ct = 1;
-		var click_ct = 1;
-		let alert_fade_out;
-		let home;
+		location = url;
+	});
 
-		function redirectHome() {
-			home = setTimeout(function () { location = 'index.php?route=common/home&action=<?= $action; ?>'; }, 60000);
-		}
+	$('input[id=\'input-search\']').on('keyup', function () {
+		let filter = $('input[id=\'input-search\']').val().toUpperCase();
+		let list = $('#customer-list div[id^=\'customer\']');
 
-		redirectHome();
+		for (let i = 0; i < list.length; i++) {
+			const customer_name = list[i].getElementsByClassName('tile-main')[0].innerText.toUpperCase();
 
-		$('a[id^=\'customer\']').on('click', function (e) {
-			e.preventDefault();
-
-			if (click_ct == 1) {
-				click_ct++;
-
-				var node = this;
-				var customer_id = $(node).attr('value');
-				var action = '<?= $action; ?>';
-
-				$.ajax({
-					url: 'index.php?route=presence/login/validateLog',
-					type: 'post',
-					dataType: 'json',
-					data: 'customer_id=' + customer_id + '&action=' + action,
-					crossDomain: true,
-					beforeSend: function () {
-						clearTimeout(alert_fade_out);
-						clearTimeout(home);
-						$('.alert').remove();
-					},
-
-					success: function (json) {
-						redirectHome();
-
-						if (json['error']) {
-							$('#fixed-alert').html('<div class="alert fixed-alert alert-danger">' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-
-							click_ct = 1;
-
-							alert_fade_out = setTimeout(function () { $('.alert').fadeOut(); }, 3000);
-						}
-
-						if (json['process_verification']) {
-							processVerification(customer_id, action);
-						}
-					},
-
-					error: function (xhr, ajaxOptions, thrownError) {
-						alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-					}
-				});
+			if (customer_name.indexOf(filter) > -1) {
+				list[i].style.display = '';
+				console.log(customer_name);
+			} else {
+				list[i].style.display = 'none';
 			}
-		});
+		}
+	});
 
-		function processVerification(customer_id, action) {
-			var button = $('#button-' + action);
+	$('button[id=\'button-clear\']').on('click', function () {
+		$('input[id=\'input-search\']').val('');
 
-	<?php if ($use_fingerprint) { ?>
-				url = 'index.php?route=presence/login/verification&customer_id=' + customer_id + '&action=' + action;
-				location = url;
-	<?php } ?>
+		$('input[id=\'input-search\']').trigger('keyup');
+	});
+</script>
+<script type="text/javascript">
+	var log_ct = 1;
+	var click_ct = 1;
+	let alert_fade_out;
+	let home;
 
-				log_status = 0;
+	function redirectHome() {
+		home = setTimeout(function () { location = 'index.php?route=common/home&action=<?= $action; ?>'; }, 60000);
+	}
 
-			// try	{
-			// 	timer_register.stop();
-			// }
-			// catch(err) {
-			// 	console.log('Verification timer has been init');
-			// }
+	redirectHome();
 
-			var limit = 22;
-			var ct = 1;
-			var timeout = 500;
+	$('a[id^=\'scan_index\']').on('click', function (e) {
+		e.preventDefault();
 
-			timer_register = $.timer(timeout, function () {
-				// console.log('Verification checking... ' + ct);
+		if (click_ct == 1) {
+			click_ct++;
 
-				getLogStatus(customer_id, action);
-				// console.log('Log status = ' + log_status);
+			let node = this;
+			let finger_index = $(node).attr('value');
+			let action = '<?= $action; ?>';
 
-				if (ct >= limit || log_status == 1) {
-					timer_register.stop();
-					// console.log('Verification checking end');
-
-					if (ct >= limit && log_status == 0) {
-						$('#fixed-alert').html('<div class="alert fixed-alert alert-danger"><?= $error_verification; ?><button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-
-						click_ct = 1;
-					}
-
-					if (log_status == 1) {
-						$('#customer' + customer_id).parent().removeClass().addClass('tile tile-' + action);
-
-						$('#fixed-alert').html('<div class="alert fixed-alert alert-success">' + text_success + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-
-						click_ct = 1;
-
-						if (log_ct >= 5) {
-							location.reload();
-						}
-						log_ct++;
-					}
-
-					alert_fade_out = setTimeout(function () { $('.alert').fadeOut(); }, 3000);
-				}
-
-				ct++;
-			});
-		};
-
-		function getLogStatus(customer_id, action) {
 			$.ajax({
-				url: 'index.php?route=presence/login/getLogStatus&customer_id=' + customer_id + '&action=' + action,
+				url: 'index.php?route=presence/login/validateLog',
+				type: 'post',
 				dataType: 'json',
+				data: 'finger_index=' + finger_index + '&action=' + action,
 				crossDomain: true,
+				beforeSend: function () {
+					clearTimeout(alert_fade_out);
+					clearTimeout(home);
+					$('.alert').remove();
+				},
+
 				success: function (json) {
-					if (json['success']) {
-						log_status = 1;
-						text_success = json['success'];
+					redirectHome();
+
+					if (json['error']) {
+						$('#fixed-alert').html('<div class="alert fixed-alert alert-danger">' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+						click_ct = 1;
+
+						alert_fade_out = setTimeout(function () { $('.alert').fadeOut(); }, 3000);
+					}
+
+					if (json['process_verification']) {
+						processVerification(finger_index, action);
 					}
 				},
 
@@ -240,6 +222,100 @@
 				}
 			});
 		}
-	</script>
-</div>
+	});
+
+	function processVerification(finger_index, action) {
+		let button = $('#button-' + action);
+		let use_fingerprint = '<?= $use_fingerprint; ?>'
+
+		if (use_fingerprint == 1) {
+			url = 'index.php?route=presence/login/verification&finger_index=' + finger_index + '&action=' + action;
+			location = url;
+		}
+
+		log_status = 0;
+
+		// try	{
+		// 	timer_register.stop();
+		// }
+		// catch(err) {
+		// 	console.log('Verification timer has been init');
+		// }
+
+		var limit = 22;
+		var ct = 1;
+		var timeout = 500;
+
+		timer_register = $.timer(timeout, function () {
+			let customer_id = finger_index.split('x')[0];
+			// console.log('Verification checking... ' + ct);
+
+			getLogStatus(customer_id, action);
+			// console.log('Log status = ' + log_status);
+
+			if (ct >= limit || log_status == 1) {
+				timer_register.stop();
+				// console.log('Verification checking end');
+
+				if (ct >= limit && log_status == 0) {
+					if (action == 'login') {
+						deleteScheduleTime(customer_id, action);
+					}
+
+					$('#fixed-alert').html('<div class="alert fixed-alert alert-danger"><?= $error_verification; ?><button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+					click_ct = 1;
+				}
+
+				if (log_status == 1) {
+					$('#customer' + customer_id + ' > div').removeClass().addClass('tile tile-' + action);
+
+					$('#fixed-alert').html('<div class="alert fixed-alert alert-success">' + text_success + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+					click_ct = 1;
+
+					if (log_ct >= 5) {
+						location.reload();
+					}
+
+					log_ct++;
+				}
+
+				alert_fade_out = setTimeout(function () { $('.alert').fadeOut(); }, 3000);
+			}
+
+			ct++;
+		});
+	};
+
+	function getLogStatus(customer_id, action) {
+		$.ajax({
+			url: 'index.php?route=presence/login/getLogStatus&customer_id=' + customer_id + '&action=' + action,
+			dataType: 'json',
+			crossDomain: true,
+			success: function (json) {
+				if (json['success']) {
+					log_status = 1;
+					text_success = json['success'];
+				}
+			},
+
+			error: function (xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+	}
+
+	function deleteScheduleTime(customer_id, action) {
+		$.ajax({
+			url: 'index.php?route=presence/login/deleteScheduleTime&customer_id=' + customer_id + '&action=' + action,
+			dataType: 'json',
+			crossDomain: true,
+
+			error: function (xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+	}
+</script>
 <?= $footer; ?>

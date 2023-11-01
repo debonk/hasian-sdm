@@ -8,7 +8,8 @@ if (isset($_GET['msg']) && !empty($_GET['msg'])) {
 	$name	= $_GET['name'];
 	$time	= date('Y-m-d H:i:s', strtotime($_GET['time']));
 	
-	echo 'Verifikasi ' . $name . ' sukses pada ' . date('Y-m-d H:i:s', strtotime($time)) . '.';
+	// echo 'Verifikasi ' . $name . ' sukses pada ' . date('Y-m-d H:i:s', strtotime($time)) . '.';
+	echo 'Verifikasi ' . $name . ' sukses pada ' . $time . '.';
 	
 } else {
 		
