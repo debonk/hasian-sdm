@@ -24,7 +24,7 @@ class ControllerCommonMaintenance extends Controller {
 
 		$item_lists = array(
 			'blank',
-			'willowbabyshop',
+			// 'willowbabyshop',
 			// 'willow-hr-management',
 			// 'willow-accounting',
 			// 'willow-login'

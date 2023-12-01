@@ -31,7 +31,7 @@ $_['column_customer_group'] 		= 'Jabatan';
 $_['column_location']				= 'Lokasi Kerja';
 $_['column_full_overtime']			= '12 Jam';
 $_['column_date_start']				= 'Mulai Bekerja';
-$_['column_date_end']				= 'Berhenti Bekerja';
+$_['column_date_end']				= 'Akhir Masa Kerja';
 $_['column_date_added']				= 'Date Added';
 $_['column_action']					= 'Action';
 $_['column_gaji_pokok']				= 'Gaji Pokok';
@@ -108,7 +108,7 @@ $_['error_lastname']			   = 'Nama Lengkap harus diisi antara 1 - 64 karakter!';
 $_['error_customer_department']	   = 'Tentukan Divisi karyawan!';
 $_['error_customer_group']		   = 'Tentukan Jabatan karyawan!';
 $_['error_date_start']			   = 'Tanggal Mulai Bekerja harus diisi!';
-$_['error_date_end']			   = 'Periksa Tanggal Berhenti Bekerja!';
+// $_['error_date_end']			   = 'Periksa Tanggal Berhenti Bekerja!';
 $_['error_acc_no']				   = 'No Rekening harus diisi!';
 $_['error_email']				   = 'E-Mail Address does not appear to be valid!';
 $_['error_health_insurance_id']	   = 'No. BPJS Kesehatan harus terdiri dari 13 angka!';
@@ -126,4 +126,4 @@ $_['error_custom_field']		   = '%s required!';
 $_['error_custom_field_validate']  = '%s invalid!';
 
 //Button
-$_['button_reactivate']  = 'Reactivate';
+// $_['button_reactivate']  = 'Reactivate';

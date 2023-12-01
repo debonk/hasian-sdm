@@ -26,4 +26,3 @@ $_['error_name']             = 'District Name must be between 3 and 128 characte
 $_['error_default']          = 'Warning: This district cannot be deleted as it is currently assigned as the default store district!';
 $_['error_store']            = 'Warning: This district cannot be deleted as it is currently assigned to %s stores!';
 $_['error_address']          = 'Warning: This district cannot be deleted as it is currently assigned to %s address book entries!';
-$_['error_affiliate']        = 'Warning: This district cannot be deleted as it is currently assigned to %s affiliates!';

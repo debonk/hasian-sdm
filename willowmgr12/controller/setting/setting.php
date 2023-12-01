@@ -26,10 +26,10 @@ class ControllerSettingSetting extends Controller {
 		$language_items = array(
 			'heading_title',
 			'text_account',
-			'text_affiliate',
 			'text_allowance',
 			'text_captcha',
-			'text_checkout',
+			// 'text_checkout',
+			'text_contract',
 			'text_customer',
 			'text_disabled',
 			'text_edit',
@@ -55,6 +55,7 @@ class ControllerSettingSetting extends Controller {
 			'entry_account',
 			'entry_address',
 			'entry_admin_language',
+			'entry_admin_maintenance',
 			'entry_api',
 			'entry_bbm',
 			'entry_captcha_page',
@@ -62,6 +63,7 @@ class ControllerSettingSetting extends Controller {
 			'entry_comment',
 			'entry_components',
 			'entry_compression',
+			'entry_contract_end_notif',
 			'entry_country',
 			'entry_currency_auto',
 			'entry_currency',
@@ -121,11 +123,13 @@ class ControllerSettingSetting extends Controller {
 
 			'help_account_mail',
 			'help_account',
+			'help_admin_maintenance',
 			'help_api',
 			'help_captcha',
 			'help_comment',
 			'help_components',
 			'help_compression',
+			'help_contract_end_notif',
 			'help_currency_auto',
 			'help_currency',
 			'help_customer_last',
@@ -230,18 +234,6 @@ class ControllerSettingSetting extends Controller {
 			$data['error_login_attempts'] = $this->error['login_attempts'];
 		} else {
 			$data['error_login_attempts'] = '';
-		}
-
-		if (isset($this->error['processing_status'])) {
-			$data['error_processing_status'] = $this->error['processing_status'];
-		} else {
-			$data['error_processing_status'] = '';
-		}
-
-		if (isset($this->error['complete_status'])) {
-			$data['error_complete_status'] = $this->error['complete_status'];
-		} else {
-			$data['error_complete_status'] = '';
 		}
 
 		if (isset($this->error['ftp_hostname'])) {
@@ -534,6 +526,12 @@ class ControllerSettingSetting extends Controller {
 			$data['config_customer_last'] = $this->config->get('config_customer_last');
 		}
 
+		if (isset($this->request->post['config_contract_end_notif'])) {
+			$data['config_contract_end_notif'] = $this->request->post['config_contract_end_notif'];
+		} else {
+			$data['config_contract_end_notif'] = $this->config->get('config_contract_end_notif');
+		}
+
 		$components = [
 			'gaji_pokok',
 			'tunj_jabatan',
@@ -565,24 +563,6 @@ class ControllerSettingSetting extends Controller {
 			$data['config_limit_admin'] = $this->config->get('config_limit_admin');
 		}
 
-		if (isset($this->request->post['config_tax'])) {
-			$data['config_tax'] = $this->request->post['config_tax'];
-		} else {
-			$data['config_tax'] = $this->config->get('config_tax');
-		}
-
-		if (isset($this->request->post['config_tax_default'])) {
-			$data['config_tax_default'] = $this->request->post['config_tax_default'];
-		} else {
-			$data['config_tax_default'] = $this->config->get('config_tax_default');
-		}
-
-		if (isset($this->request->post['config_tax_customer'])) {
-			$data['config_tax_customer'] = $this->request->post['config_tax_customer'];
-		} else {
-			$data['config_tax_customer'] = $this->config->get('config_tax_customer');
-		}
-
 		if (isset($this->request->post['config_customer_online'])) {
 			$data['config_customer_online'] = $this->request->post['config_customer_online'];
 		} else {
@@ -611,66 +591,6 @@ class ControllerSettingSetting extends Controller {
 			$data['config_account_mail'] = $this->request->post['config_account_mail'];
 		} else {
 			$data['config_account_mail'] = $this->config->get('config_account_mail');
-		}
-
-		if (isset($this->request->post['config_cart_weight'])) {
-			$data['config_cart_weight'] = $this->request->post['config_cart_weight'];
-		} else {
-			$data['config_cart_weight'] = $this->config->get('config_cart_weight');
-		}
-
-		if (isset($this->request->post['config_checkout_guest'])) {
-			$data['config_checkout_guest'] = $this->request->post['config_checkout_guest'];
-		} else {
-			$data['config_checkout_guest'] = $this->config->get('config_checkout_guest');
-		}
-
-		if (isset($this->request->post['config_checkout_id'])) {
-			$data['config_checkout_id'] = $this->request->post['config_checkout_id'];
-		} else {
-			$data['config_checkout_id'] = $this->config->get('config_checkout_id');
-		}
-
-		if (isset($this->request->post['config_invoice_prefix'])) {
-			$data['config_invoice_prefix'] = $this->request->post['config_invoice_prefix'];
-		} elseif ($this->config->get('config_invoice_prefix')) {
-			$data['config_invoice_prefix'] = $this->config->get('config_invoice_prefix');
-		} else {
-			$data['config_invoice_prefix'] = 'INV-' . date('Y') . '-00';
-		}
-
-		if (isset($this->request->post['config_order_status_id'])) {
-			$data['config_order_status_id'] = $this->request->post['config_order_status_id'];
-		} else {
-			$data['config_order_status_id'] = $this->config->get('config_order_status_id');
-		}
-
-		if (isset($this->request->post['config_processing_status'])) {
-			$data['config_processing_status'] = $this->request->post['config_processing_status'];
-		} elseif ($this->config->get('config_processing_status')) {
-			$data['config_processing_status'] = $this->config->get('config_processing_status');
-		} else {
-			$data['config_processing_status'] = array();
-		}
-
-		if (isset($this->request->post['config_complete_status'])) {
-			$data['config_complete_status'] = $this->request->post['config_complete_status'];
-		} elseif ($this->config->get('config_complete_status')) {
-			$data['config_complete_status'] = $this->config->get('config_complete_status');
-		} else {
-			$data['config_complete_status'] = array();
-		}
-
-		if (isset($this->request->post['config_order_status_id'])) {
-			$data['config_fraud_status_id'] = $this->request->post['config_fraud_status_id'];
-		} else {
-			$data['config_fraud_status_id'] = $this->config->get('config_fraud_status_id');
-		}
-
-		if (isset($this->request->post['config_order_mail'])) {
-			$data['config_order_mail'] = $this->request->post['config_order_mail'];
-		} else {
-			$data['config_order_mail'] = $this->config->get('config_order_mail');
 		}
 
 		if (isset($this->request->post['config_api_id'])) {
@@ -904,6 +824,12 @@ class ControllerSettingSetting extends Controller {
 			$data['config_file_mime_allowed'] = $this->request->post['config_file_mime_allowed'];
 		} else {
 			$data['config_file_mime_allowed'] = $this->config->get('config_file_mime_allowed');
+		}
+
+		if (isset($this->request->post['config_admin_maintenance'])) {
+			$data['config_admin_maintenance'] = $this->request->post['config_admin_maintenance'];
+		} else {
+			$data['config_admin_maintenance'] = $this->config->get('config_admin_maintenance');
 		}
 
 		if (isset($this->request->post['config_maintenance'])) {

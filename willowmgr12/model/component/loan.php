@@ -14,7 +14,7 @@ class ModelComponentLoan extends Model {
 			
 			foreach ($query->rows as $result) {
 				$loan_query = $this->db->query("SELECT SUM(value) AS total FROM " . DB_PREFIX . "payroll_component_value WHERE code = 'loan' AND item = '" . (int)$result['loan_id'] . "' AND presence_period_id <> '" . (int)$presence_period_id . "'");
-				$value = -min($loan_query->row['total'], $result['cicilan']);
+				$value = -min($loan_query->row['total'], $result['installment']);
 				
 				$balance = $loan_query->row['total'] + $value;
 				if ($balance) {

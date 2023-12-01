@@ -217,13 +217,8 @@
 				}
 
 				if (reg_status == 1) {
-					html = '<button type="button" value="' + $(node).val() + '" id="button-verification' + $(node).val() + '" data-loading-text="<?= $text_loading; ?>" data-toggle="tooltip" title="<?= $button_verification; ?>" class="btn btn-default"><i class="fa fa-sign-in"></i></button>';
-					html += ' <button type="button" value="' + $(node).val() + '" id="button-delete' + $(node).val() + '" data-loading-text="<?= $text_loading; ?>" data-toggle="tooltip" title="<?= $button_delete; ?>" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>';
-
-					$(node).replaceWith(html);
-					$('#date_added' + $(node).val()).html(date_added);
-					$('#username' + $(node).val()).html(username);
 					alert('<?= $text_success_register; ?>');
+					location.reload();
 				}
 			}
 			ct++;

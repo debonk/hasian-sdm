@@ -18,6 +18,11 @@
           <?php } else { ?>
           <a href="<?php echo $sort_customer_group; ?>"><?php echo $column_customer_group; ?></a>
           <?php } ?></td>
+        <td class="text-left" rowspan="2"><?php if ($sort == 'customer_department') { ?>
+          <a href="<?php echo $sort_customer_department; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_customer_department; ?></a>
+          <?php } else { ?>
+          <a href="<?php echo $sort_customer_department; ?>"><?php echo $column_customer_department; ?></a>
+          <?php } ?></td>
         <td class="text-left" rowspan="2"><?php if ($sort == 'location') { ?>
           <a href="<?php echo $sort_location; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_location; ?></a>
           <?php } else { ?>
@@ -49,6 +54,7 @@
         <td class="text-left"><?php echo $customer['nip']; ?></td>
         <td class="text-left"><?php echo $customer['name']; ?></td>
         <td class="text-left"><?php echo $customer['customer_group']; ?></td>
+        <td class="text-left"><?php echo $customer['customer_department']; ?></td>
         <td class="text-left"><?php echo $customer['location']; ?></td>
         <?php foreach ($date_titles as $date_title) { ?>
         <?php if (isset($customer['schedules_data'][$date_title['date']])) { ?>

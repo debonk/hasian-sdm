@@ -44,6 +44,7 @@ class ControllerPayrollPayrollSetting extends Controller {
 			'entry_vacation_limit',
 			'entry_schedule_lock',
 			'entry_login_session',
+			'entry_login_date',
 			'entry_logout_date',
 			'entry_login_start',
 			'entry_login_end',
@@ -67,6 +68,7 @@ class ControllerPayrollPayrollSetting extends Controller {
 			'help_default_hke',
 			'help_vacation_limit',
 			'help_schedule_lock',
+			'help_login_date',
 			'help_logout_date',
 			'help_login_start',
 			'help_login_end',
@@ -261,6 +263,14 @@ class ControllerPayrollPayrollSetting extends Controller {
 			$data['payroll_setting_login_session'] = $this->config->get('payroll_setting_login_session');
 		} else {
 			$data['payroll_setting_login_session'] = 0;
+		}
+
+		if (isset($this->request->post['payroll_setting_login_date'])) {
+			$data['payroll_setting_login_date'] = $this->request->post['payroll_setting_login_date'];
+		} elseif ($this->config->get('payroll_setting_login_date')) {
+			$data['payroll_setting_login_date'] = $this->config->get('payroll_setting_login_date');
+		} else {
+			$data['payroll_setting_login_date'] = 0;
 		}
 
 		if (isset($this->request->post['payroll_setting_logout_date'])) {

@@ -3,31 +3,37 @@
 $_['heading_title']				 = 'Lembur';
 
 // Text
-$_['text_select_customer']	 	 = '-- Pilih Karyawan --';
 $_['text_list']					 = 'Daftar Lembur';
-$_['text_add']					 = 'Lembur Baru';
-$_['text_edit']					 = 'Ubah Lembur';
+$_['text_add']					 = 'Data Lembur Baru';
+$_['text_edit']					 = 'Edit Data Lembur';
 $_['text_paid']	 				 = 'Telah Dibayar';
-$_['text_unpaid']	 			 = 'Tidak Disetujui';
+$_['text_unpaid']	 			 = 'Belum/Tidak Disetujui';
 $_['text_success']				 = 'Success: You have modified overtimes!';
+$_['text_name_set']			 	 = '%s - %s - %s';
 
 // Column
-$_['column_date']			 	= 'Tanggal Lembur';
-$_['column_name']				= 'Nama Karyawan';
-$_['column_overtime_type']		= 'Tipe Lembur';
-$_['column_description']		= 'Tujuan Lembur';
-$_['column_wage']				= 'Kompensasi';
-$_['column_action']				= 'Action';
-$_['column_payment']			= 'Pembayaran';
+$_['column_description']			= 'Tujuan Lembur';
+$_['column_date']			 		= 'Tanggal Lembur';
+$_['column_name']					= 'Nama Karyawan';
+$_['column_customer_group']     	= 'Jabatan';
+$_['column_customer_department']	= 'Divisi';
+$_['column_location'] 				= 'Lokasi Kerja';
+$_['column_overtime_type']			= 'Tipe Lembur';
+$_['column_wage']					= 'Kompensasi';
+$_['column_username']		 		= 'Username';
+$_['column_period']					= 'Pembayaran';
 
 // Entry
-$_['entry_period']				= 'Periode';
 $_['entry_name']				= 'Nama Karyawan';
+$_['entry_customer_group']     	= 'Jabatan';
+$_['entry_customer_department']	= 'Divisi';
+$_['entry_location']	 		= 'Lokasi Kerja';
+$_['entry_period']				= 'Periode';
 $_['entry_date']				= 'Tanggal Lembur';
-$_['entry_overtime_type'] 		= 'Type Lembur';
 $_['entry_description']     	= 'Tujuan Lembur';
+$_['entry_overtime_type'] 		= 'Type Lembur';
 $_['entry_schedule_type']     	= 'Jadwal Lembur';
-$_['entry_status']				= 'Status Lembur';
+$_['entry_status']				= 'Status';
 
 // Error
 $_['error_customer_department']	= 'Warning: You do not have permission to modify other division!';

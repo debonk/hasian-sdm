@@ -1,23 +1,6 @@
 <?php
 class ControllerCommonFooter extends Controller {
 	public function index() {
-		
-		// Pavo 2.2 fix
-		// require_once( DIR_SYSTEM . 'pavothemes/loader.php' );
-
-		// $this->load->language('module/themecontrol');
-		// $data['objlang'] = $this->language;
-
-		// $config = $this->registry->get('config');
-		// $data['sconfig'] = $config;
-
-		// $helper = ThemeControlHelper::getInstance( $this->registry, $config->get('theme_default_directory') );
-		// $helper->triggerUserParams( array('header_layout','productlayout') );
-		// $data['helper'] = $helper;
-
-		// $themeConfig = (array)$config->get('themecontrol');
-		// Pavo 2.2 end fix
-
 		$this->load->language('common/footer');
 
 		$data['scripts'] = $this->document->getScripts('footer');
@@ -61,17 +44,13 @@ class ControllerCommonFooter extends Controller {
 		// $data['sitemap'] = $this->url->link('information/sitemap');
 		// $data['manufacturer'] = $this->url->link('product/manufacturer');
 		// $data['voucher'] = $this->url->link('account/voucher', '', true);
-		// $data['affiliate'] = $this->url->link('affiliate/account', '', true);
-		// $data['special'] = $this->url->link('product/special');
 		// $data['account'] = $this->url->link('account/account', '', true);
 		$data['account'] = '#';
 		$data['schedule'] = '#';
 		$data['newsletter'] = '#';
 		$data['sitemap'] = '#';
-		// $data['order'] = $this->url->link('account/order', '', true);
 		// $data['wishlist'] = $this->url->link('account/wishlist', '', true);
 		// $data['newsletter'] = $this->url->link('account/newsletter', '', true);
-		$data['blogs'] = $this->url->link('pavblog/blogs');//Bonk
 		// $data['career'] = $this->url->link('information/career');//Bonk
 
 		$data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));

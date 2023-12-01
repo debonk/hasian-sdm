@@ -4,26 +4,32 @@ $_['heading_title']				 = 'Absen';
 
 // Text
 $_['text_list']					 = 'Daftar Absen';
-$_['text_add']					 = 'Absen Baru';
-$_['text_edit']					 = 'Ubah Absen';
+$_['text_add']					 = 'Data Absen Baru';
+$_['text_edit']					 = 'Edit Data Absen';
 $_['text_with_note']	 		 = 'Dengan Catatan Tambahan';
 $_['text_without_note']	 		 = 'Tanpa Catatan Tambahan';
 $_['text_approved']	 		 	 = 'Telah Disetujui';
 $_['text_not_approved']	 		 = 'Butuh Persetujuan';
 $_['text_success']				 = 'Success: You have modified absences!';
 $_['text_success_note']			 = 'Success: Catatan telah ditambah!';
+$_['text_name_set']			 	 = '%s - %s - %s';
 
 // Column
-$_['column_date']			 	= 'Tanggal Absen';
-$_['column_name']				= 'Nama Karyawan';
-$_['column_presence_status']	= 'Tipe Absen';
-$_['column_description']		= 'Alasan Absen';
-$_['column_note']				= 'Catatan Tambahan';
-$_['column_approved']			= 'Status';
-$_['column_action']				= 'Action';
+$_['column_date']			 		= 'Tanggal Absen';
+$_['column_name']					= 'Nama Karyawan';
+$_['column_customer_group']     	= 'Jabatan';
+$_['column_customer_department']	= 'Divisi';
+$_['column_location'] 				= 'Lokasi Kerja';
+$_['column_presence_status']		= 'Tipe Absen';
+$_['column_description']			= 'Alasan Absen';
+$_['column_note']					= 'Catatan Tambahan';
+$_['column_approved']				= 'Status';
 
 // Entry
 $_['entry_name']				= 'Nama Karyawan';
+$_['entry_customer_group']     	= 'Jabatan';
+$_['entry_customer_department']	= 'Divisi';
+$_['entry_location']	 		= 'Lokasi Kerja';
 $_['entry_date']				= 'Tanggal Absen';
 $_['entry_period']				= 'Periode';
 $_['entry_approved']			= 'Status Absen';

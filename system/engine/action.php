@@ -27,7 +27,7 @@ class Action {
 		}
 
 		$file = DIR_APPLICATION . 'controller/' . $this->route . '.php';		
-		$class = 'Controller' . preg_replace('/[^a-zA-Z0-9]/', '', $this->route);
+		$class = $this->route ? 'Controller' . preg_replace('/[^a-zA-Z0-9]/', '', $this->route) : '';
 		
 		// Initialize the class
 		if (is_file($file)) {

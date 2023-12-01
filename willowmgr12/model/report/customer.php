@@ -39,9 +39,9 @@ class ModelReportCustomer extends Model {
 
 		if (isset($data['filter_active'])) {
 			if ($data['filter_active']) {
-				$implode[] = "(date_end IS NULL OR date_end > NOW())";
+				$implode[] = "(date_end IS NULL OR date_end >= CURDATE())";
 			} else {
-				$implode[] = "(date_end IS NOT NULL AND date_end <= NOW())";
+				$implode[] = "(date_end IS NOT NULL AND date_end < CURDATE())";
 			}
 		}
 
@@ -192,9 +192,9 @@ class ModelReportCustomer extends Model {
 
 		if (isset($data['filter_active'])) {
 			if ($data['filter_active']) {
-				$implode[] = "(date_end IS NULL OR date_end > NOW())";
+				$implode[] = "(date_end IS NULL OR date_end >= CURDATE())";
 			} else {
-				$implode[] = "(date_end IS NOT NULL AND date_end <= NOW())";
+				$implode[] = "(date_end IS NOT NULL AND date_end < CURDATE())";
 			}
 		}
 

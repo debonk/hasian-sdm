@@ -3,11 +3,11 @@ class ModelExtensionModule extends Model {
 	public function addModule($code, $data) {
 
 		
-		if( $code == 'pavhomebuilder' || $code == 'pavbannerbuilder' ){  
-			$setting =  @serialize($data);
-		}else {
+		// if( $code == 'pavhomebuilder' || $code == 'pavbannerbuilder' ){  
+		// 	$setting =  @serialize($data);
+		// }else {
 			$setting = $this->db->escape(json_encode($data)); 
-		}
+		// }
 
 
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "module` SET `name` = '" . $this->db->escape($data['name']) . "', `code` = '" . $this->db->escape($code) . "', `setting` = '" . $setting . "'");
@@ -18,11 +18,11 @@ class ModelExtensionModule extends Model {
 
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "module` WHERE `module_id` = '" . $this->db->escape($module_id) . "'");
 
-		if( $query->row['code'] == 'pavhomebuilder' || $query->row['code'] == 'pavbannerbuilder' ){  
-			$setting =  serialize( $data );
-		}else {
+		// if( $query->row['code'] == 'pavhomebuilder' || $query->row['code'] == 'pavbannerbuilder' ){  
+		// 	$setting =  serialize( $data );
+		// }else {
 			$setting = $this->db->escape(json_encode($data)); 
-		}
+		// }
  
 		$this->db->query("UPDATE `" . DB_PREFIX . "module` SET `name` = '" . $this->db->escape($data['name']) . "', `setting` = '" . $setting . "' WHERE `module_id` = '" . (int)$module_id . "'");
 	}
@@ -36,9 +36,9 @@ class ModelExtensionModule extends Model {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "module` WHERE `module_id` = '" . $this->db->escape($module_id) . "'");
 	 
 		if ($query->row) {
-			if( $query->row['code'] == 'pavhomebuilder' || $query->row['code'] == 'pavbannerbuilder' ){  
-				return @unserialize( trim($query->row['setting'])) ;
-			}
+			// if( $query->row['code'] == 'pavhomebuilder' || $query->row['code'] == 'pavbannerbuilder' ){  
+			// 	return @unserialize( trim($query->row['setting'])) ;
+			// }
 			return json_decode($query->row['setting'], true);
 		} else {
 			return array();	

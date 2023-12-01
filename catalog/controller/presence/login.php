@@ -28,6 +28,7 @@ class ControllerPresenceLogin extends Controller
 			'text_no_results',
 			'text_left',
 			'text_right',
+			'text_index_none',
 			'text_index_old',
 			'text_thumbs',
 			'text_index',
@@ -170,6 +171,11 @@ class ControllerPresenceLogin extends Controller
 								'text'	=> $data['text_' . $finger_indexes[$i[1]]] . ' ' . $hands[$i[0]]
 							];
 						}
+					} else {
+						$scan_active[] = [
+							'index'	=> $result['customer_id'] . 'x',
+							'text'	=> $data['text_index_none']
+						];
 					}
 				}
 
@@ -218,8 +224,6 @@ class ControllerPresenceLogin extends Controller
 
 		$data['store_name'] = $this->config->get('config_name');
 
-		// $data['column_left'] = $this->load->controller('common/column_left');
-		// $data['column_right'] = $this->load->controller('common/column_right');
 		$data['column_left'] = false;
 		$data['column_right'] = false;
 		$data['content_top'] = $this->load->controller('common/content_top');
@@ -275,9 +279,8 @@ class ControllerPresenceLogin extends Controller
 
 			$action = 'logout';
 		} else {
-			$login_start = $this->config->get('payroll_setting_login_start');
-			$schedule_date = date('Y-m-d', strtotime('+' . $login_start . ' minutes'));
-
+			$schedule_date = date('Y-m-d', strtotime($this->config->get('payroll_setting_login_date') . ' hours'));
+		
 			$action = 'login';
 		}
 
@@ -295,10 +298,16 @@ class ControllerPresenceLogin extends Controller
 					break;
 				}
 
+				if ($finger_index == '') { //Cek apakah finger aktif telah diset
+					$json['error'] = $this->language->get('error_finger_not_set');
+
+					break;
+				}
+
 				$use_fingerprint = $this->config->get('payroll_setting_use_fingerprint');
 
 				$finger_count = $this->model_presence_presence->getFingersCount($customer_id, $finger_index);
-
+				
 				if ($use_fingerprint && !$finger_count) { //Cek apakah sudah rekam sidik jari
 					$json['error'] = $this->language->get('error_finger_not_found');
 
@@ -370,15 +379,15 @@ class ControllerPresenceLogin extends Controller
 					} else {
 						$login_start = $this->config->get('payroll_setting_login_start');
 						$date_login_start = date('Y-m-d H:i:s', strtotime('+' . $login_start . ' minutes'));
-
+						
 						$login_end = $this->config->get('payroll_setting_login_end');
 						$date_login_end = date('Y-m-d H:i:s', strtotime('-' . $login_end . ' minutes'));
 
-						if ($login_start && strtotime($date_login_start) < strtotime($time_in)) { //Cek login sebelum waktu start yang diizinkan
+						if ($login_start && strtotime($date_login_start) < strtotime($time_in)) { #Cek login sebelum waktu start yang diizinkan. Value 0 untuk menonaktifkan.
 							$json['error'] = $this->language->get('error_login_start');
 
 							break;
-						} elseif ($login_end && strtotime($date_login_end) > strtotime($time_in)) { //Cek login setelah waktu akhir yang diizinkan
+						} elseif ($login_end && strtotime($date_login_end) > strtotime($time_in)) { #Cek login setelah waktu akhir yang diizinkan. Value 0 untuk menonaktifkan.
 							$json['error'] = $this->language->get('error_login_end');
 
 							break;

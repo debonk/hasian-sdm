@@ -1,8 +1,10 @@
 <?php
-class ControllerCustomerCustomer extends Controller {
+class ControllerCustomerCustomer extends Controller
+{
 	private $error = array();
 
-	public function index() {
+	public function index()
+	{
 		$this->load->language('customer/customer');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -12,7 +14,8 @@ class ControllerCustomerCustomer extends Controller {
 		$this->getList();
 	}
 
-	public function add() {
+	public function add()
+	{
 		$this->load->language('customer/customer');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -23,11 +26,11 @@ class ControllerCustomerCustomer extends Controller {
 			$customer_id = $this->db->transaction(function () {
 				return $this->model_customer_customer->addCustomer($this->request->post);
 			});
-			
+
 			// Add to customer_history log
 			$this->load->model('customer/history');
 			$this->load->model('common/payroll');
-			
+
 			$history_data = array(
 				'date' 					=> $this->request->post['date_start'],
 				'customer_id' 			=> $customer_id,
@@ -89,16 +92,17 @@ class ControllerCustomerCustomer extends Controller {
 		$this->getForm();
 	}
 
-	public function edit() {
+	public function edit()
+	{
 		$this->load->language('customer/customer');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('customer/customer');
-		
+
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
 			$this->customerHistory();
-			
+
 			$this->db->transaction(function () {
 				$this->model_customer_customer->editCustomer($this->request->get['customer_id'], $this->request->post);
 			});
@@ -153,7 +157,8 @@ class ControllerCustomerCustomer extends Controller {
 		$this->getForm();
 	}
 
-	public function delete() {
+	public function delete()
+	{
 		$this->load->language('customer/customer');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -165,12 +170,12 @@ class ControllerCustomerCustomer extends Controller {
 			foreach ($this->request->post['selected'] as $customer_id) {
 				// Add to customer_history log
 				$customer_info = $this->model_customer_customer->getCustomer($customer_id);
-				
+
 				$history_data = array(
 					'date' 			=> date($this->language->get('date_format_jMY')),
 					'name'        	=> $customer_info['firstname'] . ' [' . $customer_info['lastname'] . ']'
 				);
-				
+
 				$this->model_customer_history->addHistory('delete', $history_data);
 
 				$this->model_customer_customer->deleteCustomer($customer_id);
@@ -226,61 +231,62 @@ class ControllerCustomerCustomer extends Controller {
 		$this->getList();
 	}
 
-	protected function customerHistory() {
+	protected function customerHistory()
+	{
 		$this->load->model('customer/history');
 		$this->load->model('common/payroll');
-		
+
 		$history_data = array(
 			'date' 					=> '',
 			'customer_id' 			=> $this->request->get['customer_id'],
 			'name'        			=> $this->request->post['firstname'] . ' [' . $this->request->post['lastname'] . ']'
 		);
-		
-		if (isset($this->request->post['date_end']) && $this->request->post['date_end']) {
-			$history_data['date'] = $this->request->post['date_end'];
 
-			$key = 'date_end';
-		} elseif (isset($this->request->post['date_start'])) {
-			$history_data['date'] = $this->request->post['date_start'];
-			
-			$key = 'reactivate2';
-			
+		// if (isset($this->request->post['date_end']) && $this->request->post['date_end']) {
+		// $history_data['date'] = $this->request->post['date_end'];
+
+		// $key = 'date_end';
+		// } elseif (isset($this->request->post['date_start'])) {
+		// $history_data['date'] = $this->request->post['date_start'];
+
+		// $key = 'reactivate2';
+
+		// $additional_data = [
+		// 	'customer_group' 		=> $this->model_common_payroll->getCustomerGroup($this->request->post['customer_group_id']),
+		// 	'customer_department' 	=> $this->model_common_payroll->getCustomerDepartment($this->request->post['customer_department_id']),
+		// 	'location' 				=> $this->model_common_payroll->getLocation($this->request->post['location_id'])
+		// ];
+
+		// $history_data = array_merge($history_data, $additional_data);
+
+		// } elseif (!isset($date)) {
+		$history_data['date'] = date($this->language->get('date_format_jMY'));
+
+		$customer_info = $this->model_common_payroll->getCustomer($this->request->get['customer_id']);
+
+		if ($this->request->post['customer_department_id'] != $customer_info['customer_department_id'] || $this->request->post['customer_group_id'] != $customer_info['customer_group_id'] || $this->request->post['location_id'] != $customer_info['location_id']) {
+			$key = 'mutation2';
+
 			$additional_data = [
-				'customer_group' 		=> $this->model_common_payroll->getCustomerGroup($this->request->post['customer_group_id']),
-				'customer_department' 	=> $this->model_common_payroll->getCustomerDepartment($this->request->post['customer_department_id']),
-				'location' 				=> $this->model_common_payroll->getLocation($this->request->post['location_id'])
+				'customer_group_from' 		=> $customer_info['customer_group'],
+				'customer_department_from' 	=> $customer_info['customer_department'],
+				'location_from' 			=> $customer_info['location'],
+				'customer_group_to' 		=> $this->model_common_payroll->getCustomerGroup($this->request->post['customer_group_id']),
+				'customer_department_to' 	=> $this->model_common_payroll->getCustomerDepartment($this->request->post['customer_department_id']),
+				'location_to' 				=> $this->model_common_payroll->getLocation($this->request->post['location_id'])
 			];
 
 			$history_data = array_merge($history_data, $additional_data);
-
-		} elseif (!isset($date)) {
-			$history_data['date'] = date($this->language->get('date_format_jMY'));
-			
-			$customer_info = $this->model_common_payroll->getCustomer($this->request->get['customer_id']);
-			
-			if ($this->request->post['customer_department_id'] != $customer_info['customer_department_id'] || $this->request->post['customer_group_id'] != $customer_info['customer_group_id'] || $this->request->post['location_id'] != $customer_info['location_id']) {
-				$key = 'mutation2';
-				
-				$additional_data = [
-					'customer_group_from' 		=> $customer_info['customer_group'],
-					'customer_department_from' 	=> $customer_info['customer_department'],
-					'location_from' 			=> $customer_info['location'],
-					'customer_group_to' 		=> $this->model_common_payroll->getCustomerGroup($this->request->post['customer_group_id']),
-					'customer_department_to' 	=> $this->model_common_payroll->getCustomerDepartment($this->request->post['customer_department_id']),
-					'location_to' 				=> $this->model_common_payroll->getLocation($this->request->post['location_id'])
-				];
-
-				$history_data = array_merge($history_data, $additional_data);
-
-			} else {
-				$key = 'edit';
-			}
+		} else {
+			$key = 'edit';
 		}
-		
+		// }
+
 		$this->model_customer_history->addHistory($key, $history_data);
 	}
 
-	public function unlock() {
+	public function unlock()
+	{
 		$this->load->language('customer/customer');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -301,7 +307,7 @@ class ControllerCustomerCustomer extends Controller {
 			if (isset($this->request->get['filter_customer_department_id'])) {
 				$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
 			}
-	
+
 			if (isset($this->request->get['filter_customer_group_id'])) {
 				$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
 			}
@@ -340,7 +346,8 @@ class ControllerCustomerCustomer extends Controller {
 		$this->getList();
 	}
 
-	protected function getList() {
+	protected function getList()
+	{
 		if (isset($this->request->get['filter_name'])) {
 			$filter_name = $this->request->get['filter_name'];
 		} else {
@@ -698,7 +705,8 @@ class ControllerCustomerCustomer extends Controller {
 		$this->response->setOutput($this->load->view('customer/customer_list', $data));
 	}
 
-	protected function getForm() {
+	protected function getForm()
+	{
 		$this->db->createView('v_customer');
 		// $this->model_customer_customer->createView();
 
@@ -766,11 +774,9 @@ class ControllerCustomerCustomer extends Controller {
 			'button_save',
 			'button_cancel',
 			'button_address_add',
-			'button_transaction_add',
-			'button_reward_add',
 			'button_remove',
 			'button_upload',
-			'button_reactivate',
+			// 'button_reactivate',
 			'tab_general',
 			'tab_additional',
 			'tab_address'
@@ -795,7 +801,7 @@ class ControllerCustomerCustomer extends Controller {
 			'customer_department',
 			'customer_group',
 			'date_start',
-			'date_end',
+			// 'date_end',
 			'email',
 			'telephone',
 			'npwp_address',
@@ -811,7 +817,7 @@ class ControllerCustomerCustomer extends Controller {
 				$data['error_' . $error] = '';
 			}
 		}
-		
+
 		if (isset($this->error['custom_field'])) {
 			$data['error_custom_field'] = $this->error['custom_field'];
 		} else {
@@ -1087,7 +1093,7 @@ class ControllerCustomerCustomer extends Controller {
 				$data['date_end_locked'] = true;
 			}
 		}
-		
+
 		$data['help_registered_wage_default'] = sprintf($this->language->get('help_registered_wage_default'), $this->language->get('text_' . $this->config->get('insurance_calculation_base')));
 
 		$data['header'] = $this->load->controller('common/header');
@@ -1097,7 +1103,8 @@ class ControllerCustomerCustomer extends Controller {
 		$this->response->setOutput($this->load->view('customer/customer_form', $data));
 	}
 
-	protected function validateForm() {
+	protected function validateForm()
+	{
 		if (!$this->user->hasPermission('modify', 'customer/customer')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
@@ -1132,9 +1139,9 @@ class ControllerCustomerCustomer extends Controller {
 			}
 		}
 
-		if (!empty($this->request->post['date_end']) && empty(strtotime($this->request->post['date_end']))) {
-			$this->error['date_end'] = $this->language->get('error_date_end');
-		}
+		// if (!empty($this->request->post['date_end']) && empty(strtotime($this->request->post['date_end']))) {
+		// 	$this->error['date_end'] = $this->language->get('error_date_end');
+		// }
 
 		if ((utf8_strlen($this->request->post['email']) > 96) || !filter_var($this->request->post['email'], FILTER_VALIDATE_EMAIL)) {
 			$this->error['email'] = $this->language->get('error_email');
@@ -1168,7 +1175,7 @@ class ControllerCustomerCustomer extends Controller {
 
 		if ($this->request->post['nik']) {
 			$customer_by_nik_info = $this->model_customer_customer->getCustomerByNik($this->request->post['nik']);
-		
+
 			if (!isset($this->request->get['customer_id'])) {
 				if ($customer_by_nik_info) {
 					$this->error['nik'] = $this->language->get('error_nik_exists');
@@ -1193,8 +1200,8 @@ class ControllerCustomerCustomer extends Controller {
 			if (($custom_field['location'] == 'account') && $custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['custom_field_id']])) {
 				$this->error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
 			} elseif (($custom_field['type'] == 'text' && !empty($custom_field['validation']) && $custom_field['location'] == 'account') && !filter_var($this->request->post['custom_field'][$custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $custom_field['validation'])))) {
-		        	$this->error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field_validate'), $custom_field['name']);
-		        }
+				$this->error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field_validate'), $custom_field['name']);
+			}
 		}
 
 		if ($this->request->post['password'] || (!isset($this->request->get['customer_id']))) {
@@ -1229,8 +1236,8 @@ class ControllerCustomerCustomer extends Controller {
 					if (($custom_field['location'] == 'address') && $custom_field['required'] && empty($value['custom_field'][$custom_field['custom_field_id']])) {
 						$this->error['address'][$key]['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
 					} elseif (($custom_field['type'] == 'text' && !empty($custom_field['validation']) && $custom_field['location'] == 'address') && !filter_var($value['custom_field'][$custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $custom_field['validation'])))) {
-                        $this->error['address'][$key]['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field_validate'), $custom_field['name']);
-                    }
+						$this->error['address'][$key]['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field_validate'), $custom_field['name']);
+					}
 				}
 			}
 		}
@@ -1242,7 +1249,8 @@ class ControllerCustomerCustomer extends Controller {
 		return !$this->error;
 	}
 
-	protected function validateDelete() {
+	protected function validateDelete()
+	{
 		if (!$this->user->hasPermission('bypass', 'customer/customer')) {
 			$this->error['warning'] = $this->language->get('error_permission_delete');
 		}
@@ -1250,7 +1258,8 @@ class ControllerCustomerCustomer extends Controller {
 		return !$this->error;
 	}
 
-	protected function validateUnlock() {
+	protected function validateUnlock()
+	{
 		if (!$this->user->hasPermission('modify', 'customer/customer')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
@@ -1258,7 +1267,8 @@ class ControllerCustomerCustomer extends Controller {
 		return !$this->error;
 	}
 
-	public function login() {
+	public function login()
+	{
 		if (isset($this->request->get['customer_id'])) {
 			$customer_id = $this->request->get['customer_id'];
 		} else {
@@ -1319,7 +1329,7 @@ class ControllerCustomerCustomer extends Controller {
 		}
 	}
 
-/* 	public function ip() {
+	/* 	public function ip() {
 		$this->load->language('customer/customer');
 
 		$this->load->model('customer/customer');
@@ -1364,7 +1374,8 @@ class ControllerCustomerCustomer extends Controller {
 		$this->response->setOutput($this->load->view('customer/customer_ip', $data));
 	}
  */
-	public function autocomplete() {
+	public function autocomplete()
+	{
 		$json = array();
 
 		if (isset($this->request->get['filter_name']) || isset($this->request->get['filter_email'])) {
@@ -1423,7 +1434,8 @@ class ControllerCustomerCustomer extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
-	public function customfield() {
+	public function customfield()
+	{
 		$json = array();
 
 		$this->load->model('customer/custom_field');
@@ -1448,7 +1460,8 @@ class ControllerCustomerCustomer extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
-	public function address() {
+	public function address()
+	{
 		$json = array();
 
 		if (!empty($this->request->get['address_id'])) {
@@ -1462,7 +1475,8 @@ class ControllerCustomerCustomer extends Controller {
 	}
 
 	// Bonk
-	public function city() {
+	public function city()
+	{
 		$output = '<option value="">' . $this->language->get('text_select') . '</option>';
 
 		$this->load->model('localisation/city');

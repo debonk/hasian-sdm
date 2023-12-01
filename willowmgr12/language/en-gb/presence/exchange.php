@@ -1,24 +1,31 @@
 <?php
 // Heading
-$_['heading_title']				 = 'Tukar Jadwal (Shift/Off)';
+$_['heading_title']				= 'Tukar Jadwal (Shift/Off)';
 
 // Text
-$_['text_select_customer']	 	 = '-- Pilih Karyawan --';
-$_['text_list']					 = 'Daftar Tukar Jadwal';
-$_['text_add']					 = 'Tambah Data Tukar Jadwal';
-$_['text_edit']					 = 'Ubah Data Tukar Jadwal';
-$_['text_all_period']	 		 = '-- Semua Periode --';
-$_['text_success']				 = 'Success: You have modified exchanges!';
+$_['text_list']					= 'Daftar Tukar Jadwal';
+$_['text_add']					= 'Data Tukar Jadwal Baru';
+$_['text_edit']					= 'Edit Data Tukar Jadwal';
+$_['text_success']				= 'Success: You have modified exchanges!';
+$_['text_name_set']	 	 		= '%s - %s - %s';
 
 // Column
-$_['column_date_from']			= 'Tanggal Semula';
-$_['column_date_to']			= 'Tanggal Pengganti';
-$_['column_name']				= 'Nama Karyawan';
-$_['column_description']		= 'Alasan Tukar Jadwal';
-$_['column_action']				= 'Action';
+$_['column_date_from']				= 'Tanggal Semula';
+$_['column_date_to']				= 'Tanggal Pengganti';
+$_['column_name']					= 'Nama Karyawan';
+$_['column_customer_group']     	= 'Jabatan';
+$_['column_customer_department']	= 'Divisi';
+$_['column_location'] 				= 'Lokasi Kerja';
+$_['column_customer_group']     	= 'Jabatan';
+$_['column_customer_department']	= 'Divisi';
+$_['column_location'] 				= 'Lokasi Kerja';
+$_['column_description']			= 'Alasan Tukar Jadwal';
 
 // Entry
 $_['entry_name']				= 'Nama Karyawan';
+$_['entry_customer_group']		= 'Jabatan';
+$_['entry_customer_department']	= 'Divisi';
+$_['entry_location']			= 'Lokasi Kerja';
 $_['entry_date']				= 'Tanggal';
 $_['entry_date_from']			= 'Tanggal Semula/Off';
 $_['entry_date_to']				= 'Tanggal Pengganti';

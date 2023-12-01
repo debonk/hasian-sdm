@@ -117,13 +117,13 @@ class ModelCustomerCustomer extends Model
 
 		$this->db->query($sql);
 
-		if (isset($data['date_end'])) {
-			if ((!$data['date_end']) || $this->db->escape($data['date_end']) == '0000-00-00') {
-				$this->db->query("UPDATE " . DB_PREFIX . "customer SET date_end = NULL WHERE customer_id = '" . (int)$customer_id . "'");
-			} else {
-				$this->db->query("UPDATE " . DB_PREFIX . "customer SET date_end = STR_TO_DATE('" . $this->db->escape($data['date_end']) . "', '%e %b %Y') WHERE customer_id = '" . (int)$customer_id . "'");
-			}
-		}
+		// if (isset($data['date_end'])) {
+		// 	if ((!$data['date_end']) || $this->db->escape($data['date_end']) == '0000-00-00') {
+		// 		$this->db->query("UPDATE " . DB_PREFIX . "customer SET date_end = NULL WHERE customer_id = '" . (int)$customer_id . "'");
+		// 	} else {
+		// 		$this->db->query("UPDATE " . DB_PREFIX . "customer SET date_end = STR_TO_DATE('" . $this->db->escape($data['date_end']) . "', '%e %b %Y') WHERE customer_id = '" . (int)$customer_id . "'");
+		// 	}
+		// }
 
 		if (isset($data['date_start'])) {
 			$this->db->query("UPDATE " . DB_PREFIX . "customer SET date_start = STR_TO_DATE('" . $this->db->escape($data['date_start']) . "', '%e %b %Y') WHERE customer_id = '" . (int)$customer_id . "'");
@@ -198,8 +198,6 @@ class ModelCustomerCustomer extends Model
 
 	public function getCustomers($data = array())
 	{
-		// $this->createView();
-
 		$this->db->createView('v_customer');
 
 		$sql = "SELECT * FROM " . DB_PREFIX . "v_customer WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
@@ -208,7 +206,7 @@ class ModelCustomerCustomer extends Model
 		$implode = array();
 
 		if (!empty($data['filter_name'])) {
-			$implode[] = "CONCAT(firstname, ' [', lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+			$implode[] = "name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
 		}
 
 		if (!empty($data['filter_email'])) {
@@ -237,15 +235,13 @@ class ModelCustomerCustomer extends Model
 
 		if (isset($data['filter_active']) && !is_null($data['filter_active'])) {
 			if (!$data['filter_active']) {
-				$implode[] = "(date_end <> '0000-00-00' AND date_end <= CURDATE())";
+				$implode[] = "date_end <= CURDATE()";
 			}
 		} else {
 			if (!empty($data['filter_date_end'])) {
-				// $date_end = date($this->language->get('Y-m-d'), strtotime('-2 months', strtotime('2023-09-05')));
-
-				$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end >= '" . $this->db->escape($data['filter_date_end']) . "')";
+				$implode[] = "(date_end IS NULL OR date_end >= '" . $this->db->escape($data['filter_date_end']) . "')";
 			} else {
-				$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end >= CURDATE())";
+				$implode[] = "(date_end IS NULL OR date_end >= CURDATE())";
 			}
 		}
 
@@ -379,7 +375,7 @@ class ModelCustomerCustomer extends Model
 		$implode = array();
 
 		if (!empty($data['filter_name'])) {
-			$implode[] = "CONCAT(firstname, ' [', lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+			$implode[] = "name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
 		}
 
 		if (!empty($data['filter_email'])) {
@@ -512,14 +508,4 @@ class ModelCustomerCustomer extends Model
 	{
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "customer_login` WHERE `email` = '" . $this->db->escape($email) . "'");
 	}
-
-	// public function createView($view_name = 'v_customer')
-	// {
-	// 	$view_name = DB_PREFIX . $view_name;
-
-	// 	$sql = "SELECT c.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cdd.name AS customer_department, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (c.customer_department_id = cdd.customer_department_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id AND cdd.language_id = cgd.language_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' OR cgd.language_id IS NULL";
-
-	// 	return $this->db->createView($view_name, $sql);
-	// 	// return $this->db->createView($view_name, $sql, 1);
-	// }
 }

@@ -31,6 +31,5 @@ $_['error_name']              = 'Province Name must be between 3 and 128 charact
 $_['error_default']           = 'Warning: This province cannot be deleted as it is currently assigned as the default store province!';
 $_['error_store']             = 'Warning: This province cannot be deleted as it is currently assigned to %s stores!';
 $_['error_address']           = 'Warning: This province cannot be deleted as it is currently assigned to %s address book entries!';
-$_['error_affiliate']         = 'Warning: This province cannot be deleted as it is currently assigned to %s affiliates!';
 $_['error_zone']              = 'Warning: This province cannot be deleted as it is currently assigned to %s cities!';
 $_['error_zone_to_geo_zone']  = 'Warning: This province cannot be deleted as it is currently assigned to %s zones to geo zones!';

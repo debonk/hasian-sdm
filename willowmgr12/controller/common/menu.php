@@ -12,15 +12,16 @@ class ControllerCommonMenu extends Controller
 		$data['child_groups'] = [];
 		$data['menu_title'] = [];
 
-		$fa_icon_class = ['fa-user', 'fa-th-large', 'fa-calendar', 'fa-money', 'fa-share-alt', 'fa-bar-chart-o', 'fa-info', 'fa-puzzle-piece', 'fa-rocket', 'fa-cog', '', ''];
+		$fa_icon_class = ['fa-user', 'fa-th-large', 'fa-calendar', 'fa-money', 'fa-share-alt', 'fa-bar-chart-o', 'fa-info', 'fa-puzzle-piece', 'fa-cog', '', ''];
 
 		$menu_groups = [
 			'customer'		=> [
 				'customer/customer',
 				'customer/document',
+				'customer/contract',
 				'customer/presence_method',
 				'customer/finger',
-				'option'		=> ['localisation/location', 'customer/customer_department', 'customer/customer_group', 'localisation/gender', 'localisation/marriage_status', 'localisation/payroll_method', 'customer/custom_field', 'customer/document_type', 'localisation/finger_device'],
+				'option'		=> ['localisation/location', 'customer/customer_department', 'customer/customer_group', 'customer/contract_type', 'customer/document_type', 'localisation/gender', 'localisation/marriage_status', 'localisation/payroll_method', 'customer/custom_field'],
 			],
 			'component'		=> [
 				'incentive/incentive',
@@ -45,17 +46,16 @@ class ControllerCommonMenu extends Controller
 				'option'		=> ['release/fund_account'],
 			],
 			'report'		=> [
-				'customer'		=> ['report/customer', 'report/customer_loan', 'report/customer_history'],
+				'customer'		=> ['report/customer', 'report/customer_loan', 'report/customer_history', 'report/customer_online'],
 				'payroll'		=> ['report/payroll', 'report/payroll_insurance', 'report/payroll_tax'],
 				'user'		=> ['report/user_activity', 'report/user_online']
 			],
 			'information'	=> ['module/information', 'catalog/download'],
-			'extension'		=> ['extension/installer', 'extension/modification', 'extension/component', 'extension/module', 'design/layout', 'extension/theme'],
-			'themecontrol'	=> ['module/themecontrol', 'module/pavmegamenu', 'module/pavblog'],
+			'extension'		=> ['extension/installer', 'extension/modification', 'extension/component', 'extension/module', 'design/layout'],
 			'system'		=> [
 				'setting/store',
 				'payroll/payroll_setting',
-				'localisation'	=> ['localisation/language', 'localisation/currency', 'localisation/payroll_status', 'localisation/country', 'localisation/zone', 'localisation/city', 'localisation/geozone'],
+				'localisation'	=> ['localisation/language', 'localisation/currency', 'localisation/payroll_status', 'localisation/finger_device', 'localisation/country', 'localisation/zone', 'localisation/city', 'localisation/geozone'],
 				'user'			=> ['user/user', 'user/user_permission', 'user/api'],
 				'tools'			=> ['tool/sysinfo', 'tool/upload', 'tool/backup', 'tool/error_log']
 			]

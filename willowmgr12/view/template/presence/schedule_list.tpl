@@ -288,57 +288,6 @@
 		});
 	</script>
 	<script type="text/javascript">
-		$('#button-import-bak').on('click', function (e) {
-			// var node = this;
-			// alert('galkdgjkd');
-			$('#form-import').remove();
-
-			$('body').prepend('<form enctype="multipart/form-data" id="form-import" style="display: none;"><input type="file" name="file" /></form>');
-
-			$('#form-import input[name=\'file\']').trigger('click');
-
-			if (typeof timer != 'undefined') {
-				clearInterval(timer);
-			}
-
-			timer = setInterval(function () {
-				if ($('#form-import input[name=\'file\']').val() != '') {
-					clearInterval(timer);
-
-					$.ajax({
-						url: 'index.php?route=presence/schedule/import&token=<?=$token; ?>&presence_period_id=<?=$presence_period_id; ?>',
-						type: 'post',
-						dataType: 'json',
-						data: new FormData($('#form-import')[0]),
-						cache: false,
-						contentType: false,
-						processData: false,
-						beforeSend: function () {
-							$('.alert').remove();
-							$('#button-import').button('loading');
-						},
-						success: function (json) {
-							$('#button-import').button('reset');
-							console.log(json['check']);
-
-							if (json['error']) {
-								$('#content > .container-fluid').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-
-							}
-
-							if (json['success']) {
-								// location.reload();
-							}
-						},
-						error: function (xhr, ajaxOptions, thrownError) {
-							alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-						}
-					});
-				}
-			}, 500);
-		});
-	</script>
-	<script type="text/javascript">
 		$('input[name=\'filter_name\']').autocomplete({
 			'source': function (request, response) {
 				$.ajax({

@@ -15,9 +15,6 @@ class ControllerApiCurrency extends Controller {
 			if ($currency_info) {
 				$this->session->data['currency'] = $this->request->post['currency'];
 
-				unset($this->session->data['shipping_method']);
-				unset($this->session->data['shipping_methods']);
-
 				$json['success'] = $this->language->get('text_success');
 			} else {
 				$json['error'] = $this->language->get('error_currency');

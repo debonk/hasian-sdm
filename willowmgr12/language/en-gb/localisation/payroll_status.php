@@ -18,4 +18,4 @@ $_['entry_name']       = 'Payroll Status Name';
 // Error
 $_['error_permission'] = 'Warning: You do not have permission to modify payroll statuses!';
 $_['error_name']       = 'Payroll Status Name must be between 3 and 32 characters!';
-$_['error_product']    = 'Warning: This payroll status cannot be deleted as it is currently assigned to %s products!';
+$_['error_payroll_period']    = 'Warning: This payroll status cannot be deleted as it is currently assigned to %s payroll periods!';

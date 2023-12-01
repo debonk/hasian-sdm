@@ -1,6 +1,8 @@
 <?php
-class ControllerAccountEdit extends Controller {
-	public function index() {
+class ControllerAccountEdit extends Controller
+{
+	public function index()
+	{
 		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/edit', '', true);
 
@@ -33,15 +35,19 @@ class ControllerAccountEdit extends Controller {
 		$language_items = [
 			'heading_title',
 			'text_basic_info',
+			'text_contract',
 			'text_placement',
 			'entry_firstname',
 			'entry_lastname',
 			'entry_email',
 			'entry_telephone',
 			'entry_acc_no',
-			'entry_date_start',
+			'entry_contract_status',
+			'entry_contract_type',
 			'entry_customer_group',
 			'entry_customer_department',
+			'entry_date_end',
+			'entry_date_start',
 			'entry_location',
 			'button_back',
 		];
@@ -51,30 +57,59 @@ class ControllerAccountEdit extends Controller {
 
 		$customer_info = $this->model_account_customer->getCustomer($this->customer->getId());
 
-		$data['firstname'] = $customer_info['firstname'];
-		$data['lastname'] = $customer_info['lastname'];
-		$data['email'] = $customer_info['email'];
-		$data['telephone'] = $customer_info['telephone'];
-		$data['acc_no'] = $customer_info['acc_no'];
+		$field_items = array(
+			'firstname',
+			'lastname',
+			'email',
+			'telephone',
+			'acc_no',
+			'customer_group',
+			'customer_department',
+			'location',
+		);
+		foreach ($field_items as $field) {
+			$data[$field] = $customer_info[$field];
+		}
+
 		$data['date_start'] = date($this->language->get('date_format_jMY'), strtotime($customer_info['date_start']));
-		$data['account_custom_field'] = json_decode($customer_info['custom_field'], true);
+
+		$contract_info = $this->model_account_customer->getCustomerContract($this->customer->getId());
+
+		switch ($contract_info['contract_status']) {
+			case 'expired':
+				$contract_status = $customer_info['end_reason'];
+
+				break;
+
+			case 'end_soon':
+				$contract_end_left = date_diff(date_create($contract_info['contract_end']), date_create(date('Y-m-d')))->days;
+
+				$contract_status = sprintf($this->language->get('text_contract_end_left'), $contract_end_left);
+
+				break;
+
+			default:
+				$contract_status = $this->language->get('text_contract_' . $contract_info['contract_status']);
+
+				break;
+		}
+
+		if ($contract_info['contract_type']) {
+			$contract_type = $contract_info['contract_type'] . ' (' . ($contract_info['duration'] ? sprintf($this->language->get('text_month'), ($contract_info['duration'])) : $this->language->get('text_contract_permanent')) . ')';
+		} else {
+			$contract_type = '';
+		}
+
+		$data['contract_type'] = $contract_type;
+		$data['contract_status'] = $contract_status;
+		$data['date_end'] = !$customer_info['date_end'] ? '-' : date($this->language->get('date_format_jMY'), strtotime($customer_info['date_end']));
 
 		// Custom Fields
+		$data['account_custom_field'] = json_decode($customer_info['custom_field'], true);
+
 		$this->load->model('account/custom_field');
 
 		$data['custom_fields'] = $this->model_account_custom_field->getCustomFields($this->config->get('config_customer_group_id'));
-
-		$this->load->model('account/customer_group');
-		$customer_group_info = $this->model_account_customer_group->getCustomerGroup($customer_info['customer_group_id']);
-		$data['customer_group'] = $customer_group_info['name'];
-
-		$this->load->model('account/customer_department');
-		$customer_department_info = $this->model_account_customer_department->getCustomerDepartment($customer_info['customer_department_id']);
-		$data['customer_department'] = $customer_department_info['name'];
-
-		$this->load->model('account/location');
-		$location_info = $this->model_account_location->getLocation($customer_info['location_id']);
-		$data['location'] = $location_info['name'];
 
 		$data['back'] = $this->url->link('account/account', '', true);
 

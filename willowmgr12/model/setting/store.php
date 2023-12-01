@@ -92,17 +92,11 @@ class ModelSettingStore extends Model {
 		return $query->row['total'];
 	}
 
-	public function getTotalStoresByInformationId($information_id) {
-		$account_query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "setting WHERE `key` = 'config_account_id' AND `value` = '" . (int)$information_id . "' AND store_id != '0'");
+	// public function getTotalStoresByInformationId($information_id) {
+	// 	$account_query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "setting WHERE `key` = 'config_account_id' AND `value` = '" . (int)$information_id . "' AND store_id != '0'");
 
-		$checkout_query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "setting WHERE `key` = 'config_checkout_id' AND `value` = '" . (int)$information_id . "' AND store_id != '0'");
+	// 	$checkout_query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "setting WHERE `key` = 'config_checkout_id' AND `value` = '" . (int)$information_id . "' AND store_id != '0'");
 
-		return ($account_query->row['total'] + $checkout_query->row['total']);
-	}
-
-	public function getTotalStoresByOrderStatusId($order_status_id) {
-		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "setting WHERE `key` = 'config_order_status_id' AND `value` = '" . (int)$order_status_id . "' AND store_id != '0'");
-
-		return $query->row['total'];
-	}
+	// 	return ($account_query->row['total'] + $checkout_query->row['total']);
+	// }
 }

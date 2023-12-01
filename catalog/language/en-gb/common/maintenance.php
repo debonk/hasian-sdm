@@ -5,7 +5,7 @@ $_['heading_title']    = 'Maintenance';
 // Text
 $_['text_maintenance'] = 'Maintenance';
 // $_['text_message']     = 'Absensi Lokal hanya untuk kondisi darurat.<br/>Klik gambar di bawah untuk Absensi Utama.';
-$_['text_message']     = 'Sedang Dalam Pemeliharaan';
+$_['text_message']     = 'Sistem sedang dalam pemeliharaan dan akan kembali aktif segera.';
 
 // Image Source
 $_['image_blank']   				= '';

@@ -407,7 +407,7 @@ class ControllerLocalisationCountry extends Controller {
 
 		$this->load->model('setting/store');
 		$this->load->model('customer/customer');
-		$this->load->model('marketing/affiliate');
+		// $this->load->model('marketing/affiliate');
 		$this->load->model('localisation/zone');
 		$this->load->model('localisation/geo_zone');
 
@@ -428,11 +428,11 @@ class ControllerLocalisationCountry extends Controller {
 				$this->error['warning'] = sprintf($this->language->get('error_address'), $address_total);
 			}
 
-			$affiliate_total = $this->model_marketing_affiliate->getTotalAffiliatesByCountryId($country_id);
+			// $affiliate_total = $this->model_marketing_affiliate->getTotalAffiliatesByCountryId($country_id);
 
-			if ($affiliate_total) {
-				$this->error['warning'] = sprintf($this->language->get('error_affiliate'), $affiliate_total);
-			}
+			// if ($affiliate_total) {
+			// 	$this->error['warning'] = sprintf($this->language->get('error_affiliate'), $affiliate_total);
+			// }
 
 			$zone_total = $this->model_localisation_zone->getTotalZonesByCountryId($country_id);
 

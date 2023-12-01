@@ -27,7 +27,6 @@ class ControllerInformationSitemap extends Controller {
 		$data['text_history'] = $this->language->get('text_history');
 		$data['text_download'] = $this->language->get('text_download');
 		$data['text_cart'] = $this->language->get('text_cart');
-		$data['text_checkout'] = $this->language->get('text_checkout');
 		$data['text_search'] = $this->language->get('text_search');
 		$data['text_information'] = $this->language->get('text_information');
 		$data['text_contact'] = $this->language->get('text_contact');
@@ -70,16 +69,11 @@ class ControllerInformationSitemap extends Controller {
 			);
 		}
 
-		$data['special'] = $this->url->link('product/special');
 		$data['account'] = $this->url->link('account/account', '', true);
 		$data['edit'] = $this->url->link('account/edit', '', true);
 		$data['password'] = $this->url->link('account/password', '', true);
 		$data['address'] = $this->url->link('account/address', '', true);
-		$data['history'] = $this->url->link('account/order', '', true);
 		$data['download'] = $this->url->link('account/download', '', true);
-		$data['cart'] = $this->url->link('checkout/cart');
-		$data['checkout'] = $this->url->link('checkout/checkout', '', true);
-		$data['search'] = $this->url->link('product/search');
 		$data['contact'] = $this->url->link('information/contact');
 
 		$this->load->model('catalog/information');

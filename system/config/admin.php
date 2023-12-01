@@ -23,7 +23,8 @@ $_['action_pre_action']  = array(
 	'startup/event',
 	'startup/sass',
 	'startup/login',
-	'startup/permission'
+	'startup/permission',
+	'startup/maintenance'
 );
 
 // Actions

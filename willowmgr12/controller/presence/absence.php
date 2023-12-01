@@ -2,6 +2,44 @@
 class ControllerPresenceAbsence extends Controller
 {
 	private $error = array();
+	private $filter_items = array(
+		'name',
+		'customer_group_id',
+		'customer_department_id',
+		'location_id',
+		'presence_status_id',
+		'date',
+		'period',
+		'note',
+		'approved'
+	);
+
+	private function urlFilter($excluded_item = null)
+	{
+		$url_filter = '';
+
+		foreach ($this->filter_items as $filter_item) {
+			if (isset($this->request->get['filter_' . $filter_item])) {
+				$url_filter .= '&filter_' . $filter_item . '=' . $this->request->get['filter_' . $filter_item];
+			}
+		}
+
+		if ($excluded_item != 'sort') {
+			if (isset($this->request->get['sort'])) {
+				$url_filter .= '&sort=' . $this->request->get['sort'];
+			}
+
+			if (isset($this->request->get['order'])) {
+				$url_filter .= '&order=' . $this->request->get['order'];
+			}
+		}	
+
+		if (isset($this->request->get['page']) && $excluded_item != 'page') {
+			$url_filter .= '&page=' . $this->request->get['page'];
+		}
+
+	return $url_filter;
+	}
 
 	public function index()
 	{
@@ -27,43 +65,7 @@ class ControllerPresenceAbsence extends Controller
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$url = '';
-
-			if (isset($this->request->get['filter_name'])) {
-				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-			}
-
-			if (isset($this->request->get['filter_presence_status_id'])) {
-				$url .= '&filter_presence_status_id=' . $this->request->get['filter_presence_status_id'];
-			}
-
-			if (isset($this->request->get['filter_date'])) {
-				$url .= '&filter_date=' . $this->request->get['filter_date'];
-			}
-
-			if (isset($this->request->get['filter_period_id'])) {
-				$url .= '&filter_period_id=' . $this->request->get['filter_period_id'];
-			}
-
-			if (isset($this->request->get['filter_note'])) {
-				$url .= '&filter_note=' . $this->request->get['filter_note'];
-			}
-
-			if (isset($this->request->get['filter_approved'])) {
-				$url .= '&filter_approved=' . $this->request->get['filter_approved'];
-			}
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
-			}
+			$url = $this->urlFilter();
 
 			$this->response->redirect($this->url->link('presence/absence', 'token=' . $this->session->data['token'] . $url, true));
 		}
@@ -84,43 +86,7 @@ class ControllerPresenceAbsence extends Controller
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$url = '';
-
-			if (isset($this->request->get['filter_name'])) {
-				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-			}
-
-			if (isset($this->request->get['filter_presence_status_id'])) {
-				$url .= '&filter_presence_status_id=' . $this->request->get['filter_presence_status_id'];
-			}
-
-			if (isset($this->request->get['filter_date'])) {
-				$url .= '&filter_date=' . $this->request->get['filter_date'];
-			}
-
-			if (isset($this->request->get['filter_period_id'])) {
-				$url .= '&filter_period_id=' . $this->request->get['filter_period_id'];
-			}
-
-			if (isset($this->request->get['filter_note'])) {
-				$url .= '&filter_note=' . $this->request->get['filter_note'];
-			}
-
-			if (isset($this->request->get['filter_approved'])) {
-				$url .= '&filter_approved=' . $this->request->get['filter_approved'];
-			}
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
-			}
+			$url = $this->urlFilter();
 
 			$this->response->redirect($this->url->link('presence/absence', 'token=' . $this->session->data['token'] . $url, true));
 		}
@@ -143,43 +109,7 @@ class ControllerPresenceAbsence extends Controller
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$url = '';
-
-			if (isset($this->request->get['filter_name'])) {
-				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-			}
-
-			if (isset($this->request->get['filter_presence_status_id'])) {
-				$url .= '&filter_presence_status_id=' . $this->request->get['filter_presence_status_id'];
-			}
-
-			if (isset($this->request->get['filter_date'])) {
-				$url .= '&filter_date=' . $this->request->get['filter_date'];
-			}
-
-			if (isset($this->request->get['filter_period_id'])) {
-				$url .= '&filter_period_id=' . $this->request->get['filter_period_id'];
-			}
-
-			if (isset($this->request->get['filter_note'])) {
-				$url .= '&filter_note=' . $this->request->get['filter_note'];
-			}
-
-			if (isset($this->request->get['filter_approved'])) {
-				$url .= '&filter_approved=' . $this->request->get['filter_approved'];
-			}
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
-			}
+			$url = $this->urlFilter();
 
 			$this->response->redirect($this->url->link('presence/absence', 'token=' . $this->session->data['token'] . $url, true));
 		}
@@ -189,40 +119,59 @@ class ControllerPresenceAbsence extends Controller
 
 	protected function getList()
 	{
-		if (isset($this->request->get['filter_name'])) {
-			$filter_name = $this->request->get['filter_name'];
-		} else {
-			$filter_name = '';
+		$this->db->createView('v_customer');
+		$this->db->createView('v_absence');
+
+		$language_items = array(
+			'heading_title',
+			'text_list',
+			'text_no_results',
+			'text_confirm',
+			'text_loading',
+			'text_all',
+			'text_with_note',
+			'text_without_note',
+			'text_approved',
+			'text_not_approved',
+			'entry_name',
+			'entry_customer_group',
+			'entry_customer_department',
+			'entry_location',
+			'entry_presence_status',
+			'entry_date',
+			'entry_period',
+			'entry_note',
+			'entry_approved',
+			'column_date',
+			'column_name',
+			'column_customer_group',
+			'column_customer_department',
+			'column_location',
+			'column_presence_status',
+			'column_description',
+			'column_note',
+			'column_approved',
+			'column_username',
+			'column_action',
+			'button_filter',
+			'button_add',
+			'button_view',
+			'button_edit',
+			'button_delete',
+			'button_approve'
+		);
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
 		}
 
-		if (isset($this->request->get['filter_presence_status_id'])) {
-			$filter_presence_status_id = $this->request->get['filter_presence_status_id'];
-		} else {
-			$filter_presence_status_id = '';
-		}
+		$filter = [];
 
-		if (isset($this->request->get['filter_date'])) {
-			$filter_date = $this->request->get['filter_date'];
-		} else {
-			$filter_date = '';
-		}
-
-		if (isset($this->request->get['filter_period_id'])) {
-			$filter_period_id = $this->request->get['filter_period_id'];
-		} else {
-			$filter_period_id = '';
-		}
-
-		if (isset($this->request->get['filter_note'])) {
-			$filter_note = $this->request->get['filter_note'];
-		} else {
-			$filter_note = null;
-		}
-
-		if (isset($this->request->get['filter_approved'])) {
-			$filter_approved = $this->request->get['filter_approved'];
-		} else {
-			$filter_approved = null;
+		foreach ($this->filter_items as $filter_item) {
+			if (isset($this->request->get['filter_' . $filter_item])) {
+				$filter[$filter_item] = $this->request->get['filter_' . $filter_item];
+			} else {
+				$filter[$filter_item] = null;
+			}
 		}
 
 		if (isset($this->request->get['sort'])) {
@@ -243,43 +192,7 @@ class ControllerPresenceAbsence extends Controller
 			$page = 1;
 		}
 
-		$url = '';
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_presence_status_id'])) {
-			$url .= '&filter_presence_status_id=' . $this->request->get['filter_presence_status_id'];
-		}
-
-		if (isset($this->request->get['filter_date'])) {
-			$url .= '&filter_date=' . $this->request->get['filter_date'];
-		}
-
-		if (isset($this->request->get['filter_period_id'])) {
-			$url .= '&filter_period_id=' . $this->request->get['filter_period_id'];
-		}
-
-		if (isset($this->request->get['filter_note'])) {
-			$url .= '&filter_note=' . $this->request->get['filter_note'];
-		}
-
-		if (isset($this->request->get['filter_approved'])) {
-			$url .= '&filter_approved=' . $this->request->get['filter_approved'];
-		}
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
-
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
+		$url = $this->urlFilter();
 
 		$data['breadcrumbs'] = array();
 
@@ -290,81 +203,44 @@ class ControllerPresenceAbsence extends Controller
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('presence/absence', 'token=' . $this->session->data['token'] . $url, true)
+			'href' => $this->url->link('presence/absence', 'token=' . $this->session->data['token'], true)
 		);
 
 		$data['add'] = $this->url->link('presence/absence/add', 'token=' . $this->session->data['token'] . $url, true);
 		$data['delete'] = $this->url->link('presence/absence/delete', 'token=' . $this->session->data['token'] . $url, true);
 
-		$filter_data = array(
-			'filter_name'				=> $filter_name,
-			'filter_presence_status_id'	=> $filter_presence_status_id,
-			'filter_date'				=> $filter_date,
-			'filter_period_id'			=> $filter_period_id,
-			'filter_note'				=> $filter_note,
-			'filter_approved'			=> $filter_approved,
-			'sort'  					=> $sort,
-			'order' 					=> $order,
-			'start'         			=> ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit'         			=> $this->config->get('config_limit_admin')
-		);
+		$limit = $this->config->get('config_limit_admin');
 
 		$data['absences'] = array();
+
+		$filter_data = array(
+			'filter'  	=> $filter,
+			'sort'  	=> $sort,
+			'order' 	=> $order,
+			'start' 	=> ($page - 1) * $limit,
+			'limit' 	=> $limit
+		);
 
 		$results = $this->model_presence_absence->getAbsences($filter_data);
 
 		foreach ($results as $result) {
 			$data['absences'][] = array(
-				'absence_id' 		=> $result['absence_id'],
-				'date' 				=> date($this->language->get('date_format_jMY'), strtotime($result['date'])),
-				'name' 				=> $result['name'],
-				'presence_status' 	=> $result['presence_status'],
-				'description' 		=> strlen($result['description']) > 30 ? substr($result['description'], 0, 28) . '..' : $result['description'],
-				'note' 				=> strlen($result['note']) > 30 ? substr($result['note'], 0, 28) . '..' : $result['note'],
-				'approved'    		=> $result['approved'],
-				'username'    		=> $result['username'],
-				// 'view'          	=> $this->url->link('presence/schedule/edit', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $result['presence_period_id'] . '&customer_id=' . $result['customer_id'], true),
-				'edit'          	=> $this->url->link('presence/absence/edit', 'token=' . $this->session->data['token'] . '&absence_id=' . $result['absence_id'] . $url, true),
+				'absence_id' 			=> $result['absence_id'],
+				'date' 					=> date($this->language->get('date_format_jMY'), strtotime($result['date'])),
+				'name' 					=> $result['name'],
+				'customer_group' 		=> $result['customer_group'],
+				'customer_department' 	=> $result['customer_department'],
+				'location' 				=> $result['location'],
+				'presence_status' 		=> $result['presence_status'],
+				'description' 			=> strlen($result['description']) > 30 ? substr($result['description'], 0, 28) . '..' : $result['description'],
+				'note' 					=> strlen($result['note']) > 30 ? substr($result['note'], 0, 28) . '..' : $result['note'],
+				'approved'    			=> $result['approved'],
+				'username'    			=> $result['username'],
+				'edit'          		=> $this->url->link('presence/absence/edit', 'token=' . $this->session->data['token'] . '&absence_id=' . $result['absence_id'] . $url, true),
 			);
 		}
 
 		$absences_count = $this->model_presence_absence->getAbsencesCount($filter_data);
-
-		$language_items = array(
-			'heading_title',
-			'text_list',
-			'text_no_results',
-			'text_confirm',
-			'text_loading',
-			'text_all',
-			'text_with_note',
-			'text_without_note',
-			'text_approved',
-			'text_not_approved',
-			'entry_name',
-			'entry_presence_status',
-			'entry_date',
-			'entry_period',
-			'entry_note',
-			'entry_approved',
-			'column_date',
-			'column_name',
-			'column_presence_status',
-			'column_description',
-			'column_note',
-			'column_approved',
-			'column_username',
-			'column_action',
-			'button_filter',
-			'button_add',
-			'button_view',
-			'button_edit',
-			'button_delete',
-			'button_approve'
-		);
-		foreach ($language_items as $language_item) {
-			$data[$language_item] = $this->language->get($language_item);
-		}
 
 		$data['token'] = $this->session->data['token'];
 
@@ -388,31 +264,7 @@ class ControllerPresenceAbsence extends Controller
 			$data['selected'] = array();
 		}
 
-		$url = '';
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_presence_status_id'])) {
-			$url .= '&filter_presence_status_id=' . $this->request->get['filter_presence_status_id'];
-		}
-
-		if (isset($this->request->get['filter_date'])) {
-			$url .= '&filter_date=' . $this->request->get['filter_date'];
-		}
-
-		if (isset($this->request->get['filter_period_id'])) {
-			$url .= '&filter_period_id=' . $this->request->get['filter_period_id'];
-		}
-
-		if (isset($this->request->get['filter_note'])) {
-			$url .= '&filter_note=' . $this->request->get['filter_note'];
-		}
-
-		if (isset($this->request->get['filter_approved'])) {
-			$url .= '&filter_approved=' . $this->request->get['filter_approved'];
-		}
+		$url = $this->urlFilter('sort');
 
 		if ($order == 'ASC') {
 			$url .= '&order=DESC';
@@ -420,71 +272,39 @@ class ControllerPresenceAbsence extends Controller
 			$url .= '&order=ASC';
 		}
 
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
-
 		$data['sort_date'] = $this->url->link('presence/absence', 'token=' . $this->session->data['token'] . '&sort=date' . $url, true);
 		$data['sort_name'] = $this->url->link('presence/absence', 'token=' . $this->session->data['token'] . '&sort=name' . $url, true);
+		$data['sort_customer_group'] = $this->url->link('presence/absence', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
+		$data['sort_customer_department'] = $this->url->link('presence/absence', 'token=' . $this->session->data['token'] . '&sort=customer_department' . $url, true);
+		$data['sort_location'] = $this->url->link('presence/absence', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
 		$data['sort_presence_status'] = $this->url->link('presence/absence', 'token=' . $this->session->data['token'] . '&sort=presence_status_id' . $url, true);
 
-		$url = '';
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_presence_status_id'])) {
-			$url .= '&filter_presence_status_id=' . $this->request->get['filter_presence_status_id'];
-		}
-
-		if (isset($this->request->get['filter_period_id'])) {
-			$url .= '&filter_period_id=' . $this->request->get['filter_period_id'];
-		}
-
-		if (isset($this->request->get['filter_note'])) {
-			$url .= '&filter_note=' . $this->request->get['filter_note'];
-		}
-
-		if (isset($this->request->get['filter_approved'])) {
-			$url .= '&filter_approved=' . $this->request->get['filter_approved'];
-		}
-
-		if (isset($this->request->get['filter_date'])) {
-			$url .= '&filter_date=' . $this->request->get['filter_date'];
-		}
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
+		$url = $this->urlFilter('page');
 
 		$pagination = new Pagination();
 		$pagination->total = $absences_count;
 		$pagination->page = $page;
-		$pagination->limit = $this->config->get('config_limit_admin');
+		$pagination->limit = $limit;
 		$pagination->url = $this->url->link('presence/absence', 'token=' . $this->session->data['token'] . $url . '&page={page}', true);
 
 		$data['pagination'] = $pagination->render();
 
-		$data['results'] = sprintf($this->language->get('text_pagination'), ($absences_count) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($absences_count - $this->config->get('config_limit_admin'))) ? $absences_count : ((($page - 1) * $this->config->get('config_limit_admin')) + $this->config->get('config_limit_admin')), $absences_count, ceil($absences_count / $this->config->get('config_limit_admin')));
+		$data['results'] = sprintf($this->language->get('text_pagination'), ($absences_count) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($absences_count - $limit)) ? $absences_count : ((($page - 1) * $limit) + $limit), $absences_count, ceil($absences_count / $limit));
 
-		$data['filter_name'] = $filter_name;
-		$data['filter_presence_status_id'] = $filter_presence_status_id;
-		$data['filter_date'] = $filter_date;
-		$data['filter_period_id'] = $filter_period_id;
-		$data['filter_note'] = $filter_note;
-		$data['filter_approved'] = $filter_approved;
+		$data['filter_items'] = json_encode($this->filter_items);
+		$data['filter'] = $filter;
 		$data['sort'] = $sort;
 		$data['order'] = $order;
 
-		$this->load->model('presence/presence_period');
-		$data['periods'] = $this->model_presence_presence_period->getPresencePeriods();
+		$this->load->model('customer/customer_group');
+		$data['customer_groups'] = $this->model_customer_customer_group->getCustomerGroups();
 
-		$data['config_presence_status'] = $this->config->get('payroll_setting_presence_status_ids');
+		$this->load->model('customer/customer_department');
+		$data['customer_departments'] = $this->model_customer_customer_department->getCustomerDepartments();
+
+		$this->load->model('localisation/location');
+		$data['locations'] = $this->model_localisation_location->getLocations();
+
 		$this->load->model('localisation/presence_status');
 		$data['presence_statuses'] = $this->model_localisation_presence_status->getPresenceStatuses();
 
@@ -497,11 +317,13 @@ class ControllerPresenceAbsence extends Controller
 
 	protected function getForm()
 	{
+		$this->db->createView('v_customer');
+		$this->db->createView('v_absence');
+
 		$data['text_form'] = !isset($this->request->get['absence_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
 
 		$language_items = array(
 			'heading_title',
-			// 'text_select_customer',
 			'text_select',
 			'text_loading',
 			'entry_name',
@@ -520,18 +342,6 @@ class ControllerPresenceAbsence extends Controller
 
 		$data['token'] = $this->session->data['token'];
 
-		$data['customers'] = array();
-
-		$this->load->model('presence/presence');
-		$results = $this->model_presence_presence->getCustomers(['filter_customer_department_id' => $this->user->getCustomerDepartmentId()]);
-
-		foreach ($results as $result) {
-			$data['customers'][] = array(
-				'customer_id' 	=> $result['customer_id'],
-				'text' 			=> $result['name'] . ' - ' . $result['customer_group']
-			);
-		}
-
 		$errors = array(
 			'warning',
 			'date',
@@ -547,43 +357,7 @@ class ControllerPresenceAbsence extends Controller
 			}
 		}
 
-		$url = '';
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_presence_status_id'])) {
-			$url .= '&filter_presence_status_id=' . $this->request->get['filter_presence_status_id'];
-		}
-
-		if (isset($this->request->get['filter_date'])) {
-			$url .= '&filter_date=' . $this->request->get['filter_date'];
-		}
-
-		if (isset($this->request->get['filter_period_id'])) {
-			$url .= '&filter_period_id=' . $this->request->get['filter_period_id'];
-		}
-
-		if (isset($this->request->get['filter_note'])) {
-			$url .= '&filter_note=' . $this->request->get['filter_note'];
-		}
-
-		if (isset($this->request->get['filter_approved'])) {
-			$url .= '&filter_approved=' . $this->request->get['filter_approved'];
-		}
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
-
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
+		$url = $this->urlFilter();
 
 		$data['breadcrumbs'] = array();
 
@@ -618,62 +392,34 @@ class ControllerPresenceAbsence extends Controller
 			$absence_info = $this->model_presence_absence->getAbsence($this->request->get['absence_id']);
 		}
 
+		$field_items = array(
+			'customer_id'			=> 0,
+			'name'					=> '',
+			'date'					=> '',
+			'approved'				=> 0,
+			'presence_status_id'	=> 0,
+			'description'			=> '',
+			'note'					=> ''
+		);
+		foreach ($field_items as $field => $value) {
+			if (isset($this->request->post[$field])) {
+				$data[$field] = $this->request->post[$field];
+			} elseif (!empty($absence_info)) {
+				if ($field == 'date') {
+					$data['date'] = date($this->language->get('date_format_jMY'), strtotime($absence_info['date']));
+				} else {
+					$data[$field] = $absence_info[$field];
+				}
+			} else {
+				$data[$field] = $value;
+			}
+		}
+
 		//Text User Modify
 		if (!empty($absence_info)) {
-			$username = $absence_info['username'];
-			$date_modified = date($this->language->get('datetime_format_jMY'), strtotime($absence_info['date_modified']));
+			$data['text_modified'] = sprintf($this->language->get('text_modified'), $absence_info['username'], date($this->language->get('datetime_format_jMY'), strtotime($absence_info['date_modified'])));
 		} else {
-			$username = $this->user->getUserName();
-			$date_modified = date($this->language->get('datetime_format_jMY'));
-		}
-		$data['text_modified'] = sprintf($this->language->get('text_modified'), $username, $date_modified);
-
-		if (isset($this->request->post['customer_id'])) {
-			$data['customer_id'] = $this->request->post['customer_id'];
-		} elseif (!empty($absence_info)) {
-			$data['customer_id'] = $absence_info['customer_id'];
-		} else {
-			$data['customer_id'] = 0;
-		}
-
-		if (isset($this->request->post['date'])) {
-			$data['date'] = $this->request->post['date'];
-		} elseif (!empty($absence_info)) {
-			$data['date'] = date($this->language->get('date_format_jMY'), strtotime($absence_info['date']));
-		} else {
-			$data['date'] = '';
-		}
-
-		if (isset($this->request->post['approval'])) {
-			$data['approval'] = $this->request->post['approval'];
-		} elseif (!empty($absence_info)) {
-			$data['approval'] = !$absence_info['approved'];
-		} else {
-			$data['approval'] = 0;
-		}
-
-		if (isset($this->request->post['presence_status_id'])) {
-			$data['presence_status_id'] = $this->request->post['presence_status_id'];
-		} elseif (!empty($absence_info)) {
-			$data['presence_status_id'] = $absence_info['presence_status_id'];
-		} else {
-			$data['presence_status_id'] = 0;
-		}
-
-		if (isset($this->request->post['description'])) {
-			$data['description'] = $this->request->post['description'];
-		} elseif (!empty($absence_info)) {
-			$data['description'] = $absence_info['description'];
-		} else {
-			$data['description'] = '';
-		}
-
-		if (isset($this->request->post['note'])) {
-			$data['note'] = $this->request->post['note'];
-		} elseif (!empty($absence_info)) {
-			$data['note'] = $absence_info['note'];
-		} else {
-			$data['note'] = '';
+			$data['text_modified'] = sprintf($this->language->get('text_created'), $this->user->getUserName(), date($this->language->get('datetime_format_jMY')));
 		}
 
 		$data['config_presence_status'] = $this->config->get('payroll_setting_presence_status_ids');
@@ -951,6 +697,41 @@ class ControllerPresenceAbsence extends Controller
 			$this->model_presence_presence->editPresenceSummary($period_info['presence_period_id'], $absence_info['customer_id'], $presence_summary_data);
 
 			$json['success'] = $this->language->get('text_success');
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
+	public function autocomplete()
+	{
+		$this->load->language('presence/absence');
+
+		$json = array();
+
+		if (isset($this->request->get['filter_name'])) {
+			$filter_name = $this->request->get['filter_name'];
+
+			$presence_period_id = isset($this->request->get['presence_period_id']) ? $this->request->get['presence_period_id'] : 0;
+
+			$this->load->model('presence/presence');
+
+			$filter_data = array(
+				'presence_period_id'	=> $presence_period_id,
+				'filter_name'			=> $filter_name,
+				'start'      			=> 0,
+				'limit'      			=> 15
+			);
+
+			$results = $this->model_presence_presence->getCustomers($filter_data);
+
+			foreach ($results as $result) {
+				$json[] = array(
+					'customer_id'	=> $result['customer_id'],
+					'name_set'		=> strip_tags(html_entity_decode(sprintf($this->language->get('text_name_set'), $result['name'], $result['customer_group'], $result['location']), ENT_QUOTES, 'UTF-8')),
+					'name'			=> strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8'))
+				);
+			}
 		}
 
 		$this->response->addHeader('Content-Type: application/json');

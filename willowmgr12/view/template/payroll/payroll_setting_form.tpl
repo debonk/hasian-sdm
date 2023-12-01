@@ -171,6 +171,17 @@
 								</div>
 							</div>
 							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-login-date"><span
+										data-toggle="tooltip" title="<?= $help_login_date; ?>">
+										<?= $entry_login_date; ?>
+									</span></label>
+								<div class="col-sm-10">
+									<input type="text" name="payroll_setting_login_date"
+										value="<?= $payroll_setting_login_date; ?>" class="form-control"
+										id="input-login-date" />
+								</div>
+							</div>
+							<div class="form-group">
 								<label class="col-sm-2 control-label" for="input-logout-date"><span
 										data-toggle="tooltip" title="<?= $help_logout_date; ?>">
 										<?= $entry_logout_date; ?>

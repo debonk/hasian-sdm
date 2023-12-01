@@ -145,7 +145,7 @@ class ControllerReportCustomer extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('report/customer', 'token=' . $this->session->data['token'] . $url, true)
+			'href' => $this->url->link('report/customer', 'token=' . $this->session->data['token'], true)
 		);
 
 		$data['customers'] = array();
@@ -171,8 +171,11 @@ class ControllerReportCustomer extends Controller {
 		$this->load->model('presence/absence');
 		
 		foreach ($results as $result) {
-			$vacation_count = $this->model_presence_absence->getVacationsCount($result['customer_id']);
-			
+			$active_time = date_diff(date_create($result['date_start']), date_create());
+
+			$vacation_limit = !$active_time->y ? 0 : $this->config->get('payroll_setting_vacation_limit');
+			$vacation_count = !$vacation_limit ? 0 : $vacation_limit - $this->model_presence_absence->getVacationsCount($result['customer_id']);
+		
 			$data['customers'][] = array(
 				'customer_id'    => $result['customer_id'],
 				'nip'            => $result['nip'],

@@ -1,6 +1,8 @@
 <?php
-class ControllerCommonDashboard extends Controller {
-	public function index() {
+class ControllerCommonDashboard extends Controller
+{
+	public function index()
+	{
 		$this->load->language('common/dashboard');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -28,12 +30,22 @@ class ControllerCommonDashboard extends Controller {
 
 		$data['token'] = $this->session->data['token'];
 
+		$data['admin_maintenance'] = $this->config->get('config_admin_maintenance');
+
+		if ($data['admin_maintenance']) {
+			$data['text_maintenance'] = $this->language->get('text_maintenance');
+			$data['login_session'] = false;
+		} else {
+			$data['text_maintenance'] = false;
+			$data['login_session'] = $this->load->controller('dashboard/login_session');
+		}
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['login_session'] = $this->load->controller('dashboard/login_session');
 		$data['presence'] = $this->load->controller('dashboard/presence');
 		$data['customer'] = $this->load->controller('dashboard/customer');
 		$data['online'] = $this->load->controller('dashboard/online');
+		$data['attention'] = $this->load->controller('dashboard/attention');
 		$data['history'] = $this->load->controller('dashboard/history');
 		$data['recent'] = $this->load->controller('dashboard/recent');
 		$data['footer'] = $this->load->controller('common/footer');

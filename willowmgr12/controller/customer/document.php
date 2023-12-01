@@ -2,6 +2,28 @@
 class ControllerCustomerDocument extends Controller
 {
 	private $error = array();
+	private $filter_items = array(
+		'name',
+		'customer_group_id',
+		'customer_department_id',
+		'location_id',
+		'requirement',
+		'active'
+	);
+
+	private function urlFilter()
+	{
+		$url_filter = '';
+
+		foreach ($this->filter_items as $filter_item) {
+			if (isset($this->request->get['filter_' . $filter_item])) {
+				$url_filter .= '&filter_' . $filter_item . '=' . $this->request->get['filter_' . $filter_item];
+			}
+		}
+
+		return $url_filter;
+	}
+
 
 	public function index()
 	{
@@ -9,9 +31,11 @@ class ControllerCustomerDocument extends Controller
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
+		$this->db->createView('v_customer');
+		$this->db->createView('v_document');
+
 		$this->load->model('customer/document');
 		$this->load->model('presence/presence');
-		$this->load->model('customer/document_type');
 
 		$this->getList();
 	}
@@ -22,6 +46,9 @@ class ControllerCustomerDocument extends Controller
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
+		$this->db->createView('v_customer');
+		$this->db->createView('v_document');
+
 		$this->load->model('customer/document');
 		$this->load->model('customer/document_type');
 
@@ -30,29 +57,70 @@ class ControllerCustomerDocument extends Controller
 
 	protected function getList()
 	{
-		if (isset($this->request->get['filter_name'])) {
-			$filter_name = $this->request->get['filter_name'];
-		} else {
-			$filter_name = null;
+		$language_items = array(
+			'heading_title',
+			'text_list',
+			'text_no_results',
+			'text_all',
+			'text_active',
+			'text_inactive',
+			'text_all_status',
+			'entry_name',
+			'entry_customer_department',
+			'entry_customer_group',
+			'entry_location',
+			'entry_requirement',
+			'entry_status',
+			'column_nip',
+			'column_name',
+			'column_customer_department',
+			'column_customer_group',
+			'column_location',
+			'column_action',
+			'button_filter',
+			'button_edit'
+		);
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
 		}
 
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$filter_customer_group_id = $this->request->get['filter_customer_group_id'];
-		} else {
-			$filter_customer_group_id = null;
+		$filter = [];
+
+		foreach ($this->filter_items as $filter_item) {
+			if (isset($this->request->get['filter_' . $filter_item])) {
+				$filter[$filter_item] = $this->request->get['filter_' . $filter_item];
+			} else {
+				$filter[$filter_item] = null;
+			}
 		}
 
-		if (isset($this->request->get['filter_location_id'])) {
-			$filter_location_id = $this->request->get['filter_location_id'];
-		} else {
-			$filter_location_id = null;
+		if (empty($filter['active'])) {
+			$filter['active'] = 1;
 		}
 
-		if (isset($this->request->get['filter_status'])) {
-			$filter_status = $this->request->get['filter_status'];
-		} else {
-			$filter_status = null;
-		}
+		// if (isset($this->request->get['filter_name'])) {
+		// 	$filter_name = $this->request->get['filter_name'];
+		// } else {
+		// 	$filter_name = null;
+		// }
+
+		// if (isset($this->request->get['filter_customer_group_id'])) {
+		// 	$filter_customer_group_id = $this->request->get['filter_customer_group_id'];
+		// } else {
+		// 	$filter_customer_group_id = null;
+		// }
+
+		// if (isset($this->request->get['filter_location_id'])) {
+		// 	$filter_location_id = $this->request->get['filter_location_id'];
+		// } else {
+		// 	$filter_location_id = null;
+		// }
+
+		// if (isset($this->request->get['filter_status'])) {
+		// 	$filter_status = $this->request->get['filter_status'];
+		// } else {
+		// 	$filter_status = null;
+		// }
 
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
@@ -72,23 +140,7 @@ class ControllerCustomerDocument extends Controller
 			$page = 1;
 		}
 
-		$url = '';
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
-
-		if (isset($this->request->get['filter_status'])) {
-			$url .= '&filter_status=' . $this->request->get['filter_status'];
-		}
+		$url = $this->urlFilter();
 
 		if (isset($this->request->get['sort'])) {
 			$url .= '&sort=' . $this->request->get['sort'];
@@ -114,97 +166,59 @@ class ControllerCustomerDocument extends Controller
 			'href' => $this->url->link('customer/document', 'token=' . $this->session->data['token'], true)
 		);
 
+		$data['documents'] = array();
+
+		$limit = $this->config->get('config_limit_admin');
+
 		$filter_data = array(
-			'filter_name'	   	   => $filter_name,
-			'filter_customer_group_id' => $filter_customer_group_id,
-			'filter_location_id'   => $filter_location_id,
-			'filter_status' 	   => $filter_status,
-			'sort'                 => $sort,
-			'order'                => $order,
-			'start'                => ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit'                => $this->config->get('config_limit_admin')
+			'filter'  	=> $filter,
+			'sort'  	=> $sort,
+			'order' 	=> $order,
+			'start' 	=> ($page - 1) * $limit,
+			'limit' 	=> $limit
 		);
 
-		$data['documents'] = array();
-		$documents_data = array();
-		$documents = array();
+		$customer_count = $this->model_customer_document->getCustomerDocumentsCount($filter_data);
 
-		$customer_count = $this->model_presence_presence->getTotalCustomers($filter_data);
+		$results = $this->model_customer_document->getCustomerDocuments($filter_data);
 
-		$results = $this->model_presence_presence->getCustomers($filter_data);
-
-		$document_types_info = $this->model_customer_document_type->getActiveDocumentTypes();
-
-		$documents_info = $this->model_customer_document->getDocuments();
-
-		foreach ($documents_info as $document_info) {
-			$documents_data[$document_info['customer_id']][$document_info['document_type_id']] = 1; //Value bisa diganti dgn data yg diperlukan
-		}
+		$document_data = $this->model_customer_document->getDocuments();
 
 		foreach ($results as $result) {
-			foreach ($document_types_info as $document_type) {
-				if (isset($documents_data[$result['customer_id']][$document_type['document_type_id']])) {
-					$documents[$document_type['document_type_id']] = $documents_data[$result['customer_id']][$document_type['document_type_id']];
-				} else {
-					$documents[$document_type['document_type_id']] = 0;
-				}
-			}
+			$documents = isset($document_data[$result['customer_id']]) ? $document_data[$result['customer_id']] : [];
 
 			$data['documents'][] = array(
-				'customer_id' 		=> $result['customer_id'],
-				'nip' 				=> $result['nip'],
-				'name' 				=> $result['name'],
-				'customer_group' 	=> $result['customer_group'],
-				'location' 			=> $result['location'],
-				'documents' 		=> $documents,
-				'edit'          	=> $this->url->link('customer/document/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
+				'customer_id' 			=> $result['customer_id'],
+				'nip' 					=> $result['nip'],
+				'name' 					=> $result['name'],
+				'customer_group' 		=> $result['customer_group'],
+				'customer_department' 	=> $result['customer_department'],
+				'location' 				=> $result['location'],
+				'documents' 			=> $documents,
+				'edit'          		=> $this->url->link('customer/document/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
 			);
 		}
 
-		$language_items = array(
-			'heading_title',
-			'text_list',
-			'text_no_results',
-			'text_all_customer_group',
-			'text_all_location',
-			'text_active',
-			'text_inactive',
-			'text_all_status',
-			'entry_name',
-			'entry_customer_group',
-			'entry_location',
-			'entry_status',
-			'column_nip',
-			'column_name',
-			'column_customer_group',
-			'column_location',
-			'column_action',
-			'button_filter',
-			'button_edit'
+		# Information
+		$data['information'] = [];
+
+		$filter_data = array(
+			'filter'  	=> [
+				'requirement'	=> '-1',
+				'active'			=> '1'
+			]
 		);
-		foreach ($language_items as $language_item) {
-			$data[$language_item] = $this->language->get($language_item);
+
+		$requirement_count = $this->model_customer_document->getCustomerDocumentsCount($filter_data);
+
+		if ($requirement_count) {
+			$href = $this->url->link('customer/document', 'token=' . $this->session->data['token'] . '&filter_requirement=-1&filter_active=1', true);
+			$data['information'] = sprintf($this->language->get('text_information'), $requirement_count, $href);
 		}
 
 		$data['token'] = $this->session->data['token'];
 
-		$url = '';
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
-
-		if (isset($this->request->get['filter_status'])) {
-			$url .= '&filter_status=' . $this->request->get['filter_status'];
-		}
+		$url = $this->urlFilter();
 
 		if ($order == 'ASC') {
 			$url .= '&order=DESC';
@@ -218,26 +232,11 @@ class ControllerCustomerDocument extends Controller
 
 		$data['sort_nip'] = $this->url->link('customer/document', 'token=' . $this->session->data['token'] . '&sort=nip' . $url, true);
 		$data['sort_name'] = $this->url->link('customer/document', 'token=' . $this->session->data['token'] . '&sort=name' . $url, true);
+		$data['sort_customer_department'] = $this->url->link('customer/document', 'token=' . $this->session->data['token'] . '&sort=customer_department' . $url, true);
 		$data['sort_customer_group'] = $this->url->link('customer/document', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
 		$data['sort_location'] = $this->url->link('customer/document', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
 
-		$url = '';
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
-
-		if (isset($this->request->get['filter_status'])) {
-			$url .= '&filter_status=' . $this->request->get['filter_status'];
-		}
+		$url = $this->urlFilter();
 
 		if (isset($this->request->get['sort'])) {
 			$url .= '&sort=' . $this->request->get['sort'];
@@ -257,20 +256,25 @@ class ControllerCustomerDocument extends Controller
 
 		$data['results'] = sprintf($this->language->get('text_pagination'), ($customer_count) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($customer_count - $this->config->get('config_limit_admin'))) ? $customer_count : ((($page - 1) * $this->config->get('config_limit_admin')) + $this->config->get('config_limit_admin')), $customer_count, ceil($customer_count / $this->config->get('config_limit_admin')));
 
-		$data['document_types_info'] = $document_types_info;
-
-		$data['filter_name'] = $filter_name;
-		$data['filter_customer_group_id'] = $filter_customer_group_id;
-		$data['filter_location_id'] = $filter_location_id;
-		$data['filter_status'] = $filter_status;
+		$data['filter'] = $filter;
 		$data['sort'] = $sort;
 		$data['order'] = $order;
 
 		$this->load->model('customer/customer_group');
 		$data['customer_groups'] = $this->model_customer_customer_group->getCustomerGroups();
 
+		$this->load->model('customer/customer_department');
+		$data['customer_departments'] = $this->model_customer_customer_department->getCustomerDepartments();
+
 		$this->load->model('localisation/location');
 		$data['locations'] = $this->model_localisation_location->getLocations();
+
+		$this->load->model('customer/document_type');
+		$data['document_types'] = $this->model_customer_document_type->getActiveDocumentTypes();
+
+		$data['requirements'] = [];
+		$data['requirements']['1'] = $this->language->get('text_complete');
+		$data['requirements']['-1'] = $this->language->get('text_incomplete');
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -327,23 +331,7 @@ class ControllerCustomerDocument extends Controller
 			$data['success'] = '';
 		}
 
-		$url = '';
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
-
-		if (isset($this->request->get['filter_status'])) {
-			$url .= '&filter_status=' . $this->request->get['filter_status'];
-		}
+		$url = $this->urlFilter();
 
 		if (isset($this->request->get['sort'])) {
 			$url .= '&sort=' . $this->request->get['sort'];
@@ -386,7 +374,7 @@ class ControllerCustomerDocument extends Controller
 		$documents_info = array();
 
 		if (isset($this->request->get['customer_id'])) {
-			$document_types_info = $this->model_customer_document_type->getActiveDocumentTypes();
+			$document_types = $this->model_customer_document_type->getActiveDocumentTypes();
 
 			$results = $this->model_customer_document->getDocumentsByCustomer($this->request->get['customer_id']);
 
@@ -411,7 +399,7 @@ class ControllerCustomerDocument extends Controller
 			}
 		}
 
-		foreach ($document_types_info as $document_type) {
+		foreach ($document_types as $document_type) {
 			if (empty($documents_info[$document_type['document_type_id']])) {
 				$documents_info[$document_type['document_type_id']][] = [
 					'filename'		=> '-',
@@ -551,7 +539,7 @@ class ControllerCustomerDocument extends Controller
 				$file['filename'] = $filename;
 
 				$this->model_customer_document->getImage($file, 1000, 1000);
-				
+
 				$post_data = array(
 					'customer_id'		=> $customer_id,
 					'document_type_id'	=> $document_type_id,
@@ -640,13 +628,13 @@ class ControllerCustomerDocument extends Controller
 			}
 		}
 
-		$sort_order = array();
+		// $sort_order = array();
 
-		foreach ($json as $key => $value) {
-			$sort_order[$key] = $value['name'];
-		}
+		// foreach ($json as $key => $value) {
+		// 	$sort_order[$key] = $value['name'];
+		// }
 
-		array_multisort($sort_order, SORT_ASC, $json);
+		// array_multisort($sort_order, SORT_ASC, $json);
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));

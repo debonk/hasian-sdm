@@ -47,11 +47,14 @@
 }
 
 .tile-body {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	padding: 5px;
 	color: #FFFFFF;
 	line-height: 48px;
 	text-align: center;
-	min-height: 75px;
+	height: 80px;
 }
 .tile .tile-body img{
 	font-size: 16px;
@@ -60,6 +63,10 @@
 	width: 150px;
 	height: 150px;
 }
+.tile-body h3{
+	margin: 0 10px;
+}
+
 .tile:hover .tile-body img{
 	opacity: 1;
 }

@@ -13,7 +13,7 @@ class ModelPresenceExchange extends Model {
 	}
 
 	public function getExchange($exchange_id) {
-		$sql = "SELECT DISTINCT *, (SELECT username FROM " . DB_PREFIX . "user u WHERE u.user_id = e.user_id) AS username FROM " . DB_PREFIX . "exchange e WHERE exchange_id = '" . (int)$exchange_id . "'";
+		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "v_exchange e WHERE exchange_id = '" . (int)$exchange_id . "'";
 
 		$query = $this->db->query($sql);
 
@@ -21,35 +21,52 @@ class ModelPresenceExchange extends Model {
 	}
 
 	public function getExchanges($data = array()) {
-		$sql = "SELECT e.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, username FROM " . DB_PREFIX . "exchange e LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = e.customer_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = e.user_id)";
+		$sql = "SELECT * FROM " . DB_PREFIX . "v_exchange WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 
 		$implode = array();
 
-		if (!empty($data['filter_name'])) {
-			$implode[] = "CONCAT(c.firstname, ' [', c.lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		if (!empty($data['filter']['name'])) {
+			$implode[] = "name LIKE '%" . $this->db->escape($data['filter']['name']) . "%'";
 		}
 
-		if (!empty($data['filter_date'])) {
-			$implode[] = "(e.date_from = STR_TO_DATE('" . $this->db->escape($data['filter_date']) . "', '%e %b %Y') OR e.date_to = STR_TO_DATE('" . $this->db->escape($data['filter_date']) . "', '%e %b %Y'))";
+		if (!empty($data['filter']['customer_department_id'])) {
+			$implode[] = "customer_department_id = '" . (int)$data['filter']['customer_department_id'] . "'";
 		}
 
-		if (!empty($data['filter_period_id'])) {
+		if (!empty($data['filter']['customer_group_id'])) {
+			$implode[] = "customer_group_id = '" . (int)$data['filter']['customer_group_id'] . "'";
+		}
+
+		if (!empty($data['filter']['location_id'])) {
+			$implode[] = "location_id = '" . (int)$data['filter']['location_id'] . "'";
+		}
+
+		if (!empty($data['filter']['date'])) {
+			$implode[] = "(date_from = STR_TO_DATE('" . $this->db->escape($data['filter']['date']) . "', '%e %b %Y') OR date_to = STR_TO_DATE('" . $this->db->escape($data['filter']['date']) . "', '%e %b %Y'))";
+		}
+
+		if (!empty($data['filter']['period'])) {
 			$this->load->model('common/payroll');
-			$period_info = $this->model_common_payroll->getPeriod($data['filter_period_id']);
+			$date = date_create_from_format('d M Y', '01 ' . $data['filter']['period']);
+
+			$period_info = $this->model_common_payroll->getPeriodByDate(date_format($date, 'Y-m-d'));
 			
 			if ($period_info) {
-				$implode[] = "e.date_from >= '" . $this->db->escape($period_info['date_start']) . "' AND e.date_from <= '" . $this->db->escape($period_info['date_end']) . "'";
+				$implode[] = "date_from >= '" . $this->db->escape($period_info['date_start']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "'";
 			}
 		}
 
 		if ($implode) {
-			$sql .= " WHERE " . implode(" AND ", $implode);
+			$sql .= " AND " . implode(" AND ", $implode);
 		}
 
 		$sort_data = array(
 			'date_from',
 			'date_to',
-			'name'
+			'name',
+			'customer_group',
+			'customer_department',
+			'location'
 		);
 
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
@@ -82,28 +99,43 @@ class ModelPresenceExchange extends Model {
 	}
 
 	public function getExchangesCount($data = array()) {
-		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "exchange e LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = e.customer_id)";
+		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "v_exchange e WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 
 		$implode = array();
 
-		if (!empty($data['filter_name'])) {
-			$implode[] = "CONCAT(c.firstname, ' [', c.lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		if (!empty($data['filter']['name'])) {
+			$implode[] = "name LIKE '%" . $this->db->escape($data['filter']['name']) . "%'";
 		}
 
-		if (!empty($data['filter_date'])) {
-			$implode[] = "(e.date_from = STR_TO_DATE('" . $this->db->escape($data['filter_date']) . "', '%e %b %Y') OR e.date_to = STR_TO_DATE('" . $this->db->escape($data['filter_date']) . "', '%e %b %Y'))";
+		if (!empty($data['filter']['customer_department_id'])) {
+			$implode[] = "customer_department_id = '" . (int)$data['filter']['customer_department_id'] . "'";
 		}
 
-		if (!empty($data['filter_period_id'])) {
-			$period_info = $this->model_common_payroll->getPeriod($data['filter_period_id']);
+		if (!empty($data['filter']['customer_group_id'])) {
+			$implode[] = "customer_group_id = '" . (int)$data['filter']['customer_group_id'] . "'";
+		}
+
+		if (!empty($data['filter']['location_id'])) {
+			$implode[] = "location_id = '" . (int)$data['filter']['location_id'] . "'";
+		}
+
+		if (!empty($data['filter']['date'])) {
+			$implode[] = "(date_from = STR_TO_DATE('" . $this->db->escape($data['filter']['date']) . "', '%e %b %Y') OR date_to = STR_TO_DATE('" . $this->db->escape($data['filter']['date']) . "', '%e %b %Y'))";
+		}
+
+		if (!empty($data['filter']['period'])) {
+			$this->load->model('common/payroll');
+			$date = date_create_from_format('d M Y', '01 ' . $data['filter']['period']);
+
+			$period_info = $this->model_common_payroll->getPeriodByDate(date_format($date, 'Y-m-d'));
 			
 			if ($period_info) {
-				$implode[] = "e.date_from >= '" . $this->db->escape($period_info['date_start']) . "' AND e.date_from <= '" . $this->db->escape($period_info['date_end']) . "'";
+				$implode[] = "date_from >= '" . $this->db->escape($period_info['date_start']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "'";
 			}
 		}
 
 		if ($implode) {
-			$sql .= " WHERE " . implode(" AND ", $implode);
+			$sql .= " AND " . implode(" AND ", $implode);
 		}
 
 		$query = $this->db->query($sql);

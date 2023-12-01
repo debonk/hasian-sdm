@@ -309,30 +309,9 @@
 											<?= $entry_date_end; ?>
 										</label>
 										<div class="col-sm-9">
-											<fieldset id="fieldset-date-end" <?=$date_end_locked ? 'disabled' : '' ?>>
-												<div class="input-group date">
-													<input type="text" name="date_end" value="<?= $date_end; ?>"
-														placeholder="<?= $entry_date_end; ?>"
-														data-date-format="D MMM YYYY" id="input-date-end"
-														class="form-control" readonly />
-													<span class="input-group-btn">
-														<button type="button" class="btn btn-default"><i
-																class="fa fa-calendar"></i></button>
-													</span>
-												</div>
-												<?php if ($error_date_end) { ?>
-												<div class="text-danger">
-													<?= $error_date_end; ?>
-												</div>
-												<?php } ?>
-											</fieldset>
-											<?php if ($date_end) { ?>
-											<br />
-											<button id="button-reactivate" type="button"
-												class="btn btn-warning pull-right"><i class="fa fa-refresh"></i>
-												<?= $button_reactivate; ?>
-											</button>
-											<?php } ?>
+											<input type="text" name="date_end" value="<?= $date_end; ?>"
+												placeholder="<?= $entry_date_end; ?>" data-date-format="D MMM YYYY"
+												id="input-date-end" class="form-control" disabled />
 										</div>
 									</div>
 								</div>
@@ -536,8 +515,8 @@
 											</span></label>
 										<div class="col-sm-9">
 											<input type="text" name="registered_wage" value="<?= $registered_wage; ?>"
-												placeholder="<?= $help_registered_wage_default; ?>" id="input-registered-wage"
-												class="form-control currency" />
+												placeholder="<?= $help_registered_wage_default; ?>"
+												id="input-registered-wage" class="form-control currency" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -1352,7 +1331,7 @@
 	$('select[name=\'customer_group_id\']').trigger('change');
 </script>
 <script type="text/javascript">
-	let address_row = <?= $address_row; ?>;
+	let address_row = '<?= $address_row; ?>';
 
 	function addAddress() {
 		html = '<div class="tab-pane" id="tab-address' + address_row + '">';
@@ -1741,21 +1720,12 @@
 <?php } ?>
 </script>
 <script type="text/javascript">
-		$('#button-reactivate').on('click', function () {
-			$('#input-skip-trial-status').removeAttr('disabled');
-			$('#fieldset-date-start').removeAttr('disabled');
-			$('#fieldset-date-start input').val('').focus();
-			$('#fieldset-date-end').removeAttr('disabled');
-			$('#fieldset-date-end input').val('');
-			$('#button-reactivate').remove();
+		$('#input-pension-insurance').on('click', function () {
+			if (this.checked == true) {
+				$('#input-employment-insurance').prop('checked', true);
+				$('#input-life-insurance').prop('checked', true);
+			}
 		});
-
-	$('#input-pension-insurance').on('click', function () {
-		if (this.checked == true) {
-			$('#input-employment-insurance').prop('checked', true);
-			$('#input-life-insurance').prop('checked', true);
-		}
-	});
 	$('#input-employment-insurance').on('click', function () {
 		if (this.checked == true) {
 			$('#input-life-insurance').prop('checked', true);

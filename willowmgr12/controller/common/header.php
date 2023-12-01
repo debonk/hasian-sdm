@@ -1,6 +1,8 @@
 <?php
-class ControllerCommonHeader extends Controller {
-	public function index() {
+class ControllerCommonHeader extends Controller
+{
+	public function index()
+	{
 		$data['title'] = $this->document->getTitle();
 
 		$this->load->language('common/header');
@@ -13,8 +15,6 @@ class ControllerCommonHeader extends Controller {
 
 		if ($this->registry->get('framework_load') == 'update') {
 			$data['text_framework_update'] = $this->language->get('text_framework_update');
-		} else {
-			$data['text_framework_update'] = '';
 		}
 
 		$data['description'] = $this->document->getDescription();
@@ -27,19 +27,9 @@ class ControllerCommonHeader extends Controller {
 
 		$data['heading_title'] = $this->language->get('heading_title');
 
-		$data['text_order'] = $this->language->get('text_order');
-		$data['text_processing_status'] = $this->language->get('text_processing_status');
-		$data['text_complete_status'] = $this->language->get('text_complete_status');
-		$data['text_return'] = $this->language->get('text_return');
 		$data['text_customer'] = $this->language->get('text_customer');
 		$data['text_online'] = $this->language->get('text_online');
-		$data['text_approval'] = $this->language->get('text_approval');
-		$data['text_product'] = $this->language->get('text_product');
-		$data['text_stock'] = $this->language->get('text_stock');
-		$data['text_review'] = $this->language->get('text_review');
-		$data['text_affiliate'] = $this->language->get('text_affiliate');
 		$data['text_store'] = $this->language->get('text_store');
-		$data['text_front'] = $this->language->get('text_front');
 		$data['text_logged'] = sprintf($this->language->get('text_logged'), $this->user->getUserName());
 		$data['text_logout'] = $this->language->get('text_logout');
 
@@ -53,25 +43,10 @@ class ControllerCommonHeader extends Controller {
 			$data['home'] = $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], true);
 			$data['logout'] = $this->url->link('common/logout', 'token=' . $this->session->data['token'], true);
 
-			// Orders
-			// $this->load->model('sale/order');
-
-			// Processing Orders
-			// $data['processing_status_total'] = $this->model_sale_order->getTotalOrders(array('filter_order_status' => implode(',', $this->config->get('config_processing_status'))));
-			// $data['processing_status'] = $this->url->link('sale/order', 'token=' . $this->session->data['token'] . '&filter_order_status=' . implode(',', $this->config->get('config_processing_status')), true);
-
-			// Complete Orders
-			// $data['complete_status_total'] = $this->model_sale_order->getTotalOrders(array('filter_order_status' => implode(',', $this->config->get('config_complete_status'))));
-			// $data['complete_status'] = $this->url->link('sale/order', 'token=' . $this->session->data['token'] . '&filter_order_status=' . implode(',', $this->config->get('config_complete_status')), true);
-
-			// Returns
-			// $this->load->model('sale/return');
-
-			// $return_total = $this->model_sale_return->getTotalReturns(array('filter_return_status_id' => $this->config->get('config_return_status_id')));
-
-			// $data['return_total'] = $return_total;
-
-			// $data['return'] = $this->url->link('sale/return', 'token=' . $this->session->data['token'], true);
+			if ($this->config->get('config_admin_maintenance')) {
+				$data['text_maintenance'] = $this->language->get('text_maintenance');
+				$data['maintenance'] = $this->url->link('setting/store', 'token=' . $this->session->data['token'], true);
+			}
 
 			// Customers
 			$this->load->model('report/customer');
@@ -105,15 +80,6 @@ class ControllerCommonHeader extends Controller {
 
 			// $data['review'] = $this->url->link('catalog/review', 'token=' . $this->session->data['token'] . '&filter_status=0', true);
 
-			// Affliate
-			// $this->load->model('marketing/affiliate');
-
-			// $affiliate_total = $this->model_marketing_affiliate->getTotalAffiliates(array('filter_approved' => false));
-
-			// $data['affiliate_total'] = $affiliate_total;
-			// $data['affiliate_approval'] = $this->url->link('marketing/affiliate', 'token=' . $this->session->data['token'] . '&filter_approved=1', true);
-
-			// $data['alerts'] = $customer_total + $product_total + $review_total + $return_total + $affiliate_total;
 			$data['alerts'] = $data['online_total'];
 
 			// Online Stores

@@ -486,23 +486,11 @@ class ControllerCatalogInformation extends Controller {
 				$this->error['warning'] = $this->language->get('error_account');
 			}
 
-			if ($this->config->get('config_checkout_id') == $information_id) {
-				$this->error['warning'] = $this->language->get('error_checkout');
-			}
+			// $store_total = $this->model_setting_store->getTotalStoresByInformationId($information_id);
 
-			if ($this->config->get('config_affiliate_id') == $information_id) {
-				$this->error['warning'] = $this->language->get('error_affiliate');
-			}
-
-			if ($this->config->get('config_return_id') == $information_id) {
-				$this->error['warning'] = $this->language->get('error_return');
-			}
-
-			$store_total = $this->model_setting_store->getTotalStoresByInformationId($information_id);
-
-			if ($store_total) {
-				$this->error['warning'] = sprintf($this->language->get('error_store'), $store_total);
-			}
+			// if ($store_total) {
+			// 	$this->error['warning'] = sprintf($this->language->get('error_store'), $store_total);
+			// }
 		}
 
 		return !$this->error;

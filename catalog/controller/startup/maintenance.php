@@ -13,11 +13,11 @@ class ControllerStartupMaintenance extends Controller {
 			}
 
 			// Show site if logged in as admin
-			// $this->user = new Cart\User($this->registry);
+			$this->user = new Cart\User($this->registry);
 
-			// if (($route != 'payment' && $route != 'api') && !$this->user->isLogged()) {
+			if ($route != 'api' && !$this->user->isLogged()) {
 				return new Action('common/maintenance');
-			// }
+			}
 		}
 	}
 }

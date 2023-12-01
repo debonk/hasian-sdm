@@ -279,7 +279,7 @@ class ControllerPresenceSchedule extends Controller
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('presence/schedule', 'token=' . $this->session->data['token'], true)
+			'href' => $this->url->link('presence/schedule', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $presence_period_id, true)
 		);
 
 		//Period Status Check
@@ -489,7 +489,7 @@ class ControllerPresenceSchedule extends Controller
 
 		$results = $this->model_presence_schedule->getScheduleCustomers($presence_period_id, $filter_data);
 
-		// // Rekap berdasarkan customer_groups
+		// Rekap berdasarkan customer_groups
 		$customer_groups = array_unique(array_column($results, 'customer_group'));
 
 		foreach ($customer_groups as $customer_group) {
@@ -590,6 +590,7 @@ class ControllerPresenceSchedule extends Controller
 			'column_nip',
 			'column_name',
 			'column_customer_group',
+			'column_customer_department',
 			'column_location',
 			'column_action',
 			'column_schedule_presence',
@@ -656,12 +657,13 @@ class ControllerPresenceSchedule extends Controller
 		if (isset($this->request->get['schedule_start'])) {
 			$schedule_start = $this->request->get['schedule_start'];
 		} else {
-			$today = date('Y-m-d', strtotime('today'));
-			if ($period_info['date_start'] < $today && $period_info['date_end'] > $today) {
-				$schedule_start = date('Y-m-d', strtotime('-2 day'));
-			} else {
+			if ($period_info['date_end'] < date('Y-m-d')) {
 				$schedule_start = date('Y-m-d', strtotime($period_info['date_start']));
-			}
+			} else {
+				$schedule_start = max($period_info['date_start'], date('Y-m-d', strtotime('-2 days')));
+			
+				$schedule_start = min($schedule_start, date('Y-m-d', strtotime('-6 days', strtotime($period_info['date_end']))));
+			}	
 		}
 
 		$url = '';
@@ -733,7 +735,7 @@ class ControllerPresenceSchedule extends Controller
 		$this->load->model('presence/absence');
 		$this->load->model('presence/exchange');
 		$this->load->model('overtime/overtime');
-
+		
 		foreach ($results as $result) {
 			$schedules_data = array();
 
@@ -750,16 +752,17 @@ class ControllerPresenceSchedule extends Controller
 			}
 
 			$data['customers'][] = array(
-				'customer_id' 		=> $result['customer_id'],
-				'nip' 				=> $result['nip'],
-				'name' 				=> $result['name'],
-				'customer_group' 	=> $result['customer_group'],
-				'location' 			=> $result['location'],
-				'schedules_data' 	=> $schedules_data,
-				'edit'          	=> $this->url->link('presence/schedule/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
+				'customer_id' 			=> $result['customer_id'],
+				'nip' 					=> $result['nip'],
+				'name' 					=> $result['name'],
+				'customer_group' 		=> $result['customer_group'],
+				'customer_department' 	=> $result['customer_department'],
+				'location' 				=> $result['location'],
+				'schedules_data' 		=> $schedules_data,
+				'edit'          		=> $this->url->link('presence/schedule/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
 			);
 		}
-
+		
 		$data['token'] = $this->session->data['token'];
 
 		if (isset($this->request->post['selected'])) {
@@ -804,6 +807,7 @@ class ControllerPresenceSchedule extends Controller
 		$data['sort_nip'] = $this->url->link('presence/schedule/report', 'token=' . $this->session->data['token'] . '&sort=nip' . $url, true);
 		$data['sort_name'] = $this->url->link('presence/schedule/report', 'token=' . $this->session->data['token'] . '&sort=name' . $url, true);
 		$data['sort_customer_group'] = $this->url->link('presence/schedule/report', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
+		$data['sort_customer_department'] = $this->url->link('presence/schedule/report', 'token=' . $this->session->data['token'] . '&sort=customer_department' . $url, true);
 		$data['sort_location'] = $this->url->link('presence/schedule/report', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
 
 		$url = '';
@@ -1969,15 +1973,15 @@ class ControllerPresenceSchedule extends Controller
 				'presence_period_id'	=> $presence_period_id,
 				'filter_name'			=> $filter_name,
 				'start'      			=> 0,
-				'limit'      			=> 5
+				'limit'      			=> 15
 			);
 
 			$results = $this->model_presence_presence->getCustomers($filter_data);
 
 			foreach ($results as $result) {
 				$json[] = array(
-					'customer_id'       => $result['customer_id'],
-					'name'              => strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8'))
+					'customer_id'   => $result['customer_id'],
+					'name'			=> strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8'))
 				);
 			}
 		}

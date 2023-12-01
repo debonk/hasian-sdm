@@ -14,7 +14,7 @@ $_['column_email']			= 'E-Mail';
 $_['column_customer_group'] = 'Jabatan';
 $_['column_location']		= 'Lokasi Kerja';
 $_['column_date_start']		= 'Mulai Bekerja';
-$_['column_vacation_count']	= 'Cuti Tahun Ini';
+$_['column_vacation_count']	= 'Sisa Cuti Tahunan';
 $_['column_action']			= 'Action';
 
 // Entry

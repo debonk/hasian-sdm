@@ -85,7 +85,7 @@ class ControllerOvertimeOvertimeType extends Controller {
 
 		if (isset($this->request->post['selected']) && $this->validateDelete()) {
 			foreach ($this->request->post['selected'] as $overtime_type_id) {
-				// $this->model_overtime_overtime_type->deleteOvertimeType($overtime_type_id);
+				$this->model_overtime_overtime_type->deleteOvertimeType($overtime_type_id);
 			}
 
 			$this->session->data['success'] = $this->language->get('text_success');

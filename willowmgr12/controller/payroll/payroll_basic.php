@@ -231,7 +231,6 @@ class ControllerPayrollPayrollBasic extends Controller {
 			'entry_location',
 			'entry_status',
 			'column_date',
-			'column_inv_no',
 			'column_nip',
 			'column_name',
 			'column_customer_group',
@@ -247,9 +246,8 @@ class ControllerPayrollPayrollBasic extends Controller {
 			'column_date_added',
 			'column_status',
 			'button_filter',
-			'button_add',
 			'button_edit',
-			'button_delete',
+			'button_delete'
 		);
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);

@@ -15,6 +15,9 @@
 	<a href="<?= $payroll; ?>" class="list-group-item">
 		<?= $text_payroll; ?>
 	</a>
+	<a href="<?= $vacation; ?>" class="list-group-item">
+		<?= $text_vacation; ?>
+	</a>
 	<a href="<?= $password; ?>" class="list-group-item">
 		<?= $text_password; ?>
 	</a>

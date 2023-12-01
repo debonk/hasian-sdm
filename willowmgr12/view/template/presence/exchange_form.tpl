@@ -1,155 +1,207 @@
-<?php echo $header; ?><?php echo $column_left; ?>
+<?= $header; ?>
+<?= $column_left; ?>
 <div id="content">
-  <div class="page-header">
-    <div class="container-fluid">
-      <div class="pull-right">
-        <button type="submit" form="form-absence" data-toggle="tooltip" title="<?php echo $button_save; ?>" class="btn btn-primary"><i class="fa fa-save"></i></button>
-        <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
-      <h1><?php echo $heading_title; ?></h1>
-      <ul class="breadcrumb">
-        <?php foreach ($breadcrumbs as $breadcrumb) { ?>
-        <li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
-        <?php } ?>
-      </ul>
-    </div>
-  </div>
-  <div class="container-fluid">
-    <?php if ($error_warning) { ?>
-    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $error_warning; ?>
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-    </div>
-    <?php } ?>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title"><i class="fa fa-pencil"></i> <?php echo $text_form; ?></h3><h4 class="pull-right"><i class="fa fa-comment-o fa-flip-horizontal"></i> <?php echo $text_modified; ?></h4>
-      </div>
-      <div class="panel-body">
-        <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form-absence" class="form-horizontal">
-		  <div class="well">
-		    <div class="row">
-		  	  <div class="col-sm-3"></div>
-		  	  <div class="col-sm-6">
-		  	    <div class="form-group">
-		  		  <label class="control-label" for="input-customer"><?php echo $entry_name; ?></label>
-		  		  <select name="customer_id" id="input-customer" class="form-control" <?php echo $disabled; ?>>
-		  		    <option value="0"><?php echo $text_select_customer ?></option>
-		  		    <?php foreach ($customers as $customer) { ?>
-					  <?php if ($customer['customer_id'] == $customer_id) { ?>
-						<option value="<?php echo $customer['customer_id']; ?>" selected="selected"><?php echo $customer['text']; ?></option>
-					  <?php } else { ?>
-						<option value="<?php echo $customer['customer_id']; ?>"><?php echo $customer['text']; ?></option>
-		  		      <?php } ?>
-		  		    <?php } ?>
-		  		  </select>
-		  	    </div>
-		  	  </div>
-		    </div>
-		  </div>
-		  <div id="customer-info"></div>
-		  <div class="form-group required">
-		    <label class="col-sm-2 control-label" for="input-date-from"><?php echo $entry_date_from; ?></label>
-		    <div class="col-sm-10">
-		  	  <div class="input-group date">
-		  	    <input type="text" name="date_from" value="<?php echo $date_from; ?>" placeholder="<?php echo $entry_date_from; ?>" id="input-date-from" class="form-control" data-date-format="D MMM YYYY" />
-		  	    <span class="input-group-btn">
-		  	      <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
-		  	    </span>
-		  	  </div>
-              <?php if ($error_date_from) { ?>
-              <div class="text-danger"><?php echo $error_date_from; ?></div>
-              <?php } ?>
-		    </div>
-		  </div>
-		  <div class="form-group required">
-		    <label class="col-sm-2 control-label" for="input-date-to"><?php echo $entry_date_to; ?></label>
-		    <div class="col-sm-10">
-		  	  <div class="input-group date">
-		  	    <input type="text" name="date_to" value="<?php echo $date_to; ?>" placeholder="<?php echo $entry_date_to; ?>" id="input-date-to" class="form-control" data-date-format="D MMM YYYY" />
-		  	    <span class="input-group-btn">
-		  	      <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
-		  	    </span>
-		  	  </div>
-              <?php if ($error_date_to) { ?>
-              <div class="text-danger"><?php echo $error_date_to; ?></div>
-              <?php } ?>
-		    </div>
-		  </div>
-          <div class="form-group required">
-            <label class="col-sm-2 control-label" for="input-schedule-type"><?php echo $entry_schedule_type; ?></label>
-            <div class="col-sm-10">
-			  <select name="schedule_type_id" id="input-schedule-type" class="form-control">
-				<option value="0"><?php echo $text_select ?></option>
-				<?php foreach ($schedule_types as $schedule_type) { ?>
-				  <?php if ($schedule_type['schedule_type_id'] == $schedule_type_id) { ?>
-					<option value="<?php echo $schedule_type['schedule_type_id']; ?>" selected="selected"><?php echo $schedule_type['text']; ?></option>
-				  <?php } else { ?>
-					<option value="<?php echo $schedule_type['schedule_type_id']; ?>"><?php echo $schedule_type['text']; ?></option>
-				  <?php } ?>
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="pull-right">
+				<button type="submit" form="form-absence" data-toggle="tooltip" title="<?= $button_save; ?>"
+					class="btn btn-primary"><i class="fa fa-save"></i></button>
+				<a href="<?= $cancel; ?>" data-toggle="tooltip" title="<?= $button_cancel; ?>"
+					class="btn btn-default"><i class="fa fa-reply"></i></a>
+			</div>
+			<h1>
+				<?= $heading_title; ?>
+			</h1>
+			<ul class="breadcrumb">
+				<?php foreach ($breadcrumbs as $breadcrumb) { ?>
+				<li><a href="<?= $breadcrumb['href']; ?>">
+						<?= $breadcrumb['text']; ?>
+					</a></li>
 				<?php } ?>
-			  </select>
-              <?php if ($error_schedule_type) { ?>
-                <div class="text-danger"><?php echo $error_schedule_type; ?></div>
-              <?php } ?>
-            </div>
-          </div>
-          <div class="form-group required">
-            <label class="col-sm-2 control-label" for="input-description"><?php echo $entry_description; ?></label>
-            <div class="col-sm-10">
-              <input type="text" name="description" value="<?php echo $description; ?>" placeholder="<?php echo $entry_description; ?>" id="input-description" class="form-control" />
-              <?php if ($error_description) { ?>
-              <div class="text-danger"><?php echo $error_description; ?></div>
-              <?php } ?>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-  <script type="text/javascript"><!--
-var select_customer = $('select[name=\'customer_id\']').val();
-
-$('#customer-info').load('index.php?route=common/customer_info&token=<?php echo $token; ?>&customer_id=' + encodeURIComponent(select_customer));
-
-$('#input-customer').change(function() {
-	var select_customer = $('select[name=\'customer_id\']').val();
-
-	$('#customer-info').load('index.php?route=common/customer_info&token=<?php echo $token; ?>&customer_id=' + encodeURIComponent(select_customer));
-});
-//--></script> 
-  <script type="text/javascript"><!--
-$('select[name=\'customer_id\']').on('change', function() {
-	$.ajax({
-		url: 'index.php?route=presence/exchange/scheduleTypesByLocationGroup&token=<?php echo $token; ?>&customer_id=' + $('select[name=\'customer_id\']').val(),
-		dataType: 'json',
-		// beforeSend: function() {
-			// $('select[name=\'customer_id\']').after(' <i class="fa fa-circle-o-notch fa-spin"></i>');
-		// },
-		// complete: function() {
-			// $('.fa-spin').remove();
-		// },
-		success: function(json) {
-			html = '	<option value="0"><?php echo $text_select ?></option>';
-
-			if (json) {
-				for (i = 0; i < json.length; i++) {
-					html += '<option value="' + json[i]['schedule_type_id'] + '">' + json[i]['text'] + '</option>';
+			</ul>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<?php if ($error_warning) { ?>
+		<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>
+			<?= $error_warning; ?>
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		<?php } ?>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-pencil"></i>
+					<?= $text_form; ?>
+				</h3>
+				<h4 class="pull-right"><i class="fa fa-comment-o fa-flip-horizontal"></i>
+					<?= $text_modified; ?>
+				</h4>
+			</div>
+			<div class="panel-body">
+				<form action="<?= $action; ?>" method="post" enctype="multipart/form-data" id="form-absence"
+					class="form-horizontal">
+					<div class="well">
+						<div class="row">
+							<div class="col-sm-3"></div>
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label class="control-label" for="input-name">
+										<?= $entry_name; ?>
+									</label>
+									<input type="text" name="name" value="<?= $name; ?>"
+										placeholder="<?= $entry_name; ?>" id="input-name" class="form-control" />
+									<input type="hidden" name="customer_id" value="<?= $customer_id; ?>"
+										id="input-customer-id" />
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12" id="customer-info"></div>
+					</div>
+					<div class="form-group required">
+						<label class="col-sm-2 control-label" for="input-date-from">
+							<?= $entry_date_from; ?>
+						</label>
+						<div class="col-sm-10">
+							<div class="input-group date">
+								<input type="text" name="date_from" value="<?= $date_from; ?>"
+									placeholder="<?= $entry_date_from; ?>" id="input-date-from" class="form-control"
+									data-date-format="D MMM YYYY" />
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default"><i
+											class="fa fa-calendar"></i></button>
+								</span>
+							</div>
+							<?php if ($error_date_from) { ?>
+							<div class="text-danger">
+								<?= $error_date_from; ?>
+							</div>
+							<?php } ?>
+						</div>
+					</div>
+					<div class="form-group required">
+						<label class="col-sm-2 control-label" for="input-date-to">
+							<?= $entry_date_to; ?>
+						</label>
+						<div class="col-sm-10">
+							<div class="input-group date">
+								<input type="text" name="date_to" value="<?= $date_to; ?>"
+									placeholder="<?= $entry_date_to; ?>" id="input-date-to" class="form-control"
+									data-date-format="D MMM YYYY" />
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default"><i
+											class="fa fa-calendar"></i></button>
+								</span>
+							</div>
+							<?php if ($error_date_to) { ?>
+							<div class="text-danger">
+								<?= $error_date_to; ?>
+							</div>
+							<?php } ?>
+						</div>
+					</div>
+					<div class="form-group required">
+						<label class="col-sm-2 control-label" for="input-schedule-type">
+							<?= $entry_schedule_type; ?>
+						</label>
+						<div class="col-sm-10">
+							<select name="schedule_type_id" id="input-schedule-type" class="form-control">
+								<option value="0">
+									<?= $text_select ?>
+								</option>
+								<?php foreach ($schedule_types as $schedule_type) { ?>
+								<?php if ($schedule_type['schedule_type_id'] == $schedule_type_id) { ?>
+								<option value="<?= $schedule_type['schedule_type_id']; ?>" selected="selected">
+									<?= $schedule_type['text']; ?>
+								</option>
+								<?php } else { ?>
+								<option value="<?= $schedule_type['schedule_type_id']; ?>">
+									<?= $schedule_type['text']; ?>
+								</option>
+								<?php } ?>
+								<?php } ?>
+							</select>
+							<?php if ($error_schedule_type) { ?>
+							<div class="text-danger">
+								<?= $error_schedule_type; ?>
+							</div>
+							<?php } ?>
+						</div>
+					</div>
+					<div class="form-group required">
+						<label class="col-sm-2 control-label" for="input-description">
+							<?= $entry_description; ?>
+						</label>
+						<div class="col-sm-10">
+							<input type="text" name="description" value="<?= $description; ?>"
+								placeholder="<?= $entry_description; ?>" id="input-description" class="form-control" />
+							<?php if ($error_description) { ?>
+							<div class="text-danger">
+								<?= $error_description; ?>
+							</div>
+							<?php } ?>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$('input[name=\'name\']').autocomplete({
+		'source': function (request, response) {
+			$.ajax({
+				url: 'index.php?route=presence/exchange/autocomplete&token=<?= $token; ?>&filter_name=' + encodeURIComponent(request),
+				dataType: 'json',
+				success: function (json) {
+					response($.map(json, function (item) {
+						return {
+							label: item['name_set'],
+							value: item['customer_id'],
+							customer: item['name'],
+						}
+					}));
 				}
-			}
-
-			$('select[name=\'schedule_type_id\']').html(html);
+			});
 		},
-		error: function(xhr, ajaxOptions, thrownError) {
-			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		'select': function (item) {
+			$('input[name=\'name\']').val(item['customer']);
+			$('input[name=\'customer_id\']').val(item['value']).trigger('change');
+
+			$('#customer-info').load('index.php?route=common/customer_info&token=<?= $token; ?>&customer_id=' + item['value']);
 		}
 	});
-});
 
-// $('select[name=\'customer_group_id\']').trigger('change');
-//--></script> 
-  <script type="text/javascript"><!--
-$('.date').datetimepicker({
-	pickTime: false
-});
-//--></script>
-</div>
-<?php echo $footer; ?>
+	let customer_id = encodeURIComponent($('input[name=\'customer_id\']').val());
+
+	$('#customer-info').load('index.php?route=common/customer_info&token=<?= $token; ?>&customer_id=' + customer_id);
+
+	$('input[name=\'customer_id\']').on('change', function () {
+		let customer_id = encodeURIComponent($('input[name=\'customer_id\']').val());
+
+		$.ajax({
+			url: 'index.php?route=presence/exchange/scheduleTypesByLocationGroup&token=<?= $token; ?>&customer_id=' + customer_id,
+			dataType: 'json',
+			success: function (json) {
+				html = '	<option value="0"><?= $text_select ?></option>';
+
+				if (json) {
+					for (i = 0; i < json.length; i++) {
+						html += '<option value="' + json[i]['schedule_type_id'] + '">' + json[i]['text'] + '</option>';
+					}
+				}
+
+				$('select[name=\'schedule_type_id\']').html(html);
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+	});
+
+	$('.date').datetimepicker({
+		pickTime: false
+	});
+</script>
+<?= $footer; ?>

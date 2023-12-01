@@ -36,11 +36,7 @@ class ControllerAccountSuccess extends Controller {
 
 		$data['button_continue'] = $this->language->get('button_continue');
 
-		if ($this->cart->hasProducts()) {
-			$data['continue'] = $this->url->link('checkout/cart');
-		} else {
-			$data['continue'] = $this->url->link('account/account', '', true);
-		}
+		$data['continue'] = $this->url->link('account/account', '', true);
 
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');

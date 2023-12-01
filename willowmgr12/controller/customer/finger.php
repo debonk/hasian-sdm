@@ -86,7 +86,6 @@ class ControllerCustomerFinger extends Controller
 			'text_left',
 			'text_right',
 			'text_loading',
-			'text_success_register',
 			'text_index_old',
 			'text_thumbs',
 			'text_index',
@@ -241,7 +240,7 @@ class ControllerCustomerFinger extends Controller
 			$scan_active = [];
 
 			if (!empty($customer_add_info['active_finger'])) {
-				$active_fingers = $customer_add_info['active_finger'] ? json_decode($customer_add_info['active_finger'], true) : [];
+				$active_fingers = json_decode($customer_add_info['active_finger'], true);
 			} else {
 				$finger_info = $this->model_customer_finger->getFingerByCustomerId($result['customer_id']);
 
@@ -572,7 +571,7 @@ class ControllerCustomerFinger extends Controller
 		$customer_add_info = $this->model_presence_presence->getCustomerAddData($customer_id);
 
 		if (!empty($customer_add_info['active_finger'])) {
-			$data['active_fingers'] = $customer_add_info['active_finger'] ? json_decode($customer_add_info['active_finger'], true) : [];
+			$data['active_fingers'] = json_decode($customer_add_info['active_finger'], true);
 		} else {
 			$finger_info = $this->model_customer_finger->getFingerByCustomerId($customer_id);
 
@@ -672,9 +671,9 @@ class ControllerCustomerFinger extends Controller
 		$finger_info = $this->model_customer_finger->getFingerByCustomerId($customer_id, $finger_index);
 
 		if ($finger_info) {
+			$this->session->data['success'] = $this->language->get('text_success_register');
+			
 			$json['reg_status'] = 1;
-			$json['date_added'] = date($this->language->get('datetime_format_jMY'), strtotime($finger_info['date_added']));
-			$json['username'] = $finger_info['username'];
 		}
 
 		$this->response->addHeader('Content-Type: application/json');

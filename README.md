@@ -4,6 +4,29 @@
 MODUL: APP > Account: Login by location (Trial & Progress)
 MODUL: Customer > Presence Method
 
+MODIFY TABLE
+ALTER TABLE `oc_overtime` CHANGE `date_modified` `date_modified` DATETIME on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP; 
+ALTER TABLE `oc_loan` CHANGE `date_modified` `date_added` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP; 
+ALTER TABLE `oc_payroll_component_value` CHANGE `date_added` `date_added` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP; 
+ALTER TABLE `oc_payroll` CHANGE `date_added` `date_added` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP; 
+
+2.8.0
+Incentive, Cutoff, Overtime, Loan: Add more filter, Change customer selection to autocompletion
+Presence > Absence, Exchange: Add more filter, Change customer selection to autocompletion
+MODUL: APP > Account > Vacation
+MODUL: Admin Maintenance
+Customer > Document: Rebuild dan menambah filter dan notifikasi
+MODUL: Dashboard > Attention
+Customer, Report > Customer, Customer Info: Mengganti info cuti menjadi 'Sisa Cuti'
+Report > Customer, Customer Info: Menyesuaikan modul dgn adanya Modul Contract
+MODUL: Employment Contracts
+Bug Fixed: Front: Login error jika tidak ada sidik jari aktif
+Delete from oc_setting code like 'pav%'
+Delete table pav&, megamenu%
+Bug Fixed: Schedule: Perbaikan showed data pada schedule list.
+Bug Fixed: App > Presence > Login: Jadwal malam terdeteksi besoknya karena login_start terlalu besar.
+Customer Finger: Repair Layout
+
 2.7.1	01/11/2023
 Customer Finger: Add Search Feature
 Customer Finger: Add multiple finger for scan

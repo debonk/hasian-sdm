@@ -45,12 +45,13 @@ class ModelPresenceSchedule extends Model {
 	}
 
 	public function getScheduleCustomers($presence_period_id, $data = array()) {
-		$sql = "SELECT DISTINCT s.customer_id, c.nip, c.firstname, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_end, c.date_added, c.customer_department_id, c.customer_group_id, cgd.name AS customer_group, c.location_id, c.payroll_include, l.name AS location FROM " . DB_PREFIX . "schedule s LEFT JOIN (" . DB_PREFIX . "customer c, " . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (c.customer_id = s.customer_id AND cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND s.presence_period_id = '" . (int)$presence_period_id . "'";
+		// $sql = "SELECT DISTINCT s.customer_id, c.nip, c.firstname, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_end, c.date_added, c.customer_department_id, c.customer_group_id, cgd.name AS customer_group, c.location_id, c.payroll_include, l.name AS location FROM " . DB_PREFIX . "schedule s LEFT JOIN (" . DB_PREFIX . "customer c, " . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (c.customer_id = s.customer_id AND cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND s.presence_period_id = '" . (int)$presence_period_id . "'";
+		$sql = "SELECT DISTINCT s.customer_id, c.nip, c.firstname, c.name, c.date_start, c.date_end, c.date_added, c.customer_group_id, c.customer_group, c.customer_department_id, c.customer_department, c.location_id, c.location, c.payroll_include FROM " . DB_PREFIX . "schedule s LEFT JOIN " . DB_PREFIX . "v_customer c ON c.customer_id = s.customer_id WHERE c.language_id = '" . (int)$this->config->get('config_language_id') . "' AND s.presence_period_id = '" . (int)$presence_period_id . "'";
 
 		$implode = array();
 
 		if (!empty($data['filter_name'])) {
-			$implode[] = "CONCAT(c.firstname, ' [', c.lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+			$implode[] = "c.name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
 		}
 
 		if (!empty($data['filter_customer_group_id'])) {
@@ -73,6 +74,7 @@ class ModelPresenceSchedule extends Model {
 			'nip',
 			'name',
 			'customer_group',
+			'customer_department',
 			'location',
 			'customer_group DESC, name'
 		);
@@ -107,12 +109,12 @@ class ModelPresenceSchedule extends Model {
 	}
 
 	public function getScheduleCustomersCount($presence_period_id, $data = array()) {
-		$sql = "SELECT COUNT(DISTINCT s.customer_id) AS total FROM " . DB_PREFIX . "schedule s LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = s.customer_id) WHERE s.presence_period_id = '" . (int)$presence_period_id . "'";
+		$sql = "SELECT COUNT(DISTINCT s.customer_id) AS total FROM " . DB_PREFIX . "schedule s LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = s.customer_id) WHERE s.presence_period_id = '" . (int)$presence_period_id . "'";
 
 		$implode = array();
 
 		if (!empty($data['filter_name'])) {
-			$implode[] = "CONCAT(c.firstname, ' [', c.lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+			$implode[] = "c.name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
 		}
 
 		if (!empty($data['filter_customer_group_id'])) {

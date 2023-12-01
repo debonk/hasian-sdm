@@ -170,7 +170,7 @@ $('.time').datetimepicker({
 	pickDate: false,
 	pickTime: true,
 	format: 'HH:mm',
-	minuteStepping: 15
+	minuteStepping: 5
 });
   </script>
 </div>

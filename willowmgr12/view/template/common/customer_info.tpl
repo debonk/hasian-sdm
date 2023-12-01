@@ -24,7 +24,7 @@
 		</tr>
 		<tr>
 		  <td><button data-toggle="tooltip" title="<?php echo $text_employment_period; ?>" class="btn btn-info btn-xs"><i class="fa fa-calendar fa-fw"></i></button></td>
-		  <td><?php echo $employment_period; ?></td>
+		  <td><?php echo $employment_period; ?> <span class="text-warning text-bold"><?php echo $contract_status; ?></span></td>
 		</tr>
 	  </table>
 	</div>

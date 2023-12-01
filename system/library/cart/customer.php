@@ -1,7 +1,10 @@
 <?php
+
 namespace Cart;
+
 #[\AllowDynamicProperties]
-class Customer {
+class Customer
+{
 	private $customer_id;
 	private $firstname;
 	private $lastname;
@@ -11,15 +14,17 @@ class Customer {
 	private $telephone;
 	// private $newsletter;
 	private $address_id;
+	private $date_start;
 	private $security_phrase = '1ZdqsIUYHULguvNHskkxfPGxzGi1a1gz';
 
-	public function __construct($registry) {
+	public function __construct($registry)
+	{
 		$this->db = $registry->get('db');
 		$this->request = $registry->get('request');
 		$this->session = $registry->get('session');
 
 		$this->getCookie();
-		
+
 		if (isset($this->session->data['customer_id'])) {
 			$customer_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$this->session->data['customer_id'] . "' AND status = '1'");
 
@@ -33,6 +38,7 @@ class Customer {
 				$this->telephone = $customer_query->row['telephone'];
 				// $this->newsletter = $customer_query->row['newsletter'];
 				$this->address_id = $customer_query->row['address_id'];
+				$this->date_start = $customer_query->row['date_start'];
 
 				$this->db->query("UPDATE " . DB_PREFIX . "customer SET ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "' WHERE customer_id = '" . (int)$this->customer_id . "'");
 
@@ -51,7 +57,8 @@ class Customer {
 		}
 	}
 
-	public function login($email, $password, $override = false) {
+	public function login($email, $password, $override = false)
+	{
 		if ($override) {
 			$customer_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . "' AND status = '1'");
 		} else {
@@ -65,10 +72,12 @@ class Customer {
 			$this->firstname = $customer_query->row['firstname'];
 			$this->lastname = $customer_query->row['lastname'];
 			$this->customer_group_id = $customer_query->row['customer_group_id'];
+			$this->location_id = $customer_query->row['location_id'];
 			$this->email = $customer_query->row['email'];
 			$this->telephone = $customer_query->row['telephone'];
 			// $this->newsletter = $customer_query->row['newsletter'];
 			$this->address_id = $customer_query->row['address_id'];
+			$this->date_start = $customer_query->row['date_start'];
 
 			$this->db->query("UPDATE " . DB_PREFIX . "customer SET ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "' WHERE customer_id = '" . (int)$this->customer_id . "'");
 
@@ -80,7 +89,8 @@ class Customer {
 		}
 	}
 
-	public function logout() {
+	public function logout()
+	{
 		unset($this->session->data['customer_id']);
 
 		$this->customer_id = '';
@@ -95,21 +105,24 @@ class Customer {
 		$this->deleteCookie();
 	}
 
-	protected function setCookie() {
+	protected function setCookie()
+	{
 		$cookie = md5($this->customer_id . $this->security_phrase);
 
 		setcookie('customer_session', $cookie, time() + 172800, '/', $this->request->server['HTTP_HOST'], true, true);
-		
+
 		$this->db->query("UPDATE " . DB_PREFIX . "customer SET cookie = '" . $this->db->escape($cookie) . "' WHERE customer_id = '" . (int)$this->customer_id . "'");
 	}
 
-	protected function deleteCookie() {
+	protected function deleteCookie()
+	{
 		setcookie('customer_session', '', time() - 172800, '/', $this->request->server['HTTP_HOST']);
-		
+
 		$this->db->query("UPDATE " . DB_PREFIX . "customer SET cookie =  '' WHERE customer_id = '" . (int)$this->customer_id . "'");
 	}
 
-	protected function getCookie() {
+	protected function getCookie()
+	{
 		if (isset($this->request->cookie['customer_session'])) {
 			$customer_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE cookie = '" . $this->db->escape($this->request->cookie['customer_session']) . "' AND status = '1'");
 
@@ -121,54 +134,63 @@ class Customer {
 		}
 	}
 
-	public function isLogged() {
+	public function isLogged()
+	{
 		return $this->customer_id;
 	}
 
-	public function getId() {
+	public function getId()
+	{
 		return $this->customer_id;
 	}
 
-	public function getFirstName() {
+	public function getFirstName()
+	{
 		return $this->firstname;
 	}
 
-	public function getLastName() {
+	public function getLastName()
+	{
 		return $this->lastname;
 	}
 
-	public function getGroupId() {
+	public function getGroupId()
+	{
 		return $this->customer_group_id;
 	}
 
-	public function getLocationId() {
+	public function getLocationId()
+	{
 		return $this->location_id;
 	}
 
-	public function getEmail() {
+	public function getEmail()
+	{
 		return $this->email;
 	}
 
-	public function getTelephone() {
+	public function getTelephone()
+	{
 		return $this->telephone;
 	}
 
-/* 	public function getNewsletter() {
+	/* 	public function getNewsletter() {
 		return $this->newsletter;
 	}
  */
-	public function getAddressId() {
+	public function getAddressId()
+	{
 		return $this->address_id;
 	}
 
-	public function getBalance() {
-		$query = $this->db->query("SELECT SUM(amount) AS total FROM " . DB_PREFIX . "customer_transaction WHERE customer_id = '" . (int)$this->customer_id . "'");
-
-		return $query->row['total'];
+	public function getDateStart()
+	{
+		return $this->date_start;
 	}
 
-	public function getRewardPoints() {
-		$query = $this->db->query("SELECT SUM(points) AS total FROM " . DB_PREFIX . "customer_reward WHERE customer_id = '" . (int)$this->customer_id . "'");
+	public function getBalance()
+	{
+		$query = $this->db->query("SELECT SUM(amount) AS total FROM " . DB_PREFIX . "customer_transaction WHERE customer_id = '" . (int)$this->customer_id . "'");
 
 		return $query->row['total'];
 	}

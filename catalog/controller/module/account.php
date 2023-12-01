@@ -14,9 +14,9 @@ class ControllerModuleAccount extends Controller {
 			'text_schedule',
 			'text_payroll_basic',
 			'text_payroll',
-			'text_paid_leave',
-			'text_download',
-			'text_newsletter'		
+			'text_vacation'
+			// 'text_download',
+			// 'text_newsletter'		
 		];
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
@@ -32,8 +32,9 @@ class ControllerModuleAccount extends Controller {
 		$data['payroll_basic'] = $this->url->link('account/payroll_basic', '', true);
 		$data['payroll'] = $this->url->link('account/payroll', '', true);
 		$data['password'] = $this->url->link('account/password', '', true);
-		$data['download'] = $this->url->link('account/download', '', true);
-		$data['newsletter'] = $this->url->link('account/newsletter', '', true);
+		$data['vacation'] = $this->url->link('account/vacation', '', true);
+		// $data['download'] = $this->url->link('account/download', '', true);
+		// $data['newsletter'] = $this->url->link('account/newsletter', '', true);
 
 		return $this->load->view('module/account', $data);
 	}

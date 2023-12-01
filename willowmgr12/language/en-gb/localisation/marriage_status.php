@@ -21,4 +21,4 @@ $_['entry_code']       = 'Marriage Status Code';
 $_['error_permission'] = 'Warning: You do not have permission to modify marriage statuses!';
 $_['error_name']       = 'Marriage Status Name must be between 3 and 32 characters!';
 $_['error_code']	   = 'Marriage Status Code must be set!';
-$_['error_product']    = 'Warning: This marriage status cannot be deleted as it is currently assigned to %s products!';
+$_['error_data']       = 'Warning: This marriage status cannot be deleted as it is currently assigned to %s customers!';

@@ -29,7 +29,7 @@ class ModelPresenceAbsence extends Model {
 	}
 
 	public function getAbsence($absence_id) {
-		$sql = "SELECT DISTINCT a.*, ps.code AS presence_code, ps.last_notif, (SELECT username FROM " . DB_PREFIX . "user u WHERE u.user_id = a.user_id) AS username FROM " . DB_PREFIX . "absence a LEFT JOIN " . DB_PREFIX . "presence_status ps ON (ps.presence_status_id = a.presence_status_id) WHERE absence_id = '" . (int)$absence_id . "'";
+		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "v_absence a WHERE absence_id = '" . (int)$absence_id . "'";
 
 		$query = $this->db->query($sql);
 
@@ -37,50 +37,67 @@ class ModelPresenceAbsence extends Model {
 	}
 
 	public function getAbsences($data = array()) {
-		$sql = "SELECT a.*, ps.name as presence_status, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, username FROM " . DB_PREFIX . "absence a LEFT JOIN " . DB_PREFIX . "presence_status ps ON (ps.presence_status_id = a.presence_status_id) LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = a.customer_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = a.user_id)";
+		$sql = "SELECT * FROM " . DB_PREFIX . "v_absence WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 
 		$implode = array();
 
-		if (!empty($data['filter_name'])) {
-			$implode[] = "CONCAT(c.firstname, ' [', c.lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		if (!empty($data['filter']['name'])) {
+			$implode[] = "name LIKE '%" . $this->db->escape($data['filter']['name']) . "%'";
 		}
 
-		if (!empty($data['filter_presence_status_id'])) {
-			$implode[] = "a.presence_status_id = '" . (int)$data['filter_presence_status_id'] . "'";
+		if (!empty($data['filter']['customer_department_id'])) {
+			$implode[] = "customer_department_id = '" . (int)$data['filter']['customer_department_id'] . "'";
 		}
 
-		if (!empty($data['filter_date'])) {
-			$implode[] = "a.date = STR_TO_DATE('" . $this->db->escape($data['filter_date']) . "', '%e %b %Y')";
+		if (!empty($data['filter']['customer_group_id'])) {
+			$implode[] = "customer_group_id = '" . (int)$data['filter']['customer_group_id'] . "'";
 		}
 
-		if (!empty($data['filter_period_id'])) {
+		if (!empty($data['filter']['location_id'])) {
+			$implode[] = "location_id = '" . (int)$data['filter']['location_id'] . "'";
+		}
+
+		if (!empty($data['filter']['presence_status_id'])) {
+			$implode[] = "presence_status_id = '" . (int)$data['filter']['presence_status_id'] . "'";
+		}
+
+		if (!empty($data['filter']['date'])) {
+			$implode[] = "date = STR_TO_DATE('" . $this->db->escape($data['filter']['date']) . "', '%e %b %Y')";
+		}
+
+		if (!empty($data['filter']['period'])) {
 			$this->load->model('common/payroll');
-			$period_info = $this->model_common_payroll->getPeriod($data['filter_period_id']);
+			$date = date_create_from_format('d M Y', '01 ' . $data['filter']['period']);
+
+			$period_info = $this->model_common_payroll->getPeriodByDate(date_format($date, 'Y-m-d'));
 			
 			if ($period_info) {
-				$implode[] = "a.date >= '" . $this->db->escape($period_info['date_start']) . "' AND a.date <= '" . $this->db->escape($period_info['date_end']) . "'";
+				$implode[] = "date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'";
 			}
 		}
 
-		if (isset($data['filter_note'])) {
-			if (empty($data['filter_note'])) {
-				$implode[] = "a.note = ''";
+		if (isset($data['filter']['note'])) {
+			if (empty($data['filter']['note'])) {
+				$implode[] = "note = ''";
 			} else {
-				$implode[] = "a.note <> ''";
+				$implode[] = "note <> ''";
 			}
 		}
 
-		if (isset($data['filter_approved'])) {
-			$implode[] = "a.approved = '" . (int)$data['filter_approved'] . "'";
+		if (isset($data['filter']['approved'])) {
+			$implode[] = "approved = '" . (int)$data['filter']['approved'] . "'";
 		}
 
 		if ($implode) {
-			$sql .= " WHERE " . implode(" AND ", $implode);
+			$sql .= " AND " . implode(" AND ", $implode);
 		}
 
 		$sort_data = array(
 			'date',
 			'name',
+			'customer_group',
+			'customer_department',
+			'location',
 			'presence_status_id'
 		);
 
@@ -114,44 +131,59 @@ class ModelPresenceAbsence extends Model {
 	}
 
 	public function getAbsencesCount($data = array()) {
-		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "absence a LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = a.customer_id)";
+		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "v_absence WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 
 		$implode = array();
 
-		if (!empty($data['filter_name'])) {
-			$implode[] = "CONCAT(c.firstname, ' [', c.lastname, ']') LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		if (!empty($data['filter']['name'])) {
+			$implode[] = "name LIKE '%" . $this->db->escape($data['filter']['name']) . "%'";
 		}
 
-		if (!empty($data['filter_presence_status_id'])) {
-			$implode[] = "a.presence_status_id = '" . (int)$data['filter_presence_status_id'] . "'";
+		if (!empty($data['filter']['customer_department_id'])) {
+			$implode[] = "customer_department_id = '" . (int)$data['filter']['customer_department_id'] . "'";
 		}
 
-		if (!empty($data['filter_date'])) {
-			$implode[] = "a.date = STR_TO_DATE('" . $this->db->escape($data['filter_date']) . "', '%e %b %Y')";
+		if (!empty($data['filter']['customer_group_id'])) {
+			$implode[] = "customer_group_id = '" . (int)$data['filter']['customer_group_id'] . "'";
 		}
 
-		if (!empty($data['filter_period_id'])) {
-			$period_info = $this->model_common_payroll->getPeriod($data['filter_period_id']);
+		if (!empty($data['filter']['location_id'])) {
+			$implode[] = "location_id = '" . (int)$data['filter']['location_id'] . "'";
+		}
+
+		if (!empty($data['filter']['presence_status_id'])) {
+			$implode[] = "presence_status_id = '" . (int)$data['filter']['presence_status_id'] . "'";
+		}
+
+		if (!empty($data['filter']['date'])) {
+			$implode[] = "date = STR_TO_DATE('" . $this->db->escape($data['filter']['date']) . "', '%e %b %Y')";
+		}
+
+		if (!empty($data['filter']['period'])) {
+			$this->load->model('common/payroll');
+			$date = date_create_from_format('d M Y', '01 ' . $data['filter']['period']);
+
+			$period_info = $this->model_common_payroll->getPeriodByDate(date_format($date, 'Y-m-d'));
 			
 			if ($period_info) {
-				$implode[] = "a.date >= '" . $this->db->escape($period_info['date_start']) . "' AND a.date <= '" . $this->db->escape($period_info['date_end']) . "'";
+				$implode[] = "date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'";
 			}
 		}
 
-		if (isset($data['filter_note'])) {
-			if (empty($data['filter_note'])) {
-				$implode[] = "a.note = ''";
+		if (isset($data['filter']['note'])) {
+			if (empty($data['filter']['note'])) {
+				$implode[] = "note = ''";
 			} else {
-				$implode[] = "a.note <> ''";
+				$implode[] = "note <> ''";
 			}
 		}
 
-		if (isset($data['filter_approved'])) {
-			$implode[] = "a.approved = '" . (int)$data['filter_approved'] . "'";
+		if (isset($data['filter']['approved'])) {
+			$implode[] = "approved = '" . (int)$data['filter']['approved'] . "'";
 		}
 
 		if ($implode) {
-			$sql .= " WHERE " . implode(" AND ", $implode);
+			$sql .= " AND " . implode(" AND ", $implode);
 		}
 
 		$query = $this->db->query($sql);
@@ -159,7 +191,7 @@ class ModelPresenceAbsence extends Model {
 		return $query->row['total'];
 	}
 
-	public function getAbsencesByCustomerDate($customer_id, $date = array()) {//Used by: schedule
+	public function getAbsencesByCustomerDate($customer_id, $date = array()) {
 		$sql = "SELECT a.*, ps.code as presence_code, ps.name as presence_status, u.username FROM " . DB_PREFIX . "absence a LEFT JOIN " . DB_PREFIX . "presence_status ps ON (ps.presence_status_id = a.presence_status_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = a.user_id) WHERE customer_id = '" . (int)$customer_id . "' AND a.date >= '" . $this->db->escape($date['start']) . "' AND a.date <= '" . $this->db->escape($date['end']) . "' ORDER BY a.date ASC";
 
 		$query = $this->db->query($sql);
@@ -175,7 +207,7 @@ class ModelPresenceAbsence extends Model {
 		return $query->row['total'];
 	}
 
-	public function getAbsenceCountByPresenceStatusId($presence_status_id) { //Used by: presence_status
+	public function getAbsenceCountByPresenceStatusId($presence_status_id) {
 		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "absence WHERE presence_status_id = '" . (int)$presence_status_id . "'";
 
 		$query = $this->db->query($sql);
@@ -183,7 +215,7 @@ class ModelPresenceAbsence extends Model {
 		return $query->row['total'];
 	}
 	
-	public function getVacations($customer_id, $year = 0) { //used by common/vacation_info
+	public function getVacations($customer_id, $year = 0) {
 		if (empty($year)) {
 			$year = date('Y');
 		}
@@ -197,7 +229,7 @@ class ModelPresenceAbsence extends Model {
 		return $query->rows;
 	}
 	
-	public function getVacationsCount($customer_id, $year = 0) { //used by customer_info
+	public function getVacationsCount($customer_id, $year = 0) {
 		if (empty($year)) {
 			$year = date('Y');
 		}

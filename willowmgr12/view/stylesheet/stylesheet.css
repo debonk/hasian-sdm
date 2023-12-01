@@ -822,3 +822,16 @@ input[type=file]::file-selector-button {
 .bg-light-dark {
 	background-color:#eee;
 }
+
+/* class for filter well */
+.flex-container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 15px;
+}
+.flex-item {
+	flex-basis: 0;
+	flex-grow: 1;
+	min-width: 200px;
+}

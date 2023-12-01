@@ -390,7 +390,7 @@ class ControllerLocalisationCity extends Controller {
 
 		$this->load->model('setting/store');
 		$this->load->model('customer/customer');
-		$this->load->model('marketing/affiliate');
+		// $this->load->model('marketing/affiliate');
 		$this->load->model('localisation/geo_zone');
 
 		foreach ($this->request->post['selected'] as $city) {
@@ -410,11 +410,11 @@ class ControllerLocalisationCity extends Controller {
 				$this->error['warning'] = sprintf($this->language->get('error_address'), $address_total);
 			}
 
-			$affiliate_total = $this->model_marketing_affiliate->getTotalAffiliatesByCity($city);
+			// $affiliate_total = $this->model_marketing_affiliate->getTotalAffiliatesByCity($city);
 
-			if ($affiliate_total) {
-				$this->error['warning'] = sprintf($this->language->get('error_affiliate'), $affiliate_total);
-			}
+			// if ($affiliate_total) {
+			// 	$this->error['warning'] = sprintf($this->language->get('error_affiliate'), $affiliate_total);
+			// }
 
 			$zone_to_geo_zone_total = $this->model_localisation_geo_zone->getTotalZoneToGeoZoneByCity($city);
 

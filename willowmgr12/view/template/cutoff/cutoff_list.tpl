@@ -1,122 +1,324 @@
-<?php echo $header; ?><?php echo $column_left; ?>
+<?= $header; ?>
+<?= $column_left; ?>
 <div id="content">
   <div class="page-header">
     <div class="container-fluid">
       <div class="pull-right">
-        <a href="<?php echo $add; ?>" data-toggle="tooltip" title="<?php echo $button_add; ?>" class="btn btn-primary"><i class="fa fa-plus"></i></a>
-        <button type="button" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger" onclick="confirm('<?php echo $text_confirm; ?>') ? $('#form-cutoff').submit() : false;"><i class="fa fa-trash-o"></i></button>
-	  </div>
-      <h1><?php echo $heading_title; ?></h1>
+        <a href="<?= $add; ?>" data-toggle="tooltip" title="<?= $button_add; ?>" class="btn btn-primary"><i
+            class="fa fa-plus"></i></a>
+        <button type="button" data-toggle="tooltip" title="<?= $button_delete; ?>" class="btn btn-danger"
+          onclick="confirm('<?= $text_confirm; ?>') ? $('#form-cutoff').submit() : false;"><i
+            class="fa fa-trash-o"></i></button>
+      </div>
+      <h1>
+        <?= $heading_title; ?>
+      </h1>
       <ul class="breadcrumb">
         <?php foreach ($breadcrumbs as $breadcrumb) { ?>
-        <li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
+        <li><a href="<?= $breadcrumb['href']; ?>">
+            <?= $breadcrumb['text']; ?>
+          </a></li>
         <?php } ?>
       </ul>
     </div>
   </div>
   <div class="container-fluid">
     <?php if ($error_warning) { ?>
-    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $error_warning; ?>
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>
+      <?= $error_warning; ?>
       <button type="button" class="close" data-dismiss="alert">&times;</button>
     </div>
     <?php } ?>
     <?php if ($success) { ?>
-    <div class="alert alert-success"><i class="fa fa-check-circle"></i> <?php echo $success; ?>
+    <div class="alert alert-success"><i class="fa fa-check-circle"></i>
+      <?= $success; ?>
       <button type="button" class="close" data-dismiss="alert">&times;</button>
     </div>
     <?php } ?>
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3 class="panel-title"><i class="fa fa-list"></i> <?php echo $text_list; ?></h3><h4 class="pull-right"><i class="fa fa-line-chart"></i> <?php echo $grandtotal; ?></h4>
+        <h3 class="panel-title"><i class="fa fa-list"></i>
+          <?= $text_list; ?>
+        </h3>
+        <h4 class="pull-right"><i class="fa fa-line-chart"></i>
+          <?= $grandtotal; ?>
+        </h4>
       </div>
       <div class="panel-body">
         <div class="well">
-          <div class="row">
-            <div class="col-sm-4">
+          <div class="row flex-container">
+            <div class="flex-item">
               <div class="form-group">
-                <label class="control-label" for="input-name"><?php echo $entry_name; ?></label>
-                <input type="text" name="filter_name" value="<?php echo $filter_name; ?>" placeholder="<?php echo $entry_name; ?>" id="input-name" class="form-control" />
+                <label class="control-label" for="input-name">
+                  <?= $entry_name; ?>
+                </label>
+                <input type="text" name="filter[name]" value="<?= $filter['name']; ?>" placeholder="<?= $entry_name; ?>"
+                  id="input-name" class="form-control" />
               </div>
             </div>
-            <div class="col-sm-4">
+            <div class="flex-item">
               <div class="form-group">
-                <label class="control-label" for="input-inv-no"><?php echo $entry_inv_no; ?></label>
-                <input type="text" name="filter_inv_no" value="<?php echo $filter_inv_no; ?>" placeholder="<?php echo $entry_inv_no; ?>" id="input-inv_no" class="form-control" />
-              </div>
-            </div>
-            <div class="col-sm-4">
-              <div class="form-group">
-                <label class="control-label" for="input-status"><?php echo $entry_status; ?></label>
-                <select name="filter_status" id="input-status" class="form-control">
-                  <option value="*"><?php echo $text_unpaid; ?></option>
-                  <?php if ($filter_status) { ?>
-                    <option value="1" selected="selected"><?php echo $text_paid; ?></option>
-                  <?php } else { ?>
-                    <option value="1"><?php echo $text_paid; ?></option>
-                  <?php } ?>
-                  <?php if (!$filter_status && !is_null($filter_status)) { ?>
-                    <option value="0" selected="selected"><?php echo $text_all_status; ?></option>
-                  <?php } else { ?>
-                    <option value="0"><?php echo $text_all_status; ?></option>
+                <label class="control-label" for="input-customer-group">
+                  <?= $entry_customer_group; ?>
+                </label>
+                <select name="filter[customer_group_id]" id="input-customer-group" class="form-control">
+                  <option value="">
+                    <?= $text_all; ?>
+                  </option>
+                  <?php foreach ($customer_groups as $customer_group) { ?>
+                  <option value="<?= $customer_group['customer_group_id']; ?>"
+                    <?=$customer_group['customer_group_id']==$filter['customer_group_id'] ? 'selected' : '' ; ?>>
+                    <?= $customer_group['name']; ?>
+                  </option>
                   <?php } ?>
                 </select>
               </div>
-              <button type="button" id="button-filter" class="btn btn-primary pull-right"><i class="fa fa-search"></i> <?php echo $button_filter; ?></button>
+            </div>
+            <div class="flex-item">
+              <div class="form-group">
+                <label class="control-label" for="input-customer-department">
+                  <?= $entry_customer_department; ?>
+                </label>
+                <select name="filter[customer_department_id]" id="input-customer-department" class="form-control">
+                  <option value="">
+                    <?= $text_all; ?>
+                  </option>
+                  <?php foreach ($customer_departments as $customer_department) { ?>
+                  <option value="<?= $customer_department['customer_department_id']; ?>"
+                    <?=$customer_department['customer_department_id']==$filter['customer_department_id'] ? 'selected'
+                    : '' ; ?>>
+                    <?= $customer_department['name']; ?>
+                  </option>
+                  <?php } ?>
+                </select>
+              </div>
+            </div>
+            <div class="flex-item">
+              <div class="form-group">
+                <label class="control-label" for="input-location">
+                  <?= $entry_location; ?>
+                </label>
+                <select name="filter[location_id]" id="input-location" class="form-control">
+                  <option value="">
+                    <?= $text_all ?>
+                  </option>
+                  <?php foreach ($locations as $location) { ?>
+                  <option value="<?= $location['location_id']; ?>" <?=$location['location_id']==$filter['location_id']
+                    ? 'selected' : '' ; ?>>
+                    <?= $location['name']; ?>
+                  </option>
+                  <?php } ?>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row flex-container">
+            <div class="flex-item">
+              <div class="form-group">
+                <label class="control-label" for="input-period">
+                  <?= $entry_period; ?>
+                </label>
+                <div class="input-group month">
+                  <input type="text" name="filter[period]" value="<?= $filter['period']; ?>"
+                    placeholder="<?= $entry_period; ?>" id="input-period" class="form-control"
+                    data-date-format="MMM YYYY" />
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-default"><i class="fa fa-calendar-o"></i></button>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="flex-item">
+              <div class="form-group">
+                <label class="control-label" for="input-description">
+                  <?= $entry_description; ?>
+                </label>
+                <input type="text" name="filter[description]" value="<?= $filter['description']; ?>"
+                  placeholder="<?= $entry_description; ?>" id="input-description" class="form-control" />
+              </div>
+            </div>
+            <div class="flex-item">
+              <div class="form-group">
+                <label class="control-label" for="input-status">
+                  <?= $entry_status; ?>
+                </label>
+                <select name="filter[status]" id="input-status" class="form-control">
+                  <option value="*">
+                    <?= $text_unpaid; ?>
+                  </option>
+                  <?php if ($filter['status']) { ?>
+                  <option value="1" selected="selected">
+                    <?= $text_paid; ?>
+                  </option>
+                  <?php } else { ?>
+                  <option value="1">
+                    <?= $text_paid; ?>
+                  </option>
+                  <?php } ?>
+                  <?php if (!$filter['status'] && !is_null($filter['status'])) { ?>
+                  <option value="0" selected="selected">
+                    <?= $text_all; ?>
+                  </option>
+                  <?php } else { ?>
+                  <option value="0">
+                    <?= $text_all; ?>
+                  </option>
+                  <?php } ?>
+                </select>
+              </div>
+            </div>
+            <div>
+              <div class="form-group">
+                <label>
+                  <?= '&nbsp;'; ?>
+                </label>
+                <div>
+                  <button type="button" id="button-filter" class="btn btn-primary pull-right"><i
+                      class="fa fa-search"></i>
+                    <?= $button_filter; ?>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <form action="<?php echo $delete; ?>" method="post" enctype="multipart/form-data" id="form-cutoff">
+        <form action="<?= $delete; ?>" method="post" enctype="multipart/form-data" id="form-cutoff">
           <div class="table-responsive">
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered table-hover text-left">
               <thead>
                 <tr>
-                  <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
-				  <td class="text-left"><?php echo $column_date; ?></td>
-				  <td class="text-left"><?php echo $column_name; ?></td>
-				  <td class="text-left"><?php echo $column_inv_no; ?></td>
-				  <td class="text-left"><?php echo $column_principle; ?></td>
-				  <td class="text-left"><?php echo $column_business_name; ?></td>
-				  <td class="text-right"><?php echo $column_amount; ?></td>
-                  <td class="text-left"><?php echo $column_username; ?></td>
-                  <td class="text-center"><?php echo $column_payment; ?></td>
-                  <td class="text-right"><?php echo $column_action; ?></td>
+                  <td style="width: 1px;" class="text-center"><input type="checkbox"
+                      onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
+                      <td>
+                        <a href="<?= $sort_date; ?>" <?=($sort=='date' ) ? 'class="' . strtolower($order) . '"' : '' ; ?> >
+                          <?= $column_date; ?>
+                        </a>
+                      </td>
+                      <td>
+                        <a href="<?= $sort_name; ?>" <?=($sort=='name' ) ? 'class="' . strtolower($order) . '"' : '' ; ?> >
+                          <?= $column_name; ?>
+                        </a>
+                      </td>
+                      <td>
+                        <a href="<?= $sort_customer_group; ?>" <?=($sort=='customer_group' ) ? 'class="' .
+                          strtolower($order) . '"' : '' ; ?> >
+                          <?= $column_customer_group; ?>
+                        </a>
+                      </td>
+                      <td>
+                        <a href="<?= $sort_customer_department; ?>" <?=($sort=='customer_department' ) ? 'class="' .
+                          strtolower($order) . '"' : '' ; ?> >
+                          <?= $column_customer_department; ?>
+                        </a>
+                      </td>
+                      <td>
+                        <a href="<?= $sort_location; ?>" <?=($sort=='location' ) ? 'class="' . strtolower($order) . '"' : ''
+                          ; ?> >
+                          <?= $column_location; ?>
+                        </a>
+                      </td>
+                      <td>
+                        <?= $column_description; ?>
+                      </td>
+                      <td>
+                        <a href="<?= $sort_principle; ?>" <?=($sort=='principle' ) ? 'class="' . strtolower($order) . '"' : ''
+                          ; ?> >
+                          <?= $column_principle; ?>
+                        </a>
+                      </td>
+                      <td>
+                        <a href="<?= $sort_business_name; ?>" <?=($sort=='business_name' ) ? 'class="' . strtolower($order) . '"' : ''
+                          ; ?> >
+                          <?= $column_business_name; ?>
+                        </a>
+                      </td>
+                              <td class="text-right">
+                        <?= $column_amount; ?>
+                      </td>
+                      <td class="text-center">
+                        <a href="<?= $sort_period; ?>" <?=($sort=='period' ) ? 'class="' . strtolower($order) . '"' : ''
+                          ; ?> >
+                          <?= $column_period; ?>
+                        </a>
+                      </td>
+                      <td>
+                    <?= $column_username; ?>
+                  </td>
+                  <td class="text-right">
+                    <?= $column_action; ?>
+                  </td>
                 </tr>
               </thead>
               <tbody>
                 <?php if ($cutoffs) { ?>
-                  <?php foreach ($cutoffs as $cutoff) { ?>
-                    <tr>
-                      <td class="text-center"><?php if (in_array($cutoff['cutoff_id'], $selected)) { ?>
-                        <input type="checkbox" name="selected[]" value="<?php echo $cutoff['cutoff_id']; ?>" checked="checked" />
-                        <?php } else { ?>
-                        <input type="checkbox" name="selected[]" value="<?php echo $cutoff['cutoff_id']; ?>" />
-                        <?php } ?></td>
-                      <td class="text-left"><?php echo $cutoff['date']; ?></td>
-                      <td class="text-left"><?php echo $cutoff['name']; ?></td>
-                      <td class="text-left"><?php echo $cutoff['inv_no']; ?></td>
-				      <td class="text-left"><?php echo $cutoff['principle']; ?></td>
-				      <td class="text-left"><?php echo $cutoff['business_name']; ?></td>
-				      <td class="text-right nowrap"><?php echo $cutoff['amount']; ?></td>
-                      <td class="text-left"><?php echo $cutoff['username']; ?></td>
-					  <?php if ($cutoff['payment']) { ?>
-                        <td class="text-center"><?php echo $cutoff['payment']; ?></td>
-					  <?php } else { ?>
-					    <td class="text-center text-danger"><i class="fa fa-question"></i></td>
-					  <?php } ?>
-                      <td class="text-right">
-					    <?php if ($cutoff['payment']) { ?>
-					      <a href="<?php echo $cutoff['view']; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info" target="_blank" rel="noopener noreferrer"><i class="fa fa-eye"></i></a>
-						<?php } else { ?>
-                          <a href="<?php echo $cutoff['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
-						<?php } ?>
-					  </td>
-                    </tr>
+                <?php foreach ($cutoffs as $cutoff) { ?>
+                <tr>
+                  <td class="text-center">
+                    <?php if (in_array($cutoff['cutoff_id'], $selected)) { ?>
+                    <input type="checkbox" name="selected[]" value="<?= $cutoff['cutoff_id']; ?>" checked="checked" />
+                    <?php } else { ?>
+                    <input type="checkbox" name="selected[]" value="<?= $cutoff['cutoff_id']; ?>" />
+                    <?php } ?>
+                  </td>
+                  <td>
+                    <?= $cutoff['date']; ?>
+                  </td>
+                  <td>
+                    <?= $cutoff['name']; ?>
+                  </td>
+                  <td>
+                    <?= $cutoff['customer_group']; ?>
+                  </td>
+                  <td>
+                    <?= $cutoff['customer_department']; ?>
+                  </td>
+                  <td>
+                    <?= $cutoff['location']; ?>
+                  </td>
+                  <td>
+                    <?= $cutoff['description']; ?>
+                  </td>
+                  <td>
+                    <?= $cutoff['principle']; ?>
+                  </td>
+                  <td>
+                    <?= $cutoff['business_name']; ?>
+                  </td>
+                  <td class="text-right nowrap">
+                    <?= $cutoff['amount']; ?>
+                  </td>
+                  <?php if ($cutoff['period']) { ?>
+                  <td class="text-center">
+                    <?= $cutoff['period']; ?>
+                  </td>
+                  <?php } else { ?>
+                  <td class="text-center text-danger"><i class="fa fa-question"></i></td>
                   <?php } ?>
-				  <td class="text-right text-bold" colspan="6"><?php echo $text_subtotal; ?></td>
-				  <td class="text-right text-bold nowrap"><?php echo $subtotal; ?></td>
+                  <td>
+                    <?= $cutoff['username']; ?>
+                  </td>
+                  <td class="text-right">
+                    <?php if ($cutoff['period']) { ?>
+                    <a href="<?= $cutoff['view']; ?>" data-toggle="tooltip" title="<?= $button_view; ?>"
+                      class="btn btn-info" target="_blank" rel="noopener noreferrer"><i class="fa fa-eye"></i></a>
+                    <?php } else { ?>
+                    <a href="<?= $cutoff['edit']; ?>" data-toggle="tooltip" title="<?= $button_edit; ?>"
+                      class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                    <?php } ?>
+                  </td>
+                </tr>
+                <?php } ?>
+                <td class="text-right text-bold" colspan="9">
+                  <?= $text_subtotal; ?>
+                </td>
+                <td class="text-right text-bold nowrap">
+                  <?= $subtotal; ?>
+                </td>
                 <?php } else { ?>
                 <tr>
-                  <td class="text-center" colspan="10"><?php echo $text_no_results; ?></td>
+                  <td class="text-center" colspan="13">
+                    <?= $text_no_results; ?>
+                  </td>
                 </tr>
                 <?php } ?>
               </tbody>
@@ -124,63 +326,65 @@
           </div>
         </form>
         <div class="row">
-          <div class="col-sm-6 text-left"><?php echo $pagination; ?></div>
-          <div class="col-sm-6 text-right"><?php echo $results; ?></div>
+          <div class="col-sm-6 text-left">
+            <?= $pagination; ?>
+          </div>
+          <div class="col-sm-6 text-right">
+            <?= $results; ?>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <script type="text/javascript"><!--
-$(document).keypress(function(e) {
-        if(e.which == 13) {
-			$("#button-filter").click();
-        }
-    });
-
-$('#button-filter').on('click', function() {
-	url = 'index.php?route=cutoff/cutoff&token=<?php echo $token; ?>';
-	
-	var filter_name = $('input[name=\'filter_name\']').val();
-	
-	if (filter_name) {
-		url += '&filter_name=' + encodeURIComponent(filter_name);
-	}
-	
-	var filter_inv_no = $('input[name=\'filter_inv_no\']').val();
-	
-	if (filter_inv_no) {
-		url += '&filter_inv_no=' + encodeURIComponent(filter_inv_no);
-	}	
-	
-	var filter_status = $('select[name=\'filter_status\']').val();
-	
-	if (filter_status != '*') {
-		url += '&filter_status=' + encodeURIComponent(filter_status); 
-	}	
-	
-	location = url;
-});
-//--></script> 
-  <script type="text/javascript"><!--
-$('input[name=\'filter_name\']').autocomplete({
-	'source': function(request, response) {
-		$.ajax({
-			url: 'index.php?route=presence/presence/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request),
-			dataType: 'json',			
-			success: function(json) {
-				response($.map(json, function(item) {
-					return {
-						label: item['name'],
-						value: item['customer_id']
-					}
-				}));
-			}
-		});
-	},
-	'select': function(item) {
-		$('input[name=\'filter_name\']').val(item['label']);
-	}	
-});
-//--></script> 
 </div>
-<?php echo $footer; ?> 
+<script type="text/javascript">
+  $(document).keypress(function (e) {
+    if (e.which == 13) {
+      $("#button-filter").click();
+    }
+  });
+
+  $('#button-filter').on('click', function () {
+    url = 'index.php?route=cutoff/cutoff&token=<?= $token; ?>';
+
+    let filter = [];
+    
+    let filter_items = JSON.parse('<?= $filter_items; ?>');
+
+    for (let i = 0; i < filter_items.length; i++) {
+      filter[filter_items[i]] = $('.well [name=\'filter[' + filter_items[i] + ']\']').val();
+
+      if (filter[filter_items[i]] && filter[filter_items[i]] != '*') {
+        url += '&filter_' + filter_items[i] + '=' + encodeURIComponent(filter[filter_items[i]]);
+      }
+    }
+
+    location = url;
+  });
+
+  $('input[name=\'filter[name]\']').autocomplete({
+    'source': function (request, response) {
+      $.ajax({
+        url: 'index.php?route=cutoff/cutoff/autocomplete&token=<?= $token; ?>&filter_name=' + encodeURIComponent(request),
+        dataType: 'json',
+        success: function (json) {
+          response($.map(json, function (item) {
+            return {
+              label: item['name'],
+              value: item['customer_id']
+            }
+          }));
+        }
+      });
+    },
+    'select': function (item) {
+      $('input[name=\'filter[name]\']').val(item['label']);
+    }
+  });
+
+  $('.month').datetimepicker({
+    minViewMode: 'months',
+    pickTime: false
+  });
+</script>
+<?= $footer; ?>
