@@ -377,8 +377,10 @@ class ControllerCutoffCutoff extends Controller
 
 		if (!isset($this->request->get['cutoff_id'])) {
 			$data['action'] = $this->url->link('cutoff/cutoff/add', 'token=' . $this->session->data['token'] . $url, true);
+			$data['disabled'] = '';
 		} else {
 			$data['action'] = $this->url->link('cutoff/cutoff/edit', 'token=' . $this->session->data['token'] . '&cutoff_id=' . $this->request->get['cutoff_id'] . $url, true);
+			$data['disabled'] = 'disabled';
 		}
 
 		$data['breadcrumbs'][] = array(
@@ -525,6 +527,7 @@ class ControllerCutoffCutoff extends Controller
 			$filter_data = array(
 				'presence_period_id'	=> $presence_period_id,
 				'filter_name'			=> $filter_name,
+				'availability'  		=> true,
 				'start'      			=> 0,
 				'limit'      			=> 15
 			);

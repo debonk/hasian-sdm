@@ -4,13 +4,14 @@
 MODUL: APP > Account: Login by location (Trial & Progress)
 MODUL: Customer > Presence Method
 
-MODIFY TABLE
-ALTER TABLE `oc_overtime` CHANGE `date_modified` `date_modified` DATETIME on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP; 
-ALTER TABLE `oc_loan` CHANGE `date_modified` `date_added` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP; 
-ALTER TABLE `oc_payroll_component_value` CHANGE `date_added` `date_added` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP; 
-ALTER TABLE `oc_payroll` CHANGE `date_added` `date_added` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP; 
+setting: Modifikasi Tanggal Login = -3; Modifikasi Tanggal Logout = -13
 
-2.8.0
+MODIFY TABLE
+
+2.8.1	04/12/2023
+Some Bugs Fixed
+
+2.8.0	01/12/2023
 Incentive, Cutoff, Overtime, Loan: Add more filter, Change customer selection to autocompletion
 Presence > Absence, Exchange: Add more filter, Change customer selection to autocompletion
 MODUL: APP > Account > Vacation

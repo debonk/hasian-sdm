@@ -35,18 +35,19 @@ class ModelPresencePresence extends Model
 
 			$date_start = $period_info['date_start'];
 
-			$availability = (int)$this->config->get('config_customer_last');
+			if (isset($data['availability']) && $data['availability']) {
+				$availability = (int)$this->config->get('config_customer_last');
 
-			if ($availability) {
-				$period_info_availability = $this->model_common_payroll->getPeriodByDate(date('Y-m-d', strtotime('-' . $availability . ' months')));
+				if ($availability) {
+					$period_info_availability = $this->model_common_payroll->getPeriodByDate(date('Y-m-d', strtotime('-' . $availability . ' months')));
 
-				if ($period_info_availability) {
-					$date_start = $period_info_availability['date_start'];
+					if ($period_info_availability) {
+						$date_start = $period_info_availability['date_start'];
+					}
 				}
 			}
-			
-			$implode[] = "(date_end IS NULL OR date_end >= '" . $this->db->escape($date_start) . "')";
 
+			$implode[] = "(date_end IS NULL OR date_end >= '" . $this->db->escape($date_start) . "')";
 		} elseif (isset($data['filter_status']) && !is_null($data['filter_status'])) {
 			if (!empty($data['filter_status'])) {
 				$implode[] = "date_end <= CURDATE()";

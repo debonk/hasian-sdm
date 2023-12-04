@@ -368,8 +368,10 @@ class ControllerIncentiveIncentive extends Controller
 
 		if (!isset($this->request->get['incentive_id'])) {
 			$data['action'] = $this->url->link('incentive/incentive/add', 'token=' . $this->session->data['token'] . $url, true);
+			$data['disabled'] = '';
 		} else {
 			$data['action'] = $this->url->link('incentive/incentive/edit', 'token=' . $this->session->data['token'] . '&incentive_id=' . $this->request->get['incentive_id'] . $url, true);
+			$data['disabled'] = 'disabled';
 		}
 
 		$data['breadcrumbs'][] = array(
@@ -514,6 +516,7 @@ class ControllerIncentiveIncentive extends Controller
 			$filter_data = array(
 				'presence_period_id'	=> $presence_period_id,
 				'filter_name'			=> $filter_name,
+				'availability'  		=> true,
 				'start'      			=> 0,
 				'limit'      			=> 15
 			);

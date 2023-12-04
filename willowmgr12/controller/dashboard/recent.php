@@ -5,6 +5,8 @@ class ControllerDashboardRecent extends Controller {
 			return;
 		}
 
+		$this->db->createView('v_customer');
+
 		$this->load->language('dashboard/recent');
 
 		$data['heading_title'] = $this->language->get('heading_title');
@@ -31,8 +33,8 @@ class ControllerDashboardRecent extends Controller {
 			'limit' => 5
 		);
 
-		$this->load->model('customer/customer');
-		$results = $this->model_customer_customer->getCustomers($filter_data);
+		$this->load->model('report/customer');
+		$results = $this->model_report_customer->getCustomers($filter_data);
 
 		foreach ($results as $result) {
 			$data['customers'][] = array(

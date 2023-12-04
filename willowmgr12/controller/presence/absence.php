@@ -505,7 +505,7 @@ class ControllerPresenceAbsence extends Controller
 						$this->load->model('localisation/presence_status');
 
 						$presence_status_info = $this->model_localisation_presence_status->getPresenceStatus($this->request->post['presence_status_id']);
-						$date_last_notif = date($this->language->get('date_format_jMY'), strtotime('-' . $presence_status_info['last_notif'] . ' days'));
+						$date_last_notif = date($this->language->get('date_format_jMY'), strtotime(-$presence_status_info['last_notif'] . ' days'));
 
 						if (strtotime($this->request->post['date']) < strtotime($date_last_notif)) { //Check proteksi date
 							$this->error['date'] = sprintf($this->language->get('error_date'), $presence_status_info['name'], $date_last_notif);
@@ -618,7 +618,7 @@ class ControllerPresenceAbsence extends Controller
 			$this->load->model('presence/absence');
 
 			$absence_count = $this->model_presence_absence->getAbsencesCountByCustomerDate($this->request->post['customer_id'], $this->request->post['date']);
-
+			
 			if ($absence_count) {
 				$json['error'] = $this->language->get('error_absence_exist');
 			} else {

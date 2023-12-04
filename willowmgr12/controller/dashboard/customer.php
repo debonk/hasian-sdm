@@ -1,6 +1,8 @@
 <?php
 class ControllerDashboardCustomer extends Controller {
 	public function index() {
+		$this->db->createView('v_customer');
+
 		$this->load->language('dashboard/customer');
 
 		$data['heading_title'] = $this->language->get('heading_title');

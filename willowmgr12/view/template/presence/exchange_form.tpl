@@ -49,7 +49,7 @@
 										<?= $entry_name; ?>
 									</label>
 									<input type="text" name="name" value="<?= $name; ?>"
-										placeholder="<?= $entry_name; ?>" id="input-name" class="form-control" />
+										placeholder="<?= $entry_name; ?>" id="input-name" class="form-control" <?= $disabled ? 'disabled' : ''; ?> />
 									<input type="hidden" name="customer_id" value="<?= $customer_id; ?>"
 										id="input-customer-id" />
 								</div>

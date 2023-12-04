@@ -21,7 +21,7 @@ class ControllerCommonMenu extends Controller
 				'customer/contract',
 				'customer/presence_method',
 				'customer/finger',
-				'option'		=> ['localisation/location', 'customer/customer_department', 'customer/customer_group', 'customer/contract_type', 'customer/document_type', 'localisation/gender', 'localisation/marriage_status', 'localisation/payroll_method', 'customer/custom_field'],
+				'option'		=> ['localisation/location', 'customer/customer_department', 'customer/customer_group', 'customer/document_type', 'customer/contract_type', 'localisation/gender', 'localisation/marriage_status', 'localisation/payroll_method', 'customer/custom_field'],
 			],
 			'component'		=> [
 				'incentive/incentive',

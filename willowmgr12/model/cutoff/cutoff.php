@@ -8,7 +8,7 @@ class ModelCutoffCutoff extends Model
 
 	public function editCutoff($cutoff_id, $data)
 	{
-		$this->db->query("UPDATE " . DB_PREFIX . "cutoff SET cutoff_id = '" . (int)$cutoff_id . "', date = STR_TO_DATE('" . $this->db->escape($data['date']) . "', '%e %b %Y'), description = '" . $this->db->escape($data['description']) . "', principle = '" . $this->db->escape($data['principle']) . "', business_name = '" . $this->db->escape($data['business_name']) . "', amount = '" . (int)$data['amount'] . "', user_id = '" . (int)$this->user->getId() . "' WHERE cutoff_id = '" . (int)$cutoff_id . "'");
+		$this->db->query("UPDATE " . DB_PREFIX . "cutoff SET date = STR_TO_DATE('" . $this->db->escape($data['date']) . "', '%e %b %Y'), description = '" . $this->db->escape($data['description']) . "', principle = '" . $this->db->escape($data['principle']) . "', business_name = '" . $this->db->escape($data['business_name']) . "', amount = '" . (int)$data['amount'] . "', user_id = '" . (int)$this->user->getId() . "' WHERE cutoff_id = '" . (int)$cutoff_id . "'");
 	}
 
 	public function deleteCutoff($cutoff_id)

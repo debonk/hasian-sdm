@@ -7,8 +7,6 @@ class ModelReportCustomer extends Model {
 	}
 
 	public function getCustomers($data = array()) { //Used by: dashboard/recent
-		$this->db->createView('v_customer');
-
 		$sql = "SELECT * FROM " . DB_PREFIX . "v_customer WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 
 		$implode = array();

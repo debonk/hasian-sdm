@@ -384,8 +384,10 @@ class ControllerOvertimeOvertime extends Controller
 
 		if (!isset($this->request->get['overtime_id'])) {
 			$data['action'] = $this->url->link('overtime/overtime/add', 'token=' . $this->session->data['token'] . $url, true);
+			$data['disabled'] = '';
 		} else {
 			$data['action'] = $this->url->link('overtime/overtime/edit', 'token=' . $this->session->data['token'] . '&overtime_id=' . $this->request->get['overtime_id'] . $url, true);
+			$data['disabled'] = 'disabled';
 		}
 
 		$data['breadcrumbs'][] = array(

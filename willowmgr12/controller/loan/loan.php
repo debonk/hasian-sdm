@@ -693,6 +693,7 @@ class ControllerLoanLoan extends Controller
 			$filter_data = array(
 				'filter_name'  	=> $filter_name,
 				'filter_status'	=> $filter_status,
+				'availability'  => true,
 				'start'        	=> 0,
 				'limit'        	=> 15
 			);

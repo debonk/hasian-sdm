@@ -171,7 +171,7 @@ class ControllerReleaseFreeTransfer extends Controller {
 		$free_transfer_count = $this->model_release_free_transfer->getFreeTransfersCount($filter_data);
 		
 		$results = $this->model_release_free_transfer->getFreeTransfers($filter_data);
-// print_r($results);
+
 		foreach ($results as $result) {
 			$data['free_transfers'][] = array(
 				'free_transfer_id' 	=> $result['free_transfer_id'],
@@ -409,17 +409,17 @@ class ControllerReleaseFreeTransfer extends Controller {
 		$data['customers'] = array();
 
 		if (!$this->model_release_free_transfer->checkFreeTransferProcessed($free_transfer_id)) {
-			$availability = (int)$this->config->get('config_customer_last');
+			$this->load->model('common/payroll');
+			$period_info = $this->model_common_payroll->getPeriod();
 
-			$filter_date_end = date($this->language->get('Y-m-d'), strtotime('-' . $availability . ' months')); // Customer still available in selection until this month of custoemr's date_end.
-						
-			$this->load->model('customer/customer');
+			$this->load->model('presence/presence');
 			
 			$filter_data = array(
-				'filter_date_end'	=> $filter_date_end
+				'presence_period_id'	=> $period_info['presence_period_id'],
+				'availability'  		=> true,
 			);
 
-			$customers = $this->model_customer_customer->getCustomers($filter_data);
+			$customers = $this->model_presence_presence->getCustomers($filter_data);
 		} else {
 			$customers = $this->model_release_free_transfer->getFreeTransferCustomers($free_transfer_id);
 		}

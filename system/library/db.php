@@ -101,8 +101,12 @@ class DB
 		if (!$sql) {
 			$sql = $this->viewSql($view_name);
 
+			if (!$sql) {
+				return;
+			}
+
 			$view_name = DB_PREFIX . $view_name;
-		}
+		}	
 
 		$view_sql = "CREATE OR REPLACE VIEW " . $view_name . " AS ";
 		$view_sql .= $sql;
@@ -137,7 +141,6 @@ class DB
 				break;
 
 			case 'v_document':
-				// $view_sql = "SELECT c.customer_id, c.nip, c.name, c.customer_department_id, c.customer_department, c.customer_group_id, c.customer_group, c.location_id, c.location, c.date_start, c.date_end, c.language_id, d.document_id, d.document_type_id, d.filename, d.mask, d.date_added, u.username, dt.title, dt.required FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "document d ON (d.customer_id = c.customer_id) LEFT JOIN " . DB_PREFIX . "document_type dt ON (dt.document_type_id = d.document_type_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = d.user_id) ";
 				$view_sql = "SELECT d.*, u.username, dt.title, dt.required FROM " . DB_PREFIX . "document d LEFT JOIN " . DB_PREFIX . "document_type dt ON (dt.document_type_id = d.document_type_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = d.user_id) ";
 				
 				break;

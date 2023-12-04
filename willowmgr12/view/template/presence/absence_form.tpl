@@ -49,7 +49,7 @@
 										<?= $entry_name; ?>
 									</label>
 									<input type="text" name="name" value="<?= $name; ?>"
-										placeholder="<?= $entry_name; ?>" id="input-name" class="form-control" />
+										placeholder="<?= $entry_name; ?>" id="input-name" class="form-control" <?= $disabled ? 'disabled' : ''; ?> />
 									<input type="hidden" name="customer_id" value="<?= $customer_id; ?>"
 										id="input-customer-id" />
 								</div>
@@ -209,10 +209,10 @@
 	});
 
 	$('#button-ask-approval').on('click', function () {
-		var customer_id = encodeURIComponent($('select[name=\'customer_id\']').val());
-		var presence_status_id = encodeURIComponent($('select[name=\'presence_status_id\']').val());
-		var date = encodeURIComponent($('input[name=\'date\']').val());
-		var description = encodeURIComponent($('input[name=\'description\']').val());
+		let customer_id = encodeURIComponent($('input[name=\'customer_id\']').val());
+		let presence_status_id = encodeURIComponent($('select[name=\'presence_status_id\']').val());
+		let date = encodeURIComponent($('input[name=\'date\']').val());
+		let description = encodeURIComponent($('input[name=\'description\']').val());
 
 		$.ajax({
 			url: 'index.php?route=presence/absence/askApproval&token=<?= $token; ?>',

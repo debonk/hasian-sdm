@@ -57,9 +57,9 @@
                   <?php } ?></td>
                 <td><?php echo $user['date_added']; ?></td>
                 <td class="text-right"><?php if ($user['user_id']) { ?>
-                  <a href="<?php echo $user['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pen"></i></a>
+                  <a href="<?php echo $user['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
                   <?php } else { ?>
-                  <button type="button" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary" disabled="disabled"><i class="fa fa-pen"></i></button>
+                  <button type="button" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary" disabled="disabled"><i class="fa fa-pencil"></i></button>
                   <?php } ?></td>
               </tr>
               <?php } ?>

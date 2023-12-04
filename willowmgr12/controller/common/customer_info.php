@@ -5,6 +5,9 @@ class ControllerCommonCustomerInfo extends Controller
 	{
 		$this->load->language('common/customer_info');
 
+		$this->db->createView('v_customer');
+		$this->db->createView('v_contract');
+
 		$this->load->model('common/payroll');
 		$this->load->model('customer/contract');
 
