@@ -31,7 +31,6 @@ class ControllerCustomerDocument extends Controller
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
-		$this->db->createView('v_customer');
 		$this->db->createView('v_document');
 
 		$this->load->model('customer/document');
@@ -46,7 +45,6 @@ class ControllerCustomerDocument extends Controller
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
-		$this->db->createView('v_customer');
 		$this->db->createView('v_document');
 
 		$this->load->model('customer/document');

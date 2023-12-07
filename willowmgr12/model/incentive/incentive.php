@@ -1,11 +1,6 @@
 <?php
 class ModelIncentiveIncentive extends Model
 {
-	public function view()
-	{
-		var_dump('v_incentive');
-	}
-
 	public function addIncentive($data)
 	{
 		$this->db->query("INSERT INTO " . DB_PREFIX . "incentive SET customer_id = '" . (int)$data['customer_id'] . "', date = STR_TO_DATE('" . $this->db->escape($data['date']) . "', '%e %b %Y'), description = '" . $this->db->escape($data['description']) . "', amount = '" . (int)$data['amount'] . "', user_id = '" . (int)$this->user->getId() . "'");

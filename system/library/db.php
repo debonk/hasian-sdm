@@ -106,7 +106,7 @@ class DB
 			}
 
 			$view_name = DB_PREFIX . $view_name;
-		}	
+		}
 
 		$view_sql = "CREATE OR REPLACE VIEW " . $view_name . " AS ";
 		$view_sql .= $sql;
@@ -123,10 +123,12 @@ class DB
 				break;
 
 			case 'v_contract':
+				$this->createView('v_customer');
+
 				$config_contract_end_query = $this->adaptor->query("SELECT s.value FROM " . DB_PREFIX . "setting s WHERE s.code = 'config' AND s.key = 'config_contract_end_notif'");
 				$config_contract_end_notif = $config_contract_end_query->num_rows ? $config_contract_end_query->row['value'] : 0;
 
-				$view_sql = "SELECT c.customer_id, c.nip, c.name, c.customer_department_id, c.customer_department, c.customer_group_id, c.customer_group, c.location_id, c.location, c.date_start, c.date_end, c.language_id, c.contract_id, cn.contract_type_id, cn.contract_start, cn.contract_end, cn.description, cn.end_reason, ct.name AS contract_type, ct.duration,
+				$view_sql = "SELECT c.customer_id, c.nip, c.lastname, c.name, c.customer_department_id, c.customer_department, c.customer_group_id, c.customer_group, c.location_id, c.location, c.date_start, c.date_end, c.language_id, c.contract_id, cn.contract_type_id, cn.contract_start, cn.contract_end, cn.description, cn.end_reason, ct.name AS contract_type, ct.duration,
 				CASE 
 					WHEN c.contract_id IS NULL THEN 
 						IF (c.date_end IS NULL, 'none', 'inactive') 
@@ -136,43 +138,56 @@ class DB
 					WHEN DATEDIFF(cn.contract_end, CURDATE()) <= " . $config_contract_end_notif . " THEN 'end_soon' 
 					ELSE 'active' 
 				END AS contract_status 
-				FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "contract cn ON (cn.contract_id = c.contract_id) LEFT JOIN " . DB_PREFIX . "contract_type ct ON (ct.contract_type_id = cn.contract_type_id)";
+				FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "contract cn ON (cn.contract_id = c.contract_id) LEFT JOIN " . DB_PREFIX . "contract_type ct ON (ct.contract_type_id = cn.contract_type_id) WHERE c.payroll_include = 1";
 
 				break;
 
 			case 'v_document':
+				$this->createView('v_customer');
+
 				$view_sql = "SELECT d.*, u.username, dt.title, dt.required FROM " . DB_PREFIX . "document d LEFT JOIN " . DB_PREFIX . "document_type dt ON (dt.document_type_id = d.document_type_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = d.user_id) ";
-				
+
 				break;
 
 			case 'v_absence':
+				$this->createView('v_customer');
+
 				$view_sql = "SELECT a.*, c.nip, c.name, c.customer_department_id, c.customer_department, c.customer_group_id, c.customer_group, c.location_id, c.location, c.date_start, c.date_end, c.language_id, ps.name as presence_status, u.username FROM " . DB_PREFIX . "absence a LEFT JOIN " . DB_PREFIX . "presence_status ps ON (ps.presence_status_id = a.presence_status_id) LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = a.customer_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = a.user_id)";
-				
+
 				break;
 
 			case 'v_exchange':
+				$this->createView('v_customer');
+
 				$view_sql = "SELECT e.*, c.nip, c.name, c.customer_department_id, c.customer_department, c.customer_group_id, c.customer_group, c.location_id, c.location, c.date_start, c.date_end, c.language_id, u.username FROM " . DB_PREFIX . "exchange e LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = e.customer_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = e.user_id)";
-				
+
 				break;
 
 			case 'v_incentive':
+				$this->createView('v_customer');
+
 				$view_sql = "SELECT i.*, c.nip, c.name, c.customer_department_id, c.customer_department, c.customer_group_id, c.customer_group, c.location_id, c.location, c.date_start, c.date_end, c.language_id, u.username, pcv.presence_period_id, pp.period FROM " . DB_PREFIX . "incentive i LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = i.customer_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = i.user_id) LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.item = i.incentive_id AND pcv.code = 'incentive') LEFT JOIN " . DB_PREFIX . "presence_period pp ON (pp.presence_period_id = pcv.presence_period_id)";
-				
+
 				break;
 
 			case 'v_cutoff':
+				$this->createView('v_customer');
+
 				$view_sql = "SELECT co.*, c.nip, c.name, c.customer_department_id, c.customer_department, c.customer_group_id, c.customer_group, c.location_id, c.location, c.date_start, c.date_end, c.language_id, u.username, pcv.presence_period_id, pp.period FROM " . DB_PREFIX . "cutoff co LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = co.customer_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = co.user_id) LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.item = co.cutoff_id AND pcv.code = 'cutoff') LEFT JOIN " . DB_PREFIX . "presence_period pp ON (pp.presence_period_id = pcv.presence_period_id)";
-				
+
 				break;
 
 			case 'v_overtime':
+				$this->createView('v_customer');
+
 				$view_sql = "SELECT o.*, ot.name as overtime_type, ot.wage, c.nip, c.name, c.customer_department_id, c.customer_department, c.customer_group_id, c.customer_group, c.location_id, c.location, c.date_start, c.date_end, c.language_id, u.username, pcv.presence_period_id, pp.period FROM " . DB_PREFIX . "overtime o LEFT JOIN " . DB_PREFIX . "overtime_type ot ON (ot.overtime_type_id = o.overtime_type_id) LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = o.customer_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = o.user_id) LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.item = o.overtime_id AND pcv.code = 'overtime') LEFT JOIN " . DB_PREFIX . "presence_period pp ON (pp.presence_period_id = pcv.presence_period_id)";
-				
+
 				break;
 
 			case 'v_loan':
+				$this->createView('v_customer');
+
 				$view_sql = "SELECT l.loan_id, l.customer_id, l.amount, l.description, l.installment, l.date_start AS installment_start, l.date_added, l.user_id, SUM(pcv.value) as balance, c.nip, c.name, c.customer_department_id, c.customer_department, c.customer_group_id, c.customer_group, c.location_id, c.location, c.date_start, c.date_end, c.language_id, u.username, pcv.presence_period_id FROM " . DB_PREFIX . "loan l LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = l.customer_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = l.user_id) LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.item = l.loan_id AND pcv.code = 'loan') GROUP BY pcv.item";
-				// $sql = "SELECT l.*, SUM(pcv.value) as balance, c.customer_id, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cgd.name AS customer_group, username FROM " . DB_PREFIX . "loan l LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = l.customer_id) LEFT JOIN `" . DB_PREFIX . "customer_group_description` cgd ON (c.customer_group_id = cgd.customer_group_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = l.user_id) LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.item = l.loan_id AND pcv.code = 'loan')";
 
 				break;
 

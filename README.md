@@ -7,6 +7,10 @@ MODUL: Customer > Presence Method
 setting: Modifikasi Tanggal Login = -3; Modifikasi Tanggal Logout = -13
 
 MODIFY TABLE
+ALTER TABLE hsdm.oc_schedule_type ADD code_id tinytext NOT NULL AFTER name;
+
+2.8.2	07/12/2023
+Schedule > Import: Pembaharuan Program
 
 2.8.1	04/12/2023
 Some Bugs Fixed

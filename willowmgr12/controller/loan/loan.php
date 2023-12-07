@@ -120,7 +120,6 @@ class ControllerLoanLoan extends Controller
 
 	protected function getList()
 	{
-		$this->db->createView('v_customer');
 		$this->db->createView('v_loan');
 
 		$language_items = array(
@@ -317,7 +316,6 @@ class ControllerLoanLoan extends Controller
 
 	protected function getForm()
 	{
-		$this->db->createView('v_customer');
 		$this->db->createView('v_loan');
 
 		$data['text_form'] = !isset($this->request->get['loan_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');

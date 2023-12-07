@@ -120,7 +120,6 @@ class ControllerPresenceExchange extends Controller
 
 	protected function getList()
 	{
-		$this->db->createView('v_customer');
 		$this->db->createView('v_exchange');
 
 		$language_items = array(
@@ -303,7 +302,6 @@ class ControllerPresenceExchange extends Controller
 
 	protected function getForm()
 	{
-		$this->db->createView('v_customer');
 		$this->db->createView('v_exchange');
 
 		$data['text_form'] = !isset($this->request->get['exchange_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');

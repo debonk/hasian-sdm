@@ -9,7 +9,7 @@
 /config.php
 # /.gitignore
 willowmgr12/config.php
-system/storage/download/Schedule\ Form\ 20*.xlsx
+system/storage/download/Schedule\ Form\ Final.xlsx
 
 !index.html
 

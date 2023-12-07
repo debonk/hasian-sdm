@@ -119,7 +119,6 @@ class ControllerPresenceAbsence extends Controller
 
 	protected function getList()
 	{
-		$this->db->createView('v_customer');
 		$this->db->createView('v_absence');
 
 		$language_items = array(
@@ -317,7 +316,6 @@ class ControllerPresenceAbsence extends Controller
 
 	protected function getForm()
 	{
-		$this->db->createView('v_customer');
 		$this->db->createView('v_absence');
 
 		$data['text_form'] = !isset($this->request->get['absence_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');

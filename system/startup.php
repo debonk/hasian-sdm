@@ -9,13 +9,14 @@ if (version_compare(phpversion(), '5.3.0', '<') == true) {
 
 // Magic Quotes Fix
 if (ini_get('magic_quotes_gpc')) {
-	function clean($data) {
-   		if (is_array($data)) {
-  			foreach ($data as $key => $value) {
-    			$data[clean($key)] = clean($value);
-  			}
+	function clean($data)
+	{
+		if (is_array($data)) {
+			foreach ($data as $key => $value) {
+				$data[clean($key)] = clean($value);
+			}
 		} else {
-  			$data = stripslashes($data);
+			$data = stripslashes($data);
 		}
 
 		return $data;
@@ -29,7 +30,7 @@ if (ini_get('magic_quotes_gpc')) {
 //if (!ini_get('date.timezone')) {
 //	date_default_timezone_set('UTC');
 //}
-	date_default_timezone_set('Asia/Jakarta');
+date_default_timezone_set('Asia/Jakarta');
 
 // Windows IIS Compatibility
 if (!isset($_SERVER['DOCUMENT_ROOT'])) {
@@ -66,7 +67,8 @@ if ((isset($_SERVER['HTTPS']) && (($_SERVER['HTTPS'] == 'on') || ($_SERVER['HTTP
 }
 
 // Modification Override
-function modification($filename) {
+function modification($filename)
+{
 	if (!defined('DIR_CATALOG')) {
 		$file = DIR_MODIFICATION . 'catalog/' . substr($filename, strlen(DIR_APPLICATION));
 	} else {
@@ -91,9 +93,12 @@ if (file_exists(DIR_SYSTEM . '../../vendor/autoload.php')) {
 
 if (file_exists(DIR_SYSTEM . '../../composer/vendor/autoload.php')) {
 	require_once(DIR_SYSTEM . '../../composer/vendor/autoload.php');
+} elseif (file_exists(DIR_SYSTEM . '../../../composer/vendor/autoload.php')) {
+	require_once(DIR_SYSTEM . '../../../composer/vendor/autoload.php');
 }
 
-function library($class) {
+function library($class)
+{
 	$file = DIR_SYSTEM . 'library/' . str_replace('\\', '/', strtolower($class)) . '.php';
 
 	if (is_file($file)) {

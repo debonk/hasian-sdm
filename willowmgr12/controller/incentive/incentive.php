@@ -117,7 +117,6 @@ class ControllerIncentiveIncentive extends Controller
 
 	protected function getList()
 	{
-		$this->db->createView('v_customer');
 		$this->db->createView('v_incentive');
 
 		$language_items = array(
@@ -246,8 +245,6 @@ class ControllerIncentiveIncentive extends Controller
 		$data['subtotal'] = $this->currency->format($results_total, $this->config->get('config_currency'));
 		$data['grandtotal'] = sprintf($this->language->get('text_grandtotal'), $this->currency->format($grandtotal, $this->config->get('config_currency')));
 
-		$data['token'] = $this->session->data['token'];
-
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
 		} else {
@@ -295,6 +292,8 @@ class ControllerIncentiveIncentive extends Controller
 
 		$data['results'] = sprintf($this->language->get('text_pagination'), ($incentive_count) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($incentive_count - $limit)) ? $incentive_count : ((($page - 1) * $limit) + $limit), $incentive_count, ceil($incentive_count / $limit));
 
+		$data['token'] = $this->session->data['token'];
+
 		$data['filter_items'] = json_encode($this->filter_items);
 		$data['filter'] = $filter;
 		$data['sort'] = $sort;
@@ -318,7 +317,6 @@ class ControllerIncentiveIncentive extends Controller
 
 	protected function getForm()
 	{
-		$this->db->createView('v_customer');
 		$this->db->createView('v_incentive');
 
 		$data['text_form'] = !isset($this->request->get['incentive_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
@@ -335,8 +333,6 @@ class ControllerIncentiveIncentive extends Controller
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
 		}
-
-		$data['token'] = $this->session->data['token'];
 
 		$errors = array(
 			'warning',
@@ -412,6 +408,8 @@ class ControllerIncentiveIncentive extends Controller
 		} else {
 			$data['text_modified'] = sprintf($this->language->get('text_created'), $this->user->getUserName(), date($this->language->get('datetime_format_jMY')));
 		}
+
+		$data['token'] = $this->session->data['token'];
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');

@@ -120,7 +120,6 @@ class ControllerCustomerContract extends Controller
 
 	protected function getList()
 	{
-		$this->db->createView('v_customer');
 		$this->db->createView('v_contract');
 
 		$language_items = array(
@@ -369,7 +368,6 @@ class ControllerCustomerContract extends Controller
 
 	protected function getForm()
 	{
-		$this->db->createView('v_customer');
 		$this->db->createView('v_contract');
 
 		$language_items = array(

@@ -1041,10 +1041,24 @@ class ControllerPresenceSchedule extends Controller
 
 		$presence_period_id = isset($this->request->get['presence_period_id']) ? (int)$this->request->get['presence_period_id'] : 0;
 
-		$filter_name = isset($this->request->get['filter_name']) ? $this->request->get['filter_name'] : '';
-		$filter_customer_group_id = isset($this->request->get['filter_customer_group_id']) ? (int)$this->request->get['filter_customer_group_id'] : 0;
-		$filter_customer_department_id = isset($this->request->get['filter_customer_department_id']) ? (int)$this->request->get['filter_customer_department_id'] : 0;
-		$filter_location_id = isset($this->request->get['filter_location_id']) ? (int)$this->request->get['filter_location_id'] : 0;
+		if ($this->user->getCustomerDepartmentId()) {
+			$filter_customer_department_id = $this->user->getCustomerDepartmentId();
+		} else {
+			$filter_customer_department_id = isset($this->request->get['filter_customer_department_id']) ? (int)$this->request->get['filter_customer_department_id'] : 0;
+		}
+		
+		$filter = [
+			'name'						=> isset($this->request->get['filter_name']) ? $this->request->get['filter_name'] : '',
+			'customer_group_id'			=> isset($this->request->get['filter_customer_group_id']) ? (int)$this->request->get['filter_customer_group_id'] : 0,
+			'customer_department_id'	=> $filter_customer_department_id,
+			'location_id'				=> isset($this->request->get['filter_location_id']) ? (int)$this->request->get['filter_location_id'] : 0,
+			'status'					=> 1
+		];
+
+		// $filter_name = isset($this->request->get['filter_name']) ? $this->request->get['filter_name'] : '';
+		// $filter_customer_group_id = isset($this->request->get['filter_customer_group_id']) ? (int)$this->request->get['filter_customer_group_id'] : 0;
+		// $filter_customer_department_id = isset($this->request->get['filter_customer_department_id']) ? (int)$this->request->get['filter_customer_department_id'] : 0;
+		// $filter_location_id = isset($this->request->get['filter_location_id']) ? (int)$this->request->get['filter_location_id'] : 0;
 
 		$title_color = 'FF76933c';
 		$table_head_format = [
@@ -1087,7 +1101,7 @@ class ControllerPresenceSchedule extends Controller
 					break;
 				}
 
-				if ($this->user->getCustomerDepartmentId() && $filter_customer_department_id && $this->user->getCustomerDepartmentId() != $filter_customer_department_id) {
+				if ($this->user->getCustomerDepartmentId() && $filter['customer_department_id'] && $this->user->getCustomerDepartmentId() != $filter['customer_department_id']) {
 					$this->error = $this->language->get('error_customer_department');
 
 					break;
@@ -1147,10 +1161,11 @@ class ControllerPresenceSchedule extends Controller
 
 				$filter_data = [
 					'presence_period_id'   			=> $presence_period_id,
-					'filter_name'	   	   			=> $filter_name,
-					'filter_customer_group_id'		=> $filter_customer_group_id,
-					'filter_customer_department_id'	=> $this->user->getCustomerDepartmentId() ? $this->user->getCustomerDepartmentId() : $filter_customer_department_id,
-					'filter_location_id'   			=> $filter_location_id,
+					'filter'	   	   				=> $filter,
+					'filter_name'	   	   			=> $filter['name'],
+					'filter_customer_group_id'		=> $filter['customer_group_id'],
+					'filter_customer_department_id'	=> $filter['customer_department_id'],
+					'filter_location_id'   			=> $filter['location_id'],
 					'filter_status'   				=> 1
 				];
 
@@ -1162,17 +1177,17 @@ class ControllerPresenceSchedule extends Controller
 
 				$schedule_type_data = [];
 
-				unset($filter_data['filter_name']);
+				unset($filter_data['filter']['name']);
 
 				foreach ($customer_groups as $customer_group) {
-					$filter_data['filter_customer_group_id'] = $customer_group;
+					$filter_data['filter']['customer_group_id'] = $customer_group;
 					
 					$schedule_types = $this->model_presence_schedule_type->getScheduleTypes($filter_data);
 
 					foreach ($schedule_types as $schedule_type) {
 						if (!isset($schedule_type_data[$schedule_type['schedule_type_id']])) {
 							$schedule_type_data[$schedule_type['schedule_type_id']] = [
-								$schedule_type['code'],
+								$schedule_type['code_id'],
 								date('H:i', strtotime($schedule_type['time_start'])),
 								date('H:i', strtotime($schedule_type['time_end'])),
 								$schedule_type['schedule_type_id']
@@ -1180,6 +1195,7 @@ class ControllerPresenceSchedule extends Controller
 						}
 					}
 				}
+
 				$schedule_type_data = array_values($schedule_type_data);
 
 				$schedule_type_count = count($schedule_type_data);
@@ -1303,7 +1319,7 @@ class ControllerPresenceSchedule extends Controller
 				$spreadsheet->setActiveSheetIndexByName('Setting');
 
 				# Force to download
-				$new_file = DIR_DOWNLOAD . 'Schedule Form ' . date('Y_M', strtotime($period_info['period'])) . '.xlsx';
+				$new_file = DIR_DOWNLOAD . 'Schedule Form Final.xlsx';
 
 				$writer = $php_spreadsheet->writer('Xlsx');
 				$writer->setPreCalculateFormulas(false);
@@ -1494,8 +1510,8 @@ class ControllerPresenceSchedule extends Controller
 						break;
 					}
 
-					if (!isset($schedule_type[strtoupper($value[0])])) {
-						$schedule_type[strtoupper($value[0])] = (int)$value[3];
+					if (!isset($schedule_type[$value[0]])) {
+						$schedule_type[$value[0]] = (int)$value[3];
 					} else {
 						$this->error = $this->language->get('error_schedule_type');
 
@@ -1586,15 +1602,19 @@ class ControllerPresenceSchedule extends Controller
 					$post_data = [];
 
 					foreach (array_slice($schedule, 6, $header_count - 6, true) as $date => $value) {
-						if (!isset($schedule_type[strtoupper($value)])) {
+						if (!isset($schedule_type[$value])) {
 							$this->log(sprintf($this->language->get('error_schedule_type_none'), $schedule['NAMA']));
 
 							continue 2;
 						}
 
-						$post_data['schedule' . date('Y-m-d', \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($date))] = $schedule_type[strtoupper($value)];
-					}
+						$schedule_date = date('Y-m-d', \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($date));
 
+						if ($schedule_date >= date('Y-m-d')) {
+							$post_data['schedule' . $schedule_date] = $schedule_type[$value];
+						}
+					}
+					
 					$this->model_presence_schedule->editSchedule($presence_period_id, $schedule['ID'], $post_data);
 
 					$import_success_count++;
