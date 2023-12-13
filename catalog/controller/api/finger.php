@@ -3,18 +3,12 @@ class ControllerApiFinger extends Controller
 {
 	public function index()
 	{
-		$this->load->language('api/finger');
+		$this->db->createView('v_customer_finger');
 
-		// Delete past finger in case there is an error
-		unset($this->session->data['finger']);
+		$this->load->language('api/finger');
 
 		$json = [];
 
-
-		// if (!isset($this->session->data['api_id'])) {
-		// 	$json['error']['warning'] = $this->language->get('error_permission');
-		// } else {
-		// Add keys for missing post vars
 		$filter_items = array(
 			'location_id',
 			'action'
@@ -30,45 +24,46 @@ class ControllerApiFinger extends Controller
 			}
 		}
 
-		// Finger
-		$this->load->model('presence/finger');
+		$this->load->model('presence/presence');
 
 		$filter_data = array(
 			'filter'	=> $filter
 		);
 
-		$results = $this->model_presence_finger->getFingers($filter_data);
+		$results = $this->model_presence_presence->getFingers($filter_data);
 
 		if (!$results) {
-			$json['error'] = $this->language->get('error_data');
+			$json['result'] = $this->language->get('error_data');
 		}
-
-		// if ((utf8_strlen(trim($this->request->post['firstname'])) < 1) || (utf8_strlen(trim($this->request->post['firstname'])) > 32)) {
-		// 	$json['error']['firstname'] = $this->language->get('error_firstname');
-		// }
-
-		// if ((utf8_strlen(trim($this->request->post['lastname'])) < 1) || (utf8_strlen(trim($this->request->post['lastname'])) > 32)) {
-		// 	$json['error']['lastname'] = $this->language->get('error_lastname');
-		// }
-
-		// if ((utf8_strlen($this->request->post['email']) > 96) || (!filter_var($this->request->post['email'], FILTER_VALIDATE_EMAIL))) {
-		// 	$json['error']['email'] = $this->language->get('error_email');
-		// }
-
-		// if ((utf8_strlen($this->request->post['telephone']) < 3) || (utf8_strlen($this->request->post['telephone']) > 32)) {
-		// 	$json['error']['telephone'] = $this->language->get('error_telephone');
-		// }
 
 		if (!$json) {
 			foreach ($results as $result) {
-				$json['fingers'] = array(
-					'customer_id'	=> $result['customer_id'],
-					'finger_data'	=> $result['finger_data'],
-					'name'       	=> $result['customer']
-				);
+				// $name = $this->config->get('payroll_setting_presence_card') == 'lastname' ? $result['lastname'] : $result['firstname'];
 
-				$json['ready'] = $this->language->get('text_ready');
+				if (is_null($result['active_finger'])) {
+					$json['fingers'][] = array(
+						'customer_id'	=> $result['customer_id'],
+						// 'finger_id'		=> $result['finger_id'],
+						'active_finger'	=> 0,
+						// 'name'       	=> $name,
+						'finger_data'	=> $result['finger_data']
+					);
+				} else {
+					$active_fingers = json_decode($result['active_finger'], 1);
+
+					if (in_array($result['customer_id'] . 'x' . $result['finger_index'], $active_fingers)) {
+						$json['fingers'][] = array(
+							'customer_id'	=> $result['customer_id'],
+							// 'finger_id'		=> $result['finger_id'],
+							'active_finger'	=> $result['finger_index'],
+							// 'name'       	=> $name,
+							'finger_data'	=> $result['finger_data']
+						);
+					}
+				}
 			}
+
+			$json['ready'] = $this->language->get('text_ready');
 		}
 
 		if (isset($this->request->server['HTTP_ORIGIN'])) {
@@ -77,6 +72,144 @@ class ControllerApiFinger extends Controller
 			$this->response->addHeader('Access-Control-Max-Age: 1000');
 			$this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
+	public function login()
+	{
+		$this->load->language('api/finger');
+
+		$json = [];
+
+		if (empty($this->request->post)) {
+			$json['result'] = $this->language->get('error_data');
+		} else {
+			if (isset($this->request->post['action']) && $this->request->post['action'] == 'logout') {
+				$schedule_date = date('Y-m-d', strtotime($this->config->get('payroll_setting_logout_date') . ' hours'));
+	
+				$action = 'logout';
+			} else {
+				$schedule_date = date('Y-m-d', strtotime($this->config->get('payroll_setting_login_date') . ' hours'));
+			
+				$action = 'login';
+			}
+		}
+
+		$this->load->model('presence/presence');
+
+		switch ($json) {
+			case false:
+				$customer_id = isset($this->request->post['customer_id']) ? $this->request->post['customer_id'] : 0;
+
+				$customer_info = $this->model_presence_presence->getCustomer($customer_id);
+				
+				if (!$customer_info) { //Cek apakah karyawan msh aktif
+					$json['result'] = $this->language->get('error_customer_not_found');
+
+					break;
+				}
+
+				$schedule_check = $this->config->get('payroll_setting_schedule_check');
+
+				if ($schedule_check) {
+					$schedule_info = $this->model_presence_presence->getAppliedSchedule($customer_id, $schedule_date);
+
+					if (!$schedule_info || !$schedule_info['schedule_type_id']) { //Cek ga ada jadwal
+						$json['result'] = $this->language->get('error_absence');
+
+						break;
+					}
+
+					$time_in = $schedule_date . ' ' . $schedule_info['time_in'];
+					$time_out = $schedule_date . ' ' . $schedule_info['time_out'];
+
+					if ($time_in >= $time_out) {
+						$time_out = date('Y-m-d H:i:s', strtotime('+1 day', strtotime($time_out)));
+					}
+				} else {
+					$time_in = '';
+					$time_out = '';
+					// $time_in = '0000-00-00 00:00:00';
+					// $time_out = '0000-00-00 00:00:00';
+				}
+
+				$log_info = $this->model_presence_presence->getLog($customer_id, $schedule_date);
+				
+				if ($log_info) {
+					if ($log_info['time_logout'] != '0000-00-00 00:00:00') { //Cek ternyata sudah logout
+						$json['result'] = $this->language->get('error_logout');
+
+						break;
+					}
+
+					if ($action == 'login' && $log_info['time_login'] != '0000-00-00 00:00:00') { //Cek sudah login
+						$json['result'] = $this->language->get('error_login');
+
+						break;
+					}
+
+					if ($action == 'logout' && $log_info['time_login'] == '0000-00-00 00:00:00') { //Cek belum login
+						$json['result'] = $this->language->get('error_not_login');
+
+						break;
+					}
+				} else {
+					if ($action == 'logout') { //Cek belum login
+						$json['result'] = $this->language->get('error_not_login');
+
+						break;
+					}
+				}
+
+				if ($schedule_check) {
+					if ($action == 'logout') {
+						$logout_start = $this->config->get('payroll_setting_logout_start');
+						$datetime_logout = date('Y-m-d H:i:s', strtotime('+' . $logout_start . ' minutes'));
+
+						if ($logout_start && strtotime($datetime_logout) < strtotime($time_out)) { //Cek login sebelum waktu start yang diizinkan
+							$json['result'] = $this->language->get('error_logout_start');
+
+							break;
+						}
+					} else {
+						$login_start = $this->config->get('payroll_setting_login_start');
+						$date_login_start = date('Y-m-d H:i:s', strtotime('+' . $login_start . ' minutes'));
+						
+						$login_end = $this->config->get('payroll_setting_login_end');
+						$date_login_end = date('Y-m-d H:i:s', strtotime('-' . $login_end . ' minutes'));
+
+						if ($login_start && strtotime($date_login_start) < strtotime($time_in)) { #Cek login sebelum waktu start yang diizinkan. Value 0 untuk menonaktifkan.
+							$json['result'] = $this->language->get('error_login_start');
+
+							break;
+						} elseif ($login_end && strtotime($date_login_end) > strtotime($time_in)) { #Cek login setelah waktu akhir yang diizinkan. Value 0 untuk menonaktifkan.
+							$json['result'] = $this->language->get('error_login_end');
+
+							break;
+						}
+					}
+				}
+
+				$this->model_presence_presence->addScheduleTime($customer_id, $schedule_date, $action, $time_in, $time_out);
+				$this->model_presence_presence->addLog($customer_id, $schedule_date, $action);
+
+				$name = $this->config->get('payroll_setting_presence_card') != 'lastname' ? $customer_info['firstname'] : $customer_info['lastname'];
+				
+				$json['result'] = sprintf($this->language->get('text_success_login'), $name, $this->language->get('text_' . $action), date('j M Y H:i:s', strtotime($log_info['time_login'])));
+
+				break;
+
+			default:
+		}
+
+		// if (isset($this->request->server['HTTP_ORIGIN'])) {
+		// 	$this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);
+		// 	$this->response->addHeader('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+		// 	$this->response->addHeader('Access-Control-Max-Age: 1000');
+		// 	$this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+		// }
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));

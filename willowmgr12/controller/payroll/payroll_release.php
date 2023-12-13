@@ -71,7 +71,7 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		// $payroll_period = $this->model_common_payroll->getPeriod($presence_period_id);
 		// if ($payroll_period && $payroll_period['fund_account_id']) {
-			// $this->getList();
+		// $this->getList();
 		// } else {
 		// 	return new Action('error/not_found');
 		// }
@@ -152,7 +152,7 @@ class ControllerPayrollPayrollRelease extends Controller
 				if (!$data['information']) {
 					$completed_after = $this->config->get('payroll_setting_completed_after');
 
-					if (strtotime('+ ' . ($completed_after + 3) . 'months', strtotime($result['date_release'])) < strtotime('today')) {
+					if (strtotime('+ ' . $completed_after . 'months', strtotime($result['date_release'])) < strtotime('today')) {
 						$data['information'] = sprintf($this->language->get('text_information'), $completed_after);
 					}
 				}
@@ -274,7 +274,7 @@ class ControllerPayrollPayrollRelease extends Controller
 			'button_payroll_complete',
 			'button_export_cimb',
 			'button_send_all',
-			'button_send'		
+			'button_send'
 		];
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
@@ -752,7 +752,7 @@ class ControllerPayrollPayrollRelease extends Controller
 			if (isset($this->request->get['filter_email'])) {
 				$url .= '&filter_email=' . urlencode(html_entity_decode($this->request->get['filter_email'], ENT_QUOTES, 'UTF-8'));
 			}
-	
+
 			if (isset($this->request->get['filter_customer_group_id'])) {
 				$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
 			}
@@ -760,11 +760,11 @@ class ControllerPayrollPayrollRelease extends Controller
 			if (isset($this->request->get['filter_customer_department_id'])) {
 				$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
 			}
-	
+
 			if (isset($this->request->get['filter_location_id'])) {
 				$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 			}
-	
+
 			if (isset($this->request->get['sort'])) {
 				$url .= '&sort=' . $this->request->get['sort'];
 			}
@@ -1032,6 +1032,14 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		if (empty($this->request->post['date_release']) || strtotime($this->request->post['date_release']) < strtotime('today')) {
 			$this->error['date_release'] = $this->language->get('error_date_release');
+		}
+
+		$completed_after = $this->config->get('payroll_setting_completed_after') + 3;
+
+		$released_period_total = $this->model_payroll_payroll_release->getTotalPayrollPeriods(['filter_payroll_status'	=> $this->config->get('payroll_setting_released_status_id')]);
+
+		if ($released_period_total > $completed_after) {
+			$this->error['warning'] = sprintf($this->language->get('error_complete'), $completed_after);
 		}
 
 		if ($this->error && !isset($this->error['warning'])) {

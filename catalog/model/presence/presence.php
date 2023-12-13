@@ -25,7 +25,7 @@ class ModelPresencePresence extends Model
 
 	public function getCustomer($customer_id)
 	{
-		$query = $this->db->query("SELECT DISTINCT customer_id FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "' AND status = 1 AND date_start <= CURDATE() AND (date_end > CURDATE() OR date_end IS NULL)");
+		$query = $this->db->query("SELECT DISTINCT customer_id, firstname, lastname FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "' AND status = 1 AND date_start <= CURDATE() AND (date_end > CURDATE() OR date_end IS NULL)");
 
 		return $query->row;
 	}
@@ -95,6 +95,27 @@ class ModelPresencePresence extends Model
 			}
 
 			$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
+		}
+
+		$query = $this->db->query($sql);
+
+		return $query->rows;
+	}
+
+	public function getFingers($data = array())
+	{
+		$sql = "SELECT * FROM " . DB_PREFIX . "v_customer_finger WHERE status = 1 AND date_start <= CURDATE() AND (date_end >= CURDATE() OR date_end IS NULL)";
+
+		$implode = array();
+
+		if (!empty($data['filter']['location_id'])) {
+			$implode[] = "location_id = '" . (int)$data['filter']['location_id'] . "'";
+		}
+
+		$implode[] = "customer_id <= 10"; // For testing
+
+		if ($implode) {
+			$sql .= " AND " . implode(" AND ", $implode);
 		}
 
 		$query = $this->db->query($sql);

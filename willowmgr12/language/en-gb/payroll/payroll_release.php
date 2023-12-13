@@ -71,3 +71,4 @@ $_['error_fund_account']		= 'Warning: Pilih akun sumber dana!';
 $_['error_date_release']        = 'Warning: Tanggal proses harus diisi dan belum berlalu!';
 $_['error_not_found']           = 'Warning: Data tidak ditemukan!';
 $_['error_mail_sending_status'] = 'Some statement sending process got error!';
+$_['error_complete'] 	 		= 'Warning: Sebagian data payroll telah lebih dari %s bulan. Set Status menjadi Complete terlebih dahulu untuk mengurangi data aktif!';
