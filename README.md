@@ -8,7 +8,7 @@ setting: Modifikasi Tanggal Login = -3; Modifikasi Tanggal Logout = -13
 
 MODIFY TABLE
 
-2.8.3	13/12/2003
+3.0.beta.0	15/12/2003
 Trial: Penerapan HSDM Presence Tool (Desktop App)
 
 2.8.2	07/12/2023

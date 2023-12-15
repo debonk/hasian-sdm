@@ -112,7 +112,7 @@ class ModelPresencePresence extends Model
 			$implode[] = "location_id = '" . (int)$data['filter']['location_id'] . "'";
 		}
 
-		$implode[] = "customer_id <= 10"; // For testing
+		// $implode[] = "customer_id <= 10"; // For testing
 
 		if ($implode) {
 			$sql .= " AND " . implode(" AND ", $implode);
