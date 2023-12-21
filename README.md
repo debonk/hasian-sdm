@@ -6,9 +6,21 @@ MODUL: Customer > Presence Method
 
 setting: Modifikasi Tanggal Login = -3; Modifikasi Tanggal Logout = -13
 
-MODIFY TABLE
+MODIFY CONFIG
+define('DIR_FILE', $_SERVER['DOCUMENT_ROOT'].'/system/storage/file/');
 
-3.0.beta.0	15/12/2003
+MODIFY TABLE
+ALTER TABLE oc_finger_device ADD location_id int(11) NULL;
+ALTER TABLE oc_finger_device ADD status boolean NULL;
+
+3.0.beta.1	21/12/2023
+APP > Login: Open HSDM Tool via web page
+HSDM Tool: v 1.2
+Download: Upload file HSDM Presence Tool_v1.2.zip to site
+MODUL: Information > Download
+Move file template folder to DIR_FILE
+
+3.0.beta.0	15/12/2023
 Trial: Penerapan HSDM Presence Tool (Desktop App)
 
 2.8.2	07/12/2023

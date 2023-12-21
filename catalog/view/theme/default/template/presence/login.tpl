@@ -20,6 +20,23 @@
 			<?= $content_top; ?>
 			<div class="clearfix">
 				<div class="pull-right">
+					<?php if ($presence_tools) { ?>
+					<span class="dropdown">
+						<button type="button" id="button-tool" class="btn btn-primary dropdown-toggle"
+							data-toggle="dropdown">
+							<?= $button_tool; ?> <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu dropdown-menu-right">
+							<?php foreach ($presence_tools as $presence_tool) { ?>
+							<li>
+								<a href="<?= $presence_tool['href']; ?>">
+									<?= $presence_tool['title']; ?>
+								</a>
+							</li>
+							<?php } ?>
+						</ul>
+					</span>
+					<?php } ?>
 					<?php if ($action == 'logout') { ?>
 					<a href="<?= $href_login; ?>" type="button" id="button-login" class="btn btn-default">
 						<?= $button_login; ?>

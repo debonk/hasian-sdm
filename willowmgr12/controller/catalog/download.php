@@ -176,7 +176,8 @@ class ControllerCatalogDownload extends Controller {
 				'download_id' => $result['download_id'],
 				'name'        => $result['name'],
 				'date_added'  => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
-				'edit'        => $this->url->link('catalog/download/edit', 'token=' . $this->session->data['token'] . '&download_id=' . $result['download_id'] . $url, true)
+				'edit'        => $this->url->link('catalog/download/edit', 'token=' . $this->session->data['token'] . '&download_id=' . $result['download_id'] . $url, true),
+				'href'	      => $this->url->link('catalog/download/download', 'token=' . $this->session->data['token'] . '&download_id=' . $result['download_id'] . $url, true)
 			);
 		}
 
@@ -193,6 +194,7 @@ class ControllerCatalogDownload extends Controller {
 		$data['button_add'] = $this->language->get('button_add');
 		$data['button_edit'] = $this->language->get('button_edit');
 		$data['button_delete'] = $this->language->get('button_delete');
+		$data['button_download'] = $this->language->get('button_download');
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -412,15 +414,6 @@ class ControllerCatalogDownload extends Controller {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
-		$this->load->model('catalog/product');
-
-		// foreach ($this->request->post['selected'] as $download_id) {
-		// 	$product_total = $this->model_catalog_product->getTotalProductsByDownloadId($download_id);
-
-		// 	if ($product_total) {
-		// 		$this->error['warning'] = sprintf($this->language->get('error_product'), $product_total);
-		// 	}
-		// }
 
 		return !$this->error;
 	}
@@ -504,6 +497,55 @@ class ControllerCatalogDownload extends Controller {
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
+	}
+
+
+	public function download() {
+		$this->load->language('catalog/download');
+
+		if (!$this->user->hasPermission('modify', 'catalog/download')) {
+			$json['error'] = $this->language->get('error_permission');
+		}
+
+		$this->load->model('catalog/download');
+
+		if (isset($this->request->get['download_id'])) {
+			$download_id = $this->request->get['download_id'];
+		} else {
+			$download_id = 0;
+		}
+
+		$download_info = $this->model_catalog_download->getDownload($download_id);
+		
+		if ($download_info) {
+			$file = DIR_DOWNLOAD . $download_info['filename'];
+			$mask = basename($download_info['mask']);
+
+			if (!headers_sent()) {
+				if (file_exists($file)) {
+					header('Content-Type: application/octet-stream');
+					header('Content-Disposition: attachment; filename="' . ($mask ? $mask : basename($file)) . '"');
+					header('Expires: 0');
+					header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+					header('Pragma: public');
+					header('Content-Length: ' . filesize($file));
+
+					if (ob_get_level()) {
+						ob_end_clean();
+					}
+
+					readfile($file, 'rb');
+
+					exit();
+				} else {
+					exit('Error: Could not find file ' . $file . '!');
+				}
+			} else {
+				exit('Error: Headers already sent out!');
+			}
+		} else {
+			$this->response->redirect($this->url->link('catalog/download', '', true));
+		}
 	}
 
 	public function autocomplete() {

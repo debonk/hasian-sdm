@@ -38,3 +38,4 @@ $_['error_session']				= 'Sesi absensi telah habis. Hubungi Supervisor untuk mem
 
 // Button
 $_['button_clear']    		= 'Clear';
+$_['button_tool']    		= 'Open HSDM Tool';

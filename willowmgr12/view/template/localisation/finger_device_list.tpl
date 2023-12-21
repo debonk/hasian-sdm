@@ -1,46 +1,48 @@
-<?php echo $header; ?><?php echo $column_left; ?>
+<?= $header; ?><?= $column_left; ?>
 <div id="content">
   <div class="page-header">
     <div class="container-fluid">
-      <div class="pull-right"><a href="<?php echo $add; ?>" data-toggle="tooltip" title="<?php echo $button_add; ?>" class="btn btn-primary"><i class="fa fa-plus"></i></a>
-        <button type="button" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger" onclick="confirm('<?php echo $text_confirm; ?>') ? $('#form-finger-device').submit() : false;"><i class="fa fa-trash-o"></i></button>
+      <div class="pull-right"><a href="<?= $add; ?>" data-toggle="tooltip" title="<?= $button_add; ?>" class="btn btn-primary"><i class="fa fa-plus"></i></a>
+        <button type="button" data-toggle="tooltip" title="<?= $button_delete; ?>" class="btn btn-danger" onclick="confirm('<?= $text_confirm; ?>') ? $('#form-finger-device').submit() : false;"><i class="fa fa-trash-o"></i></button>
       </div>
-      <h1><?php echo $heading_title; ?></h1>
+      <h1><?= $heading_title; ?></h1>
       <ul class="breadcrumb">
         <?php foreach ($breadcrumbs as $breadcrumb) { ?>
-        <li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
+        <li><a href="<?= $breadcrumb['href']; ?>"><?= $breadcrumb['text']; ?></a></li>
         <?php } ?>
       </ul>
     </div>
   </div>
   <div class="container-fluid">
     <?php if ($error_warning) { ?>
-    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $error_warning; ?>
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?= $error_warning; ?>
       <button type="button" class="close" data-dismiss="alert">&times;</button>
     </div>
     <?php } ?>
     <?php if ($success) { ?>
-    <div class="alert alert-success"><i class="fa fa-check-circle"></i> <?php echo $success; ?>
+    <div class="alert alert-success"><i class="fa fa-check-circle"></i> <?= $success; ?>
       <button type="button" class="close" data-dismiss="alert">&times;</button>
     </div>
     <?php } ?>
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3 class="panel-title"><i class="fa fa-list"></i> <?php echo $text_list; ?></h3>
+        <h3 class="panel-title"><i class="fa fa-list"></i> <?= $text_list; ?></h3>
       </div>
       <div class="panel-body">
-        <form action="<?php echo $delete; ?>" method="post" enctype="multipart/form-data" id="form-finger-device">
+        <form action="<?= $delete; ?>" method="post" enctype="multipart/form-data" id="form-finger-device">
           <div class="table-responsive">
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered table-hover text-left">
               <thead>
                 <tr>
                   <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
-                  <td class="text-left"><?php echo $column_device_name; ?></td>
-                  <td class="text-left"><?php echo $column_sn; ?></td>
-                  <td class="text-left"><?php echo $column_vc; ?></td>
-                  <td class="text-left"><?php echo $column_ac; ?></td>
-                  <td class="text-left"><?php echo $column_vkey; ?></td>
-                  <td class="text-right"><?php echo $column_action; ?></td>
+                  <td><?= $column_device_name; ?></td>
+                  <td><?= $column_sn; ?></td>
+                  <td><?= $column_vc; ?></td>
+                  <td><?= $column_ac; ?></td>
+                  <td><?= $column_vkey; ?></td>
+                  <td><?= $column_location; ?></td>
+                  <td><?= $column_status; ?></td>
+                  <td class="text-right"><?= $column_action; ?></td>
                 </tr>
               </thead>
               <tbody>
@@ -48,21 +50,23 @@
                 <?php foreach ($finger_devices as $finger_device) { ?>
                 <tr>
                   <td class="text-center"><?php if (in_array($finger_device['finger_device_id'], $selected)) { ?>
-                    <input type="checkbox" name="selected[]" value="<?php echo $finger_device['finger_device_id']; ?>" checked="checked" />
+                    <input type="checkbox" name="selected[]" value="<?= $finger_device['finger_device_id']; ?>" checked="checked" />
                     <?php } else { ?>
-                    <input type="checkbox" name="selected[]" value="<?php echo $finger_device['finger_device_id']; ?>" />
+                    <input type="checkbox" name="selected[]" value="<?= $finger_device['finger_device_id']; ?>" />
                     <?php } ?></td>
-                  <td class="text-left"><?php echo $finger_device['device_name']; ?></td>
-                  <td class="text-left"><?php echo $finger_device['sn']; ?></td>
-                  <td class="text-left"><?php echo $finger_device['vc']; ?></td>
-                  <td class="text-left"><?php echo $finger_device['ac']; ?></td>
-                  <td class="text-left"><code><?php echo $finger_device['vkey']; ?><code></td>
-                  <td class="text-right"><a href="<?php echo $finger_device['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
+                  <td><?= $finger_device['device_name']; ?></td>
+                  <td><?= $finger_device['sn']; ?></td>
+                  <td><?= $finger_device['vc']; ?></td>
+                  <td><?= $finger_device['ac']; ?></td>
+                  <td><code><?= $finger_device['vkey']; ?><code></td>
+                  <td><?= $finger_device['location']; ?></td>
+                  <td><?= $finger_device['status']; ?></td>
+                  <td class="text-right"><a href="<?= $finger_device['edit']; ?>" data-toggle="tooltip" title="<?= $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
                 </tr>
                 <?php } ?>
                 <?php } else { ?>
                 <tr>
-                  <td class="text-center" colspan="7"><?php echo $text_no_results; ?></td>
+                  <td class="text-center" colspan="7"><?= $text_no_results; ?></td>
                 </tr>
                 <?php } ?>
               </tbody>
@@ -70,11 +74,11 @@
           </div>
         </form>
         <div class="row">
-          <div class="col-sm-6 text-left"><?php echo $pagination; ?></div>
-          <div class="col-sm-6 text-right"><?php echo $results; ?></div>
+          <div class="col-sm-6 text-left"><?= $pagination; ?></div>
+          <div class="col-sm-6 text-right"><?= $results; ?></div>
         </div>
       </div>
     </div>
   </div>
 </div>
-<?php echo $footer; ?>
+<?= $footer; ?>

@@ -40,6 +40,7 @@ class ControllerPresenceLogin extends Controller
 			'button_clear',
 			'button_login',
 			'button_logout',
+			'button_tool',
 			'error_verification'
 		);
 		foreach ($language_items as $language_item) {
@@ -223,6 +224,22 @@ class ControllerPresenceLogin extends Controller
 		$data['action'] = $action;
 
 		$data['store_name'] = $this->config->get('config_name');
+
+		$data['presence_tools'] = [];
+
+		# HSDM Presence Tool
+		if ($data['use_fingerprint']) {
+			$this->load->model('localisation/finger_device');
+			$finger_devices = $this->model_localisation_finger_device->getFingerDevicesByLocationId($location_id);
+
+			foreach ($finger_devices as $finger_device) {
+				$data['presence_tools'][] = [
+					'title'	=> $finger_device['device_name'] . ' [' . $finger_device['sn'] . ']',
+					'href'	=> 'hsdmtool:' . base64_encode('referrer=' . utf8_substr(HTTP_SERVER, 7, utf8_strlen(HTTP_SERVER) - 8) . '&sn=' . $finger_device['sn'] . '&location_id=' . $location_id)
+					// 'href'	=> 'hsdmtool:' . base64_encode('referrer=wsdm.go-corp.net&sn=' . $finger_device['sn'] . '&location_id=' . $location_id)
+				];
+			}
+		}
 
 		$data['column_left'] = false;
 		$data['column_right'] = false;

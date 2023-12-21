@@ -7,7 +7,7 @@ class ModelLocalisationFingerDevice extends Model
 		$data['ac'] = str_replace('-', '', $data['ac']);
 		$data['vkey'] = str_replace('-', '', $data['vkey']);
 
-		$this->db->query("INSERT INTO " . DB_PREFIX . "finger_device SET device_name = '" . $this->db->escape($data['device_name']) . "', sn = '" . $this->db->escape($data['sn']) . "', vc = '" . $this->db->escape($data['vc']) . "', ac = '" . $this->db->escape($data['ac']) . "', vkey = '" . $this->db->escape($data['vkey']) . "'");
+		$this->db->query("INSERT INTO " . DB_PREFIX . "finger_device SET device_name = '" . $this->db->escape($data['device_name']) . "', sn = '" . $this->db->escape($data['sn']) . "', vc = '" . $this->db->escape($data['vc']) . "', ac = '" . $this->db->escape($data['ac']) . "', vkey = '" . $this->db->escape($data['vkey']) . "', location_id = '" . (int)$data['location_id'] . "', status = '" . (int)$data['status'] . "'");
 	}
 
 	public function editFingerDevice($finger_device_id, $data)
@@ -16,7 +16,7 @@ class ModelLocalisationFingerDevice extends Model
 		$data['ac'] = str_replace('-', '', $data['ac']);
 		$data['vkey'] = str_replace('-', '', $data['vkey']);
 
-		$this->db->query("UPDATE " . DB_PREFIX . "finger_device SET device_name = '" . $this->db->escape($data['device_name']) . "', sn = '" . $this->db->escape($data['sn']) . "', vc = '" . $this->db->escape($data['vc']) . "', ac = '" . $this->db->escape($data['ac']) . "', vkey = '" . $this->db->escape($data['vkey']) . "' WHERE finger_device_id = '" . (int)$finger_device_id . "'");
+		$this->db->query("UPDATE " . DB_PREFIX . "finger_device SET device_name = '" . $this->db->escape($data['device_name']) . "', sn = '" . $this->db->escape($data['sn']) . "', vc = '" . $this->db->escape($data['vc']) . "', ac = '" . $this->db->escape($data['ac']) . "', vkey = '" . $this->db->escape($data['vkey']) . "', location_id = '" . (int)$data['location_id'] . "', status = '" . (int)$data['status'] . "' WHERE finger_device_id = '" . (int)$finger_device_id . "'");
 	}
 
 	public function deleteFingerDevice($finger_device_id)
@@ -33,7 +33,7 @@ class ModelLocalisationFingerDevice extends Model
 
 	public function getFingerDevices($data = array())
 	{ //Used by: payroll_setting
-		$sql = "SELECT * FROM " . DB_PREFIX . "finger_device ORDER BY device_name ASC";
+		$sql = "SELECT fd.*, l.name AS location FROM " . DB_PREFIX . "finger_device fd LEFT JOIN " . DB_PREFIX . "location l ON l.location_id = fd.location_id ORDER BY device_name ASC";
 
 		if (isset($data['start']) || isset($data['limit'])) {
 			if ($data['start'] < 0) {

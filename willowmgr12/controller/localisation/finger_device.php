@@ -133,6 +133,8 @@ class ControllerLocalisationFingerDevice extends Controller {
 				'vc'				=> $result['vc'],
 				'ac'				=> $result['ac'],
 				'vkey'				=> substr($result['vkey'], 0, 5) . '...',
+				'location'			=> $result['location'] ? $result['location'] : '-',
+				'status'			=> $result['status'] ? $this->language->get('text_enabled') : $this->language->get('text_disabled'),
 				'edit'				=> $this->url->link('localisation/finger_device/edit', 'token=' . $this->session->data['token'] . '&finger_device_id=' . $result['finger_device_id'] . $url, true)
 			);
 		}
@@ -147,6 +149,8 @@ class ControllerLocalisationFingerDevice extends Controller {
 			'column_vc',
 			'column_ac',
 			'column_vkey',
+			'column_location',
+			'column_status',
 			'column_action',
 			'button_add',
 			'button_edit',
@@ -200,11 +204,16 @@ class ControllerLocalisationFingerDevice extends Controller {
 
 		$language_items = array(
 			'heading_title',
+			'text_select',
+			'text_enabled',
+			'text_disabled',
 			'entry_device_name',
 			'entry_sn',
 			'entry_vc',
 			'entry_ac',
 			'entry_vkey',
+			'entry_location',
+			'entry_status',
 			'button_save',
 			'button_cancel'
 		);
@@ -259,45 +268,27 @@ class ControllerLocalisationFingerDevice extends Controller {
 			$finger_device_info = $this->model_localisation_finger_device->getFingerDevice($this->request->get['finger_device_id']);
 		}
 	
-		if (isset($this->request->post['device_name'])) {
-			$data['device_name'] = $this->request->post['device_name'];
-		} elseif (!empty($finger_device_info)) {
-			$data['device_name'] = $finger_device_info['device_name'];
-		} else {
-			$data['device_name'] = '';
+		$field_items = array(
+			'device_name',
+			'sn',
+			'vc',
+			'ac',
+			'vkey',
+			'location_id',
+			'status'
+		);
+		foreach ($field_items as $field) {
+			if (isset($this->request->post[$field])) {
+				$data[$field] = $this->request->post[$field];
+			} elseif (!empty($finger_device_info)) {
+				$data[$field] = $finger_device_info[$field];
+			} else {
+				$data[$field] = '';
+			}
 		}
 
-		if (isset($this->request->post['sn'])) {
-			$data['sn'] = $this->request->post['sn'];
-		} elseif (!empty($finger_device_info)) {
-			$data['sn'] = $finger_device_info['sn'];
-		} else {
-			$data['sn'] = '';
-		}
-
-		if (isset($this->request->post['vc'])) {
-			$data['vc'] = $this->request->post['vc'];
-		} elseif (!empty($finger_device_info)) {
-			$data['vc'] = $finger_device_info['vc'];
-		} else {
-			$data['vc'] = '';
-		}
-
-		if (isset($this->request->post['ac'])) {
-			$data['ac'] = $this->request->post['ac'];
-		} elseif (!empty($finger_device_info)) {
-			$data['ac'] = $finger_device_info['ac'];
-		} else {
-			$data['ac'] = '';
-		}
-
-		if (isset($this->request->post['vkey'])) {
-			$data['vkey'] = $this->request->post['vkey'];
-		} elseif (!empty($finger_device_info)) {
-			$data['vkey'] = $finger_device_info['vkey'];
-		} else {
-			$data['vkey'] = '';
-		}
+		$this->load->model('localisation/location');
+		$data['locations'] = $this->model_localisation_location->getLocations();
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');

@@ -1360,7 +1360,7 @@ class ControllerPayrollPayroll extends Controller
 		} else {
 			$php_spreadsheet = new Spreadsheet('Xlsx');
 
-			$spreadsheet = $php_spreadsheet->loadSpreadsheet(DIR_DOWNLOAD . 'Payroll Detail.xlsx');
+			$spreadsheet = $php_spreadsheet->loadSpreadsheet(DIR_FILE . 'Payroll Detail.xlsx');
 
 			# Sheet: Setting
 			# Set Cell Format because PhpSpreadsheet Bug losing color data from template

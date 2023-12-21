@@ -14,6 +14,8 @@ $_['column_sn']      	= 'Serial No';
 $_['column_vc']      	= 'Verification Code';
 $_['column_ac']      	= 'Activation Code';
 $_['column_vkey']  		= 'VKey';
+$_['column_location']  	= 'Device Placement';
+$_['column_status']  	= 'Status';
 $_['column_action']		= 'Action';
 
 // Entry
@@ -22,6 +24,8 @@ $_['entry_sn']         = 'Serial No';
 $_['entry_vc']         = 'Verification Code';
 $_['entry_ac']         = 'Activation Code';
 $_['entry_vkey']       = 'VKey';
+$_['entry_location']   = 'Device Placement';
+$_['entry_status']     = 'Status';
 
 // Error
 $_['error_required']   = 'Warning: Semua field harus diisi (1 - 50 karakter)!';

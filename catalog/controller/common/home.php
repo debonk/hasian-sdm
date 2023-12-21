@@ -9,8 +9,10 @@ class ControllerCommonHome extends Controller {
 			$this->document->addLink(HTTP_SERVER, 'canonical');
 		}
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
+		// $data['column_left'] = $this->load->controller('common/column_left');
+		// $data['column_right'] = $this->load->controller('common/column_right');
+		$data['column_left'] = false;
+		$data['column_right'] = false;
 		$data['content_top'] = $this->load->controller('common/content_top');
 		$data['content_bottom'] = $this->load->controller('common/content_bottom');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -27,7 +29,7 @@ class ControllerCommonHome extends Controller {
 		$mark_up_website = '{"@context": "http://schema.org", "@type": "WebSite",
 			"url": "' . $server . '",
 			"name": "' . $this->config->get('config_name') . '",
-			"alternateName": "Willow Baby Shop",
+			"alternateName": "HSDM Management",
 			"potentialAction": {
 				"@type": "SearchAction",
 				"target": "' . $target . '{search_term_string}",

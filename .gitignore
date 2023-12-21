@@ -9,7 +9,6 @@
 /config.php
 # /.gitignore
 willowmgr12/config.php
-system/storage/download/Schedule\ Form\ Final.xlsx
 
 !index.html
 
@@ -18,7 +17,7 @@ image/
 system/cache/
 system/logs/
 system/storage/cache/
-# system/storage/download/
+system/storage/download/
 system/storage/logs/
 # system/storage/modification/
 system/storage/upload/

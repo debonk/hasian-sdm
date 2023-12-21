@@ -14,5 +14,5 @@ $_['error_login_start']			= '%s: Waktu Login anda hari ini belum diizinkan!';
 $_['error_login_end']			= '%s: Waktu Login anda hari ini telah berakhir!';
 $_['error_logout_start']		= '%s: Waktu Logout anda hari ini belum diizinkan!';
 $_['error_logout']    			= '%s: Anda telah logout sebelumnya pada %s.';
-$_['error_login']    			= '%s: And telah login sebelumnya pada %s.';
+$_['error_login']    			= '%s: Anda telah login sebelumnya pada %s.';
 $_['error_not_login']    		= '%s: Anda belum login!';

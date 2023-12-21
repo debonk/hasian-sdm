@@ -1109,7 +1109,7 @@ class ControllerPresenceSchedule extends Controller
 
 				$php_spreadsheet = new Spreadsheet('Xlsx');
 
-				$spreadsheet = $php_spreadsheet->loadSpreadsheet(DIR_DOWNLOAD . 'Schedule Form Template.xlsx');
+				$spreadsheet = $php_spreadsheet->loadSpreadsheet(DIR_FILE . 'Schedule Form Template.xlsx');
 
 				# Sheet: Setting
 				# Set Cell Format because PhpSpreadsheet Bug losing color data from template
