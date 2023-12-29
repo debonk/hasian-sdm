@@ -373,6 +373,8 @@
 										<?php } else { ?>
 										<button type="button" class="btn btn-warning" disabled><i class="fa fa-unlock"></i></button>
 										<?php } ?>
+										<a href="<?= $customer['contract']; ?>" data-toggle="tooltip" title="<?= $button_contract; ?>"
+											class="btn btn-primary" target="_blank" rel="noopener noreferrer"><i class="fa fa-file-text-o"></i></a>
 										<a href="<?= $customer['edit']; ?>" data-toggle="tooltip" title="<?= $button_edit; ?>"
 											class="btn btn-primary"><i class="fa fa-pencil"></i></a>
 									</td>

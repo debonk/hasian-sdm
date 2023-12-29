@@ -510,6 +510,7 @@ class ControllerCustomerCustomer extends Controller
 				'date_end'     	 		=> empty($result['date_end']) ? '-' : date($this->language->get('date_format_jMY'), strtotime($result['date_end'])),
 				'unlock'         		=> $unlock,
 				'edit'           		=> $this->url->link('customer/customer/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
+				'contract'         		=> $this->url->link('customer/contract/add', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'], true),
 				'view'           		=> $this->url->link('report/customer/view', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'], true)
 			);
 		}
@@ -548,6 +549,7 @@ class ControllerCustomerCustomer extends Controller
 			'button_filter',
 			'button_add',
 			'button_edit',
+			'button_contract',
 			'button_delete',
 			'button_login',
 			'button_unlock',

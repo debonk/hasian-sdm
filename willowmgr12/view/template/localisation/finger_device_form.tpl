@@ -94,7 +94,7 @@
             <div class="col-sm-9">
               <select name="location_id" id="input-location" class="form-control">
                 <option value="">
-                  <?= $text_select; ?>
+                  <?= $text_all; ?>
                 </option>
                 <?php foreach ($locations as $location) { ?>
                 <?php if ($location['location_id'] == $location_id) { ?>

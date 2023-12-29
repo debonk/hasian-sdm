@@ -23,6 +23,12 @@ class ModelCatalogDownload extends Model {
 	}
 
 	public function deleteDownload($download_id) {
+		$download_info = $this->getDownload($download_id);
+
+		if (is_file(DIR_DOWNLOAD . $download_info['filename'])) {
+			unlink(DIR_DOWNLOAD . $download_info['filename']);
+		}
+
 		$this->db->query("DELETE FROM " . DB_PREFIX . "download WHERE download_id = '" . (int)$download_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "download_description WHERE download_id = '" . (int)$download_id . "'");
 	}

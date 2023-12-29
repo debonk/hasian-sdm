@@ -341,7 +341,7 @@
 			});
 		},
 		'select': function (item) {
-			$('input[name=\'filter_name\']').val(item['label']);
+			$('input[name=\'filter[name]\']').val(item['label']);
 		}
 	});
 

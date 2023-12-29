@@ -10,8 +10,9 @@ MODIFY CONFIG
 define('DIR_FILE', $_SERVER['DOCUMENT_ROOT'].'/system/storage/file/');
 
 MODIFY TABLE
-ALTER TABLE oc_finger_device ADD location_id int(11) NULL;
-ALTER TABLE oc_finger_device ADD status boolean NULL;
+
+3.0.0	29/12/2023
+Repair some minor bugs
 
 3.0.beta.1	21/12/2023
 APP > Login: Open HSDM Tool via web page

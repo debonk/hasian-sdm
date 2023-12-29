@@ -85,7 +85,9 @@ class ControllerCatalogDownload extends Controller {
 
 		if (isset($this->request->post['selected']) && $this->validateDelete()) {
 			foreach ($this->request->post['selected'] as $download_id) {
-				$this->model_catalog_download->deleteDownload($download_id);
+				$this->db->transaction(function () use ($download_id) {
+					$this->model_catalog_download->deleteDownload($download_id);
+				});
 			}
 
 			$this->session->data['success'] = $this->language->get('text_success');

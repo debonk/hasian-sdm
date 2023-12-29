@@ -126,4 +126,5 @@ $_['error_custom_field']		   = '%s required!';
 $_['error_custom_field_validate']  = '%s invalid!';
 
 //Button
+$_['button_contract']  		= 'Contract';
 // $_['button_reactivate']  = 'Reactivate';

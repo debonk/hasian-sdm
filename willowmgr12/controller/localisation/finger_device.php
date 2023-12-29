@@ -133,7 +133,7 @@ class ControllerLocalisationFingerDevice extends Controller {
 				'vc'				=> $result['vc'],
 				'ac'				=> $result['ac'],
 				'vkey'				=> substr($result['vkey'], 0, 5) . '...',
-				'location'			=> $result['location'] ? $result['location'] : '-',
+				'location'			=> $result['location'] ? $result['location'] : $this->language->get('text_all'),
 				'status'			=> $result['status'] ? $this->language->get('text_enabled') : $this->language->get('text_disabled'),
 				'edit'				=> $this->url->link('localisation/finger_device/edit', 'token=' . $this->session->data['token'] . '&finger_device_id=' . $result['finger_device_id'] . $url, true)
 			);
@@ -204,7 +204,7 @@ class ControllerLocalisationFingerDevice extends Controller {
 
 		$language_items = array(
 			'heading_title',
-			'text_select',
+			'text_all',
 			'text_enabled',
 			'text_disabled',
 			'entry_device_name',
