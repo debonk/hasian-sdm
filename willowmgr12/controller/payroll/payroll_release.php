@@ -871,9 +871,11 @@ class ControllerPayrollPayrollRelease extends Controller
 		}
 
 		if (!$json) {
-			$this->model_payroll_payroll_release->archivePeriodData($presence_period_id);
+			$this->db->transaction(function () use ($presence_period_id) {
+				$this->model_payroll_payroll_release->archivePeriodData($presence_period_id);
 
-			$this->model_common_payroll->setPeriodStatus($presence_period_id, 'completed');
+				$this->model_common_payroll->setPeriodStatus($presence_period_id, 'completed');
+			});
 
 			$json['success'] = $this->language->get('text_complete_success');
 		}
@@ -910,9 +912,12 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		if (!$json) {
 			$this->load->model('payroll/payroll_release');
-			$this->model_payroll_payroll_release->unarchivePeriodData($presence_period_id);
 
-			$this->model_common_payroll->setPeriodStatus($presence_period_id, 'released');
+			$this->db->transaction(function () use ($presence_period_id) {
+				$this->model_payroll_payroll_release->unarchivePeriodData($presence_period_id);
+
+				$this->model_common_payroll->setPeriodStatus($presence_period_id, 'released');
+			});
 
 			$json['success'] = true;
 		}

@@ -1,15 +1,15 @@
 <?php
 class ModelPayrollPayrollRelease extends Model
 {
-	private function initDbArchive()
-	{
-		$this->registry->set('db_archive', new DB(DB_DRIVER, DB_HOSTNAME, DB_ARCH_USERNAME, DB_ARCH_PASSWORD, DB_ARCH_DATABASE, DB_PORT));
-	}
+	// private function initDbArchive()
+	// {
+	// 	$this->registry->set('db_archive', new DB(DB_DRIVER, DB_HOSTNAME, DB_ARCH_USERNAME, DB_ARCH_PASSWORD, DB_ARCH_DATABASE, DB_PORT));
+	// }
 
-	private function closeDbArchive()
-	{
-		$this->registry->set('db_archive', null);
-	}
+	// private function closeDbArchive()
+	// {
+	// 	$this->registry->set('db_archive', null);
+	// }
 
 	public function getPayrollPeriods($data = array())
 	{ //Used by: payroll_release
@@ -86,7 +86,7 @@ class ModelPayrollPayrollRelease extends Model
 	public function getReleases($presence_period_id, $data = array())
 	{
 		$this->createView();
-		
+
 		// $sql = "SELECT DISTINCT p.presence_period_id, p.customer_id, p.statement_sent, (p.gaji_pokok + p.tunj_jabatan + p.tunj_hadir + p.tunj_pph + p.total_uang_makan - p.pot_sakit - p.pot_bolos - p.pot_tunj_hadir - p.pot_gaji_pokok - p.pot_terlambat) as net_salary, SUM(pcv.value) as component, c.nip, c.email, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.acc_no, cgd.name AS customer_group, pm.name AS payroll_method FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.customer_id = p.customer_id AND pcv.presence_period_id = '" . (int)$presence_period_id . "') LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.presence_period_id = '" . (int)$presence_period_id . "'";
 		$sql = "SELECT * FROM " . DB_PREFIX . "v_release WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
@@ -251,7 +251,7 @@ class ModelPayrollPayrollRelease extends Model
 			//Gaji & Tunjangan
 			$this->load->model('payroll/payroll');
 			$payroll_info = $this->model_payroll_payroll->getPayrollDetail($presence_period_id, $customer_id);
-			
+
 			$earning = $payroll_info['gaji_dasar'];
 			$deduction = $payroll_info['total_potongan'];
 
@@ -462,18 +462,14 @@ class ModelPayrollPayrollRelease extends Model
 
 	public function archivePeriodData($presence_period_id)
 	{
-		$this->initDbArchive();
-
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 
-		$this->db_archive->query("START TRANSACTION;");
-
-		$this->db_archive->query("INSERT INTO " . DB_PREFIX . "absence SELECT * FROM " . DB_DATABASE . "." . DB_PREFIX . "absence WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
-		$this->db_archive->query("INSERT INTO " . DB_PREFIX . "exchange SELECT * FROM " . DB_DATABASE . "." . DB_PREFIX . "exchange WHERE (date_from >= '" . $this->db->escape($period_info['date_start']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "') OR (date_to >= '" . $this->db->escape($period_info['date_start']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "')");
-		$this->db_archive->query("INSERT INTO " . DB_PREFIX . "overtime SELECT * FROM " . DB_DATABASE . "." . DB_PREFIX . "overtime WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
-		$this->db_archive->query("INSERT INTO " . DB_PREFIX . "presence SELECT * FROM " . DB_DATABASE . "." . DB_PREFIX . "presence WHERE date_presence >= '" . $this->db->escape($period_info['date_start']) . "' AND date_presence <= '" . $this->db->escape($period_info['date_end']) . "'");
-		$this->db_archive->query("INSERT INTO " . DB_PREFIX . "presence_log SELECT * FROM " . DB_DATABASE . "." . DB_PREFIX . "presence_log WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
-		$this->db_archive->query("INSERT INTO " . DB_PREFIX . "schedule SELECT * FROM " . DB_DATABASE . "." . DB_PREFIX . "schedule WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
+		$this->db->query("INSERT INTO " . DB_ARCH_DATABASE . "." . DB_PREFIX . "absence SELECT * FROM " . DB_PREFIX . "absence WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
+		$this->db->query("INSERT INTO " . DB_ARCH_DATABASE . "." . DB_PREFIX . "exchange SELECT * FROM " . DB_PREFIX . "exchange WHERE (date_from >= '" . $this->db->escape($period_info['date_start']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "') OR (date_to >= '" . $this->db->escape($period_info['date_start']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "')");
+		$this->db->query("INSERT INTO " . DB_ARCH_DATABASE . "." . DB_PREFIX . "overtime SELECT * FROM " . DB_PREFIX . "overtime WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
+		$this->db->query("INSERT INTO " . DB_ARCH_DATABASE . "." . DB_PREFIX . "presence SELECT * FROM " . DB_PREFIX . "presence WHERE date_presence >= '" . $this->db->escape($period_info['date_start']) . "' AND date_presence <= '" . $this->db->escape($period_info['date_end']) . "'");
+		$this->db->query("INSERT INTO " . DB_ARCH_DATABASE . "." . DB_PREFIX . "presence_log SELECT * FROM " . DB_PREFIX . "presence_log WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
+		$this->db->query("INSERT INTO " . DB_ARCH_DATABASE . "." . DB_PREFIX . "schedule SELECT * FROM " . DB_PREFIX . "schedule WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "absence WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "exchange WHERE (date_from >= '" . $this->db->escape($period_info['date_start']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "') OR (date_to >= '" . $this->db->escape($period_info['date_start']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "')");
@@ -481,19 +477,11 @@ class ModelPayrollPayrollRelease extends Model
 		$this->db->query("DELETE FROM " . DB_PREFIX . "presence WHERE date_presence >= '" . $this->db->escape($period_info['date_start']) . "' AND date_presence <= '" . $this->db->escape($period_info['date_end']) . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "presence_log WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "schedule WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
-
-		$this->db_archive->query("COMMIT;");
-
-		$this->closeDbArchive();
 	}
 
 	public function unarchivePeriodData($presence_period_id)
 	{
-		$this->initDbArchive();
-
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
-
-		$this->db->query("START TRANSACTION;");
 
 		$this->db->query("INSERT INTO " . DB_PREFIX . "absence SELECT * FROM " . DB_ARCH_DATABASE . "." . DB_PREFIX . "absence WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
 		$this->db->query("INSERT INTO " . DB_PREFIX . "exchange SELECT * FROM " . DB_ARCH_DATABASE . "." . DB_PREFIX . "exchange WHERE (date_from >= '" . $this->db->escape($period_info['date_start']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "') OR (date_to >= '" . $this->db->escape($period_info['date_start']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "')");
@@ -502,24 +490,20 @@ class ModelPayrollPayrollRelease extends Model
 		$this->db->query("INSERT INTO " . DB_PREFIX . "presence_log SELECT * FROM " . DB_ARCH_DATABASE . "." . DB_PREFIX . "presence_log WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
 		$this->db->query("INSERT INTO " . DB_PREFIX . "schedule SELECT * FROM " . DB_ARCH_DATABASE . "." . DB_PREFIX . "schedule WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
 
-		$this->db_archive->query("DELETE FROM " . DB_PREFIX . "absence WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
-		$this->db_archive->query("DELETE FROM " . DB_PREFIX . "exchange WHERE (date_from >= '" . $this->db->escape($period_info['date_start']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "') OR (date_to >= '" . $this->db->escape($period_info['date_start']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "')");
-		$this->db_archive->query("DELETE FROM " . DB_PREFIX . "overtime WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
-		$this->db_archive->query("DELETE FROM " . DB_PREFIX . "presence WHERE date_presence >= '" . $this->db->escape($period_info['date_start']) . "' AND date_presence <= '" . $this->db->escape($period_info['date_end']) . "'");
-		$this->db_archive->query("DELETE FROM " . DB_PREFIX . "presence_log WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
-		$this->db_archive->query("DELETE FROM " . DB_PREFIX . "schedule WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
-
-		$this->db->query("COMMIT;");
-
-		$this->closeDbArchive();
+		$this->db->query("DELETE FROM " . DB_ARCH_DATABASE . "." . DB_PREFIX . "absence WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
+		$this->db->query("DELETE FROM " . DB_ARCH_DATABASE . "." . DB_PREFIX . "exchange WHERE (date_from >= '" . $this->db->escape($period_info['date_start']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "') OR (date_to >= '" . $this->db->escape($period_info['date_start']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "')");
+		$this->db->query("DELETE FROM " . DB_ARCH_DATABASE . "." . DB_PREFIX . "overtime WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
+		$this->db->query("DELETE FROM " . DB_ARCH_DATABASE . "." . DB_PREFIX . "presence WHERE date_presence >= '" . $this->db->escape($period_info['date_start']) . "' AND date_presence <= '" . $this->db->escape($period_info['date_end']) . "'");
+		$this->db->query("DELETE FROM " . DB_ARCH_DATABASE . "." . DB_PREFIX . "presence_log WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
+		$this->db->query("DELETE FROM " . DB_ARCH_DATABASE . "." . DB_PREFIX . "schedule WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
 	}
 
 	public function createView($view_name = 'v_release')
 	{
 		$view_name = DB_PREFIX . $view_name;
-		
+
 		$sql = "SELECT DISTINCT p.presence_period_id, p.customer_id, p.statement_sent, (p.gaji_pokok + p.tunj_jabatan + p.tunj_hadir + p.tunj_pph + p.total_uang_makan - p.pot_sakit - p.pot_bolos - p.pot_tunj_hadir - p.pot_gaji_pokok - p.pot_terlambat) as net_salary, SUM(pcv.value) as component, c.nip, c.email, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.acc_no, c.customer_group_id, cgd.name AS customer_group, c.customer_department_id, cdd.name AS customer_department, c.location_id, l.name AS location, pm.name AS payroll_method FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.customer_id = p.customer_id AND pcv.presence_period_id = p.presence_period_id) LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (cdd.customer_department_id = c.customer_department_id AND cdd.language_id = cgd.language_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' OR cgd.language_id IS NULL GROUP BY p.customer_id, p.presence_period_id;";
-		
+
 		return $this->db->createView($view_name, $sql);
 	}
 }

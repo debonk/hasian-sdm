@@ -138,7 +138,7 @@ class DB
 					WHEN DATEDIFF(cn.contract_end, CURDATE()) <= " . $config_contract_end_notif . " THEN 'end_soon' 
 					ELSE 'active' 
 				END AS contract_status 
-				FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "contract cn ON (cn.contract_id = c.contract_id) LEFT JOIN " . DB_PREFIX . "contract_type ct ON (ct.contract_type_id = cn.contract_type_id) WHERE c.payroll_include = 1";
+				FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "contract cn ON (cn.contract_id = c.contract_id) LEFT JOIN " . DB_PREFIX . "contract_type ct ON (ct.contract_type_id = cn.contract_type_id)";
 
 				break;
 
