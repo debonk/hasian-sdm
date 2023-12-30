@@ -11,6 +11,9 @@ define('DIR_FILE', $_SERVER['DOCUMENT_ROOT'].'/system/storage/file/');
 
 MODIFY TABLE
 
+3.0.2
+Bug Fixed: Release: Filter payroll method not working
+
 3.0.1	29/12/2023
 Release: Repair archiving system
 

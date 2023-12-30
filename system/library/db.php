@@ -126,7 +126,7 @@ class DB
 				$this->createView('v_customer');
 
 				$config_contract_end_query = $this->adaptor->query("SELECT s.value FROM " . DB_PREFIX . "setting s WHERE s.code = 'config' AND s.key = 'config_contract_end_notif'");
-				$config_contract_end_notif = $config_contract_end_query->num_rows ? $config_contract_end_query->row['value'] : 0;
+				$config_contract_end_notif = !empty($config_contract_end_query->row['value']) ? $config_contract_end_query->row['value'] : 0;
 
 				$view_sql = "SELECT c.customer_id, c.nip, c.lastname, c.name, c.customer_department_id, c.customer_department, c.customer_group_id, c.customer_group, c.location_id, c.location, c.date_start, c.date_end, c.language_id, c.contract_id, cn.contract_type_id, cn.contract_start, cn.contract_end, cn.description, cn.end_reason, ct.name AS contract_type, ct.duration,
 				CASE 
@@ -193,6 +193,13 @@ class DB
 
 			case 'v_customer_finger':
 				$view_sql = "SELECT cf.*, c.firstname, c.lastname, c.location_id, c.date_start, c.date_end, c.status, cad.active_finger FROM " . DB_PREFIX . "customer_finger cf LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = cf.customer_id) LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON (c.customer_id = cad.customer_id)";
+
+				break;
+
+			case 'v_release':
+				$this->createView('v_customer');
+
+				$view_sql = "SELECT p.presence_period_id, p.customer_id, p.statement_sent, (p.gaji_pokok + p.tunj_jabatan + p.tunj_hadir + p.tunj_pph + p.total_uang_makan - p.pot_sakit - p.pot_bolos - p.pot_tunj_hadir - p.pot_gaji_pokok - p.pot_terlambat) as net_salary, SUM(pcv.value) as component, c.nip, c.email, c.name, c.acc_no, c.customer_group_id, c.customer_group, c.customer_department_id, c.customer_department, c.location_id, c.location, c.language_id, pm.payroll_method_id, pm.name AS payroll_method FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.customer_id = p.customer_id AND pcv.presence_period_id = p.presence_period_id) LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) GROUP BY p.customer_id, p.presence_period_id;";
 
 				break;
 
