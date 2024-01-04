@@ -19,52 +19,19 @@ class ControllerApiFinger extends Controller
 				'sn'	=> $finger_device['sn'],
 				'vc'	=> $finger_device['vc'],
 				'ac'	=> $finger_device['ac']
-			]; 
+			];
 		}
 
 		$this->load->model('localisation/location');
 
 		$json['locations'] = $this->model_localisation_location->getLocations();
 
-		// var_dump($json);
-		// die('--break');
-
-		// if (!$json) {
-		// 	foreach ($results as $result) {
-		// 		// $name = $this->config->get('payroll_setting_presence_card') == 'lastname' ? $result['lastname'] : $result['firstname'];
-
-		// 		if (is_null($result['active_finger'])) {
-		// 			$json['fingers'][] = array(
-		// 				'customer_id'	=> $result['customer_id'],
-		// 				// 'finger_id'		=> $result['finger_id'],
-		// 				'active_finger'	=> 0,
-		// 				// 'name'       	=> $name,
-		// 				'finger_data'	=> $result['finger_data']
-		// 			);
-		// 		} else {
-		// 			$active_fingers = json_decode($result['active_finger'], 1);
-
-		// 			if (in_array($result['customer_id'] . 'x' . $result['finger_index'], $active_fingers)) {
-		// 				$json['fingers'][] = array(
-		// 					'customer_id'	=> $result['customer_id'],
-		// 					// 'finger_id'		=> $result['finger_id'],
-		// 					'active_finger'	=> $result['finger_index'],
-		// 					// 'name'       	=> $name,
-		// 					'finger_data'	=> $result['finger_data']
-		// 				);
-		// 			}
-		// 		}
-		// 	}
-
-		// 	$json['ready'] = $this->language->get('text_ready');
-		// }
-
-		// if (isset($this->request->server['HTTP_ORIGIN'])) {
-		// 	$this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);
-		// 	$this->response->addHeader('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
-		// 	$this->response->addHeader('Access-Control-Max-Age: 1000');
-		// 	$this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-		// }
+		if (isset($this->request->server['HTTP_ORIGIN'])) {
+			$this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);
+			$this->response->addHeader('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+			$this->response->addHeader('Access-Control-Max-Age: 1000');
+			$this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+		}
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
@@ -78,44 +45,64 @@ class ControllerApiFinger extends Controller
 
 		$json = [];
 
-		$filter_items = array(
-			'location_id'
-		);
+		switch ($json) {
+			case false:
+				$sn = isset($this->request->get['sn']) ? $this->request->get['sn'] : '';
 
-		$filter = [];
+				$this->load->model('localisation/finger_device');
+				$device_info = $this->model_localisation_finger_device->getFingerDeviceBySn($sn);
 
-		foreach ($filter_items as $filter_item) {
-			if (isset($this->request->get[$filter_item])) {
-				$filter[$filter_item] = $this->request->get[$filter_item];
-			} else {
-				$filter[$filter_item] = null;
-			}
-		}
-		
-		// $filter['location_id'] = 3;
+				if (empty($device_info)) {
+					$json['warning'] = $this->language->get('error_device');
 
-		$this->load->model('presence/presence');
+					break;
+				}
 
-		$filter_data = array(
-			'filter'	=> $filter
-		);
+				$token = token(12);
 
-		$results = $this->model_presence_presence->getFingers($filter_data);
+				$this->model_localisation_finger_device->editToken($device_info['finger_device_id'], md5($device_info['vc'] . $token));
 
-		if (!$results) {
-			$json['warning'] = $this->language->get('error_data');
+				$filter_items = array(
+					'location_id'
+				);
+
+				$filter = [];
+
+				foreach ($filter_items as $filter_item) {
+					if (isset($this->request->get[$filter_item])) {
+						$filter[$filter_item] = $this->request->get[$filter_item];
+					} else {
+						$filter[$filter_item] = null;
+					}
+				}
+
+				$this->load->model('presence/presence');
+
+				$filter_data = array(
+					'filter'	=> $filter
+				);
+
+				$results = $this->model_presence_presence->getFingers($filter_data);
+
+				if (!$results) {
+					$json['warning'] = $this->language->get('error_data');
+
+					break;
+				}
+
+				break;
+
+			default:
+
+				break;
 		}
 
 		if (!$json) {
 			foreach ($results as $result) {
-				// $name = $this->config->get('payroll_setting_presence_card') == 'lastname' ? $result['lastname'] : $result['firstname'];
-
 				if (is_null($result['active_finger'])) {
 					$json['fingers'][] = array(
 						'customer_id'	=> $result['customer_id'],
-						// 'finger_id'		=> $result['finger_id'],
 						'active_finger'	=> 0,
-						// 'name'       	=> $name,
 						'finger_data'	=> $result['finger_data']
 					);
 				} else {
@@ -124,24 +111,23 @@ class ControllerApiFinger extends Controller
 					if (in_array($result['customer_id'] . 'x' . $result['finger_index'], $active_fingers)) {
 						$json['fingers'][] = array(
 							'customer_id'	=> $result['customer_id'],
-							// 'finger_id'		=> $result['finger_id'],
 							'active_finger'	=> $result['finger_index'],
-							// 'name'       	=> $name,
 							'finger_data'	=> $result['finger_data']
 						);
 					}
 				}
 			}
 
+			$json['token'] = $token;
 			$json['ready'] = $this->language->get('text_ready');
 		}
 
-		// if (isset($this->request->server['HTTP_ORIGIN'])) {
-		// 	$this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);
-		// 	$this->response->addHeader('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
-		// 	$this->response->addHeader('Access-Control-Max-Age: 1000');
-		// 	$this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-		// }
+		if (isset($this->request->server['HTTP_ORIGIN'])) {
+			$this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);
+			$this->response->addHeader('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+			$this->response->addHeader('Access-Control-Max-Age: 1000');
+			$this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+		}
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
@@ -153,16 +139,16 @@ class ControllerApiFinger extends Controller
 
 		$json = [];
 
-		if (empty($this->request->post)) {
+		if (empty($this->request->post) || !isset($this->request->post['sn'])) {
 			$json['result'] = $this->language->get('error_data');
 		} else {
 			if (isset($this->request->post['action']) && $this->request->post['action'] == 'logout') {
 				$schedule_date = date('Y-m-d', strtotime($this->config->get('payroll_setting_logout_date') . ' hours'));
-	
+
 				$action = 'logout';
 			} else {
 				$schedule_date = date('Y-m-d', strtotime($this->config->get('payroll_setting_login_date') . ' hours'));
-			
+
 				$action = 'login';
 			}
 		}
@@ -171,10 +157,24 @@ class ControllerApiFinger extends Controller
 
 		switch ($json) {
 			case false:
-				$customer_id = isset($this->request->post['customer_id']) ? $this->request->post['customer_id'] : 0;
+				$this->load->model('localisation/finger_device');
+				$device_info = $this->model_localisation_finger_device->getFingerDeviceBySn($this->request->post['sn']);
 
+				if (!$device_info) {
+					$json['result'] = $this->language->get('error_device');
+
+					break;
+				}
+
+				if ($this->request->post['token_hash'] != $device_info['token']) {
+					$json['result'] = $this->language->get('error_session');
+
+					break;
+				}
+
+				$customer_id = isset($this->request->post['customer_id']) ? $this->request->post['customer_id'] : 0;
 				$customer_info = $this->model_presence_presence->getCustomer($customer_id);
-				
+
 				if (!$customer_info) { //Cek apakah karyawan msh aktif
 					$json['result'] = $this->language->get('error_customer_not_found');
 
@@ -206,9 +206,9 @@ class ControllerApiFinger extends Controller
 				}
 
 				$name = $this->config->get('payroll_setting_presence_card') != 'lastname' ? $customer_info['firstname'] : $customer_info['lastname'];
-				
+
 				$log_info = $this->model_presence_presence->getLog($customer_id, $schedule_date);
-				
+
 				if ($log_info) {
 					if ($log_info['time_logout'] != '0000-00-00 00:00:00') { //Cek ternyata sudah logout
 						// $json['result'] = $this->language->get('error_logout');
@@ -253,7 +253,7 @@ class ControllerApiFinger extends Controller
 					} else {
 						$login_start = $this->config->get('payroll_setting_login_start');
 						$date_login_start = date('Y-m-d H:i:s', strtotime('+' . $login_start . ' minutes'));
-						
+
 						$login_end = $this->config->get('payroll_setting_login_end');
 						$date_login_end = date('Y-m-d H:i:s', strtotime('-' . $login_end . ' minutes'));
 

@@ -12,7 +12,7 @@ $_['text_month']				= '%d bulan';
 // Contract
 $_['text_contract_none']		= 'Kontrak Belum Aktif';
 $_['text_contract_inactive']	= 'Berhenti Bekerja';
-$_['text_contract_permanent']	= 'Kontrak Tetap';
+$_['text_contract_permanent']	= 'Tetap Aktif';
 $_['text_contract_end_today']	= 'Berakhir Hari Ini';
 $_['text_contract_end_left']	= 'Berakhir %s Hari Lagi';
 $_['text_contract_expired']		= 'Kontrak Selesai';

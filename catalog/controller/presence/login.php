@@ -236,7 +236,7 @@ class ControllerPresenceLogin extends Controller
 				$data['presence_tools'][] = [
 					'title'	=> $finger_device['device_name'] . ' [' . $finger_device['sn'] . ']',
 					'href'	=> 'hsdmtool:' . base64_encode('referrer=' . utf8_substr(HTTP_SERVER, 7, utf8_strlen(HTTP_SERVER) - 8) . '&sn=' . $finger_device['sn'] . '&location_id=' . $location_id)
-					// 'href'	=> 'hsdmtool:' . base64_encode('referrer=wsdm.go-corp.net&sn=' . $finger_device['sn'] . '&location_id=' . $location_id)
+					// 'href'	=> 'hsdmtool:' . base64_encode('referrer=burgerup.go-corp.net&sn=' . $finger_device['sn'] . '&location_id=' . $location_id)
 				];
 			}
 		}

@@ -11,7 +11,10 @@ define('DIR_FILE', $_SERVER['DOCUMENT_ROOT'].'/system/storage/file/');
 
 MODIFY TABLE
 
-3.0.2
+3.0.2	04/01/2024
+HSDM Tool: v1.3: Improve Security
+
+3.0.1.b	30/12/2023
 Bug Fixed: Release: Filter payroll method not working
 
 3.0.1	29/12/2023

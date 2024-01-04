@@ -18,7 +18,7 @@ $_['text_success_delete']		= 'Success: You have deleted last contract entry!';
 // Contract
 $_['text_contract_none']		= 'Kontrak Belum Aktif';
 $_['text_contract_inactive']	= 'Berhenti Bekerja';
-$_['text_contract_permanent']	= 'Kontrak Tetap';
+$_['text_contract_permanent']	= 'Tetap Aktif';
 $_['text_contract_end_today']	= 'Berakhir Hari Ini';
 $_['text_contract_end_soon']	= 'Segera Berakhir';
 $_['text_contract_end_left']	= 'Berakhir %s Hari Lagi';

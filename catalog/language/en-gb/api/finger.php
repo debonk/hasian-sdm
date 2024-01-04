@@ -7,7 +7,10 @@ $_['text_login']			= 'Login';
 $_['text_logout']			= 'Logout';
 
 // Error
+$_['error_token']				= 'Warning: Token Data tidak ditemukan!';
+$_['error_device']				= 'Warning: Finger Device Data tidak ditemukan!';
 $_['error_data']				= 'Warning: Finger Data tidak ditemukan!';
+$_['error_session']				= 'Warning: Session Error. Silahkan tutup dan buka kembali app ini!';
 $_['error_absence']				= 'Warning: Tidak ada jadwal Anda hari ini!';
 $_['error_customer_not_found']	= 'Warning: Data karyawan tidak ditemukan!';
 $_['error_login_start']			= '%s: Waktu Login anda hari ini belum diizinkan!';
