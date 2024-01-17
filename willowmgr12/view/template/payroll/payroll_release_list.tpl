@@ -10,7 +10,7 @@
           <?= $button_payroll_complete; ?>
         </button>
         <button type="button" class="btn btn-default"
-          onclick="$('#form-payroll-release-list').attr('action', '<?= $export_cimb; ?>').submit()"><i
+          onclick="confirm('<?= $text_confirm_release; ?>') ? $('#form-payroll-release-list').attr('action', '<?= $export_cimb; ?>').submit() : false;"><i
             class="fa fa-upload"></i>
           <?= $button_export_cimb; ?>
         </button>
@@ -27,8 +27,8 @@
         </button>
         <button type="button" class="btn btn-default disabled"><i class="fa fa-envelope"></i></button>
         <?php } ?>
-        <a href="<?= $back; ?>" data-toggle="tooltip" title="<?= $button_back; ?>"
-          class="btn btn-default"><i class="fa fa-reply"></i></a>
+        <a href="<?= $back; ?>" data-toggle="tooltip" title="<?= $button_back; ?>" class="btn btn-default"><i
+            class="fa fa-reply"></i></a>
       </div>
       <h1>
         <?= $heading_title; ?>
@@ -73,15 +73,15 @@
                 <label class="control-label" for="input-name">
                   <?= $entry_name; ?>
                 </label>
-                <input type="text" name="filter_name" value="<?= $filter_name; ?>"
-                  placeholder="<?= $entry_name; ?>" id="input-name" class="form-control" />
+                <input type="text" name="filter_name" value="<?= $filter_name; ?>" placeholder="<?= $entry_name; ?>"
+                  id="input-name" class="form-control" />
               </div>
               <div class="form-group">
                 <label class="control-label" for="input-email">
                   <?= $entry_email; ?>
                 </label>
-                <input type="text" name="filter_email" value="<?= $filter_email; ?>"
-                  placeholder="<?= $entry_email; ?>" id="input-email" class="form-control" />
+                <input type="text" name="filter_email" value="<?= $filter_email; ?>" placeholder="<?= $entry_email; ?>"
+                  id="input-email" class="form-control" />
               </div>
             </div>
             <div class="col-sm-3">
@@ -209,12 +209,12 @@
         </div>
         <form method="post" action="<?= $send; ?>" enctype="multipart/form-data" id="form-payroll-release-list">
           <div class="table-responsive">
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered table-hover text-left">
               <thead>
                 <tr>
                   <td style="width: 1px;" class="text-center"><input type="checkbox"
                       onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
-                  <td class="text-left">
+                  <td>
                     <?php if ($sort == 'nip') { ?>
                     <a href="<?= $sort_nip; ?>" class="<?= strtolower($order); ?>">
                       <?= $column_nip; ?>
@@ -225,7 +225,7 @@
                     </a>
                     <?php } ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?php if ($sort == 'name') { ?>
                     <a href="<?= $sort_name; ?>" class="<?= strtolower($order); ?>">
                       <?= $column_name; ?>
@@ -236,7 +236,7 @@
                     </a>
                     <?php } ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?php if ($sort == 'email') { ?>
                     <a href="<?= $sort_email; ?>" class="<?= strtolower($order); ?>">
                       <?= $column_email; ?>
@@ -247,7 +247,7 @@
                     </a>
                     <?php } ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?php if ($sort == 'customer_group') { ?>
                     <a href="<?= $sort_customer_group; ?>" class="<?= strtolower($order); ?>">
                       <?= $column_customer_group; ?>
@@ -258,7 +258,7 @@
                     </a>
                     <?php } ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?php if ($sort == 'customer_department') { ?>
                     <a href="<?= $sort_customer_department; ?>" class="<?= strtolower($order); ?>">
                       <?= $column_customer_department; ?>
@@ -269,7 +269,7 @@
                     </a>
                     <?php } ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?php if ($sort == 'location') { ?>
                     <a href="<?= $sort_location; ?>" class="<?= strtolower($order); ?>">
                       <?= $column_location; ?>
@@ -280,7 +280,7 @@
                     </a>
                     <?php } ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?php if ($sort == 'acc_no') { ?>
                     <a href="<?= $sort_acc_no; ?>" class="<?= strtolower($order); ?>">
                       <?= $column_acc_no; ?>
@@ -291,7 +291,7 @@
                     </a>
                     <?php } ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?php if ($sort == 'payroll_method') { ?>
                     <a href="<?= $sort_payroll_method; ?>" class="<?= strtolower($order); ?>">
                       <?= $column_payroll_method; ?>
@@ -302,7 +302,7 @@
                     </a>
                     <?php } ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?php if ($sort == 'net_salary') { ?>
                     <a href="<?= $sort_net_salary; ?>" class="<?= strtolower($order); ?>">
                       <?= $column_net_salary; ?>
@@ -312,6 +312,9 @@
                       <?= $column_net_salary; ?>
                     </a>
                     <?php } ?>
+                  </td>
+                  <td>
+                    <?= $column_date_release; ?>
                   </td>
                   <td class="text-center">
                     <?php if ($sort == 'statement_sent') { ?>
@@ -328,51 +331,115 @@
               </thead>
               <tbody>
                 <?php if ($payroll_releases) { ?>
-                <?php foreach ($payroll_releases as $payroll_release) { ?>
+                <?php if (isset($payroll_releases['late'])) { ?>
+                <tr>
+                  <th colspan="12">
+                    <?= $text_release_late; ?>
+                  </th>
+                </tr>
+                <?php foreach ($payroll_releases['late'] as $payroll_release) { ?>
                 <tr>
                   <td class="text-center">
-                    <?php if (in_array($payroll_release['customer_id'], $selected)) { ?>
-                    <input type="checkbox" name="selected[]" value="<?= $payroll_release['customer_id']; ?>"
+                    <?php if (in_array($payroll_release['customer_code'], $selected)) { ?>
+                    <input type="checkbox" name="selected[]" value="<?= $payroll_release['customer_code']; ?>"
                       checked="checked" />
                     <?php } else { ?>
-                    <input type="checkbox" name="selected[]" value="<?= $payroll_release['customer_id']; ?>" />
+                    <input type="checkbox" name="selected[]" value="<?= $payroll_release['customer_code']; ?>" />
                     <?php } ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?= $payroll_release['nip']; ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?= $payroll_release['name']; ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?= $payroll_release['email']; ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?= $payroll_release['customer_group']; ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?= $payroll_release['customer_department']; ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?= $payroll_release['location']; ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?= $payroll_release['acc_no']; ?>
                   </td>
-                  <td class="text-left">
+                  <td>
                     <?= $payroll_release['payroll_method']; ?>
                   </td>
                   <td class="text-right">
                     <?= $payroll_release['grandtotal']; ?>
+                  </td>
+                  <td>
+                    <?= $payroll_release['date_released']; ?>
                   </td>
                   <td class="text-center">
                     <?= $payroll_release['statement_sent'] ? '<i class="fa fa-check-square-o"></i>' : '<i class="fa fa-square-o"></i>' ?>
                   </td>
                 </tr>
                 <?php } ?>
+                <?php if (isset($payroll_releases['present'])) { ?>
+                <tr>
+                  <th colspan="12">
+                    <?= $text_release_present; ?>
+                  </th>
+                </tr>
+                <?php } ?>
+                <?php } ?>
+                <?php if (isset($payroll_releases['present'])) { ?>
+                  <?php foreach ($payroll_releases['present'] as $payroll_release) { ?>
+                <tr>
+                  <td class="text-center">
+                    <?php if (in_array($payroll_release['customer_code'], $selected)) { ?>
+                    <input type="checkbox" name="selected[]" value="<?= $payroll_release['customer_code']; ?>"
+                      checked="checked" />
+                    <?php } else { ?>
+                    <input type="checkbox" name="selected[]" value="<?= $payroll_release['customer_code']; ?>" />
+                    <?php } ?>
+                  </td>
+                  <td>
+                    <?= $payroll_release['nip']; ?>
+                  </td>
+                  <td>
+                    <?= $payroll_release['name']; ?>
+                  </td>
+                  <td>
+                    <?= $payroll_release['email']; ?>
+                  </td>
+                  <td>
+                    <?= $payroll_release['customer_group']; ?>
+                  </td>
+                  <td>
+                    <?= $payroll_release['customer_department']; ?>
+                  </td>
+                  <td>
+                    <?= $payroll_release['location']; ?>
+                  </td>
+                  <td>
+                    <?= $payroll_release['acc_no']; ?>
+                  </td>
+                  <td>
+                    <?= $payroll_release['payroll_method']; ?>
+                  </td>
+                  <td class="text-right">
+                    <?= $payroll_release['grandtotal']; ?>
+                  </td>
+                  <td>
+                    <?= $payroll_release['date_released']; ?>
+                  </td>
+                  <td class="text-center">
+                    <?= $payroll_release['statement_sent'] ? '<i class="fa fa-check-square-o"></i>' : '<i class="fa fa-square-o"></i>' ?>
+                  </td>
+                </tr>
+                <?php } ?>
+                <?php } ?>
                 <?php } else { ?>
                 <tr>
-                  <td class="text-center" colspan="9">
+                  <td class="text-center" colspan="12">
                     <?= $text_no_results; ?>
                   </td>
                 </tr>

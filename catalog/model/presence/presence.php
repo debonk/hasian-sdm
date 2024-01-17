@@ -25,7 +25,7 @@ class ModelPresencePresence extends Model
 
 	public function getCustomer($customer_id)
 	{
-		$query = $this->db->query("SELECT DISTINCT customer_id, firstname, lastname FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "' AND status = 1 AND date_start <= CURDATE() AND (date_end > CURDATE() OR date_end IS NULL)");
+		$query = $this->db->query("SELECT DISTINCT customer_id, firstname, lastname FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "' AND status = 1 AND date_start <= CURDATE() AND (date_end >= CURDATE() OR date_end IS NULL)");
 
 		return $query->row;
 	}

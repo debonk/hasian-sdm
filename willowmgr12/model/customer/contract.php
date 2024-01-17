@@ -179,9 +179,9 @@ class ModelCustomerContract extends Model
 
 		if (isset($data['filter']['active']) && $data['filter']['active'] != '*') {
 			if ($data['filter']['active'] == 1) {
-				$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end > CURDATE())";
+				$implode[] = "(date_end IS NULL OR date_end >= CURDATE())";
 			} else {
-				$implode[] = "(date_end <> '0000-00-00' AND date_end <= CURDATE())";
+				$implode[] = "date_end < CURDATE()";
 			}
 		}
 

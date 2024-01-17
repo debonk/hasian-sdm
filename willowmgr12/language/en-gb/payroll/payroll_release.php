@@ -3,43 +3,46 @@
 $_['heading_title']              = 'Pembagian Gaji';
 
 // Text
-$_['text_period_list']           = 'Daftar Periode Pembagian Gaji';
-$_['text_list']                  = 'Daftar Gaji';
+$_['text_complete_success']      = 'Success: Penggajian karyawan periode ini telah selesai!';
+$_['text_confirm_release'] 		 = 'Warning: Export CIMB hanya boleh 1x per karyawan. Pastikan data yang dipilih telah sesuai.\nLanjutkan?';
+$_['text_confirm_send_all'] 	 = 'Send Payroll Statement to All Employees?';
 $_['text_edit']                  = 'Edit Akun Sumber Dana';
-$_['text_success']          	 = 'Success: You have modified payroll releases!';
-$_['text_success_send'] 	 	 = 'Success: Payroll Statements sending process has been completed!';
-$_['text_payroll_period']        = 'Periode: %s, Status: %s';
-$_['text_release_info'] 	  	 = 'Info Pembagian Gaji';
 $_['text_fund_acc_name'] 	  	 = 'Nama :';
 $_['text_fund_acc_no'] 	  	   	 = 'No Rekening :';
-$_['text_fund_email'] 	  	   	 = 'Email :';
 $_['text_fund_date_release'] 	 = 'Tanggal Proses :';
-$_['text_method'] 	 			 = '%s (%d orang) :';
-$_['text_complete_success']      = 'Success: Penggajian karyawan periode ini telah selesai!';
+$_['text_fund_email'] 	  	   	 = 'Email :';
 $_['text_information'] 	 		 = 'Sebagian data payroll telah lebih dari %s bulan. Silahkan set status menjadi Complete untuk mengurangi data aktif.';
-$_['text_confirm_send_all'] 	 = 'Send Payroll Statement to All Employees?';
+$_['text_list']                  = 'Daftar Gaji';
+$_['text_method'] 	 			 = '%s (%d orang) :';
+$_['text_payroll_period']        = 'Periode: %s, Status: %s';
+$_['text_period_list']           = 'Daftar Periode Pembagian Gaji';
+$_['text_release_info'] 	  	 = 'Info Pembagian Gaji';
+$_['text_release_late'] 	  	 = 'Penggajian Tertunda Periode Sebelumnya';
+$_['text_release_present'] 	  	 = 'Penggajian Periode Ini';
+$_['text_success_send'] 	 	 = 'Success: Payroll Statements sending process has been completed!';
+$_['text_success']          	 = 'Success: You have modified payroll releases!';
 
 //Code
 $_['code_full_overtime']		 = 'LH';
 
 // Column
-$_['column_period']              = 'Periode Absensi';
-$_['column_payroll_status']      = 'Payroll Status';
+$_['column_acc_no']      	 	 = 'No. Rekening';
+$_['column_action']              = 'Action';
+$_['column_customer_department'] = 'Divisi';
+$_['column_customer_group']      = 'Jabatan';
+$_['column_date_release'] 	 	 = 'Tanggal Proses';
+$_['column_email']      		 = 'Email';
 $_['column_fund_acc_name'] 	  	 = 'Sumber Dana';
 $_['column_fund_acc_no']      	 = 'No. Rekening';
-$_['column_nip']            	 = 'NIP';
-$_['column_name']       		 = 'Nama Karyawan';
-$_['column_customer_group']      = 'Jabatan';
-$_['column_customer_department'] = 'Divisi';
 $_['column_location'] 			 = 'Lokasi Kerja';
-$_['column_acc_no']      	 	 = 'No. Rekening';
-$_['column_email']      		 = 'Email';
-$_['column_payroll_method']      = 'Metode/Bank';
+$_['column_name']       		 = 'Nama Karyawan';
 $_['column_net_salary']          = 'Jumlah Gaji';
-$_['column_action']              = 'Action';
-$_['column_sum_grandtotal'] 	 = 'Total Gaji';
+$_['column_nip']            	 = 'NIP';
+$_['column_payroll_method']      = 'Metode/Bank';
+$_['column_payroll_status']      = 'Payroll Status';
+$_['column_period']              = 'Periode Absensi';
 $_['column_statement_sent'] 	 = 'Statement Sent';
-$_['column_date_release'] 	 	 = 'Tanggal Proses';
+$_['column_sum_grandtotal'] 	 = 'Total Gaji';
 
 // Entry
 $_['entry_payroll_status']      = 'Payroll Status';

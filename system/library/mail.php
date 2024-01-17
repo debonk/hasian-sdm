@@ -1,6 +1,7 @@
 <?php
 
 use PHPMailer\PHPMailer\PHPMailer;
+// use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 
 class Mail
@@ -236,9 +237,6 @@ class Mail
 			}
 
 		} elseif ($this->protocol == 'phpmailer') {
-			// require_once(DIR_SYSTEM . '../../composer/vendor/autoload.php');
-			// require_once(DIR_VENDOR . 'autoload.php');
-
 			$mail = new PHPMailer(TRUE);
 
 			$smtp_arr = explode('://', $this->smtp_hostname);
@@ -253,7 +251,8 @@ class Mail
 
 			try {
 				/* Set the mail sender. */
-				$mail->setFrom($this->from, $this->sender);
+				// $mail->setFrom($this->from, $this->sender);
+				$mail->setFrom($this->smtp_username, $this->sender);
 
 				/* Add a recipient. */
 				$mail->addAddress($this->to);
@@ -283,6 +282,7 @@ class Mail
 
 				/* Set the encryption system. */
 				$mail->SMTPSecure = $smtp_secure;
+				// $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
 
 				/* SMTP authentication username. */
 				$mail->Username = $this->smtp_username;
@@ -293,18 +293,19 @@ class Mail
 				/* Set the SMTP port. */
 				$mail->Port = $this->smtp_port;
 
-				$mail->SMTPDebug = 2;
+				// $mail->SMTPDebug = 2;
 
-				// $mail->SMTPOptions = array(
-				// 	'ssl' => array(
-				// 		'verify_peer' 		=> false,
-				// 		'verify_peer_name' 	=> false,
-				// 		'allow_self_signed' => true
-				// 	)
-				// );
-
+				// // $mail->SMTPOptions = array(
+				// // 	'ssl' => array(
+				// // 		'verify_peer' 		=> false,
+				// // 		'verify_peer_name' 	=> false,
+				// // 		'allow_self_signed' => true
+				// // 	)
+				// // );
+				
 				/* Finally send the mail. */
 				$mail->send();
+			
 			} catch (PHPMailerException $ep) {
 				return $ep->errorMessage();
 			} catch (\Exception $e) {

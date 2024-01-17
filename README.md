@@ -4,12 +4,16 @@
 MODUL: APP > Account: Login by location (Trial & Progress)
 MODUL: Customer > Presence Method
 
-setting: Modifikasi Tanggal Login = -3; Modifikasi Tanggal Logout = -13
-
 MODIFY CONFIG
-define('DIR_FILE', $_SERVER['DOCUMENT_ROOT'].'/system/storage/file/');
 
 MODIFY TABLE
+ALTER TABLE oc_payroll ADD date_released DATE NULL AFTER statement_sent;
+ALTER TABLE `oc_payroll_basic` CHANGE `date_added` `date_added` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP; 
+DROP VIEW oc_v_release;
+
+3.0.3	17/01/2024
+Payroll Release: Export CIMB hanya boleh 1x per karyawan
+Mail: Fixed PHPMailer
 
 3.0.2	04/01/2024
 HSDM Tool: v1.3: Improve Security

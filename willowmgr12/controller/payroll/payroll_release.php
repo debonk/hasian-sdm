@@ -249,6 +249,7 @@ class ControllerPayrollPayrollRelease extends Controller
 			'heading_title',
 			'text_list',
 			'text_confirm',
+			'text_confirm_release',
 			'text_confirm_send_all',
 			'text_no_results',
 			'text_all',
@@ -256,6 +257,8 @@ class ControllerPayrollPayrollRelease extends Controller
 			'text_no',
 			'text_loading',
 			'text_period_list',
+			'text_release_late',
+			'text_release_present',
 			'column_nip',
 			'column_name',
 			'column_customer_group',
@@ -265,6 +268,7 @@ class ControllerPayrollPayrollRelease extends Controller
 			'column_acc_no',
 			'column_payroll_method',
 			'column_net_salary',
+			'column_date_release',
 			'column_statement_sent',
 			'entry_name',
 			'entry_email',
@@ -410,7 +414,7 @@ class ControllerPayrollPayrollRelease extends Controller
 		$data['send'] = $this->url->link('payroll/payroll_release/send', 'token=' . $this->session->data['token'] . $url, true);
 		$data['back'] = $this->url->link('payroll/payroll_release', 'token=' . $this->session->data['token'], true);
 
-		$data['payroll_releases'] = array();
+		$data['payroll_releases'] = [];
 
 		$filter_data = array(
 			'filter_name'	   	   			=> $filter_name,
@@ -433,10 +437,19 @@ class ControllerPayrollPayrollRelease extends Controller
 		foreach ($results as $result) {
 			$grandtotal = $result['net_salary'] + $result['component'];
 
-			$data['payroll_releases'][] = array(
+			if ($result['presence_period_id'] < $presence_period_id) {
+				$label = 'late';
+				$label_period = '<cite> - ' . date($this->language->get('date_format_m_y'), strtotime($result['period'])) . '</cite>';
+			} else {
+				$label = 'present';
+				$label_period = '';
+			}
+
+			$data['payroll_releases'][$label][] = array(
 				'customer_id' 			=> $result['customer_id'],
+				'customer_code'			=> $result['presence_period_id'] . '-' . $result['customer_id'],
 				'nip' 					=> $result['nip'],
-				'name' 					=> $result['name'],
+				'name' 					=> $result['name'] . $label_period,
 				'customer_group' 		=> $result['customer_group'],
 				'customer_department' 	=> $result['customer_department'],
 				'location' 				=> $result['location'],
@@ -444,6 +457,7 @@ class ControllerPayrollPayrollRelease extends Controller
 				'payroll_method'		=> $result['payroll_method'],
 				'acc_no' 				=> $result['acc_no'],
 				'grandtotal'    		=> $this->currency->format($grandtotal, $this->config->get('config_currency')),
+				'date_released' 		=> $result['date_released'] ? date($this->language->get('date_format_jMY'), strtotime($result['date_released'])) : '-',
 				'statement_sent' 		=> $result['statement_sent']
 			);
 		}
@@ -729,9 +743,14 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		if (isset($this->request->get['presence_period_id']) && isset($this->request->post['selected']) && $this->validateExport()) {
 			$mail_error = [];
+			
+			foreach ($this->request->post['selected'] as $selected) {
+				$code = explode('-', $selected);
 
-			foreach ($this->request->post['selected'] as $customer_id) {
-				$error_status = $this->model_payroll_payroll_release->sendStatement($this->request->get['presence_period_id'], $customer_id);
+				$presence_period_id = $code[0];
+				$customer_id = $code[1];
+
+				$error_status = $this->model_payroll_payroll_release->sendStatement($presence_period_id, $customer_id);
 
 				if ($error_status) {
 					$mail_error[] = $error_status;
@@ -959,34 +978,62 @@ class ControllerPayrollPayrollRelease extends Controller
 			$output = '';
 			$sub_output = '';
 			$sum_grandtotal = 0;
+			$customer_total = 0;
+
+			$filter_selection = [];
+			$grand_results = [];
 
 			if (isset($this->request->post['selected'])) {
-				$filter_customer = implode(',', $this->request->post['selected']);
+				foreach ($this->request->post['selected'] as $selected) {
+					$code = explode('-', $selected);
+
+					$filter_selection[$code[0]][] = $code[1];
+				}
 			} else {
-				$filter_customer = '';
+				$filter_selection[$presence_period_id] = [];
 			}
 
-			$filter_data = array(
-				'method'      		=> 'CIMB',
-				'filter_customer'	=> $filter_customer
-			);
+			foreach ($filter_selection as $presence_period_id => $filter_customer) {
+				$filter_customer = implode(',', $filter_customer);
 
-			$customer_total = $this->model_payroll_payroll_release->getPayrollsCount($presence_period_id, $filter_data);
-			$results = $this->model_payroll_payroll_release->getPayrolls($presence_period_id, $filter_data);
+				$filter_data = array(
+					// 'method'      				=> 'CIMB',
+					'filter_customer'			=> $filter_customer,
+					// 'filter_released_status'	=> false
+				);
 
-			foreach ($results as $result) {
+				$results = $this->model_payroll_payroll_release->getUnreleasedPayrolls($presence_period_id, $filter_data);
+
+				$grand_results = array_merge($grand_results, $results);
+			}
+
+			foreach ($grand_results as $result) {
+				$this->model_payroll_payroll_release->setPayrollReleased($result['presence_period_id'], $result['customer_id']);
+
+				if ($result['payroll_method'] != 'CIMB') {
+					continue;
+				}
+
+				$customer_period = date('M_Y', strtotime($result['period']));
+
 				$earning = $result['gaji_pokok'] + $result['tunj_jabatan'] + $result['tunj_hadir'] + $result['tunj_pph'] + $result['total_uang_makan'];
 				$deduction = $result['pot_sakit'] + $result['pot_bolos'] + $result['pot_tunj_hadir'] + $result['pot_gaji_pokok'] + $result['pot_terlambat'];
 				$grandtotal = $earning - $deduction;
 
 				//Payroll Component
-				$component_info = $this->model_payroll_payroll->getPayrollComponentTotal($presence_period_id, $result['customer_id']);
+				$component_info = $this->model_payroll_payroll->getPayrollComponentTotal($result['presence_period_id'], $result['customer_id']);
 
 				$grandtotal += $component_info['grandtotal'];
+
+				if (!$grandtotal) {
+					continue;
+				}
+
 				$sum_grandtotal += $grandtotal;
+				$customer_total++;
 
 				$value = '';
-				$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $grandtotal . ',Payroll_' . $period . ',' . $result['email'] . ',,';
+				$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $grandtotal . ',Payroll_' . $customer_period . ',' . $result['email'] . ',,';
 
 				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
 				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
@@ -998,6 +1045,7 @@ class ControllerPayrollPayrollRelease extends Controller
 
 				$sub_output .= "\n" . $value;
 			}
+
 			$this->load->model('release/fund_account');
 			$fund_account_info = $this->model_release_fund_account->getFundAccount($period_info['fund_account_id']);
 
