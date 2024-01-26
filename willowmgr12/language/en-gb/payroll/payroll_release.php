@@ -21,6 +21,10 @@ $_['text_release_late'] 	  	 = 'Penggajian Tertunda Periode Sebelumnya';
 $_['text_release_present'] 	  	 = 'Penggajian Periode Ini';
 $_['text_success_send'] 	 	 = 'Success: Payroll Statements sending process has been completed!';
 $_['text_success']          	 = 'Success: You have modified payroll releases!';
+$_['text_pending']               = 'Ditunda';
+$_['text_released']              = 'Telah dirilis';
+$_['text_unreleased']            = 'Belum dirilis';
+$_['text_cancelled']             = 'Dibatalkan';
 
 //Code
 $_['code_full_overtime']		 = 'LH';
@@ -30,7 +34,7 @@ $_['column_acc_no']      	 	 = 'No. Rekening';
 $_['column_action']              = 'Action';
 $_['column_customer_department'] = 'Divisi';
 $_['column_customer_group']      = 'Jabatan';
-$_['column_date_release'] 	 	 = 'Tanggal Proses';
+$_['column_date_released'] 	 	 = 'Tanggal Proses';
 $_['column_email']      		 = 'Email';
 $_['column_fund_acc_name'] 	  	 = 'Sumber Dana';
 $_['column_fund_acc_no']      	 = 'No. Rekening';
@@ -55,14 +59,19 @@ $_['entry_customer_group']      = 'Jabatan';
 $_['entry_customer_department']	= 'Divisi';
 $_['entry_location']			= 'Lokasi Kerja';
 $_['entry_payroll_method']      = 'Metode/Bank';
+$_['entry_release_status'] 	 	= 'Status Rilis';
 $_['entry_statement_sent'] 	 	= 'Statement Sent';
 
 // Button
+$_['button_action']				= 'Action';
 $_['button_release']			= 'Release Payroll';
 $_['button_payroll_complete'] 	= 'Complete Payroll';
 $_['button_export_cimb'] 		= 'Export to CIMB';
 $_['button_send'] 				= 'Send Statement';
 $_['button_uncomplete'] 		= 'Completed & Archived. Click to Unarchive';
+$_['button_pending'] 			= 'Set Selected as Pending';
+$_['button_cancelled'] 			= 'Set Selected as Cancelled';
+$_['button_unreleased'] 		= 'Unset Selected Release Status';
 
 // Error
 $_['error_warning']				= 'Warning: Please check the form carefully for errors!';
@@ -75,3 +84,5 @@ $_['error_date_release']        = 'Warning: Tanggal proses harus diisi dan belum
 $_['error_not_found']           = 'Warning: Data tidak ditemukan!';
 $_['error_mail_sending_status'] = 'Some statement sending process got error!';
 $_['error_complete'] 	 		= 'Warning: Sebagian data payroll telah lebih dari %s bulan. Set Status menjadi Complete terlebih dahulu untuk mengurangi data aktif!';
+$_['error_status_released'] 	= '%s: Action gagal karena penggajian telah dirilis!';
+$_['error_mail_not_released']	= '%s: Gaji harus dirilis sebelum rincian gaji dikirimkan!';

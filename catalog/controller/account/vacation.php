@@ -59,7 +59,7 @@ class ControllerAccountVacation extends Controller
 		$active_time = date_diff(date_create($this->customer->getDateStart()), date_create());
 
 		$vacation_limit = !$active_time->y ? 0 : $this->config->get('payroll_setting_vacation_limit');
-		$vacation_count = !$vacation_limit ? 0 : $vacation_limit - $this->model_account_absence->getVacationsCount($result['customer_id']);
+		$vacation_count = !$vacation_limit ? 0 : $vacation_limit - $this->model_account_absence->getVacationsCount($this->customer->getId());
 
 		$data['vacation_count']	= sprintf($this->language->get('text_vacation_count'), $vacation_count, $vacation_limit);
 		

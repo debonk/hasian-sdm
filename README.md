@@ -7,9 +7,14 @@ MODUL: Customer > Presence Method
 MODIFY CONFIG
 
 MODIFY TABLE
-ALTER TABLE oc_payroll ADD date_released DATE NULL AFTER statement_sent;
-ALTER TABLE `oc_payroll_basic` CHANGE `date_added` `date_added` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP; 
-DROP VIEW oc_v_release;
+ALTER TABLE oc_payroll ADD status_released varchar(16) NULL AFTER statement_sent;
+UPDATE oc_payroll SET status_released='released' WHERE date_released is not null and status_released is null;
+DROP VIEW oc_v_payroll;
+
+3.1.0	26/01/2024
+Update Framework
+Release: Menambah fitur Release Pending, Cancelled.
+Customer: Add new, otomatis set date_end = 1 bulan dari date_start
 
 3.0.3	17/01/2024
 Payroll Release: Export CIMB hanya boleh 1x per karyawan

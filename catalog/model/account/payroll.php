@@ -53,7 +53,8 @@ class ModelAccountPayroll extends Model
 		}
 	}
 
-	public function getPayrollBasic($payroll_basic_id) {
+	public function getPayrollBasic($payroll_basic_id)
+	{
 		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "payroll_basic WHERE payroll_basic_id = '" . (int)$payroll_basic_id . "'";
 
 		$query = $this->db->query($sql);
@@ -61,7 +62,8 @@ class ModelAccountPayroll extends Model
 		return $query->row;
 	}
 
-	public function getPayrollBasicByCustomer($customer_id) {
+	public function getPayrollBasicByCustomer($customer_id)
+	{
 		$query = $this->db->query("SELECT DISTINCT payroll_basic_id FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "'");
 
 		$payroll_basic_data = $this->getPayrollBasic($query->row['payroll_basic_id']);
@@ -84,7 +86,7 @@ class ModelAccountPayroll extends Model
 
 		if ($this->checkPeriodStatus($presence_period_id, 'approved, released, completed')) {
 			$payroll_info = $this->getPayroll($presence_period_id, $customer_id);
-			
+
 			if (empty($payroll_info)) {
 				$payroll_info = [
 					'gaji_pokok'		=> 0,
@@ -132,14 +134,16 @@ class ModelAccountPayroll extends Model
 				'pot_tunj_hadir'	    => $payroll_info['pot_tunj_hadir'],
 				'pot_gaji_pokok'	    => $payroll_info['pot_gaji_pokok'],
 				'pot_terlambat'         => $payroll_info['pot_terlambat'],
-				'total_potongan'        => $payroll_info['pot_sakit'] + $payroll_info['pot_bolos'] + $payroll_info['pot_tunj_hadir'] + $payroll_info['pot_gaji_pokok'] + $payroll_info['pot_terlambat']
+				'total_potongan'        => $payroll_info['pot_sakit'] + $payroll_info['pot_bolos'] + $payroll_info['pot_tunj_hadir'] + $payroll_info['pot_gaji_pokok'] + $payroll_info['pot_terlambat'],
+				'status_released'       => $payroll_info['status_released']
 			);
 		} else {
 			return;
 		}
 	}
 
-	public function getPayrollComponents($presence_period_id, $customer_id = 0) {
+	public function getPayrollComponents($presence_period_id, $customer_id = 0)
+	{
 		$sql = "SELECT * FROM " . DB_PREFIX . "payroll_component_value WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
 		if ($customer_id) {
@@ -147,7 +151,7 @@ class ModelAccountPayroll extends Model
 		}
 
 		$sql .= " ORDER BY sort_order ASC";
-		
+
 		$query = $this->db->query($sql);
 
 		return $query->rows;

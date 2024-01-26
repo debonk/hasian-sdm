@@ -2,6 +2,43 @@
 class ControllerPayrollPayrollRelease extends Controller
 {
 	private $error = array();
+	private $filter_items = array(
+		'name',
+		'customer_group_id',
+		'customer_department_id',
+		'location_id',
+		'email',
+		'payroll_method_id',
+		'statement_sent',
+		'status_released'
+	);
+
+	private function urlFilter($excluded_item = null)
+	{
+		$url_filter = '';
+
+		foreach ($this->filter_items as $filter_item) {
+			if (isset($this->request->get['filter_' . $filter_item])) {
+				$url_filter .= '&filter_' . $filter_item . '=' . $this->request->get['filter_' . $filter_item];
+			}
+		}
+
+		if ($excluded_item != 'sort') {
+			if (isset($this->request->get['sort'])) {
+				$url_filter .= '&sort=' . $this->request->get['sort'];
+			}
+
+			if (isset($this->request->get['order'])) {
+				$url_filter .= '&order=' . $this->request->get['order'];
+			}
+		}
+
+		if (isset($this->request->get['page']) && $excluded_item != 'page') {
+			$url_filter .= '&page=' . $this->request->get['page'];
+		}
+
+		return $url_filter;
+	}
 
 	public function index()
 	{
@@ -62,24 +99,35 @@ class ControllerPayrollPayrollRelease extends Controller
 		$this->load->model('payroll/payroll_release');
 
 		$this->getList();
-
-		// if (isset($this->request->get['presence_period_id'])) {
-		// 	$presence_period_id = $this->request->get['presence_period_id'];
-		// } else {
-		// 	$presence_period_id = 0;
-		// }
-
-		// $payroll_period = $this->model_common_payroll->getPeriod($presence_period_id);
-		// if ($payroll_period && $payroll_period['fund_account_id']) {
-		// $this->getList();
-		// } else {
-		// 	return new Action('error/not_found');
-		// }
 	}
 
 	protected function getPeriod()
 	{
-		$this->db->createView('v_release');
+		$this->db->createView('v_payroll');
+
+		$language_items = array(
+			'heading_title',
+			'text_period_list',
+			'text_no_results',
+			'text_confirm',
+			'text_loading',
+			'column_period',
+			'column_payroll_status',
+			'column_fund_acc_name',
+			'column_fund_acc_no',
+			'column_sum_grandtotal',
+			'column_date_released',
+			'column_action',
+			'entry_payroll_status',
+			'entry_period',
+			'button_filter',
+			'button_release',
+			'button_uncomplete',
+			'button_view'
+		);
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
 
 		if (isset($this->request->get['filter_payroll_status'])) {
 			$filter_payroll_status = $this->request->get['filter_payroll_status'];
@@ -122,14 +170,14 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('payroll/payroll_release', 'token=' . $this->session->data['token'] . $url, true)
+			'href' => $this->url->link('payroll/payroll_release', 'token=' . $this->session->data['token'], true)
 		);
 
 		$filter_data = array(
-			'filter_payroll_status' => $filter_payroll_status,
-			'filter_period' 	   => $filter_period,
-			'start'                => ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit'                => $this->config->get('config_limit_admin')
+			'filter_payroll_status'	=> $filter_payroll_status,
+			'filter_period'			=> $filter_period,
+			'start'           		=> ($page - 1) * $this->config->get('config_limit_admin'),
+			'limit'           		=> $this->config->get('config_limit_admin')
 		);
 
 		$data['payroll_periods'] = array();
@@ -146,7 +194,7 @@ class ControllerPayrollPayrollRelease extends Controller
 			$view_status_check = $this->model_common_payroll->checkPeriodStatus($result['presence_period_id'], 'released, completed');
 			$complete_status_check = $this->model_common_payroll->checkPeriodStatus($result['presence_period_id'], 'completed');
 
-			$release_count = $this->model_payroll_payroll_release->getReleasesCount($result['presence_period_id']);
+			// $release_count = $this->model_payroll_payroll_release->getReleasesCount($result['presence_period_id']);
 
 			if ($result['date_release']) {
 				$date_release = date($this->language->get('date_format_jMY'), strtotime($result['date_release']));
@@ -170,39 +218,14 @@ class ControllerPayrollPayrollRelease extends Controller
 				'fund_acc_no' 		=> $result['bank_name'] . ' - ' . $result['acc_no'],
 				'total_payroll' 	=> $this->currency->format($result['total_payroll'], $this->config->get('config_currency')),
 				'date_release' 		=> $date_release,
-				'release_check' 	=> $release_status_check && $release_count,
+				// 'release_check' 	=> $release_status_check && $release_count,
+				'release_check' 	=> $release_status_check,
 				'release'          	=> $this->url->link('payroll/payroll_release/edit', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $result['presence_period_id'] . $url, true),
 				'view_check'		=> $view_status_check,
 				'view'          	=> $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $result['presence_period_id'], true),
 				'complete_check'	=> $complete_status_check
 			);
 		}
-
-		$language_items = array(
-			'heading_title',
-			'text_period_list',
-			'text_no_results',
-			'text_confirm',
-			'text_loading',
-			'column_period',
-			'column_payroll_status',
-			'column_fund_acc_name',
-			'column_fund_acc_no',
-			'column_sum_grandtotal',
-			'column_date_release',
-			'column_action',
-			'entry_payroll_status',
-			'entry_period',
-			'button_filter',
-			'button_release',
-			'button_uncomplete',
-			'button_view'
-		);
-		foreach ($language_items as $language_item) {
-			$data[$language_item] = $this->language->get($language_item);
-		}
-
-		$data['token'] = $this->session->data['token'];
 
 		$url = '';
 
@@ -214,15 +237,11 @@ class ControllerPayrollPayrollRelease extends Controller
 			$url .= '&filter_period=' . $this->request->get['filter_period'];
 		}
 
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
-
 		$pagination = new Pagination();
 		$pagination->total = $payroll_period_total;
 		$pagination->page = $page;
 		$pagination->limit = $this->config->get('config_limit_admin');
-		$pagination->url = $this->url->link('payroll/payroll', 'token=' . $this->session->data['token'] . $url . '&page={page}', true);
+		$pagination->url = $this->url->link('payroll/payroll_release', 'token=' . $this->session->data['token'] . $url . '&page={page}', true);
 
 		$data['pagination'] = $pagination->render();
 
@@ -234,6 +253,8 @@ class ControllerPayrollPayrollRelease extends Controller
 		$this->load->model('localisation/payroll_status');
 		$data['payroll_statuses'] = $this->model_localisation_payroll_status->getPayrollStatuses();
 
+		$data['token'] = $this->session->data['token'];
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -243,7 +264,7 @@ class ControllerPayrollPayrollRelease extends Controller
 
 	protected function getList()
 	{
-		$this->db->createView('v_release');
+		$this->db->createView('v_payroll');
 
 		$language_items = [
 			'heading_title',
@@ -268,7 +289,7 @@ class ControllerPayrollPayrollRelease extends Controller
 			'column_acc_no',
 			'column_payroll_method',
 			'column_net_salary',
-			'column_date_release',
+			'column_date_released',
 			'column_statement_sent',
 			'entry_name',
 			'entry_email',
@@ -276,13 +297,13 @@ class ControllerPayrollPayrollRelease extends Controller
 			'entry_customer_department',
 			'entry_location',
 			'entry_payroll_method',
+			'entry_release_status',
 			'entry_statement_sent',
 			'button_back',
 			'button_filter',
 			'button_payroll_complete',
 			'button_export_cimb',
-			'button_send_all',
-			'button_send'
+			'button_action'
 		];
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
@@ -290,46 +311,18 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		$presence_period_id = isset($this->request->get['presence_period_id']) ? $this->request->get['presence_period_id'] : 0;
 
-		if (isset($this->request->get['filter_name'])) {
-			$filter_name = $this->request->get['filter_name'];
-		} else {
-			$filter_name = null;
+		$filter = [];
+
+		foreach ($this->filter_items as $filter_item) {
+			if (isset($this->request->get['filter_' . $filter_item])) {
+				$filter[$filter_item] = $this->request->get['filter_' . $filter_item];
+			} else {
+				$filter[$filter_item] = null;
+			}
 		}
 
-		if (isset($this->request->get['filter_email'])) {
-			$filter_email = $this->request->get['filter_email'];
-		} else {
-			$filter_email = null;
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$filter_customer_group_id = $this->request->get['filter_customer_group_id'];
-		} else {
-			$filter_customer_group_id = null;
-		}
-
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$filter_customer_department_id = $this->request->get['filter_customer_department_id'];
-		} else {
-			$filter_customer_department_id = null;
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$filter_location_id = $this->request->get['filter_location_id'];
-		} else {
-			$filter_location_id = null;
-		}
-
-		if (isset($this->request->get['filter_payroll_method_id'])) {
-			$filter_payroll_method_id = $this->request->get['filter_payroll_method_id'];
-		} else {
-			$filter_payroll_method_id = null;
-		}
-
-		if (isset($this->request->get['filter_statement_sent'])) {
-			$filter_statement_sent = $this->request->get['filter_statement_sent'];
-		} else {
-			$filter_statement_sent = null;
+		if ($filter['status_released'] == 'pending') {
+			$filter['all_period'] = 'true';
 		}
 
 		if (isset($this->request->get['sort'])) {
@@ -350,48 +343,8 @@ class ControllerPayrollPayrollRelease extends Controller
 			$page = 1;
 		}
 
-		$url = '';
+		$url = $this->urlFilter();
 		$url .= '&presence_period_id=' . $presence_period_id;
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_email'])) {
-			$url .= '&filter_email=' . urlencode(html_entity_decode($this->request->get['filter_email'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
-
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
-
-		if (isset($this->request->get['filter_payroll_method_id'])) {
-			$url .= '&filter_payroll_method_id=' . $this->request->get['filter_payroll_method_id'];
-		}
-
-		if (isset($this->request->get['filter_statement_sent'])) {
-			$url .= '&filter_statement_sent=' . $this->request->get['filter_statement_sent'];
-		}
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
-
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
 
 		$data['breadcrumbs'] = array();
 
@@ -410,27 +363,23 @@ class ControllerPayrollPayrollRelease extends Controller
 			'href' => $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $presence_period_id, true)
 		);
 
-		$data['export_cimb'] = $this->url->link('payroll/payroll_release/exportCimb', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $presence_period_id, true);
+		$data['export_cimb'] = $this->url->link('payroll/payroll_release/exportCimb', 'token=' . $this->session->data['token'] . $url, true);
 		$data['send'] = $this->url->link('payroll/payroll_release/send', 'token=' . $this->session->data['token'] . $url, true);
 		$data['back'] = $this->url->link('payroll/payroll_release', 'token=' . $this->session->data['token'], true);
+
+		// $action_href = $this->url->link('payroll/payroll_release/action', 'token=' . $this->session->data['token'] . $url, true);
+
+		$limit = $this->config->get('config_limit_admin');
 
 		$data['payroll_releases'] = [];
 
 		$filter_data = array(
-			'filter_name'	   	   			=> $filter_name,
-			'filter_email'	   	   			=> $filter_email,
-			'filter_customer_group_id'		=> $filter_customer_group_id,
-			'filter_customer_department_id'	=> $filter_customer_department_id,
-			'filter_location_id'			=> $filter_location_id,
-			'filter_payroll_method_id'		=> $filter_payroll_method_id,
-			'filter_statement_sent'			=> $filter_statement_sent,
-			'sort'                 			=> $sort,
-			'order'                			=> $order,
-			'start'                			=> ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit'                			=> $this->config->get('config_limit_admin')
+			'filter'  	=> $filter,
+			'sort'  	=> $sort,
+			'order'		=> $order,
+			'start' 	=> ($page - 1) * $limit,
+			'limit' 	=> $limit
 		);
-
-		$payroll_release_count = $this->model_payroll_payroll_release->getReleasesCount($presence_period_id, $filter_data);
 
 		$results = $this->model_payroll_payroll_release->getReleases($presence_period_id, $filter_data);
 
@@ -445,6 +394,14 @@ class ControllerPayrollPayrollRelease extends Controller
 				$label_period = '';
 			}
 
+			if ($result['date_released']) {
+				$date_released = date($this->language->get('date_format_jMY'), strtotime($result['date_released']));
+			} elseif (!$result['status_released']) {
+				$date_released = '-';
+			} else {
+				$date_released = $this->language->get('text_' . $result['status_released']);
+			}
+
 			$data['payroll_releases'][$label][] = array(
 				'customer_id' 			=> $result['customer_id'],
 				'customer_code'			=> $result['presence_period_id'] . '-' . $result['customer_id'],
@@ -457,15 +414,16 @@ class ControllerPayrollPayrollRelease extends Controller
 				'payroll_method'		=> $result['payroll_method'],
 				'acc_no' 				=> $result['acc_no'],
 				'grandtotal'    		=> $this->currency->format($grandtotal, $this->config->get('config_currency')),
-				'date_released' 		=> $result['date_released'] ? date($this->language->get('date_format_jMY'), strtotime($result['date_released'])) : '-',
+				'date_released' 		=> $date_released,
+				'text_class' 			=> $result['status_released'] == 'cancelled' ? 'text-danger' : '',
 				'statement_sent' 		=> $result['statement_sent']
 			);
 		}
 
+		$payroll_release_count = $this->model_payroll_payroll_release->getReleasesCount($presence_period_id, $filter_data);
+
 		//Status Check 
 		$data['released_status_check'] = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'released');
-
-		$data['token'] = $this->session->data['token'];
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -487,45 +445,14 @@ class ControllerPayrollPayrollRelease extends Controller
 			$data['selected'] = array();
 		}
 
-		$url = '';
+		$url = $this->urlFilter('sort');
+
 		$url .= '&presence_period_id=' . $presence_period_id;
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_email'])) {
-			$url .= '&filter_email=' . urlencode(html_entity_decode($this->request->get['filter_email'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
-
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
-
-		if (isset($this->request->get['filter_payroll_method_id'])) {
-			$url .= '&filter_payroll_method_id=' . $this->request->get['filter_payroll_method_id'];
-		}
-
-		if (isset($this->request->get['filter_statement_sent'])) {
-			$url .= '&filter_statement_sent=' . $this->request->get['filter_statement_sent'];
-		}
 
 		if ($order == 'ASC') {
 			$url .= '&order=DESC';
 		} else {
 			$url .= '&order=ASC';
-		}
-
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
 		}
 
 		$data['sort_nip'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=nip' . $url, true);
@@ -537,65 +464,26 @@ class ControllerPayrollPayrollRelease extends Controller
 		$data['sort_acc_no'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=acc_no' . $url, true);
 		$data['sort_payroll_method'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=payroll_method' . $url, true);
 		$data['sort_net_salary'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=net_salary' . $url, true);
+		$data['sort_date_released'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=date_released' . $url, true);
 		$data['sort_statement_sent'] = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&sort=statement_sent' . $url, true);
 
-		$url = '';
+		$url = $this->urlFilter('page');
+
 		$url .= '&presence_period_id=' . $presence_period_id;
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_email'])) {
-			$url .= '&filter_email=' . urlencode(html_entity_decode($this->request->get['filter_email'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
-
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
-
-		if (isset($this->request->get['filter_payroll_method_id'])) {
-			$url .= '&filter_payroll_method_id=' . $this->request->get['filter_payroll_method_id'];
-		}
-
-		if (isset($this->request->get['filter_statement_sent'])) {
-			$url .= '&filter_statement_sent=' . $this->request->get['filter_statement_sent'];
-		}
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
 
 		$pagination = new Pagination();
 		$pagination->total = $payroll_release_count;
 		$pagination->page = $page;
-		$pagination->limit = $this->config->get('config_limit_admin');
+		$pagination->limit = $limit;
 		$pagination->url = $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . $url . '&page={page}', true);
 
 		$data['pagination'] = $pagination->render();
 
-		$data['results'] = sprintf($this->language->get('text_pagination'), ($payroll_release_count) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($payroll_release_count - $this->config->get('config_limit_admin'))) ? $payroll_release_count : ((($page - 1) * $this->config->get('config_limit_admin')) + $this->config->get('config_limit_admin')), $payroll_release_count, ceil($payroll_release_count / $this->config->get('config_limit_admin')));
+		$data['results'] = sprintf($this->language->get('text_pagination'), ($payroll_release_count) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($payroll_release_count - $limit)) ? $payroll_release_count : ((($page - 1) * $limit) + $limit), $payroll_release_count, ceil($payroll_release_count / $limit));
 
 		$data['presence_period_id'] = $presence_period_id;
-		$data['filter_name'] = $filter_name;
-		$data['filter_email'] = $filter_email;
-		$data['filter_customer_group_id'] = $filter_customer_group_id;
-		$data['filter_customer_department_id'] = $filter_customer_department_id;
-		$data['filter_location_id'] = $filter_location_id;
-		$data['filter_payroll_method_id'] = $filter_payroll_method_id;
-		$data['filter_statement_sent'] = $filter_statement_sent;
+		$data['filter_items'] = json_encode($this->filter_items);
+		$data['filter'] = $filter;
 		$data['sort'] = $sort;
 		$data['order'] = $order;
 
@@ -611,9 +499,46 @@ class ControllerPayrollPayrollRelease extends Controller
 		$this->load->model('localisation/payroll_method');
 		$data['payroll_methods'] = $this->model_localisation_payroll_method->getPayrollMethods();
 
-		//		$this->load->model('setting/store');
+		$data['release_statuses'] = [];
 
-		//		$data['stores'] = $this->model_setting_store->getStores();
+		$release_statuses = [
+			'unreleased',
+			'released',
+			'pending',
+			'cancelled'
+		];
+
+		foreach ($release_statuses as $release_status) {
+			$data['release_statuses'][] = [
+				'code'	=> $release_status,
+				'text'	=> $this->language->get('text_' . $release_status)
+			];
+		}
+
+		$url = $this->urlFilter();
+		$url .= '&presence_period_id=' . $presence_period_id;
+		
+		$data['actions'] = [];
+
+		$actions = [
+			'pending',
+			'cancelled',
+			'send',
+		];
+
+		if ($this->user->hasPermission('bypass', 'payroll/payroll_release')) {
+			$actions[] = 'unreleased';
+		}
+
+		foreach ($actions as $action) {
+			$data['actions'][] = [
+				'href'	=> $this->url->link('payroll/payroll_release/action', 'token=' . $this->session->data['token'] . '&action=' . $action . $url, true),
+				'text'	=> $this->language->get('button_' . $action)
+			];
+		}
+		
+		$data['url'] = $url;
+		$data['token'] = $this->session->data['token'];
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -624,7 +549,7 @@ class ControllerPayrollPayrollRelease extends Controller
 
 	protected function getForm()
 	{
-		$this->db->createView('v_release');
+		$this->db->createView('v_payroll');
 
 		$language_items = array(
 			'heading_title',
@@ -741,16 +666,22 @@ class ControllerPayrollPayrollRelease extends Controller
 		$this->load->model('common/payroll');
 		$this->load->model('payroll/payroll_release');
 
-		if (isset($this->request->get['presence_period_id']) && isset($this->request->post['selected']) && $this->validateExport()) {
+		if (isset($this->request->get['presence_period_id']) && isset($this->request->post['selected']) && $this->validateAction()) {
 			$mail_error = [];
-			
+
 			foreach ($this->request->post['selected'] as $selected) {
 				$code = explode('-', $selected);
 
 				$presence_period_id = $code[0];
 				$customer_id = $code[1];
 
-				$error_status = $this->model_payroll_payroll_release->sendStatement($presence_period_id, $customer_id);
+				$release_info = $this->model_payroll_payroll_release->getRelease($presence_period_id, $customer_id);
+
+				if (!is_null($release_info['date_released'])) {
+					$error_status = $this->model_payroll_payroll_release->sendStatement($presence_period_id, $customer_id);
+				} else {
+					$error_status = sprintf($this->language->get('error_mail_not_released'), $release_info['name']);
+				}
 
 				if ($error_status) {
 					$mail_error[] = $error_status;
@@ -764,43 +695,8 @@ class ControllerPayrollPayrollRelease extends Controller
 				$this->session->data['success'] .= '<br>' . implode('<br>', $mail_error);
 			}
 
-			$url = '';
-
-			if (isset($this->request->get['presence_period_id'])) {
-				$url .= '&presence_period_id=' . $this->request->get['presence_period_id'];
-			}
-
-			if (isset($this->request->get['filter_name'])) {
-				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-			}
-
-			if (isset($this->request->get['filter_email'])) {
-				$url .= '&filter_email=' . urlencode(html_entity_decode($this->request->get['filter_email'], ENT_QUOTES, 'UTF-8'));
-			}
-
-			if (isset($this->request->get['filter_customer_group_id'])) {
-				$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-			}
-
-			if (isset($this->request->get['filter_customer_department_id'])) {
-				$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-			}
-
-			if (isset($this->request->get['filter_location_id'])) {
-				$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-			}
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
-			}
+			$url = $this->urlFilter();
+			$url .= '&presence_period_id=' . $presence_period_id;
 
 			$this->response->redirect($this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . $url, true));
 		}
@@ -815,8 +711,6 @@ class ControllerPayrollPayrollRelease extends Controller
 		$this->load->model('common/payroll');
 		$this->load->model('payroll/payroll_release');
 
-		$presence_period_id = $this->request->get['presence_period_id'];
-
 		$language_items = array(
 			'text_release_info',
 			'text_fund_acc_no',
@@ -828,6 +722,25 @@ class ControllerPayrollPayrollRelease extends Controller
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
 		}
+
+		$presence_period_id = $this->request->get['presence_period_id'];
+
+		$filter = [];
+
+		foreach ($this->filter_items as $filter_item) {
+			if (isset($this->request->get['filter_' . $filter_item])) {
+				$filter[$filter_item] = $this->request->get['filter_' . $filter_item];
+			} else {
+				$filter[$filter_item] = null;
+			}
+		}
+
+		if ($filter['status_released'] == 'pending') {
+			$filter['all_period'] = 'true';
+		}
+
+		$filter_data = [];
+		$filter_data['filter'] = $filter;
 
 		//Text Period
 		$payroll_period = $this->model_common_payroll->getPeriod($presence_period_id);
@@ -841,8 +754,8 @@ class ControllerPayrollPayrollRelease extends Controller
 			$data['fund_email'] = $fund_account_info['email'];
 			$data['fund_date_release'] = date($this->language->get('date_format_jMY'), strtotime($payroll_period['date_release']));
 
-			$method_releases = $this->model_payroll_payroll_release->getMethodReleases($presence_period_id);
-
+			$method_releases = $this->model_payroll_payroll_release->getMethodsSummary($presence_period_id, $filter_data);
+	
 			$data['method_releases'] = array();
 			foreach ($method_releases as $method_release) {
 				$data['method_releases'][] = array(
@@ -858,7 +771,7 @@ class ControllerPayrollPayrollRelease extends Controller
 
 	public function completePayroll()
 	{
-		$this->db->createView('v_release');
+		$this->db->createView('v_payroll');
 
 		$this->load->language('payroll/payroll_release');
 
@@ -969,7 +882,15 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 
-		if (!empty($period_info) && $this->validateExport()) {
+		if (!empty($period_info) && $this->validateAction()) {
+			foreach ($this->filter_items as $filter_item) {
+				if (isset($this->request->get['filter_' . $filter_item])) {
+					$filter[$filter_item] = $this->request->get['filter_' . $filter_item];
+				} else {
+					$filter[$filter_item] = null;
+				}
+			}
+
 			$period = date('M_Y', strtotime($period_info['period']));
 
 			$currency_code = $this->config->get('config_currency');
@@ -991,43 +912,42 @@ class ControllerPayrollPayrollRelease extends Controller
 				}
 			} else {
 				$filter_selection[$presence_period_id] = [];
+
+				$filter['status_released'] = 'unreleased';
 			}
 
-			foreach ($filter_selection as $presence_period_id => $filter_customer) {
-				$filter_customer = implode(',', $filter_customer);
+			foreach ($filter_selection as $presence_period_id => $filter_customers) {
+				$filter_customers = implode(',', $filter_customers);
 
 				$filter_data = array(
-					// 'method'      				=> 'CIMB',
-					'filter_customer'			=> $filter_customer,
-					// 'filter_released_status'	=> false
+					'filter'  	=> $filter,
 				);
 
-				$results = $this->model_payroll_payroll_release->getUnreleasedPayrolls($presence_period_id, $filter_data);
+				$filter_data['filter']['customer_ids'] = $filter_customers;
+
+				$results = $this->model_payroll_payroll_release->getReleases($presence_period_id, $filter_data);
 
 				$grand_results = array_merge($grand_results, $results);
 			}
-
+			
 			foreach ($grand_results as $result) {
-				$this->model_payroll_payroll_release->setPayrollReleased($result['presence_period_id'], $result['customer_id']);
+				if ((!is_null($result['status_released']) && $result['status_released'] != 'pending') || $result['date_released']) {
+					continue;
+				}
+
+				$this->model_payroll_payroll_release->editPayrollReleaseStatus($result['presence_period_id'], $result['customer_id'], 'released', $date_release);
 
 				if ($result['payroll_method'] != 'CIMB') {
 					continue;
 				}
 
-				$customer_period = date('M_Y', strtotime($result['period']));
-
-				$earning = $result['gaji_pokok'] + $result['tunj_jabatan'] + $result['tunj_hadir'] + $result['tunj_pph'] + $result['total_uang_makan'];
-				$deduction = $result['pot_sakit'] + $result['pot_bolos'] + $result['pot_tunj_hadir'] + $result['pot_gaji_pokok'] + $result['pot_terlambat'];
-				$grandtotal = $earning - $deduction;
-
-				//Payroll Component
-				$component_info = $this->model_payroll_payroll->getPayrollComponentTotal($result['presence_period_id'], $result['customer_id']);
-
-				$grandtotal += $component_info['grandtotal'];
+				$grandtotal = $result['net_salary'] + $result['component'];
 
 				if (!$grandtotal) {
 					continue;
 				}
+
+				$customer_period = date('M_Y', strtotime($result['period']));
 
 				$sum_grandtotal += $grandtotal;
 				$customer_total++;
@@ -1071,10 +991,74 @@ class ControllerPayrollPayrollRelease extends Controller
 			$this->response->addheader('Content-Transfer-Encoding: binary');
 			$this->response->setOutput($output);
 			// echo $output;
+
 		} else {
 
 			$this->info();
 		}
+	}
+
+	public function action()
+	{
+		$this->load->language('payroll/payroll_release');
+
+		$this->document->setTitle($this->language->get('heading_title'));
+
+		$this->load->model('common/payroll');
+		$this->load->model('payroll/payroll_release');
+
+		if (isset($this->request->get['presence_period_id']) && isset($this->request->get['action']) && isset($this->request->post['selected']) && $this->validateAction()) {
+			$error_action = [];
+
+			foreach ($this->request->post['selected'] as $selected) {
+				$code = explode('-', $selected);
+
+				$presence_period_id = $code[0];
+				$customer_id = $code[1];
+
+				$release_info = $this->model_payroll_payroll_release->getRelease($presence_period_id, $customer_id);
+
+				switch ($this->request->get['action']) {
+					case 'pending':
+					case 'cancelled':
+						if ($release_info['status_released'] == 'released' || !empty($release_info['date_released'])) {
+							$error_action[] = sprintf($this->language->get('error_status_released'), $release_info['name']);
+
+							break;
+						}
+
+						$this->model_payroll_payroll_release->editPayrollReleaseStatus($presence_period_id, $customer_id, $this->request->get['action']);
+
+						break;
+
+					case 'unreleased':
+						$this->model_payroll_payroll_release->editPayrollReleaseStatus($presence_period_id, $customer_id, $this->request->get['action']);
+
+						break;
+
+					case 'send':
+						$this->send();
+
+						break;
+
+					default:
+						break;
+				}
+			}
+
+			$this->session->data['success'] = $this->language->get('text_success');
+
+			if ($error_action) {
+				$this->session->data['success'] .= '<br>' . implode('<br>', $error_action);
+			}
+
+			$url = $this->urlFilter();
+			$url .= '&presence_period_id=' . $presence_period_id;
+
+			$this->response->redirect($this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . $url, true));
+		}
+
+		$this->getList();
 	}
 
 	protected function validateForm()
@@ -1110,7 +1094,7 @@ class ControllerPayrollPayrollRelease extends Controller
 		return !$this->error;
 	}
 
-	protected function validateExport()
+	protected function validateAction()
 	{
 		if (!$this->user->hasPermission('modify', 'payroll/payroll_release')) {
 			$this->error['warning'] = $this->language->get('error_permission');
@@ -1130,6 +1114,12 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		if (!$payroll_release_count) {
 			$this->error['warning'] = $this->language->get('error_not_found');
+		}
+
+		if (isset($this->request->get['action']) && $this->request->get['action'] == 'unreleased') {
+			if (!$this->user->hasPermission('bypass', 'payroll/payroll_release')) {
+				$this->error['warning'] = $this->language->get('error_permission');
+			}
 		}
 
 		return !$this->error;

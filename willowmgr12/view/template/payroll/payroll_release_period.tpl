@@ -92,7 +92,7 @@
 										<?= $column_sum_grandtotal; ?>
 									</td>
 									<td class="text-left">
-										<?= $column_date_release; ?>
+										<?= $column_date_released; ?>
 									</td>
 									<td class="text-right">
 										<?= $column_action; ?>

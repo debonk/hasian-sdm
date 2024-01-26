@@ -28,3 +28,6 @@ $_['text_incentive']    	= 'Pendapatan Lain';
 $_['text_cutoff']    		= 'Potongan Lain';
 $_['text_overtime']			= 'Lembur';
 $_['text_dayoff']			= 'DRM';
+
+// Error
+$_['error_no_result']		= 'Warning: Data penggajian tidak ditemukan atau belum dirilis!<br>Silahkan menghubungi Admin HRD.';

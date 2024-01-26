@@ -9,24 +9,34 @@
           class="btn btn-warning"><i class="fa fa-check"></i>
           <?= $button_payroll_complete; ?>
         </button>
-        <button type="button" class="btn btn-default"
+        <button type="button" class="btn btn-danger"
           onclick="confirm('<?= $text_confirm_release; ?>') ? $('#form-payroll-release-list').attr('action', '<?= $export_cimb; ?>').submit() : false;"><i
             class="fa fa-upload"></i>
           <?= $button_export_cimb; ?>
         </button>
-        <button type="button" id="button-send" data-toggle="tooltip" title="<?= $button_send; ?>"
-          class="btn btn-default"
-          onclick="confirm('<?= $text_confirm; ?>') ? $('#form-payroll-release-list').submit() : false;"><i
-            class="fa fa-envelope"></i></button>
         <?php } else { ?>
         <button type="button" class="btn btn-warning disabled"><i class="fa fa-check"></i>
           <?= $button_payroll_complete; ?>
         </button>
-        <button type="button" class="btn btn-default disabled"><i class="fa fa-upload"></i>
+        <button type="button" class="btn btn-danger disabled"><i class="fa fa-upload"></i>
           <?= $button_export_cimb; ?>
         </button>
-        <button type="button" class="btn btn-default disabled"><i class="fa fa-envelope"></i></button>
         <?php } ?>
+        <span class="dropdown">
+          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i
+              class="fa fa-tasks"></i>
+            <?= $button_action; ?>
+          </button>
+          <ul class="dropdown-menu pull-right" id="menu-action">
+            <?php foreach ($actions as $action) { ?>
+            <?php $href = $action['href'] ?>
+            <li><a href="#"
+                onclick="confirm('<?= $text_confirm; ?>') ? $('#form-payroll-release-list').attr('action', '<?= $href; ?>').submit() : false;">
+                <?= $action['text']; ?>
+              </a></li>
+            <?php } ?>
+          </ul>
+        </span>
         <a href="<?= $back; ?>" data-toggle="tooltip" title="<?= $button_back; ?>" class="btn btn-default"><i
             class="fa fa-reply"></i></a>
       </div>
@@ -43,15 +53,15 @@
     </div>
   </div>
   <div class="container-fluid">
-    <?php if ($success) { ?>
-    <div class="alert alert-success"><i class="fa fa-check-circle"></i>
-      <?= $success; ?>
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-    </div>
-    <?php } ?>
     <?php if ($error_warning) { ?>
     <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>
       <?= $error_warning; ?>
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    <?php } ?>
+    <?php if ($success) { ?>
+    <div class="alert alert-success"><i class="fa fa-check-circle"></i>
+      <?= $success; ?>
       <button type="button" class="close" data-dismiss="alert">&times;</button>
     </div>
     <?php } ?>
@@ -67,143 +77,149 @@
       </div>
       <div class="panel-body">
         <div class="well">
-          <div class="row">
-            <div class="col-sm-3">
+          <div class="row flex-container">
+            <div class="flex-item">
               <div class="form-group">
                 <label class="control-label" for="input-name">
                   <?= $entry_name; ?>
                 </label>
-                <input type="text" name="filter_name" value="<?= $filter_name; ?>" placeholder="<?= $entry_name; ?>"
+                <input type="text" name="filter[name]" value="<?= $filter['name']; ?>" placeholder="<?= $entry_name; ?>"
                   id="input-name" class="form-control" />
               </div>
-              <div class="form-group">
-                <label class="control-label" for="input-email">
-                  <?= $entry_email; ?>
-                </label>
-                <input type="text" name="filter_email" value="<?= $filter_email; ?>" placeholder="<?= $entry_email; ?>"
-                  id="input-email" class="form-control" />
-              </div>
             </div>
-            <div class="col-sm-3">
+            <div class="flex-item">
               <div class="form-group">
                 <label class="control-label" for="input-customer-group">
                   <?= $entry_customer_group; ?>
                 </label>
-                <select name="filter_customer_group_id" id="input-customer-group" class="form-control">
-                  <option value="*">
+                <select name="filter[customer_group_id]" id="input-customer-group" class="form-control">
+                  <option value="">
                     <?= $text_all; ?>
                   </option>
                   <?php foreach ($customer_groups as $customer_group) { ?>
-                  <?php if ($customer_group['customer_group_id'] == $filter_customer_group_id) { ?>
-                  <option value="<?= $customer_group['customer_group_id']; ?>" selected="selected">
+                  <option value="<?= $customer_group['customer_group_id']; ?>"
+                    <?=$customer_group['customer_group_id']==$filter['customer_group_id'] ? 'selected' : '' ; ?>>
                     <?= $customer_group['name']; ?>
                   </option>
-                  <?php } else { ?>
-                  <option value="<?= $customer_group['customer_group_id']; ?>">
-                    <?= $customer_group['name']; ?>
-                  </option>
-                  <?php } ?>
                   <?php } ?>
                 </select>
               </div>
+            </div>
+            <div class="flex-item">
               <div class="form-group">
                 <label class="control-label" for="input-customer-department">
                   <?= $entry_customer_department; ?>
                 </label>
-                <select name="filter_customer_department_id" id="input-customer-department" class="form-control">
-                  <option value="*">
+                <select name="filter[customer_department_id]" id="input-customer-department" class="form-control">
+                  <option value="">
                     <?= $text_all; ?>
                   </option>
                   <?php foreach ($customer_departments as $customer_department) { ?>
-                  <?php if ($customer_department['customer_department_id'] == $filter_customer_department_id) { ?>
-                  <option value="<?= $customer_department['customer_department_id']; ?>" selected="selected">
+                  <option value="<?= $customer_department['customer_department_id']; ?>"
+                    <?=$customer_department['customer_department_id']==$filter['customer_department_id'] ? 'selected'
+                    : '' ; ?>>
                     <?= $customer_department['name']; ?>
                   </option>
-                  <?php } else { ?>
-                  <option value="<?= $customer_department['customer_department_id']; ?>">
-                    <?= $customer_department['name']; ?>
-                  </option>
-                  <?php } ?>
                   <?php } ?>
                 </select>
               </div>
             </div>
-            <div class="col-sm-3">
+            <div class="flex-item">
               <div class="form-group">
                 <label class="control-label" for="input-location">
                   <?= $entry_location; ?>
                 </label>
-                <select name="filter_location_id" id="input-location" class="form-control">
-                  <option value="*">
-                    <?= $text_all; ?>
+                <select name="filter[location_id]" id="input-location" class="form-control">
+                  <option value="">
+                    <?= $text_all ?>
                   </option>
                   <?php foreach ($locations as $location) { ?>
-                  <?php if ($location['location_id'] == $filter_location_id) { ?>
-                  <option value="<?= $location['location_id']; ?>" selected="selected">
+                  <option value="<?= $location['location_id']; ?>" <?=$location['location_id']==$filter['location_id']
+                    ? 'selected' : '' ; ?>>
                     <?= $location['name']; ?>
                   </option>
-                  <?php } else { ?>
-                  <option value="<?= $location['location_id']; ?>">
-                    <?= $location['name']; ?>
-                  </option>
-                  <?php } ?>
-                  <?php } ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="control-label" for="input-payroll-method">
-                  <?= $entry_payroll_method; ?>
-                </label>
-                <select name="filter_payroll_method_id" id="input-payroll-method" class="form-control">
-                  <option value="*">
-                    <?= $text_all; ?>
-                  </option>
-                  <?php foreach ($payroll_methods as $payroll_method) { ?>
-                  <?php if ($payroll_method['payroll_method_id'] == $filter_payroll_method_id) { ?>
-                  <option value="<?= $payroll_method['payroll_method_id']; ?>" selected="selected">
-                    <?= $payroll_method['name']; ?>
-                  </option>
-                  <?php } else { ?>
-                  <option value="<?= $payroll_method['payroll_method_id']; ?>">
-                    <?= $payroll_method['name']; ?>
-                  </option>
-                  <?php } ?>
                   <?php } ?>
                 </select>
               </div>
             </div>
-            <div class="col-sm-3">
+          </div>
+          <div class="row flex-container">
+            <div class="flex-item">
               <div class="form-group">
-                <label class="control-label" for="input-statement-sent">
-                  <?= $entry_statement_sent; ?>
+                <label class="control-label" for="input-email">
+                  <?= $entry_email; ?>
                 </label>
-                <select name="filter_statement_sent" id="input-statement-sent" class="form-control">
+                <input type="text" name="filter[email]" value="<?= $filter['email']; ?>"
+                  placeholder="<?= $entry_email; ?>" id="input-email" class="form-control" />
+              </div>
+            </div>
+            <div class="flex-item">
+              <div class="form-group">
+                <label class="control-label" for="input-payroll-method">
+                  <?= $entry_payroll_method; ?>
+                </label>
+                <select name="filter[payroll_method_id]" id="input-payroll-method" class="form-control">
                   <option value="*">
                     <?= $text_all; ?>
                   </option>
-                  <?php if ($filter_statement_sent) { ?>
-                  <option value="1" selected="selected">
-                    <?= $text_yes; ?>
-                  </option>
-                  <?php } else { ?>
-                  <option value="1">
-                    <?= $text_yes; ?>
-                  </option>
-                  <?php } ?>
-                  <?php if (!$filter_statement_sent && !is_null($filter_statement_sent)) { ?>
-                  <option value="0" selected="selected">
-                    <?= $text_no; ?>
-                  </option>
-                  <?php } else { ?>
-                  <option value="0">
-                    <?= $text_no; ?>
+                  <?php foreach ($payroll_methods as $payroll_method) { ?>
+                  <option value="<?= $payroll_method['payroll_method_id']; ?>"
+                    <?=($payroll_method['payroll_method_id']==$filter['payroll_method_id']) ? 'selected' : '' ; ?>>
+                    <?= $payroll_method['name']; ?>
                   </option>
                   <?php } ?>
                 </select>
               </div>
-              <button type="button" id="button-filter" class="btn btn-primary pull-right"><i class="fa fa-search"></i>
-                <?= $button_filter; ?>
-              </button>
+            </div>
+            <div class="flex-item">
+              <div class="form-group">
+                <label class="control-label" for="input-release-status">
+                  <?= $entry_release_status; ?>
+                </label>
+                <select name="filter[status_released]" id="input-release-status" class="form-control">
+                  <option value="*">
+                    <?= $text_all ?>
+                  </option>
+                  <?php foreach ($release_statuses as $release_status) { ?>
+                  <option value="<?= $release_status['code']; ?>"
+                    <?=($release_status['code']==$filter['status_released']) ? 'selected' : '' ; ?>>
+                    <?= $release_status['text']; ?>
+                  </option>
+                  <?php } ?>
+                </select>
+              </div>
+            </div>
+            <div class="flex-item">
+              <div class="form-group">
+                <label class="control-label" for="input-statement-sent">
+                  <?= $entry_statement_sent; ?>
+                </label>
+                <select name="filter[statement_sent]" id="input-statement-sent" class="form-control">
+                  <option value="*">
+                    <?= $text_all; ?>
+                  </option>
+                  <option value="1" <?=($filter['statement_sent']) ? 'selected' : '' ; ?>>
+                    <?= $text_yes; ?>
+                  </option>
+                  <option value="0" <?=(!$filter['statement_sent'] && !is_null($filter['statement_sent'])) ? 'selected'
+                    : '' ; ?>>
+                    <?= $text_no; ?>
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <div class="form-group">
+                <label>
+                  <?= '&nbsp;'; ?>
+                </label>
+                <div>
+                  <button type="button" id="button-filter" class="btn btn-primary pull-right"><i
+                      class="fa fa-search"></i>
+                    <?= $button_filter; ?>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -215,117 +231,67 @@
                   <td style="width: 1px;" class="text-center"><input type="checkbox"
                       onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
                   <td>
-                    <?php if ($sort == 'nip') { ?>
-                    <a href="<?= $sort_nip; ?>" class="<?= strtolower($order); ?>">
+                    <a href="<?= $sort_nip; ?>" <?=($sort=='nip' ) ? 'class="' . strtolower($order) . '"' : '' ; ?>>
                       <?= $column_nip; ?>
                     </a>
-                    <?php } else { ?>
-                    <a href="<?= $sort_nip; ?>">
-                      <?= $column_nip; ?>
-                    </a>
-                    <?php } ?>
                   </td>
                   <td>
-                    <?php if ($sort == 'name') { ?>
-                    <a href="<?= $sort_name; ?>" class="<?= strtolower($order); ?>">
+                    <a href="<?= $sort_name; ?>" <?=($sort=='name' ) ? 'class="' . strtolower($order) . '"' : '' ; ?>>
                       <?= $column_name; ?>
                     </a>
-                    <?php } else { ?>
-                    <a href="<?= $sort_name; ?>">
-                      <?= $column_name; ?>
-                    </a>
-                    <?php } ?>
                   </td>
                   <td>
-                    <?php if ($sort == 'email') { ?>
-                    <a href="<?= $sort_email; ?>" class="<?= strtolower($order); ?>">
+                    <a href="<?= $sort_email; ?>" <?=($sort=='email' ) ? 'class="' . strtolower($order) . '"' : '' ; ?>>
                       <?= $column_email; ?>
                     </a>
-                    <?php } else { ?>
-                    <a href="<?= $sort_email; ?>">
-                      <?= $column_email; ?>
-                    </a>
-                    <?php } ?>
                   </td>
                   <td>
-                    <?php if ($sort == 'customer_group') { ?>
-                    <a href="<?= $sort_customer_group; ?>" class="<?= strtolower($order); ?>">
+                    <a href="<?= $sort_customer_group; ?>" <?=($sort=='customer_group' ) ? 'class="' .
+                      strtolower($order) . '"' : '' ; ?>>
                       <?= $column_customer_group; ?>
                     </a>
-                    <?php } else { ?>
-                    <a href="<?= $sort_customer_group; ?>">
-                      <?= $column_customer_group; ?>
-                    </a>
-                    <?php } ?>
                   </td>
                   <td>
-                    <?php if ($sort == 'customer_department') { ?>
-                    <a href="<?= $sort_customer_department; ?>" class="<?= strtolower($order); ?>">
+                    <a href="<?= $sort_customer_department; ?>" <?=($sort=='customer_department' ) ? 'class="' .
+                      strtolower($order) . '"' : '' ; ?>>
                       <?= $column_customer_department; ?>
                     </a>
-                    <?php } else { ?>
-                    <a href="<?= $sort_customer_department; ?>">
-                      <?= $column_customer_department; ?>
-                    </a>
-                    <?php } ?>
                   </td>
                   <td>
-                    <?php if ($sort == 'location') { ?>
-                    <a href="<?= $sort_location; ?>" class="<?= strtolower($order); ?>">
+                    <a href="<?= $sort_location; ?>" <?=($sort=='location' ) ? 'class="' . strtolower($order) . '"' : ''
+                      ; ?>>
                       <?= $column_location; ?>
                     </a>
-                    <?php } else { ?>
-                    <a href="<?= $sort_location; ?>">
-                      <?= $column_location; ?>
-                    </a>
-                    <?php } ?>
                   </td>
                   <td>
-                    <?php if ($sort == 'acc_no') { ?>
-                    <a href="<?= $sort_acc_no; ?>" class="<?= strtolower($order); ?>">
-                      <?= $column_acc_no; ?>
-                    </a>
-                    <?php } else { ?>
-                    <a href="<?= $sort_acc_no; ?>">
-                      <?= $column_acc_no; ?>
-                    </a>
-                    <?php } ?>
-                  </td>
-                  <td>
-                    <?php if ($sort == 'payroll_method') { ?>
-                    <a href="<?= $sort_payroll_method; ?>" class="<?= strtolower($order); ?>">
+                    <a href="<?= $sort_payroll_method; ?>" <?=($sort=='payroll_method' ) ? 'class="' .
+                      strtolower($order) . '"' : '' ; ?>>
                       <?= $column_payroll_method; ?>
                     </a>
-                    <?php } else { ?>
-                    <a href="<?= $sort_payroll_method; ?>">
-                      <?= $column_payroll_method; ?>
-                    </a>
-                    <?php } ?>
                   </td>
                   <td>
-                    <?php if ($sort == 'net_salary') { ?>
-                    <a href="<?= $sort_net_salary; ?>" class="<?= strtolower($order); ?>">
-                      <?= $column_net_salary; ?>
+                    <a href="<?= $sort_acc_no; ?>" <?=($sort=='acc_no' ) ? 'class="' . strtolower($order) . '"' : '' ;
+                      ?>>
+                      <?= $column_acc_no; ?>
                     </a>
-                    <?php } else { ?>
-                    <a href="<?= $sort_net_salary; ?>">
-                      <?= $column_net_salary; ?>
-                    </a>
-                    <?php } ?>
                   </td>
                   <td>
-                    <?= $column_date_release; ?>
+                    <a href="<?= $sort_net_salary; ?>" <?=($sort=='net_salary' ) ? 'class="' . strtolower($order) . '"'
+                      : '' ; ?>>
+                      <?= $column_net_salary; ?>
+                    </a>
+                  </td>
+                  <td>
+                    <a href="<?= $sort_date_released; ?>" <?=($sort=='date_released' ) ? 'class="' . strtolower($order)
+                      . '"' : '' ; ?>>
+                      <?= $column_date_released; ?>
+                    </a>
                   </td>
                   <td class="text-center">
-                    <?php if ($sort == 'statement_sent') { ?>
-                    <a href="<?= $sort_statement_sent; ?>" class="<?= strtolower($order); ?>">
+                    <a href="<?= $sort_statement_sent; ?>" <?=($sort=='statement_sent' ) ? 'class="' .
+                      strtolower($order) . '"' : '' ; ?>>
                       <?= $column_statement_sent; ?>
                     </a>
-                    <?php } else { ?>
-                    <a href="<?= $sort_statement_sent; ?>">
-                      <?= $column_statement_sent; ?>
-                    </a>
-                    <?php } ?>
                   </td>
                 </tr>
               </thead>
@@ -338,7 +304,7 @@
                   </th>
                 </tr>
                 <?php foreach ($payroll_releases['late'] as $payroll_release) { ?>
-                <tr>
+                <tr >
                   <td class="text-center">
                     <?php if (in_array($payroll_release['customer_code'], $selected)) { ?>
                     <input type="checkbox" name="selected[]" value="<?= $payroll_release['customer_code']; ?>"
@@ -366,10 +332,10 @@
                     <?= $payroll_release['location']; ?>
                   </td>
                   <td>
-                    <?= $payroll_release['acc_no']; ?>
+                    <?= $payroll_release['payroll_method']; ?>
                   </td>
                   <td>
-                    <?= $payroll_release['payroll_method']; ?>
+                    <?= $payroll_release['acc_no']; ?>
                   </td>
                   <td class="text-right">
                     <?= $payroll_release['grandtotal']; ?>
@@ -391,8 +357,8 @@
                 <?php } ?>
                 <?php } ?>
                 <?php if (isset($payroll_releases['present'])) { ?>
-                  <?php foreach ($payroll_releases['present'] as $payroll_release) { ?>
-                <tr>
+                <?php foreach ($payroll_releases['present'] as $payroll_release) { ?>
+                <tr class="<?= $payroll_release['text_class']; ?>">
                   <td class="text-center">
                     <?php if (in_array($payroll_release['customer_code'], $selected)) { ?>
                     <input type="checkbox" name="selected[]" value="<?= $payroll_release['customer_code']; ?>"
@@ -420,10 +386,10 @@
                     <?= $payroll_release['location']; ?>
                   </td>
                   <td>
-                    <?= $payroll_release['acc_no']; ?>
+                    <?= $payroll_release['payroll_method']; ?>
                   </td>
                   <td>
-                    <?= $payroll_release['payroll_method']; ?>
+                    <?= $payroll_release['acc_no']; ?>
                   </td>
                   <td class="text-right">
                     <?= $payroll_release['grandtotal']; ?>
@@ -459,119 +425,92 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript">
-    $('#period-info').load('index.php?route=common/period_info&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>');
-
-    $('#release-info').load('index.php?route=payroll/payroll_release/releaseinfo&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>');
-
-    $(document).keypress(function (e) {
-      if (e.which == 13) {
-        $("#button-filter").click();
-      }
-    });
-
-    $('#button-filter').on('click', function () {
-      url = 'index.php?route=payroll/payroll_release/info&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>';
-
-      let filter_name = $('input[name=\'filter_name\']').val();
-
-      if (filter_name) {
-        url += '&filter_name=' + encodeURIComponent(filter_name);
-      }
-
-      let filter_email = $('input[name=\'filter_email\']').val();
-
-      if (filter_email) {
-        url += '&filter_email=' + encodeURIComponent(filter_email);
-      }
-
-      let filter_customer_group_id = $('select[name=\'filter_customer_group_id\']').val();
-
-      if (filter_customer_group_id != '*') {
-        url += '&filter_customer_group_id=' + encodeURIComponent(filter_customer_group_id);
-      }
-
-      let filter_customer_department_id = $('select[name=\'filter_customer_department_id\']').val();
-
-      if (filter_customer_department_id != '*') {
-        url += '&filter_customer_department_id=' + encodeURIComponent(filter_customer_department_id);
-      }
-
-      let filter_location_id = $('select[name=\'filter_location_id\']').val();
-
-      if (filter_location_id != '*') {
-        url += '&filter_location_id=' + encodeURIComponent(filter_location_id);
-      }
-
-      let filter_payroll_method_id = $('select[name=\'filter_payroll_method_id\']').val();
-
-      if (filter_payroll_method_id != '*') {
-        url += '&filter_payroll_method_id=' + encodeURIComponent(filter_payroll_method_id);
-      }
-
-      let filter_statement_sent = $('select[name=\'filter_statement_sent\']').val();
-
-      if (filter_statement_sent != '*') {
-        url += '&filter_statement_sent=' + encodeURIComponent(filter_statement_sent);
-      }
-
-      location = url;
-    });
-  </script>
-  <script type="text/javascript">
-    $('#button-payroll-complete').on('click', function (e) {
-      if (confirm('<?= $text_confirm; ?>')) {
-        $.ajax({
-          url: 'index.php?route=payroll/payroll_release/completepayroll&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>',
-          dataType: 'json',
-          crossDomain: true,
-          beforeSend: function () {
-            $('#button-payroll-complete').button('loading');
-          },
-          complete: function () {
-            $('#button-payroll-complete').button('reset');
-          },
-          success: function (json) {
-            $('.alert').remove();
-
-            if (json['error']) {
-              $('#content > .container-fluid').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-            }
-
-            if (json['success']) {
-              $('#content > .container-fluid').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-
-              $('#button-payroll-complete').replaceWith('<button type="button" class="btn btn-warning disabled"><i class="fa fa-check"></i> <?= $button_payroll_complete; ?></button>');
-              $('#period-info').load('index.php?route=common/period_info&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>');
-            }
-          },
-          error: function (xhr, ajaxOptions, thrownError) {
-            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-          }
-        });
-      }
-    });
-  </script>
-  <script type="text/javascript">
-    $('input[name=\'filter_name\']').autocomplete({
-      'source': function (request, response) {
-        $.ajax({
-          url: 'index.php?route=presence/presence/autocomplete&token=<?= $token; ?>&filter_name=' + encodeURIComponent(request) + '&presence_period_id=<?= $presence_period_id; ?>',
-          dataType: 'json',
-          success: function (json) {
-            response($.map(json, function (item) {
-              return {
-                label: item['name'],
-                value: item['customer_id']
-              }
-            }));
-          }
-        });
-      },
-      'select': function (item) {
-        $('input[name=\'filter_name\']').val(item['label']);
-      }
-    });
-  </script>
 </div>
+<script type="text/javascript">
+  $('#period-info').load('index.php?route=common/period_info&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>');
+
+  // $('#release-info').load('index.php?route=payroll/payroll_release/releaseinfo&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>');
+  $('#release-info').load('index.php?route=payroll/payroll_release/releaseinfo&token=<?= $token . $url; ?>');
+
+  $(document).keypress(function (e) {
+    if (e.which == 13) {
+      $("#button-filter").click();
+    }
+  });
+
+  $('#button-filter').on('click', function () {
+    url = 'index.php?route=payroll/payroll_release/info&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>';
+
+    let filter = [];
+
+    let filter_items = JSON.parse('<?= $filter_items; ?>');
+
+    for (let i = 0; i < filter_items.length; i++) {
+      filter[filter_items[i]] = $('.well [name=\'filter[' + filter_items[i] + ']\']').val();
+
+      if (filter[filter_items[i]] && filter[filter_items[i]] != '*') {
+        url += '&filter_' + filter_items[i] + '=' + encodeURIComponent(filter[filter_items[i]]);
+      }
+    }
+
+    location = url;
+  });
+
+  $('#menu-action a').on('click', function (e) {
+    e.preventDefault();
+  });
+
+  $('#button-payroll-complete').on('click', function (e) {
+    if (confirm('<?= $text_confirm; ?>')) {
+      $.ajax({
+        url: 'index.php?route=payroll/payroll_release/completepayroll&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>',
+        dataType: 'json',
+        crossDomain: true,
+        beforeSend: function () {
+          $('#button-payroll-complete').button('loading');
+        },
+        complete: function () {
+          $('#button-payroll-complete').button('reset');
+        },
+        success: function (json) {
+          $('.alert').remove();
+
+          if (json['error']) {
+            $('#content > .container-fluid').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+          }
+
+          if (json['success']) {
+            $('#content > .container-fluid').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+            $('#button-payroll-complete').replaceWith('<button type="button" class="btn btn-warning disabled"><i class="fa fa-check"></i> <?= $button_payroll_complete; ?></button>');
+            $('#period-info').load('index.php?route=common/period_info&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>');
+          }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+      });
+    }
+  });
+
+  $('input[name=\'filter[name]\']').autocomplete({
+    'source': function (request, response) {
+      $.ajax({
+        url: 'index.php?route=presence/presence/autocomplete&token=<?= $token; ?>&filter_name=' + encodeURIComponent(request) + '&presence_period_id=<?= $presence_period_id; ?>',
+        dataType: 'json',
+        success: function (json) {
+          response($.map(json, function (item) {
+            return {
+              label: item['name'],
+              value: item['customer_id']
+            }
+          }));
+        }
+      });
+    },
+    'select': function (item) {
+      $('input[name=\'filter[name]\']').val(item['label']);
+    }
+  });
+</script>
 <?= $footer; ?>

@@ -45,7 +45,7 @@ class ControllerAccountPayroll extends Controller
 			'text_total_deduction',
 			'text_total_earning',
 			'text_grandtotal',
-			'text_no_results',
+			'error_no_result',
 			'button_back'
 		];
 		foreach ($language_items as $language_item) {
@@ -54,13 +54,14 @@ class ControllerAccountPayroll extends Controller
 
 		$data['payroll_check'] = false;
 
-		$period_info = $this->model_account_payroll->getPeriodByDate(date('Y-m-d', strtotime('-1 month')));
+		// $period_info = $this->model_account_payroll->getPeriodByDate(date('Y-m-d', strtotime('-1 month')));
+		$period_info = $this->model_account_payroll->getPeriodByDate(date('Y-m-d', strtotime('25 Oct 2023')));
 
 		if ($period_info) {
 			$payroll_info = $this->model_account_payroll->getPayrollDetail($period_info['presence_period_id'], $this->customer->getId());
 		}
-		
-		if (!empty($payroll_info)) {
+
+		if (!empty($payroll_info) && $payroll_info['status_released'] == 'released') {
 			$data['payroll_check'] = true;
 
 			$data['text_period'] = sprintf($this->language->get('text_period'), date($this->language->get('date_format_m_y'), strtotime($period_info['period'])));
@@ -145,9 +146,9 @@ class ControllerAccountPayroll extends Controller
 			$data['deduction']     	= $this->currency->format($deduction, $this->config->get('config_currency'));
 			$data['grandtotal']  	= $this->currency->format($earning - $deduction, $this->config->get('config_currency'));
 		}
-		
+
 		$data['back'] = $this->url->link('account/account', '', true);
-	
+
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
 		$data['content_top'] = $this->load->controller('common/content_top');

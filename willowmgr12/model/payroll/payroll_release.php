@@ -83,46 +83,71 @@ class ModelPayrollPayrollRelease extends Model
 		return $query->row['total'];
 	}
 
+	public function getRelease($presence_period_id, $customer_id)
+	{
+		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "v_payroll WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL) AND presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'";
+
+		$query = $this->db->query($sql);
+
+		return $query->row;
+	}
+
 	public function getReleases($presence_period_id, $data = array())
 	{
 		// $sql = "SELECT DISTINCT p.presence_period_id, p.customer_id, p.statement_sent, (p.gaji_pokok + p.tunj_jabatan + p.tunj_hadir + p.tunj_pph + p.total_uang_makan - p.pot_sakit - p.pot_bolos - p.pot_tunj_hadir - p.pot_gaji_pokok - p.pot_terlambat) as net_salary, SUM(pcv.value) as component, c.nip, c.email, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.acc_no, cgd.name AS customer_group, pm.name AS payroll_method FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.customer_id = p.customer_id AND pcv.presence_period_id = '" . (int)$presence_period_id . "') LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.presence_period_id = '" . (int)$presence_period_id . "'";
-		$sql = "SELECT * FROM " . DB_PREFIX . "v_release WHERE (presence_period_id = '" . (int)$presence_period_id . "' OR (presence_period_id < '" . (int)$presence_period_id . "' AND date_released is NULL)) AND (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
+		$sql = "SELECT * FROM " . DB_PREFIX . "v_payroll WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 
 		$implode = array();
 
-		if (!empty($data['filter_name'])) {
-			$implode[] = "name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		if (!empty($data['filter']['name'])) {
+			$implode[] = "name LIKE '%" . $this->db->escape($data['filter']['name']) . "%'";
 		}
 
-		if (!empty($data['filter_email'])) {
-			$implode[] = "email LIKE '%" . $this->db->escape($data['filter_email']) . "%'";
+		if (!empty($data['filter']['email'])) {
+			$implode[] = "email LIKE '%" . $this->db->escape($data['filter']['email']) . "%'";
 		}
 
-		if (!empty($data['filter_customer_group_id'])) {
-			$implode[] = "customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+		if (!empty($data['filter']['customer_group_id'])) {
+			$implode[] = "customer_group_id = '" . (int)$data['filter']['customer_group_id'] . "'";
 		}
 
-		if (!empty($data['filter_customer_department_id'])) {
-			$implode[] = "customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
+		if (!empty($data['filter']['customer_department_id'])) {
+			$implode[] = "customer_department_id = '" . (int)$data['filter']['customer_department_id'] . "'";
 		}
 
-		if (!empty($data['filter_location_id'])) {
-			$implode[] = "location_id = '" . (int)$data['filter_location_id'] . "'";
+		if (!empty($data['filter']['location_id'])) {
+			$implode[] = "location_id = '" . (int)$data['filter']['location_id'] . "'";
 		}
 
-		if (!empty($data['filter_payroll_method_id'])) {
-			$implode[] = "payroll_method_id = '" . (int)$data['filter_payroll_method_id'] . "'";
+		if (!empty($data['filter']['payroll_method_id'])) {
+			$implode[] = "payroll_method_id = '" . (int)$data['filter']['payroll_method_id'] . "'";
 		}
 
-		if (isset($data['filter_statement_sent']) && !is_null($data['filter_statement_sent'])) {
-			$implode[] = "statement_sent = '" . (int)$data['filter_statement_sent'] . "'";
+		if (!empty($data['filter']['status_released'])) {
+			if ($data['filter']['status_released'] == 'unreleased') {
+				$implode[] = "status_released IS NULL";
+			} else {
+				$implode[] = "status_released = '" . $this->db->escape($data['filter']['status_released']) . "'";
+			}
+		}
+
+		if (isset($data['filter']['statement_sent']) && !is_null($data['filter']['statement_sent'])) {
+			$implode[] = "statement_sent = '" . (int)$data['filter']['statement_sent'] . "'";
+		}
+
+		if (isset($data['filter']['all_period']) && !empty($data['filter']['all_period'])) {
+			$implode[] = "presence_period_id <='" . (int)$presence_period_id . "'";
+		} else {
+			$implode[] = "presence_period_id = '" . (int)$presence_period_id . "'";
+		}
+
+		if (!empty($data['filter']['customer_ids'])) {
+			$implode[] = "customer_id IN (" . $this->db->escape($data['filter']['customer_ids']) . ")";
 		}
 
 		if ($implode) {
 			$sql .= " AND " . implode(" AND ", $implode);
 		}
-
-		// $sql .= "  GROUP BY customer_id";
 
 		$sort_data = array(
 			'nip',
@@ -168,37 +193,54 @@ class ModelPayrollPayrollRelease extends Model
 
 	public function getReleasesCount($presence_period_id, $data = array())
 	{
-		// $sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) WHERE p.presence_period_id = '" . (int)$presence_period_id . "'";
-		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "v_release WHERE (presence_period_id = '" . (int)$presence_period_id . "' OR (presence_period_id < '" . (int)$presence_period_id . "' AND date_released is NULL)) AND (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
+		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "v_payroll WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 
 		$implode = array();
 
-		if (!empty($data['filter_name'])) {
-			$implode[] = "name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		if (!empty($data['filter']['name'])) {
+			$implode[] = "name LIKE '%" . $this->db->escape($data['filter']['name']) . "%'";
 		}
 
-		if (!empty($data['filter_email'])) {
-			$implode[] = "email LIKE '%" . $this->db->escape($data['filter_email']) . "%'";
+		if (!empty($data['filter']['email'])) {
+			$implode[] = "email LIKE '%" . $this->db->escape($data['filter']['email']) . "%'";
 		}
 
-		if (!empty($data['filter_customer_group_id'])) {
-			$implode[] = "customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+		if (!empty($data['filter']['customer_group_id'])) {
+			$implode[] = "customer_group_id = '" . (int)$data['filter']['customer_group_id'] . "'";
 		}
 
-		if (!empty($data['filter_customer_department_id'])) {
-			$implode[] = "customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
+		if (!empty($data['filter']['customer_department_id'])) {
+			$implode[] = "customer_department_id = '" . (int)$data['filter']['customer_department_id'] . "'";
 		}
 
-		if (!empty($data['filter_location_id'])) {
-			$implode[] = "location_id = '" . (int)$data['filter_location_id'] . "'";
+		if (!empty($data['filter']['location_id'])) {
+			$implode[] = "location_id = '" . (int)$data['filter']['location_id'] . "'";
 		}
 
-		if (!empty($data['filter_payroll_method_id'])) {
-			$implode[] = "payroll_method_id = '" . (int)$data['filter_payroll_method_id'] . "'";
+		if (!empty($data['filter']['payroll_method_id'])) {
+			$implode[] = "payroll_method_id = '" . (int)$data['filter']['payroll_method_id'] . "'";
 		}
 
-		if (isset($data['filter_statement_sent']) && !is_null($data['filter_statement_sent'])) {
-			$implode[] = "statement_sent = '" . (int)$data['filter_statement_sent'] . "'";
+		if (!empty($data['filter']['status_released'])) {
+			if ($data['filter']['status_released'] == 'unreleased') {
+				$implode[] = "status_released IS NULL";
+			} else {
+				$implode[] = "status_released = '" . $this->db->escape($data['filter']['status_released']) . "'";
+			}
+		}
+
+		if (isset($data['filter']['statement_sent']) && !is_null($data['filter']['statement_sent'])) {
+			$implode[] = "statement_sent = '" . (int)$data['filter']['statement_sent'] . "'";
+		}
+
+		if (isset($data['filter']['all_period']) && !empty($data['filter']['all_period'])) {
+			$implode[] = "presence_period_id <='" . (int)$presence_period_id . "'";
+		} else {
+			$implode[] = "presence_period_id = '" . (int)$presence_period_id . "'";
+		}
+
+		if (!empty($data['filter']['customer_ids'])) {
+			$implode[] = "customer_id IN (" . $this->db->escape($data['filter']['customer_ids']) . ")";
 		}
 
 		if ($implode) {
@@ -210,9 +252,63 @@ class ModelPayrollPayrollRelease extends Model
 		return $query->row['total'];
 	}
 
-	public function getMethodReleases($presence_period_id)
+	public function getMethodsSummary($presence_period_id, $data = array())
 	{
-		$sql = "SELECT p.presence_period_id, pm.name AS payroll_method, count(p.customer_id) AS count, (SUM(p.gaji_pokok + p.tunj_jabatan + p.tunj_hadir + p.tunj_pph + p.total_uang_makan - p.pot_sakit - p.pot_bolos - p.pot_tunj_hadir - p.pot_gaji_pokok - p.pot_terlambat) + (SELECT IFNULL(SUM(pcv.value), 0) FROM " . DB_PREFIX . "payroll_component_value pcv LEFT JOIN " . DB_PREFIX . "customer c2 ON (c2.customer_id = pcv.customer_id) WHERE pcv.presence_period_id = p.presence_period_id AND c2.payroll_method_id = c.payroll_method_id)) as total FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE p.presence_period_id = '" . (int)$presence_period_id . "' GROUP BY c.payroll_method_id";
+		$sql = "SELECT payroll_method, COUNT(*) AS count, SUM(net_salary + component) AS total  FROM " . DB_PREFIX . "v_payroll WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
+
+		$implode = array();
+
+		if (!empty($data['filter']['name'])) {
+			$implode[] = "name LIKE '%" . $this->db->escape($data['filter']['name']) . "%'";
+		}
+
+		if (!empty($data['filter']['email'])) {
+			$implode[] = "email LIKE '%" . $this->db->escape($data['filter']['email']) . "%'";
+		}
+
+		if (!empty($data['filter']['customer_group_id'])) {
+			$implode[] = "customer_group_id = '" . (int)$data['filter']['customer_group_id'] . "'";
+		}
+
+		if (!empty($data['filter']['customer_department_id'])) {
+			$implode[] = "customer_department_id = '" . (int)$data['filter']['customer_department_id'] . "'";
+		}
+
+		if (!empty($data['filter']['location_id'])) {
+			$implode[] = "location_id = '" . (int)$data['filter']['location_id'] . "'";
+		}
+
+		if (!empty($data['filter']['payroll_method_id'])) {
+			$implode[] = "payroll_method_id = '" . (int)$data['filter']['payroll_method_id'] . "'";
+		}
+
+		if (!empty($data['filter']['status_released'])) {
+			if ($data['filter']['status_released'] == 'unreleased') {
+				$implode[] = "status_released IS NULL";
+			} else {
+				$implode[] = "status_released = '" . $this->db->escape($data['filter']['status_released']) . "'";
+			}
+		}
+
+		if (isset($data['filter']['statement_sent']) && !is_null($data['filter']['statement_sent'])) {
+			$implode[] = "statement_sent = '" . (int)$data['filter']['statement_sent'] . "'";
+		}
+
+		if (isset($data['filter']['all_period']) && !empty($data['filter']['all_period'])) {
+			$implode[] = "presence_period_id <='" . (int)$presence_period_id . "'";
+		} else {
+			$implode[] = "presence_period_id = '" . (int)$presence_period_id . "'";
+		}
+
+		if (!empty($data['filter']['customer_ids'])) {
+			$implode[] = "customer_id IN (" . $this->db->escape($data['filter']['customer_ids']) . ")";
+		}
+
+		if ($implode) {
+			$sql .= " AND " . implode(" AND ", $implode);
+		}
+
+		$sql .= 'GROUP BY payroll_method_id';
 
 		$query = $this->db->query($sql);
 
@@ -403,39 +499,30 @@ class ModelPayrollPayrollRelease extends Model
 		}
 	}
 
-	public function setPayrollReleased($presence_period_id, $customer_id)
+	public function editPayrollReleaseStatus($presence_period_id, $customer_id, $status = 'released', $date_released = null)
 	{
-		$this->load->model('common/payroll');
-		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
-		
-		$sql = "UPDATE " . DB_PREFIX . "payroll SET date_released = '" . $this->db->escape($period_info['date_release']) . "' WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'";
+		switch ($status) {
+			case 'pending':
+			case 'cancelled':
+				$sql = "UPDATE " . DB_PREFIX . "payroll SET status_released = '" . $this->db->escape($status) . "' WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'";
+
+				break;
+
+			case 'unreleased':
+				$sql = "UPDATE " . DB_PREFIX . "payroll SET status_released = NULL, date_released = NULL WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'";
+
+				break;
+
+			case 'released':
+				$sql = "UPDATE " . DB_PREFIX . "payroll SET status_released = '" . $this->db->escape($status) . "', date_released = '" . $this->db->escape($date_released) . "' WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'";
+
+				break;
+
+			default:
+				break;
+		}
 
 		$this->db->query($sql);
-	}
-
-	public function getUnreleasedPayrolls($presence_period_id, $data = array())
-	{
-		$sql = "SELECT DISTINCT p.*, c.lastname, c.email, c.acc_no, pm.name AS payroll_method, pp.period FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) LEFT JOIN " . DB_PREFIX . "presence_period pp ON (pp.presence_period_id = p.presence_period_id) WHERE pm.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.presence_period_id = '" . (int)$presence_period_id . "' AND p.date_released IS NULL";
-
-		$implode = array();
-
-		if (!empty($data['method'])) {
-			$implode[] = "pm.name = '" . $this->db->escape($data['method']) . "' AND c.acc_no <> ''";
-		}
-
-		if (!empty($data['filter_customer'])) {
-			$implode[] = "p.customer_id IN (" . $this->db->escape($data['filter_customer']) . ")";
-		}
-
-		if ($implode) {
-			$sql .= " AND " . implode(" AND ", $implode);
-		}
-
-		$sql .= " ORDER BY c.lastname ASC";
-
-		$query = $this->db->query($sql);
-
-		return $query->rows;
 	}
 
 	public function setPayrollStatementSent($payroll_id)
@@ -480,13 +567,4 @@ class ModelPayrollPayrollRelease extends Model
 		$this->db->query("DELETE FROM " . DB_ARCH_DATABASE . "." . DB_PREFIX . "presence_log WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
 		$this->db->query("DELETE FROM " . DB_ARCH_DATABASE . "." . DB_PREFIX . "schedule WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
 	}
-
-	// public function createView($view_name = 'v_release')
-	// {
-	// 	$view_name = DB_PREFIX . $view_name;
-
-	// 	$sql = "SELECT DISTINCT p.presence_period_id, p.customer_id, p.statement_sent, (p.gaji_pokok + p.tunj_jabatan + p.tunj_hadir + p.tunj_pph + p.total_uang_makan - p.pot_sakit - p.pot_bolos - p.pot_tunj_hadir - p.pot_gaji_pokok - p.pot_terlambat) as net_salary, SUM(pcv.value) as component, c.nip, c.email, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.acc_no, c.customer_group_id, cgd.name AS customer_group, c.customer_department_id, cdd.name AS customer_department, c.location_id, l.name AS location, pm.name AS payroll_method FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.customer_id = p.customer_id AND pcv.presence_period_id = p.presence_period_id) LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (cdd.customer_department_id = c.customer_department_id AND cdd.language_id = cgd.language_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' OR cgd.language_id IS NULL GROUP BY p.customer_id, p.presence_period_id;";
-
-	// 	return $this->db->createView($view_name, $sql);
-	// }
 }

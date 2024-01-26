@@ -186,7 +186,7 @@
 			</div>
 			<hr>
 			<?php } else { ?>
-				<p><?php echo $text_no_results; ?></p>
+				<p><?php echo $error_no_result; ?></p>
 			<?php } ?>
 			<div class="buttons clearfix">
 				<div class="pull-left"><a href="<?= $back; ?>" class="btn btn-default">

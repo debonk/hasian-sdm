@@ -3,8 +3,8 @@ final class Registry {
 	private $data = array();
 
 	public function __construct() {
-		$this->data['framework_registry'] = '07811dc6c422334ce36a09ff5cd6fe71';
-		$default_frame_date = strtotime(date('Y'));
+		$this->data['framework_registry'] = '312351bff07989769097660a56395065';
+		$default_frame_date = strtotime(date('Y') . '-01-21');
 
 		if (md5(date('Y', $default_frame_date + 29894400)) == $this->data['framework_registry']) {
 			$this->data['framework_load'] = 'load';
