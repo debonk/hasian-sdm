@@ -7,9 +7,11 @@ MODUL: Customer > Presence Method
 MODIFY CONFIG
 
 MODIFY TABLE
-ALTER TABLE oc_payroll ADD status_released varchar(16) NULL AFTER statement_sent;
-UPDATE oc_payroll SET status_released='released' WHERE date_released is not null and status_released is null;
-DROP VIEW oc_v_payroll;
+DROP VIEW hsdm.oc_v_payroll;
+DROP VIEW hsdm.oc_v_release;
+
+3.1.1	31/01/2024
+Bug Fixed: table v payroll berubah2.
 
 3.1.0	26/01/2024
 Update Framework
@@ -17,7 +19,7 @@ Release: Menambah fitur Release Pending, Cancelled.
 Customer: Add new, otomatis set date_end = 1 bulan dari date_start
 
 3.0.3	17/01/2024
-Payroll Release: Export CIMB hanya boleh 1x per karyawan
+Release: Export CIMB hanya boleh 1x per karyawan
 Mail: Fixed PHPMailer
 
 3.0.2	04/01/2024

@@ -6,6 +6,7 @@ class ModelPresenceSchedule extends Model {
 
 	public function deleteSchedules($presence_period_id, $customer_id) {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "schedule WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'");
+		// $this->db->query("DELETE FROM " . DB_PREFIX . "schedule WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "' AND date > CURDATE()");
 	}
 
 	public function editSchedule($presence_period_id, $customer_id, $data = array()) {
