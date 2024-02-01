@@ -254,7 +254,7 @@ class ModelPayrollPayrollRelease extends Model
 
 	public function getMethodsSummary($presence_period_id, $data = array())
 	{
-		$sql = "SELECT payroll_method, COUNT(*) AS count, SUM(net_salary + component) AS total  FROM " . DB_PREFIX . "v_release WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
+		$sql = "SELECT payroll_method, COUNT(*) AS count, SUM(net_salary + COALESCE(component, 0)) AS total  FROM " . DB_PREFIX . "v_release WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 
 		$implode = array();
 

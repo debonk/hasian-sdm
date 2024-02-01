@@ -54,8 +54,7 @@ class ControllerAccountPayroll extends Controller
 
 		$data['payroll_check'] = false;
 
-		// $period_info = $this->model_account_payroll->getPeriodByDate(date('Y-m-d', strtotime('-1 month')));
-		$period_info = $this->model_account_payroll->getPeriodByDate(date('Y-m-d', strtotime('25 Oct 2023')));
+		$period_info = $this->model_account_payroll->getPeriodByDate(date('Y-m-d', strtotime('-1 month')));
 
 		if ($period_info) {
 			$payroll_info = $this->model_account_payroll->getPayrollDetail($period_info['presence_period_id'], $this->customer->getId());

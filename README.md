@@ -7,8 +7,10 @@ MODUL: Customer > Presence Method
 MODIFY CONFIG
 
 MODIFY TABLE
-DROP VIEW hsdm.oc_v_payroll;
-DROP VIEW hsdm.oc_v_release;
+
+3.1.2	01/02/2024
+Bug Fixed: App > Account > Payroll
+Bug Fixed: Release Info
 
 3.1.1	31/01/2024
 Bug Fixed: table v payroll berubah2.
