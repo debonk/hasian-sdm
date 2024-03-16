@@ -131,7 +131,7 @@ class DB
 				$view_sql = "SELECT c.customer_id, c.nip, c.lastname, c.name, c.customer_department_id, c.customer_department, c.customer_group_id, c.customer_group, c.location_id, c.location, c.date_start, c.date_end, c.language_id, c.contract_id, cn.contract_type_id, cn.contract_start, cn.contract_end, cn.description, cn.end_reason, ct.name AS contract_type, ct.duration,
 				CASE 
 					WHEN c.contract_id IS NULL THEN 
-						IF (c.date_end IS NULL, 'none', 'inactive') 
+						IF (c.date_end IS NULL OR c.date_end >= CURDATE(), 'none', 'inactive') 
 					WHEN c.date_end IS NULL THEN 'permanent' 
 					WHEN cn.contract_end < CURDATE() THEN 'expired' 
 					WHEN cn.contract_end = CURDATE() THEN 'end_today' 

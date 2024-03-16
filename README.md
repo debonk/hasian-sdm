@@ -8,6 +8,10 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
+3.1.3	16/03/2024
+Release: Fitur export draft utk pengecekan gaji sebelum dirilis.
+Bug Fixed: Karyawan baru disebut Berhenti Bekerja karena date_end otomatis diset.
+
 3.1.2	01/02/2024
 Bug Fixed: App > Account > Payroll
 Bug Fixed: Release Info

@@ -64,6 +64,7 @@ $_['entry_statement_sent'] 	 	= 'Statement Sent';
 
 // Button
 $_['button_action']				= 'Action';
+$_['button_draft']				= 'Export Release Draft';
 $_['button_release']			= 'Release Payroll';
 $_['button_payroll_complete'] 	= 'Complete Payroll';
 $_['button_export_cimb'] 		= 'Export to CIMB';

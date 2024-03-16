@@ -66,7 +66,7 @@
                 <?php } ?>
                 <?php } else { ?>
                 <tr>
-                  <td class="text-center" colspan="7"><?= $text_no_results; ?></td>
+                  <td class="text-center" colspan="9"><?= $text_no_results; ?></td>
                 </tr>
                 <?php } ?>
               </tbody>

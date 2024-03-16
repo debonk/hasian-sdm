@@ -271,7 +271,7 @@
 							<?php } ?>
 							<?php } else { ?>
 							<tr>
-								<td class="text-center" colspan="11">
+								<td class="text-center" colspan="13">
 									<?= $text_no_results; ?>
 								</td>
 							</tr>
