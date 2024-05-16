@@ -429,9 +429,6 @@ class ControllerCustomerCustomer extends Controller
 
 	protected function getForm()
 	{
-		$this->db->createView('v_customer');
-		// $this->model_customer_customer->createView();
-
 		$data['text_form'] = !isset($this->request->get['customer_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
 
 		$language_items = array(

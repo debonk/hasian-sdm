@@ -117,8 +117,6 @@ class ControllerCutoffCutoff extends Controller
 
 	protected function getList()
 	{
-		$this->db->createView('v_cutoff');
-
 		$language_items = array(
 			'heading_title',
 			'text_list',
@@ -324,8 +322,6 @@ class ControllerCutoffCutoff extends Controller
 
 	protected function getForm()
 	{
-		$this->db->createView('v_cutoff');
-
 		$data['text_form'] = !isset($this->request->get['cutoff_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
 
 		$language_items = array(

@@ -181,7 +181,6 @@ class ControllerPresencePresence extends Controller {
 			'text_list',
 			'text_confirm',
 			'text_submit_confirm',
-			'text_no_results',
 			'text_all',
 			'text_loading',
 			'text_yes',
@@ -193,23 +192,11 @@ class ControllerPresencePresence extends Controller {
 			'column_contract_type',
 			'column_action',
 			'column_presence_summary',
-			'column_hke',
-			'column_h',
-			'column_s',
-			'column_i',
-			'column_ns',
-			'column_ia',
-			'column_a',
-			'column_c',
-			'column_t1',
-			'column_t2',
-			'column_t3',
 			'column_note',
 			'entry_presence_period',
 			'entry_name',
 			'entry_customer_group',
 			'entry_location',
-			'entry_contract_type',
 			'entry_payroll_include',
 			'entry_presence_status',
 			'button_edit',
@@ -337,7 +324,7 @@ class ControllerPresencePresence extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('presence/presence', 'token=' . $this->session->data['token'], true)
+			'href' => $this->url->link('presence/presence', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $presence_period_id, true)
 		);
 
 		//Period Status Check
@@ -380,6 +367,8 @@ class ControllerPresencePresence extends Controller {
 			$results = $this->model_presence_presence->getPresenceSummaries($presence_period_id, $filter_data);
 			$customer_total = $this->model_presence_presence->getPresenceSummariesCount($presence_period_id, $filter_data);
 		}
+
+		$additional_items = $this->model_presence_presence->getPresenceAdditionalItem(array_column($results, 'additional'));
 		
 		$this->load->model('presence/absence');
 		$this->load->model('presence/exchange');
@@ -387,9 +376,16 @@ class ControllerPresencePresence extends Controller {
 		//Get absence Note
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 
+		$data['presence_data_title'] = [];
+
 		foreach ($results as $result) {
 			$contract_type = $result['contract_type'] ? $result['contract_type'] : '-';
-			//Get Note
+
+			$result['presence_data'] = $this->model_presence_presence->calculatePresenceSummaryData($result, $additional_items);
+
+			$presence_data = [];
+
+			# Get Note
 			$range_date = array(
 				'start'	=> $period_info['date_start'],
 				'end'	=> $period_info['date_end']
@@ -400,86 +396,60 @@ class ControllerPresencePresence extends Controller {
 			if ($result['date_end']) {
 				$range_date['end'] = min($range_date['end'], $result['date_end']);
 			}
-			//End GetNote Block
 			$absences_info = $this->model_presence_absence->getAbsencesByCustomerDate($result['customer_id'], $range_date);
 			
 			$note = implode(', ', array_filter(array_column($absences_info, 'description')));
+			# GetNote Block End
 				
-			if ($payroll_status_check) {
-				$presence_summary = $this->model_presence_presence->getPresenceSummary($presence_period_id, $result['customer_id']);
-				
-				if ($presence_summary) {
-					$data['customers'][] = array(
-						'customer_id' 		=> $result['customer_id'],
-						'nip' 				=> $result['nip'],
-						'name' 				=> $result['name'],
-						'customer_group' 	=> $result['customer_group'],
-						'location' 			=> $result['location'],
-						'contract_type'     => $contract_type,
-						'hke' 				=> $presence_summary['total_h'] + $presence_summary['total_s'] + $presence_summary['total_i'] + $presence_summary['total_ns'] + $presence_summary['total_ia'] + $presence_summary['total_a'],
-						'total_h' 			=> $presence_summary['total_h'],
-						'total_s'         	=> $presence_summary['total_s'],
-						'total_i'         	=> $presence_summary['total_i'],
-						'total_ns'         	=> $presence_summary['total_ns'],
-						'total_ia'         	=> $presence_summary['total_ia'],
-						'total_a'         	=> $presence_summary['total_a'],
-						'total_c'         	=> $presence_summary['total_c'],
-						'total_t1'         	=> $presence_summary['total_t1'],
-						'total_t2'         	=> $presence_summary['total_t2'],
-						'total_t3'         	=> $presence_summary['total_t3'],
-						'note' 				=> strlen($note) > 50 ? substr($note, 0, 48) . '..' : $note,
-						'edit'          	=> $this->url->link('presence/presence/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
-					);
-					
-				} else {
-					$data['customers'][] = array(
-						'customer_id' 		=> $result['customer_id'],
-						'nip' 				=> $result['nip'],
-						'name' 				=> $result['name'],
-						'customer_group' 	=> $result['customer_group'],
-						'location' 			=> $result['location'],
-						'contract_type'     => $contract_type,
-						'hke' 				=> '',
-						'total_h' 			=> '',
-						'total_s'         	=> '',
-						'total_i'         	=> '',
-						'total_ns'         	=> '',
-						'total_ia'         	=> '',
-						'total_a'         	=> '',
-						'total_c'         	=> '',
-						'total_t1'         	=> '',
-						'total_t2'         	=> '',
-						'total_t3'         	=> '',
-						'note' 				=> '',
-						'edit'          	=> $this->url->link('presence/presence/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
-					);
-				}
+			// if ($payroll_status_check) {
+				// $presence_summary = $this->model_presence_presence->getPresenceSummary($presence_period_id, $result['customer_id']);
+				// $data['customers'][] = $result;
+
+				$result['note'] = strlen($note) > 50 ? substr($note, 0, 48) . '..' : $note;
+				$result['edit'] = $this->url->link('presence/presence/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true);
+
+				$presence_data['hke'] = $result['presence_data']['total']['hke'];
+
+				$result['presence_data'] = array_merge($presence_data, $result['presence_data']['primary'], $result['presence_data']['additional'], $result['presence_data']['secondary']);
+
+				$data['customers'][] = $result;
+
+				$data['presence_data_title'] = array_merge($data['presence_data_title'], $result['presence_data']);
 			
-			} else {
-				$data['customers'][] = array(
-					'customer_id' 		=> $result['customer_id'],
-					'nip' 				=> $result['nip'],
-					'name' 				=> $result['name'],
-					'customer_group' 	=> $result['customer_group'],
-					'location' 			=> $result['location'],
-					'contract_type'     => $contract_type,
-					'hke' 				=> $result['total_h'] + $result['total_s'] + $result['total_i'] + $result['total_ns'] + $result['total_ia'] + $result['total_a'],
-					'total_h' 			=> $result['total_h'],
-					'total_s'         	=> $result['total_s'],
-					'total_i'         	=> $result['total_i'],
-					'total_ns'         	=> $result['total_ns'],
-					'total_ia'         	=> $result['total_ia'],
-					'total_a'         	=> $result['total_a'],
-					'total_c'         	=> $result['total_c'],
-					'total_t1'         	=> $result['total_t1'],
-					'total_t2'         	=> $result['total_t2'],
-					'total_t3'         	=> $result['total_t3'],
-					'note' 				=> strlen($note) > 30 ? substr($note, 0, 28) . '..' : $note,
-					'edit'          	=> $this->url->link('presence/presence/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
-				);
-			}
+			// } else {
+			// 	$data['customers'][] = array(
+			// 		'customer_id' 		=> $result['customer_id'],
+			// 		'nip' 				=> $result['nip'],
+			// 		'name' 				=> $result['name'],
+			// 		'customer_group' 	=> $result['customer_group'],
+			// 		'location' 			=> $result['location'],
+			// 		'hke' 				=> $result['total_h'] + $result['total_s'] + $result['total_i'] + $result['total_ns'] + $result['total_ia'] + $result['total_a'],
+			// 		'total_h' 			=> $result['total_h'],
+			// 		'total_s'         	=> $result['total_s'],
+			// 		'total_i'         	=> $result['total_i'],
+			// 		'total_ns'         	=> $result['total_ns'],
+			// 		'total_ia'         	=> $result['total_ia'],
+			// 		'total_a'         	=> $result['total_a'],
+			// 		'total_c'         	=> $result['total_c'],
+			// 		'total_t1'         	=> $result['total_t1'],
+			// 		'total_t2'         	=> $result['total_t2'],
+			// 		'total_t3'         	=> $result['total_t3'],
+			// 		'note' 				=> strlen($note) > 30 ? substr($note, 0, 28) . '..' : $note,
+			// 		'edit'          	=> $this->url->link('presence/presence/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
+			// 	);
+			// }
+		}
+		// var_dump($data['presence_data_title']);
+		// die;
+
+		if ($data['customers']) {
+			$data['presence_data_title'] = array_keys($data['customers'][0]['presence_data']);
+		} else {
+			$data['presence_data_title'] = [$this->language->get('text_none')];
 		}
 
+		$data['presence_data_count'] = count($data['presence_data_title']);
+		
 		$data['token'] = $this->session->data['token'];
 
 		if (isset($this->error['warning'])) {
@@ -544,6 +514,12 @@ class ControllerPresencePresence extends Controller {
 		$data['sort_customer_group'] = $this->url->link('presence/presence', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
 		$data['sort_location'] = $this->url->link('presence/presence', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
 		$data['sort_contract_type'] = $this->url->link('presence/presence', 'token=' . $this->session->data['token'] . '&sort=contract_type' . $url, true);
+
+		$sort_presences = ['h', 's', 'i', 'ns', 'ia', 'a', 'c', 't1', 't2', 't3'];
+
+		foreach ($sort_presences as $code) {
+			$data['sort_total'][$code] = $this->url->link('presence/presence', 'token=' . $this->session->data['token'] . '&sort=total_' . $code . $url, true);
+		}
 
 		$url = '';
 		$url .= '&presence_period_id=' . $presence_period_id;
@@ -631,32 +607,10 @@ class ControllerPresencePresence extends Controller {
 			'text_presence_detail',
 			'text_presence_summary',
 			'text_late_summary',
-			'text_total_t',
 			'text_hke',
 			'text_confirm',
-			'text_no_results',
 			'text_off',
-			'column_hke',
-			'column_h',
-			'column_s',
-			'column_i',
-			'column_ns',
-			'column_ia',
-			'column_a',
-			'column_c',
-			'column_t1',
-			'column_t2',
-			'column_t3',
-			'entry_h',
-			'entry_s',
-			'entry_i',
-			'entry_ns',
-			'entry_ia',
-			'entry_a',
-			'entry_c',
-			'entry_t1',
-			'entry_t2',
-			'entry_t3',
+			'column_t',
 			'button_save',
 			'button_cancel'
 		);
@@ -753,10 +707,10 @@ class ControllerPresencePresence extends Controller {
 
 		$this->load->model('presence/schedule');
 		$this->load->model('overtime/overtime');
-		$schedules_info = $this->model_presence_schedule->getFinalSchedules($customer_id, $range_date);
-		
+		$schedules_info = $this->model_presence_schedule->getFinalSchedules($presence_period_id, $customer_id, $range_date);
+
 		$presences_info = $this->model_presence_presence->getFinalPresences($customer_id, $range_date);
-		
+
 		//Form Calendar
 		$data['list_days'] = explode(' ',$this->language->get('text_days'));
 
@@ -786,8 +740,8 @@ class ControllerPresencePresence extends Controller {
 					}
 
 					$schedule_type	= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_in'] != '0000-00-00 00:00:00') ? ($schedules_info[$date_text]['schedule_type'] . ' (' . date('H:i', strtotime($schedules_info[$date_text]['time_in'])) . '-' . date('H:i', strtotime($schedules_info[$date_text]['time_out'])) . ')') : $data['text_off'];
-					$time_login		= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_login'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_info[$date_text]['time_login'])) : '...';
-					$time_logout	= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_logout'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_info[$date_text]['time_logout'])) : '...';
+					$time_login		= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_login'] != '0000-00-00 00:00:00') ? date('H:i:s', strtotime($schedules_info[$date_text]['time_login'])) : '...';
+					$time_logout	= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_logout'] != '0000-00-00 00:00:00') ? date('H:i:s', strtotime($schedules_info[$date_text]['time_logout'])) : '...';
 					$bg_class		= !empty($schedules_info[$date_text]['bg_class']) ? $schedules_info[$date_text]['bg_class'] : 'info';
 					$note			= !empty($schedules_info[$date_text]['note']) ? $schedules_info[$date_text]['note'] : '';
 
@@ -832,17 +786,24 @@ class ControllerPresencePresence extends Controller {
 		//End Calendar
 
 		//Ringkasan Absensi
-		$data['presence_summary'] = array();
-		
-		$presence_summary_data = $this->model_presence_presence->getPresenceSummary($presence_period_id, $customer_id);
-		
-		foreach ($presence_summary_data as $key => $total) {
-			$data['presence_summary'][$key] = $total;
+		$presence_summary = $this->model_presence_presence->getPresenceSummary($presence_period_id, $customer_id);
+
+		// # Merge Primary and Additional for report purpose
+		// if ($data['presence_summaries']['additional']) {
+		// 	$data['presence_summaries']['primary'] = array_merge($data['presence_summaries']['primary'], $data['presence_summaries']['additional']);
+		// }
+
+		if (!empty($presence_summary['full_overtimes_count'])) {
+			$presence_summary['total']['hke'] .= ' (' . $presence_summary['full_overtimes_count'] . ' ' . $this->language->get('code_full_overtime') . ')';
 		}
-		
-		if (!empty($data['presence_summary']['full_overtimes_count'])) {
-			$data['presence_summary']['hke'] .= ' (' . $data['presence_summary']['full_overtimes_count'] . ' ' . $this->language->get('code_full_overtime') . ')';
-		}
+
+		$data['presence_summary']['hke'] = $presence_summary['total']['hke'];
+		$data['presence_summary'] = array_merge($data['presence_summary'], $presence_summary['primary'], $presence_summary['additional']);
+
+		$data['presence_summary_width'] = (100 / count($data['presence_summary'])) . '%';
+
+		$data['late_summary']['t'] = $presence_summary['total']['t'];
+		$data['late_summary'] = array_merge($data['late_summary'], $presence_summary['secondary']);
 
 		$data['presence_period_id'] = $presence_period_id;
 		$data['customer_id'] = $customer_id;
@@ -991,6 +952,34 @@ class ControllerPresencePresence extends Controller {
 		$this->load->model('presence/presence');
 		$this->load->model('common/payroll');
 
+		$language_items = array(
+			'text_list',
+			'text_no_results',
+			'text_presence_summary',
+			'column_no',
+			'column_nip',
+			'column_name',
+			'column_lastname',
+			'column_customer_group',
+			'column_location',
+			'column_hke',
+			'column_h',
+			'column_s',
+			'column_i',
+			'column_ns',
+			'column_ia',
+			'column_a',
+			'column_c',
+			'column_t1',
+			'column_t2',
+			'column_t3',
+			'column_t',
+			'column_note',
+		);
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
+
 		if (isset($this->request->get['presence_period_id'])) {
 			$presence_period_id = $this->request->get['presence_period_id'];
 		} else {
@@ -1069,53 +1058,34 @@ class ControllerPresencePresence extends Controller {
 			return new Action('error/not_found');
 		}
 		
-		$language_items = array(
-			'text_list',
-			'text_no_results',
-			'text_presence_summary',
-			'column_no',
-			'column_nip',
-			'column_name',
-			'column_customer_group',
-			'column_location',
-			'column_hke',
-			'column_h',
-			'column_s',
-			'column_i',
-			'column_ns',
-			'column_ia',
-			'column_a',
-			'column_c',
-			'column_t1',
-			'column_t2',
-			'column_t3',
-			'column_total_t',
-			'column_note',
-		);
-		foreach ($language_items as $language_item) {
-			$data[$language_item] = $this->language->get($language_item);
-		}
-
 		$period = date('M_Y', strtotime($period_info['period']));
 
 		$output = $data['text_list'] . ' - ' . $period . '||';
 		$output .= $data['text_presence_summary'] . '||||';
 
-		$output .= $data['column_no'] . '|' . $data['column_nip'] . '|' . $data['column_name'] . '|' . $data['column_customer_group'] . '|' . $data['column_location'] . '|' . $data['column_hke'] . '|' . $data['column_h'] . '|' . $data['column_s'] . '|' . $data['column_i'] . '|' . $data['column_ns'] . '|' . $data['column_ia'] . '|' . $data['column_a'] . '|' . $data['column_c'] . '|' . $data['column_total_t'] . '|' . $data['column_t1'] . '|' . $data['column_t2'] . '|' . $data['column_t3'] . '|' . $data['column_note'] . '||';
+		$output .= $data['column_no'] . '|' . $data['column_nip'] . '|' . $data['column_name'] . '|' . $data['column_lastname'] . '|' . $data['column_customer_group'] . '|' . $data['column_location'] . '|';
+		// $output .= $data['column_no'] . '|' . $data['column_nip'] . '|' . $data['column_name'] . '|' . $data['column_lastname'] . '|' . $data['column_customer_group'] . '|' . $data['column_location'] . '|' . $data['column_hke'] . '|' . $data['column_h'] . '|' . $data['column_s'] . '|' . $data['column_i'] . '|' . $data['column_ns'] . '|' . $data['column_ia'] . '|' . $data['column_a'] . '|' . $data['column_c'] . '|' . $data['column_t'] . '|' . $data['column_t1'] . '|' . $data['column_t2'] . '|' . $data['column_t3'] . '|' . $data['column_note'] . '||';
 		
 		$no = 1;
 		
-		//Get absence Note
-		$range_date = array(
-			'start'	=> $period_info['date_start'],
-			'end'	=> $period_info['date_end']
-		);
-		//End GetNote Block
-		
 		$this->load->model('presence/absence');
+
+		$output_data = '';
+		$presence_data_title = [];
 	
+		$additional_items = $this->model_presence_presence->getPresenceAdditionalItem(array_column($results, 'additional'));
+		
 		foreach ($results as $result) {
+			$result['presence_data'] = $this->model_presence_presence->calculatePresenceSummaryData($result, $additional_items);
+
+			$presence_data = [];
+
 			//Get Note
+			$range_date = array(
+				'start'	=> $period_info['date_start'],
+				'end'	=> $period_info['date_end']
+			);
+
 			$range_date['start'] = max($range_date['start'], $result['date_start']);
 			
 			if ($result['date_end']) {
@@ -1130,13 +1100,29 @@ class ControllerPresencePresence extends Controller {
 				$note = '-';
 			}
 				
-			$hke = $result['total_h'] + $result['total_s'] + $result['total_i'] + $result['total_ns'] + $result['total_ia'] + $result['total_a'];
-			$total_t = $result['total_t1'] + 3 * $result['total_t2'] + 5 * $result['total_t3'];
+			$presence_data['hke'] = $result['presence_data']['total']['hke'];
+
+			$presence_data = array_merge($presence_data, $result['presence_data']['primary'], $result['presence_data']['additional'], $result['presence_data']['secondary']);
+
+	
+
+
+			// $hke = $result['total_h'] + $result['total_s'] + $result['total_i'] + $result['total_ns'] + $result['total_ia'] + $result['total_a'];
+			// $total_t = $result['total_t1'] + 3 * $result['total_t2'] + 5 * $result['total_t3'];
 			
-			$output .= $no . '|' . $result['nip'] . '|' . $result['name'] . '|' . $result['customer_group'] . '|' . $result['location'] . '|' . $hke . '|' . $result['total_h'] . '|' . $result['total_s'] . '|' . $result['total_i'] . '|' . $result['total_ns'] . '|' . $result['total_ia'] . '|' . $result['total_a'] . '|' . $result['total_c'] . '|' . $total_t . '|' . $result['total_t1'] . '|' . $result['total_t2'] . '|' . $result['total_t3'] . '|' . $note . '||';
+			$output_data .= $no . '|' . $result['nip'] . '|' . $result['firstname'] . '|' . $result['lastname'] . '|' . $result['customer_group'] . '|' . $result['location'] . '|';
+			// $output .= $no . '|' . $result['nip'] . '|' . $result['name'] . '|' . $result['customer_group'] . '|' . $result['location'] . '|' . $hke . '|' . $result['total_h'] . '|' . $result['total_s'] . '|' . $result['total_i'] . '|' . $result['total_ns'] . '|' . $result['total_ia'] . '|' . $result['total_a'] . '|' . $result['total_c'] . '|' . $total_t . '|' . $result['total_t1'] . '|' . $result['total_t2'] . '|' . $result['total_t3'] . '|' . $note . '||';
+			
+			$output_data .= implode('|', $presence_data) . '|' . $note . '||';
+
+			$presence_data_title = array_merge($presence_data_title, $presence_data);
 
 			$no++;
 		}
+
+		$output .= utf8_strtoupper(implode('|', array_keys($presence_data_title))). '|' . $data['column_note'] . '||';
+
+		$output .= $output_data;
 
 		$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
 		$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
@@ -1174,18 +1160,7 @@ class ControllerPresencePresence extends Controller {
 		$presence_period_id = $this->request->get['presence_period_id'];
 		
 		$language_items = array(
-			'text_sum_presence',
-			'text_no_results',
-			'column_h',
-			'column_s',
-			'column_i',
-			'column_ns',
-			'column_ia',
-			'column_a',
-			'column_c',
-			'column_t1',
-			'column_t2',
-			'column_t3'
+			'text_sum_presence'
 		);
 		foreach ($language_items as $item) {
 			$data[$item] = $this->language->get($item);
@@ -1283,12 +1258,20 @@ class ControllerPresencePresence extends Controller {
 			
 		// } else {
 			$presence_summary_total = $this->model_presence_presence->getPresenceSummariesTotal($filter_data);
+			// $presence_summary_total = $this->model_presence_presence->getPresenceSummaries($presence_period_id, $filter_data);
 
-			if (array_sum($presence_summary_total)) {
-				foreach ($presence_summary_total as $key => $value) {
-					$data['presences_summary_total'][$key] = $value;
-				}
-			}
+
+			$data['presence_summary_total'] = array_merge($presence_summary_total['primary'], $presence_summary_total['additional']);
+			
+			$data['presence_summary_total_width'] = (100 / count($data['presence_summary_total'])) . '%';
+			
+			$data['late_summary_total'] = $presence_summary_total['secondary'];
+
+			// if (array_sum($presence_summary_total)) {
+			// 	foreach ($presence_summary_total as $key => $value) {
+			// 		$data['presences_summary_total'][$key] = $value;
+			// 	}
+			// }
 		// }
 		
 		$this->response->setOutput($this->load->view('presence/presence_info', $data));

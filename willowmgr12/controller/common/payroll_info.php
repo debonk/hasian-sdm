@@ -1,21 +1,42 @@
 <?php
 class ControllerCommonPayrollInfo extends Controller {
+	private $filter_items = array(
+		'name',
+		'customer_group_id',
+		'customer_department_id',
+		'location_id'
+	);
+
 	public function index() {
 		$this->load->language('common/payroll_info');
 
 		$this->load->model('payroll/payroll');
 
 		$presence_period_id = $this->request->get['presence_period_id'];
-		
-		$total_payroll = $this->model_payroll_payroll->getTotalPayroll($presence_period_id);
-		$net_salary = $total_payroll['total_earning'] - $total_payroll['total_deduction'];
+
+		$filter = [];
+
+		foreach ($this->filter_items as $filter_item) {
+			if (isset($this->request->get['filter_' . $filter_item])) {
+				$filter[$filter_item] = $this->request->get['filter_' . $filter_item];
+			} else {
+				$filter[$filter_item] = null;
+			}
+		}
+
+		$filter_data = array(
+			'filter'	=> $filter
+		);
+
+		$payroll_summary = $this->model_payroll_payroll->getPayrollSummary($presence_period_id, $filter_data);
 
 		$data['component_codes'] = $this->model_payroll_payroll->getPayrollComponentCodes($presence_period_id);
 
-		$total_component = $this->model_payroll_payroll->getPayrollComponentTotal($presence_period_id,0,'code');
-		$data['net_salary'] = $this->currency->format($net_salary, $this->config->get('config_currency'));
-		$data['grandtotal'] = $this->currency->format($net_salary + $total_component['grandtotal'], $this->config->get('config_currency'));
-		$data['total_customer'] = $total_payroll['total_customer'];
+		$total_component = $this->model_payroll_payroll->getPayrollComponentTotal($presence_period_id, 0, 'code', $filter_data);
+
+		$data['net_salary'] = $this->currency->format($payroll_summary['total_net_salary'], $this->config->get('config_currency'));
+		$data['grandtotal'] = $this->currency->format($payroll_summary['total_net_salary'] + $payroll_summary['total_component'], $this->config->get('config_currency'));
+		$data['total_customer'] = $payroll_summary['total_customer'];
 
 		foreach ($data['component_codes'] as $code) {
 			$data['text_component'][$code] = $this->language->get('text_' . $code) . ' :';

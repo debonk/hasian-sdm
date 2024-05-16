@@ -9,8 +9,6 @@ class ControllerDashboardAttention extends Controller
 
 		$this->load->language('dashboard/attention');
 
-		$this->db->createView('v_contract');
-
 		$data['token'] = $this->session->data['token'];
 
 		$data['attentions'] = [];

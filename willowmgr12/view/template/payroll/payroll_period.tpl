@@ -128,9 +128,6 @@ $('#button-filter').on('click', function() {
 $('button[id^=\'button-generate\']').on('click', function(e) {
 	if (confirm('<?php echo $text_confirm; ?>')) {
 		var node = this;
-//		url = 'index.php?route=payroll/payroll/generate&token=<?php echo $token; ?>&presence_period_id=' + $(node).val();
-//		location = url;
-//    	alert($(node).val());
 		
 		$.ajax({
 			url: 'index.php?route=payroll/payroll/generate&token=<?php echo $token; ?>&presence_period_id=' + $(node).val(),

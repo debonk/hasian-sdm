@@ -18,7 +18,7 @@ $_['text_success_process']			= 'Success: Jadwal Karyawan telah berlaku!';
 $_['text_success_recap']			= 'Success: Data Absensi Karyawan telah dihitung!';
 $_['text_schedule_info']			= 'Ringkasan Jadwal';
 $_['text_schedule_type']			= '%s (%s - %s)';
-$_['text_confirm_recap']			= 'Data karyawan sebelumnya akan dihapus dan dihitung ulang.\nLanjutkan?';
+$_['text_confirm_recap']			= 'Data karyawan sebelumnya akan dihapus dan dihitung ulang.\n\nHilangkan centang untuk menghitung kehadiran seluruh karyawan sesuai filter yang diterapkan.\n\nLanjutkan?';
 $_['text_presence_summary']     	= 'Ringkasan Kehadiran';
 $_['text_log']						= 'Data Log';
 $_['text_off']						= 'Off';
@@ -31,9 +31,10 @@ $_['text_group_summary']			= 'Ringkasan Jabatan';
 $_['text_success_import']     		= 'Success: Your request has been processed. %d successfully imported, %d failed!';
 $_['text_schedule_imported']     	= '%s Import Success!';
 $_['text_importing']     			= 'Importing process started...!';
+$_['text_inactive']     			= 'Status Karyawan Tidak Aktif!';
 
 //Calendar
-$_['text_days']					= 'Sunday Monday Tuesday Wednesday Thursday Friday Saturday';
+$_['text_days']						= 'Sunday Monday Tuesday Wednesday Thursday Friday Saturday';
 
 // Column
 $_['column_code']			 		= 'Code';
@@ -48,24 +49,27 @@ $_['column_location']				= 'Lokasi Kerja';
 $_['column_note']			 		= 'Catatan';
 $_['column_action']					= 'Action';
 $_['column_duration']				= 'Durasi Kerja';
-$_['column_hke']          			= 'HKE';
+// $_['column_hke']          			= 'HKE';
 $_['column_t']         				= 'Total Terlambat';
-$_['column_h']         				= 'H';
-$_['column_s']         				= 'S';
-$_['column_i']         				= 'I';
-$_['column_ns']         			= 'NS';
-$_['column_ia']         			= 'IA';
-$_['column_a']         				= 'A';
-$_['column_c']         				= 'C';
-$_['column_t1']         			= 'T1';
-$_['column_t2']         			= 'T2';
-$_['column_t3']         			= 'T3';
+// $_['column_h']         				= 'H';
+// $_['column_s']         				= 'S';
+// $_['column_i']         				= 'I';
+// $_['column_ns']         			= 'NS';
+// $_['column_ia']         			= 'IA';
+// $_['column_a']         				= 'A';
+// $_['column_c']         				= 'C';
+// $_['column_t1']         			= 'T1';
+// $_['column_t2']         			= 'T2';
+// $_['column_t3']         			= 'T3';
 $_['column_date']			 		= 'Tanggal';
 $_['column_schedule']				= 'Jadwal';
 $_['column_schedule_type']			= 'Tipe Jadwal';
 $_['column_login']					= 'Login';
 $_['column_logout']					= 'Logout';
 $_['column_presence']				= 'Status';
+
+//Code
+$_['code_full_overtime']		= 'LH';
 
 // Entry
 $_['entry_presence_period']		= 'Periode Absensi';

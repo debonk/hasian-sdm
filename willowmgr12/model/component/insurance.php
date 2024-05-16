@@ -164,7 +164,7 @@ class ModelComponentInsurance extends Model
 		if ($status) {
 			$component_data = array(
 				'code'			=> 'insurance',
-				'heading_title'	=> $this->language->get('heading_title'),
+				// 'heading_title'	=> $this->language->get('heading_title'),
 				'quote'			=> $quote_data,
 				'sort_order'	=> $this->config->get('insurance_sort_order')
 			);

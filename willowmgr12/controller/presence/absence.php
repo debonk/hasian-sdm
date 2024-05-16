@@ -32,13 +32,13 @@ class ControllerPresenceAbsence extends Controller
 			if (isset($this->request->get['order'])) {
 				$url_filter .= '&order=' . $this->request->get['order'];
 			}
-		}	
+		}
 
 		if (isset($this->request->get['page']) && $excluded_item != 'page') {
 			$url_filter .= '&page=' . $this->request->get['page'];
 		}
 
-	return $url_filter;
+		return $url_filter;
 	}
 
 	public function index()
@@ -119,8 +119,6 @@ class ControllerPresenceAbsence extends Controller
 
 	protected function getList()
 	{
-		$this->db->createView('v_absence');
-
 		$language_items = array(
 			'heading_title',
 			'text_list',
@@ -316,8 +314,6 @@ class ControllerPresenceAbsence extends Controller
 
 	protected function getForm()
 	{
-		$this->db->createView('v_absence');
-
 		$data['text_form'] = !isset($this->request->get['absence_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
 
 		$language_items = array(
@@ -480,12 +476,12 @@ class ControllerPresenceAbsence extends Controller
 			} else {
 				if ($this->user->getCustomerDepartmentId()) {
 					$customer_info = $this->model_common_payroll->getCustomer($customer_id);
-		
+
 					if ($this->user->getCustomerDepartmentId() != $customer_info['customer_department_id']) {
 						$this->error['warning'] = $this->language->get('error_customer_department');
 					}
 				}
-		
+
 				if ($period_info && $this->model_common_payroll->checkPeriodStatus($period_info['presence_period_id'], 'submitted, generated, approved, released, completed')) { //Check period status
 					$this->error['date'] = $this->language->get('error_status');
 				}
@@ -616,7 +612,7 @@ class ControllerPresenceAbsence extends Controller
 			$this->load->model('presence/absence');
 
 			$absence_count = $this->model_presence_absence->getAbsencesCountByCustomerDate($this->request->post['customer_id'], $this->request->post['date']);
-			
+
 			if ($absence_count) {
 				$json['error'] = $this->language->get('error_absence_exist');
 			} else {
@@ -657,42 +653,56 @@ class ControllerPresenceAbsence extends Controller
 		}
 
 		if (!$json) {
-			$this->load->model('presence/presence');
+			$this->db->transaction(function () use ($absence_info, $period_info) {
+				$this->load->model('presence/presence');
 
-			$presence_status_ia = $this->config->get('payroll_setting_id_ia');
+				$presence_status_ia = $this->config->get('payroll_setting_id_ia');
 
-			$presence_summary_info = $this->model_presence_presence->getPresenceSummary($period_info['presence_period_id'], $absence_info['customer_id']);
+				$presence_summary_info = $this->model_presence_presence->getPresenceSummary($period_info['presence_period_id'], $absence_info['customer_id']);
 
-			$presence_summary_data = array();
+				$this->load->model('localisation/presence_status');
+				$presence_status_groups = $this->model_localisation_presence_status->getPresenceStatusesGroup();
 
-			if ($absence_info['approved']) {
-				$this->model_presence_absence->unapproveAbsence($this->request->get['absence_id']);
+				$presence_summary_data = [
+					'primary'	=> [],
+					'secondary'	=> []
+				];
 
-				//Edit presence dan presence summary
-				if ($presence_summary_info) {
-					$this->model_presence_presence->editPresence($absence_info['customer_id'], $absence_info['date'], $presence_status_ia);
+				if ($absence_info['approved']) {
+					$this->model_presence_absence->unapproveAbsence($this->request->get['absence_id']);
 
-					$presence_summary_data['total_ia'] = $presence_summary_info['total_ia'] + 1;
+					//Edit presence dan presence summary
+					if ($presence_summary_info) {
+						$this->model_presence_presence->editPresence($absence_info['customer_id'], $absence_info['date'], $presence_status_ia);
+						
+						$presence_summary_data['primary']['ia'] = $presence_summary_info['primary']['ia'] + 1;
+						
+						if (in_array($absence_info['presence_code'], array_keys($presence_status_groups))) {
+							$presence_summary_data[$presence_status_groups[$absence_info['presence_code']]][$absence_info['presence_code']] = $presence_summary_info[$presence_status_groups[$absence_info['presence_code']]][$absence_info['presence_code']] - 1;
+						} else if (in_array($absence_info['presence_code'], array_keys($presence_summary_info['additional']))) {
+							$presence_summary_data['additional'][$absence_info['presence_code']] = $presence_summary_info['additional'][$absence_info['presence_code']] - 1;
+						}
+					}
+				} else {
+					$this->model_presence_absence->approveAbsence($this->request->get['absence_id']);
 
-					if ($absence_info['presence_code']) {
-						$presence_summary_data['total_' . $absence_info['presence_code']] = $presence_summary_info['total_' . $absence_info['presence_code']] - 1;
+					if ($presence_summary_info) {
+						$this->model_presence_presence->editPresence($absence_info['customer_id'], $absence_info['date'], $absence_info['presence_status_id']);
+
+						$presence_summary_data['primary']['ia'] = $presence_summary_info['primary']['ia'] - 1;
+
+						if (in_array($absence_info['presence_code'], array_keys($presence_status_groups))) {
+							$presence_summary_data[$presence_status_groups[$absence_info['presence_code']]][$absence_info['presence_code']] = $presence_summary_info[$presence_status_groups[$absence_info['presence_code']]][$absence_info['presence_code']] + 1;
+						} else if (in_array($absence_info['presence_code'], array_keys($presence_summary_info['additional']))) {
+							$presence_summary_data['additional'][$absence_info['presence_code']] = $presence_summary_info['additional'][$absence_info['presence_code']] + 1;
+						} else {
+							$presence_summary_data['additional'][$absence_info['presence_code']] = 1;
+						}
 					}
 				}
-			} else {
-				$this->model_presence_absence->approveAbsence($this->request->get['absence_id']);
 
-				if ($presence_summary_info) {
-					$this->model_presence_presence->editPresence($absence_info['customer_id'], $absence_info['date'], $absence_info['presence_status_id']);
-
-					$presence_summary_data['total_ia'] = $presence_summary_info['total_ia'] - 1;
-
-					if ($absence_info['presence_code']) {
-						$presence_summary_data['total_' . $absence_info['presence_code']] = $presence_summary_info['total_' . $absence_info['presence_code']] + 1;
-					}
-				}
-			}
-
-			$this->model_presence_presence->editPresenceSummary($period_info['presence_period_id'], $absence_info['customer_id'], $presence_summary_data);
+				$this->model_presence_presence->editPresenceSummary($period_info['presence_period_id'], $absence_info['customer_id'], $presence_summary_data);
+			});
 
 			$json['success'] = $this->language->get('text_success');
 		}

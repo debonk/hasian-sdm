@@ -38,7 +38,11 @@ class ControllerCommonMenu extends Controller
 				'presence/presence',
 				'option'		=> ['presence/schedule_type', 'localisation/presence_status']
 			],
-			'payroll'		=> ['payroll/payroll_basic', 'payroll/payroll'],
+			'payroll'		=> [
+				'payroll/payroll_basic',
+				'payroll/payroll',
+				'option'		=> ['payroll/payroll_type']
+			],
 			'release'		=> [
 				'payroll/payroll_release',
 				'release/free_transfer',

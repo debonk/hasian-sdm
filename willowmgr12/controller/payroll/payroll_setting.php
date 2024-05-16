@@ -49,6 +49,7 @@ class ControllerPayrollPayrollSetting extends Controller {
 			'entry_login_start',
 			'entry_login_end',
 			'entry_logout_start',
+			'entry_late_tolerance',
 			'entry_use_fingerprint',
 			'entry_presence_card',
 			'entry_schedule_check',
@@ -127,6 +128,7 @@ class ControllerPayrollPayrollSetting extends Controller {
 		$data['cancel'] = $this->url->link('payroll/payroll_setting', 'token=' . $this->session->data['token'], true);
 
 		$data['presence_items'] = array(
+			'off',
 			'h',
 			's',
 			'i',
@@ -303,6 +305,14 @@ class ControllerPayrollPayrollSetting extends Controller {
 			$data['payroll_setting_logout_start'] = $this->config->get('payroll_setting_logout_start');
 		} else {
 			$data['payroll_setting_logout_start'] = 0;
+		}
+
+		if (isset($this->request->post['payroll_setting_late_tolerance'])) {
+			$data['payroll_setting_late_tolerance'] = $this->request->post['payroll_setting_late_tolerance'];
+		} elseif ($this->config->get('payroll_setting_late_tolerance')) {
+			$data['payroll_setting_late_tolerance'] = $this->config->get('payroll_setting_late_tolerance');
+		} else {
+			$data['payroll_setting_late_tolerance'] = 0;
 		}
 
 		if (isset($this->request->post['payroll_setting_completed_after'])) {

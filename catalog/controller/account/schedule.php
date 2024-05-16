@@ -43,11 +43,15 @@ class ControllerAccountSchedule extends Controller
 			$data[$language_item] = $this->language->get($language_item);
 		}
 
-		$period_info = $this->model_account_payroll->getCurrentPeriod();
+		if (!isset($this->request->get['last_period'])) {
+			$period_info = $this->model_account_payroll->getCurrentPeriod();
+		} else {
+			$period_info = $this->model_account_payroll->getPeriodByDate(date('Y-m-d', strtotime('last month')));
+		}
 
 		$data['calendar'] = [];
 
-		if ($period_info && $this->model_account_payroll->checkPeriodStatus($period_info['presence_period_id'], 'processing')) {
+		if ($period_info && !$this->model_account_payroll->checkPeriodStatus($period_info['presence_period_id'], 'completed')) {
 			$data['text_period'] = sprintf($this->language->get('text_period'), date($this->language->get('date_format_m_y'), strtotime($period_info['period'])));
 
 			$range_date = array(
@@ -109,6 +113,18 @@ class ControllerAccountSchedule extends Controller
 					$counter++;
 				}
 			}
+		}
+
+		if (!isset($this->request->get['last_period'])) {
+			$data['schedule'] = [
+				'title'	=> $this->language->get('button_period_last'),
+				'href'	=> $this->url->link('account/schedule', 'last_period=true', true)
+			];
+		} else {
+			$data['schedule'] = [
+				'title'	=> $this->language->get('button_period_current'),
+				'href'	=> $this->url->link('account/schedule', '', true)
+			];
 		}
 
 		$data['back'] = $this->url->link('account/account', '', true);

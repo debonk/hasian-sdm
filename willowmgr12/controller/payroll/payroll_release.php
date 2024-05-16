@@ -103,8 +103,6 @@ class ControllerPayrollPayrollRelease extends Controller
 
 	protected function getPeriod()
 	{
-		$this->db->createView('v_release');
-
 		$language_items = array(
 			'heading_title',
 			'text_period_list',
@@ -264,8 +262,6 @@ class ControllerPayrollPayrollRelease extends Controller
 
 	protected function getList()
 	{
-		$this->db->createView('v_release');
-
 		$language_items = [
 			'heading_title',
 			'text_list',
@@ -550,8 +546,6 @@ class ControllerPayrollPayrollRelease extends Controller
 
 	protected function getForm()
 	{
-		$this->db->createView('v_release');
-
 		$language_items = array(
 			'heading_title',
 			'text_edit',
@@ -772,8 +766,6 @@ class ControllerPayrollPayrollRelease extends Controller
 
 	public function completePayroll()
 	{
-		$this->db->createView('v_release');
-
 		$this->load->language('payroll/payroll_release');
 
 		$json = array();

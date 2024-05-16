@@ -18,9 +18,15 @@
 		<?php } ?>
 		<div id="content" class="<?= $class; ?>">
 			<?= $content_top; ?>
+			<div class="container-fluid">
+			<div class="pull-right" style="margin-top: 20px;">
+				<a href="<?php echo $schedule['href']; ?>" data-toggle="tooltip" title="<?php echo $schedule['title']; ?>"
+					class="btn btn-primary"><i class="fa fa-angle-double-right"></i> <?php echo $schedule['title']; ?></a>
+			</div>
 			<h2>
 				<?= $heading_title; ?>
 			</h2>
+		</div>
 			<?php if ($calendar) { ?>
 			<legend>
 				<?php echo $text_period; ?>

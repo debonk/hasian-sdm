@@ -47,16 +47,6 @@ class ModelCustomerFinger extends Model
 		return $query->row['total'];
 	}
 
-	// public function createView($view_name = 'v_finger')
-	// {
-	// 	$view_name = DB_PREFIX . $view_name;
-
-	// 	# Remove description for simpler query
-	// 	$sql = "SELECT cf.*, c.firstname AS customer, c.location_id, c.date_start, c.date_end, c.status FROM " . DB_PREFIX . "customer_finger cf LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = cf.customer_id)";
-
-	// 	return $this->db->createView($view_name, $sql);
-	// }
-
 	public function getFingerIndexes()
 	{
 		return $this->finger_indexes;

@@ -3,8 +3,6 @@ class ModelReportAttention extends Model
 {
 	public function getCustomerUncompleteDataSummaries($item_data = [])
 	{
-		$this->db->createView('v_customer');
-
 		$summary_data = [];
 
 		$implode = [];
@@ -28,8 +26,6 @@ class ModelReportAttention extends Model
 
 	public function getCustomerUncompleteDocumentCount()
 	{
-		$this->db->createView('v_document');
-
 		$sql = "SELECT 1 FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "v_document d ON d.customer_id = c.customer_id WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL) AND (date_end IS NULL OR date_end >= CURDATE()) GROUP BY c.customer_id";
 
 		$requirement_query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "document_type WHERE required = 1");
@@ -48,8 +44,6 @@ class ModelReportAttention extends Model
 
 	public function getCustomerContractSummaries()
 	{
-		$this->db->createView('v_contract');
-
 		$sql = "SELECT contract_status, COUNT(*) AS total FROM " . DB_PREFIX . "v_contract WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL) GROUP BY contract_status";
 
 		$query = $this->db->query($sql);

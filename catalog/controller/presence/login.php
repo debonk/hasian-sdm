@@ -19,8 +19,6 @@ class ControllerPresenceLogin extends Controller
 
 	protected function getList()
 	{
-		$this->db->createView('v_customer');
-
 		$language_items = array(
 			'heading_title',
 			'text_select',

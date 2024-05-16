@@ -156,8 +156,6 @@ class ControllerCustomerContract extends Controller
 
 	protected function getList()
 	{
-		$this->db->createView('v_contract');
-
 		$language_items = array(
 			'heading_title',
 			'text_list',
@@ -403,8 +401,6 @@ class ControllerCustomerContract extends Controller
 
 	protected function getForm()
 	{
-		$this->db->createView('v_contract');
-
 		$language_items = array(
 			'heading_title',
 			'text_add',

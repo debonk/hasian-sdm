@@ -39,8 +39,6 @@ class ControllerApiFinger extends Controller
 
 	public function template()
 	{
-		$this->db->createView('v_customer_finger');
-
 		$this->load->language('api/finger');
 
 		$json = [];

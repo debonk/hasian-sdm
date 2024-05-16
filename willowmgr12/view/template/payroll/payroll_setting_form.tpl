@@ -171,8 +171,8 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label" for="input-login-date"><span
-										data-toggle="tooltip" title="<?= $help_login_date; ?>">
+								<label class="col-sm-2 control-label" for="input-login-date"><span data-toggle="tooltip"
+										title="<?= $help_login_date; ?>">
 										<?= $entry_login_date; ?>
 									</span></label>
 								<div class="col-sm-10">
@@ -223,6 +223,16 @@
 									<input type="text" name="payroll_setting_logout_start"
 										value="<?= $payroll_setting_logout_start; ?>" class="form-control"
 										id="input-logout-start" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-late-tolerance">
+									<?= $entry_late_tolerance; ?>
+								</label>
+								<div class="col-sm-10">
+									<input type="text" name="payroll_setting_late_tolerance"
+										value="<?= $payroll_setting_late_tolerance; ?>" class="form-control"
+										id="input-late-tolerance" />
 								</div>
 							</div>
 							<div class="form-group">

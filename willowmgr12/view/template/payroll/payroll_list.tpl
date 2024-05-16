@@ -359,7 +359,7 @@
 
     $('#period-info').load('index.php?route=common/period_info&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>');
 
-    $('#payroll-info').load('index.php?route=common/payroll_info&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>');
+    $('#payroll-info').load('index.php?route=common/payroll_info&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id . $url; ?>');
 
     $('#button-filter').on('click', function () {
       url = 'index.php?route=payroll/payroll/info&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>';

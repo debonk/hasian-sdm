@@ -8,6 +8,61 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
+4.0.0 - Progress 0
+* Presence Status: Add validasi code tidak boleh kosong.
+* Presence Status: Add field status.
+* NEW MODUL: Payroll Type
+HKE: Total hadir + total tidak hadir (termasuk C dan CK)
+Schedule: Summarize tanpa centang untuk menghitung seluruh karyawan sesuai filter
+Presence: Kehadiran karyawan sekarang bisa di-sort berdasarkan status kehadiran utama (h, s, i...)
+APP > Schedule: Add last period schedule
+Setting: Add Late Tolerance
+
+Schedule: Repair Calculation
+Presence: Repair Calculation
+Presence Status: Remove Code
+* Bug Fixed: Component: Heading title dan Description ?
+Bug Fixed: Dashboard > Customer: Karyawan bulan lalu selalu 0%
+
+<!-- NEW TABLE -->
+oc_payroll_type
+
+<!-- MODIFY TABLE -->
+ALTER TABLE oc_presence_status ADD status boolean DEFAULT 1 NOT NULL;
+
+ALTER TABLE `oc_presence` CHANGE `date_added` `date_added` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP; 
+ALTER TABLE `oc_presence_total` CHANGE `date_added` `date_added` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE oc_presence_total ADD additional TEXT NULL AFTER total_t3;
+
+
+ALTER TABLE oc_customer_add_data ADD payroll_type_id INT(11) DEFAULT 1 NULL;
+ALTER TABLE oc_customer_add_data MODIFY COLUMN payroll_type_id int(11) NULL;
+
+ALTER TABLE oc_payroll CHANGE gaji_pokok addition_0 int(11) NULL;
+ALTER TABLE oc_payroll MODIFY COLUMN addition_0 int(11) NULL;
+ALTER TABLE oc_payroll CHANGE tunj_jabatan addition_1 int(11) NULL;
+ALTER TABLE oc_payroll MODIFY COLUMN addition_1 int(11) NULL;
+ALTER TABLE oc_payroll CHANGE tunj_hadir addition_2 int(11) NULL;
+ALTER TABLE oc_payroll MODIFY COLUMN addition_2 int(11) NULL;
+ALTER TABLE oc_payroll CHANGE tunj_pph addition_3 int(11) NULL;
+ALTER TABLE oc_payroll MODIFY COLUMN addition_3 int(11) NULL;
+ALTER TABLE oc_payroll CHANGE total_uang_makan addition_4 int(11) NULL;
+ALTER TABLE oc_payroll MODIFY COLUMN addition_4 int(11) NULL;
+ALTER TABLE oc_payroll CHANGE pot_sakit deduction_0 int(11) NULL;
+ALTER TABLE oc_payroll MODIFY COLUMN deduction_0 int(11) NULL;
+ALTER TABLE oc_payroll CHANGE pot_bolos deduction_1 int(11) NULL;
+ALTER TABLE oc_payroll MODIFY COLUMN deduction_1 int(11) NULL;
+ALTER TABLE oc_payroll CHANGE pot_tunj_hadir deduction_2 int(11) NULL;
+ALTER TABLE oc_payroll MODIFY COLUMN deduction_2 int(11) NULL;
+ALTER TABLE oc_payroll CHANGE pot_gaji_pokok deduction_3 int(11) NULL;
+ALTER TABLE oc_payroll MODIFY COLUMN deduction_3 int(11) NULL;
+ALTER TABLE oc_payroll CHANGE pot_terlambat deduction_4 int(11) NULL;
+ALTER TABLE oc_payroll MODIFY COLUMN deduction_4 int(11) NULL;
+ALTER TABLE oc_payroll MODIFY COLUMN uang_makan int(11) DEFAULT 0 NULL;
+ALTER TABLE oc_payroll CHANGE uang_makan uang_makan int(11) DEFAULT 0 NULL AFTER date_added;
+ALTER TABLE oc_payroll ADD title text NULL AFTER deduction_4;
+ALTER TABLE oc_payroll ADD payroll_basic_id int(11) DEFAULT 0 NOT NULL AFTER customer_id;
+
 3.1.5a	19/06/2024
 Some Bug Fixed
 
@@ -16,18 +71,6 @@ Customer Info: Menambah info contract
 Contract: Modify date_start by super user
 Contract Type: Add Resign Contract Type
 Contract, Customer, Presence: Menambah filter Contract Type. Improve List
-
-MODIFY TABLE
-INSERT INTO oc_contract_type (contract_type_id, name, description, duration, sort_order, status) VALUES(0, 'RESIGN', 'Status resign sebelum kontrak berakhir. Jangan dihapus.', 0, -10, 0);
-
-====================
-HSDM SOFTWARE 3.1.5 UPDATE
-
-Contract: Super User bisa mengubah Tanggal Mulai Bekerja karyawan.
-Customer Info: Tambahan info Kontrak
-Contract, Customer, Presence: Tambahan filter Contract Type.
-====================
-
 
 3.1.4	17/05/2024
 Free Transfer: Pemilihan Karyawan penerima menggunakan autocomplete.

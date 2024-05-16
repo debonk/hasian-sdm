@@ -5,8 +5,6 @@ class ControllerDashboardRecent extends Controller {
 			return;
 		}
 
-		$this->db->createView('v_customer');
-
 		$this->load->language('dashboard/recent');
 
 		$data['heading_title'] = $this->language->get('heading_title');

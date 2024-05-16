@@ -1,8 +1,6 @@
 <?php
 class ControllerDashboardCustomer extends Controller {
 	public function index() {
-		$this->db->createView('v_customer');
-
 		$this->load->language('dashboard/customer');
 
 		$data['heading_title'] = $this->language->get('heading_title');
@@ -14,20 +12,24 @@ class ControllerDashboardCustomer extends Controller {
 		// Total Orders
 		$this->load->model('presence/presence');
 
-		$today = $this->model_presence_presence->getTotalCustomers(array('period_date_start' => date('Y-m-d')));
+		$current_month = $this->model_presence_presence->getTotalCustomers();
 
-		$period_date_start = date('Y-m-') . '01';
-		$yesterday = $this->model_presence_presence->getTotalCustomers(array('period_date_start' => date('Y-m-d', strtotime($period_date_start))));
+		$this->load->model('common/payroll');
 
-		$difference = $today - $yesterday;
+		$date_previous_month = date('Y-m-d', strtotime('-1 month'));
+		$period_info = $this->model_common_payroll->getPeriodByDate($date_previous_month);
+	
+		$previous_month = $this->model_presence_presence->getTotalCustomers(array('presence_period_id' => $period_info['presence_period_id']));
 
-		if ($difference && $today) {
-			$data['percentage'] = round(($difference / $today) * 100);
+		$difference = $current_month - $previous_month;
+
+		if ($difference && $current_month) {
+			$data['percentage'] = round(($difference / $current_month) * 100);
 		} else {
 			$data['percentage'] = 0;
 		}
 
-		$customer_total = $today;
+		$customer_total = $current_month;
 
 		if ($customer_total > 1000000000000) {
 			$data['total'] = round($customer_total / 1000000000000, 1) . 'T';

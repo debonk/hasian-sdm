@@ -66,8 +66,6 @@ class ControllerPayrollPayrollBasic extends Controller {
 	}
 
 	protected function getList() {
-		$this->db->createView('v_customer');
-
 		if (isset($this->request->get['filter_name'])) {
 			$filter_name = $this->request->get['filter_name'];
 		} else {

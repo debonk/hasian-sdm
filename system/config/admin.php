@@ -24,7 +24,8 @@ $_['action_pre_action']  = array(
 	'startup/sass',
 	'startup/login',
 	'startup/permission',
-	'startup/maintenance'
+	'startup/maintenance',
+	'startup/db_view'
 );
 
 // Actions

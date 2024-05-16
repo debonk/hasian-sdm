@@ -1,21 +1,21 @@
-<?php echo $header; ?>
-<?php echo $column_left; ?>
+<?= $header; ?>
+<?= $column_left; ?>
 <div id="content">
 	<div class="page-header">
 		<div class="container-fluid">
 			<div class="pull-right">
-				<button type="submit" form="form-presence-summary" data-toggle="tooltip" title="<?php echo $button_save; ?>"
+				<button type="submit" form="form-presence-summary" data-toggle="tooltip" title="<?= $button_save; ?>"
 					class="btn btn-primary"><i class="fa fa-save"></i></button>
-				<a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>"
+				<a href="<?= $cancel; ?>" data-toggle="tooltip" title="<?= $button_cancel; ?>"
 					class="btn btn-default"><i class="fa fa-reply"></i></a>
 			</div>
 			<h1>
-				<?php echo $heading_title; ?>
+				<?= $heading_title; ?>
 			</h1>
 			<ul class="breadcrumb">
 				<?php foreach ($breadcrumbs as $breadcrumb) { ?>
-				<li><a href="<?php echo $breadcrumb['href']; ?>">
-						<?php echo $breadcrumb['text']; ?>
+				<li><a href="<?= $breadcrumb['href']; ?>">
+						<?= $breadcrumb['text']; ?>
 					</a></li>
 				<?php } ?>
 			</ul>
@@ -24,14 +24,14 @@
 	<div class="container-fluid">
 		<?php if ($error_warning) { ?>
 		<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>
-			<?php echo $error_warning; ?>
+			<?= $error_warning; ?>
 			<button type="button" class="close" data-dismiss="alert">&times;</button>
 		</div>
 		<?php } ?>
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="fa fa-pencil"></i>
-					<?php echo $text_form; ?>
+					<?= $text_form; ?>
 				</h3>
 			</div>
 			<?php if ($customer_id) { ?>
@@ -41,10 +41,11 @@
 						<div class="col-sm-4" id="period-info"></div>
 						<div class="col-sm-8" id="customer-info"></div>
 					</div>
+					<?php if (!$inactive) { ?>
 					<div class="clearfix">
-						<div class="panel-body col-sm-5">
+						<div class="panel-body col-sm-4">
 							<legend>
-								<?php echo $text_legend; ?>
+								<?= $text_legend; ?>
 							</legend>
 							<fieldset>
 								<div class="table-responsive">
@@ -52,13 +53,13 @@
 										<thead>
 											<tr>
 												<td class="text-center">
-													<?php echo $column_code; ?>
+													<?= $column_code; ?>
 												</td>
 												<td class="text-center">
-													<?php echo $column_time_start; ?>
+													<?= $column_time_start; ?>
 												</td>
 												<td class="text-center">
-													<?php echo $column_time_end; ?>
+													<?= $column_time_end; ?>
 												</td>
 											</tr>
 										</thead>
@@ -66,13 +67,13 @@
 											<?php foreach ($schedule_types as $schedule_type) { ?>
 											<tr>
 												<td class="text-center">
-													<?php echo $schedule_type['code']; ?>
+													<?= $schedule_type['code']; ?>
 												</td>
 												<td class="text-center">
-													<?php echo $schedule_type['time_start']; ?>
+													<?= $schedule_type['time_start']; ?>
 												</td>
 												<td class="text-center">
-													<?php echo $schedule_type['time_end']; ?>
+													<?= $schedule_type['time_end']; ?>
 												</td>
 											</tr>
 											<?php } ?>
@@ -81,110 +82,46 @@
 								</div>
 							</fieldset>
 						</div>
-						<div class="panel-body col-sm-7">
+						<div class="panel-body col-sm-8">
 							<legend>
-								<?php echo $text_presence_summary; ?>
+								<?= $text_presence_summary; ?>
 							</legend>
 							<div class="table-responsive">
-								<table class="table table-bordered">
+								<table class="table table-bordered text-center">
 									<thead>
 										<tr>
-											<td class="text-center table-evenly-8">
-												<?php echo $column_hke; ?>
+											<?php foreach (array_keys($presence_summary) as $code) { ?>
+											<td <?='style="width:' . $presence_summary_width . ';"' ; ?>>
+												<?= utf8_strtoupper($code); ?>
 											</td>
-											<td class="text-center table-evenly-8">
-												<?php echo $column_h; ?>
-											</td>
-											<td class="text-center table-evenly-8">
-												<?php echo $column_s; ?>
-											</td>
-											<td class="text-center table-evenly-8">
-												<?php echo $column_i; ?>
-											</td>
-											<td class="text-center table-evenly-8">
-												<?php echo $column_ns; ?>
-											</td>
-											<td class="text-center table-evenly-8">
-												<?php echo $column_ia; ?>
-											</td>
-											<td class="text-center table-evenly-8">
-												<?php echo $column_a; ?>
-											</td>
-											<td class="text-center table-evenly-8">
-												<?php echo $column_c; ?>
-											</td>
+											<?php } ?>
 										</tr>
 									</thead>
 									<tbody>
 										<tr>
-											<?php if ($presence_summary) { ?>
-											<td class="text-center nowrap">
-												<?php echo $presence_summary['hke']; ?>
-											</td>
-											<td class="text-center">
-												<?php echo $presence_summary['h']; ?>
-											</td>
-											<td class="text-center">
-												<?php echo $presence_summary['s']; ?>
-											</td>
-											<td class="text-center">
-												<?php echo $presence_summary['i']; ?>
-											</td>
-											<td class="text-center">
-												<?php echo $presence_summary['ns']; ?>
-											</td>
-											<td class="text-center">
-												<?php echo $presence_summary['ia']; ?>
-											</td>
-											<td class="text-center">
-												<?php echo $presence_summary['a']; ?>
-											</td>
-											<td class="text-center">
-												<?php echo $presence_summary['c']; ?>
-											</td>
-											<?php } else { ?>
-											<td class="text-center" colspan="8">
-												<?php echo $text_no_results; ?>
+											<?php foreach (array_values($presence_summary) as $value) { ?>
+											<td>
+												<?= $value; ?>
 											</td>
 											<?php } ?>
 										</tr>
 									</tbody>
 								</table>
-								<table class="table table-bordered">
+								<table class="table table-bordered text-center">
 									<thead>
 										<tr>
-											<td class="text-center table-evenly-4">
-												<?php echo $column_t; ?>
+											<?php foreach (array_keys($late_summary) as $code) { ?>
+											<td class="table-evenly-4">
+												<?= $code == 't' ? $column_t : utf8_strtoupper($code); ?>
 											</td>
-											<td class="text-center table-evenly-4">
-												<?php echo $column_t1; ?>
-											</td>
-											<td class="text-center table-evenly-4">
-												<?php echo $column_t2; ?>
-											</td>
-											<td class="text-center table-evenly-4">
-												<?php echo $column_t3; ?>
-											</td>
+											<?php } ?>
 										</tr>
 									</thead>
 									<tbody>
 										<tr>
-											<?php if ($presence_summary) { ?>
-											<td class="text-center">
-												<?php echo $presence_summary['t']; ?>
-											</td>
-											<td class="text-center">
-												<?php echo $presence_summary['t1']; ?>
-											</td>
-											<td class="text-center">
-												<?php echo $presence_summary['t2']; ?>
-											</td>
-											<td class="text-center">
-												<?php echo $presence_summary['t3']; ?>
-											</td>
-											<?php } else { ?>
-											<td class="text-center" colspan="4">
-												<?php echo $text_no_results; ?>
+											<?php foreach (array_values($late_summary) as $value) { ?>
+											<td>
+												<?= $value; ?>
 											</td>
 											<?php } ?>
 										</tr>
@@ -194,10 +131,10 @@
 						</div>
 					</div>
 					<div class="col-sm-12">
-						<form action="<?php echo $edit; ?>" method="post" enctype="multipart/form-data" id="form-presence-summary"
-							class="form-horizontal">
+						<form action="<?= $edit; ?>" method="post" enctype="multipart/form-data"
+							id="form-presence-summary" class="form-horizontal">
 							<legend>
-								<?php echo $text_schedule_detail; ?>
+								<?= $text_schedule_detail; ?>
 							</legend>
 							<div class="table-responsive">
 								<table class="table table-bordered">
@@ -205,7 +142,7 @@
 										<tr>
 											<?php foreach ($list_days as $list_day) { ?>
 											<td class="text-center table-evenly-7">
-												<?php echo $list_day; ?>
+												<?= $list_day; ?>
 											</td>
 											<?php } ?>
 										</tr>
@@ -217,34 +154,36 @@
 											<?php if (isset($calendar[$week . $day])) { ?>
 											<td class="text-right calendar-day">
 												<h4>
-													<?php echo $calendar[$week . $day]['text']; ?>
+													<?= $calendar[$week . $day]['text']; ?>
 												</h4>
 												<?php if ($calendar[$week . $day]['locked']) { ?>
 												<div class="text-center">
 													<p><i class="fa fa-clock-o"></i>
-														<?php echo $calendar[$week . $day]['schedule_type_code']; ?>
+														<?= $calendar[$week . $day]['schedule_type_code']; ?>
 													</p>
-													<p class="bg-<?php echo $calendar[$week . $day]['bg_class']; ?>" data-toggle="tooltip"
-														title="<?php echo $calendar[$week . $day]['note']; ?>">
+													<p class="bg-<?= $calendar[$week . $day]['bg_class']; ?>"
+														data-toggle="tooltip"
+														title="<?= $calendar[$week . $day]['note']; ?>">
 														<i class="fa fa-sign-in"></i>
-														<?php echo $calendar[$week . $day]['time_login'] . ' - ' . $calendar[$week . $day]['time_logout']; ?></br>
-														<?php echo $calendar[$week . $day]['presence_status']; ?>
+														<?= $calendar[$week . $day]['time_login'] . ' - ' . $calendar[$week . $day]['time_logout']; ?></br>
+														<?= $calendar[$week . $day]['presence_status']; ?>
 													</p>
 												</div>
 												<?php } else { ?>
-												<select name="<?php echo 'schedule' . $calendar[$week . $day]['date']; ?>" id=""
-													class="form-control">
+												<select name="<?= 'schedule' . $calendar[$week . $day]['date']; ?>"
+													id="" class="form-control">
 													<option value="0">
-														<?php echo $text_off; ?>
+														<?= $text_off; ?>
 													</option>
 													<?php foreach ($schedule_types as $schedule_type) { ?>
 													<?php if ($schedule_type['schedule_type_id'] == $calendar[$week . $day]['schedule_type_id']) { ?>
-													<option value="<?php echo $schedule_type['schedule_type_id']; ?>" selected="selected">
-														<?php echo $schedule_type['text']; ?>
+													<option value="<?= $schedule_type['schedule_type_id']; ?>"
+														selected="selected">
+														<?= $schedule_type['text']; ?>
 													</option>
 													<?php } else { ?>
-													<option value="<?php echo $schedule_type['schedule_type_id']; ?>">
-														<?php echo $schedule_type['text']; ?>
+													<option value="<?= $schedule_type['schedule_type_id']; ?>">
+														<?= $schedule_type['text']; ?>
 													</option>
 													<?php } ?>
 													<?php } ?>
@@ -264,29 +203,29 @@
 						<div id="absence-info"></div>
 						<div>
 							<legend>
-								<?php echo $text_log; ?>
+								<?= $text_log; ?>
 							</legend>
 							<div class="table-responsive">
 								<table class="table table-bordered">
 									<thead>
 										<tr>
 											<td class="text-left">
-												<?php echo $column_date; ?>
+												<?= $column_date; ?>
 											</td>
 											<td class="text-center">
-												<?php echo $column_schedule; ?>
+												<?= $column_schedule; ?>
 											</td>
 											<td class="text-center">
-												<?php echo $column_login; ?>
+												<?= $column_login; ?>
 											</td>
 											<td class="text-center">
-												<?php echo $column_logout; ?>
+												<?= $column_logout; ?>
 											</td>
 											<td class="text-center">
-												<?php echo $column_duration; ?>
+												<?= $column_duration; ?>
 											</td>
 											<td class="text-left">
-												<?php echo $column_presence; ?>
+												<?= $column_presence; ?>
 											</td>
 										</tr>
 									</thead>
@@ -295,29 +234,29 @@
 										<?php foreach ($calendar as $calendar_data) { ?>
 										<tr>
 											<td class="text-left">
-												<?php echo $calendar_data['text']; ?>
+												<?= $calendar_data['text']; ?>
 											</td>
 											<td class="text-center">
-												<?php echo $calendar_data['schedule_type_code']; ?>
+												<?= $calendar_data['schedule_type_code']; ?>
 											</td>
 											<td class="text-center">
-												<?php echo $calendar_data['time_login']; ?>
+												<?= $calendar_data['time_login']; ?>
 											</td>
 											<td class="text-center">
-												<?php echo $calendar_data['time_logout']; ?>
+												<?= $calendar_data['time_logout']; ?>
 											</td>
 											<td class="text-center">
-												<?php echo $calendar_data['duration']; ?>
+												<?= $calendar_data['duration']; ?>
 											</td>
 											<td class="text-left">
-												<?php echo $calendar_data['presence_status']; ?>
+												<?= $calendar_data['presence_status']; ?>
 											</td>
 										</tr>
 										<?php } ?>
 										<?php } else { ?>
 										<tr>
 											<td class="text-center" colspan="8">
-												<?php echo $text_no_results; ?>
+												<?= $text_no_results; ?>
 											</td>
 										</tr>
 										<?php } ?>
@@ -326,6 +265,13 @@
 							</div>
 						</div>
 					</div>
+					<?php } else { ?>
+					<div class="col-sm-12">
+						<div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i>
+							<?= $text_inactive; ?>
+						</div>
+					</div>
+					<?php } ?>
 				</div>
 			</div>
 			<?php } ?>
@@ -333,18 +279,18 @@
 	</div>
 </div>
 <script type="text/javascript">
-	$('#period-info').load('index.php?route=common/period_info&token=<?php echo $token; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
+	$('#period-info').load('index.php?route=common/period_info&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>');
 
-	$('#customer-info').load('index.php?route=common/customer_info&token=<?php echo $token; ?>&customer_id=<?php echo $customer_id; ?>');
+	$('#customer-info').load('index.php?route=common/customer_info&token=<?= $token; ?>&customer_id=<?= $customer_id; ?>');
 
-	$('#absence-info').load('index.php?route=common/absence_info&token=<?php echo $token; ?>&customer_id=<?php echo $customer_id; ?>&presence_period_id=<?php echo $presence_period_id; ?>');
+	$('#absence-info').load('index.php?route=common/absence_info&token=<?= $token; ?>&customer_id=<?= $customer_id; ?>&presence_period_id=<?= $presence_period_id; ?>');
 
 	$('#absence-info').on('click', 'button[id^=\'button-action\']', function (e) {
-		if (confirm('<?php echo $text_confirm; ?>')) {
+		if (confirm('<?= $text_confirm; ?>')) {
 			var node = this;
 
 			$.ajax({
-				url: 'index.php?route=' + $(node).val() + '&token=<?php echo $token; ?>',
+				url: 'index.php?route=' + $(node).val() + '&token=<?= $token; ?>',
 				dataType: 'json',
 				crossDomain: false,
 				beforeSend: function () {
@@ -372,4 +318,4 @@
 	});
 </script>
 </div>
-<?php echo $footer; ?>
+<?= $footer; ?>

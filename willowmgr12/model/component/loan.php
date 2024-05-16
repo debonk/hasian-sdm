@@ -48,7 +48,7 @@ class ModelComponentLoan extends Model {
 		if ($status) {
       		$component_data = array(
         		'code'			=> 'loan',
-				'heading_title'	=> $this->language->get('heading_title'),
+				// 'heading_title'	=> $this->language->get('heading_title'),
          		'quote'			=> $quote_data,
 				'sort_order'	=> $this->config->get('loan_sort_order')
       		);

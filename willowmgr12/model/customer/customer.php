@@ -201,8 +201,6 @@ class ModelCustomerCustomer extends Model
 
 	public function getCustomers($data = array())
 	{
-		$this->db->createView('v_customer');
-
 		$sql = "SELECT * FROM " . DB_PREFIX . "v_customer WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 		// $sql = "SELECT c.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cdd.name AS customer_department, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (c.customer_department_id = cdd.customer_department_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
 
@@ -375,9 +373,6 @@ class ModelCustomerCustomer extends Model
 
 	public function getTotalCustomers($data = array())
 	{
-		// $this->createView();
-		$this->db->createView('v_customer');
-
 		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "v_customer WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 
 		$implode = array();

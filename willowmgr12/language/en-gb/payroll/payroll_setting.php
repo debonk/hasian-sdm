@@ -15,6 +15,7 @@ $_['tab_payroll_status']         = 'Payroll Status';
 $_['tab_general']          		 = 'General';
 
 // Entry
+$_['entry_status_off']    	 	 = 'Status Tidak Hadir (Off)';
 $_['entry_status_h']    	 	 = 'Status Hadir';
 $_['entry_status_s']    	 	 = 'Status Sakit';
 $_['entry_status_i']    	 	 = 'Status Izin';
@@ -44,6 +45,7 @@ $_['entry_logout_date']  	 	 = 'Modifikasi Tanggal Logout (jam)';
 $_['entry_login_start']  	 	 = 'Awal Login (menit)';
 $_['entry_login_end']  	 	 	 = 'Akhir Login (menit)';
 $_['entry_logout_start']  	 	 = 'Awal Logout (menit)';
+$_['entry_late_tolerance']  	 = 'Toleransi Keterlambatan (menit)';
 $_['entry_schedule_check']  	 = 'Validasi Jadwal';
 $_['entry_presence_card']  	 	 = 'Kartu Absensi';
 $_['entry_use_fingerprint']  	 = 'Gunakan Fingerprint';
