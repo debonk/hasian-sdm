@@ -3,12 +3,12 @@ class ModelPresencePresence extends Model
 {
 	public function getCustomers($data = array())
 	{
-		$sql = "SELECT customer_id, nip, name, date_start, date_added, customer_department_id, customer_department, customer_group_id, customer_group, location_id, location FROM " . DB_PREFIX . "v_customer WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL) AND status = 1";
+		$sql = "SELECT customer_id, nip, c.name, date_start, date_added, customer_department_id, customer_department, customer_group_id, customer_group, location_id, location, pm.name AS payroll_method FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE (c.language_id = '" . (int)$this->config->get('config_language_id') . "' OR c.language_id IS NULL) AND status = 1";
 
 		$implode = array();
 
 		if (!empty($data['filter_name'])) {
-			$implode[] = "name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+			$implode[] = "c.name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
 		}
 
 		if (!empty($data['filter_customer_department_id'])) {

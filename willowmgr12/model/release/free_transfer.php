@@ -83,7 +83,7 @@ class ModelReleaseFreeTransfer extends Model {
 	}
 
 	public function getFreeTransferCustomers($free_transfer_id) {
-		$sql = "SELECT ftc.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cgd.name AS customer_group FROM " . DB_PREFIX . "free_transfer_customer ftc LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ftc.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) WHERE free_transfer_id = '" . (int)$free_transfer_id . "'";
+		$sql = "SELECT ftc.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cgd.name AS customer_group, l.name AS location, pm.name AS payroll_method FROM " . DB_PREFIX . "free_transfer_customer ftc LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ftc.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE free_transfer_id = '" . (int)$free_transfer_id . "'";
 		
 		$query = $this->db->query($sql);
 
@@ -108,7 +108,7 @@ class ModelReleaseFreeTransfer extends Model {
 		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "free_transfer_customer ftc";
 
 		if ($method) {
-			$sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ftc.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) AND pm.name = '" . $this->db->escape($method) . "' AND c.acc_no <> ''";
+			$sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ftc.customer_id) INNER JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id AND pm.name = '" . $this->db->escape($method) . "' AND c.acc_no <> '')";
 		}
 
 		$sql .= " WHERE ftc.free_transfer_id = '" . (int)$free_transfer_id . "'";
@@ -122,7 +122,7 @@ class ModelReleaseFreeTransfer extends Model {
 		$sql = "SELECT SUM(ftc.amount) AS total FROM " . DB_PREFIX . "free_transfer_customer ftc";
 
 		if ($method) {
-			$sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ftc.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) AND pm.name = '" . $this->db->escape($method) . "' AND c.acc_no <> ''";
+			$sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ftc.customer_id) INNER JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id AND pm.name = '" . $this->db->escape($method) . "' AND c.acc_no <> '')";
 		}
 
 		$sql .= " WHERE ftc.free_transfer_id = '" . (int)$free_transfer_id . "'";

@@ -1,19 +1,21 @@
 <?php
-class ControllerReleaseFreeTransfer extends Controller {
+class ControllerReleaseFreeTransfer extends Controller
+{
 	private $error = array();
 
-	public function index() {
+	public function index()
+	{
 		$this->load->language('release/free_transfer');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('release/free_transfer');
-		
+
 		$this->getList();
-		
 	}
 
-	public function add() {
+	public function add()
+	{
 		$this->load->language('release/free_transfer');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -21,7 +23,9 @@ class ControllerReleaseFreeTransfer extends Controller {
 		$this->load->model('release/free_transfer');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$this->model_release_free_transfer->addFreeTransfer($this->request->post);
+			$this->db->transaction(function () {
+				$this->model_release_free_transfer->addFreeTransfer($this->request->post);
+			});
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
@@ -45,7 +49,8 @@ class ControllerReleaseFreeTransfer extends Controller {
 		$this->getForm();
 	}
 
-	public function edit() {
+	public function edit()
+	{
 		$this->load->language('release/free_transfer');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -53,7 +58,9 @@ class ControllerReleaseFreeTransfer extends Controller {
 		$this->load->model('release/free_transfer');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$this->model_release_free_transfer->editFreeTransfer($this->request->get['free_transfer_id'], $this->request->post);
+			$this->db->transaction(function () {
+				$this->model_release_free_transfer->editFreeTransfer($this->request->get['free_transfer_id'], $this->request->post);
+			});
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
@@ -77,7 +84,8 @@ class ControllerReleaseFreeTransfer extends Controller {
 		$this->getForm();
 	}
 
-	public function delete() {
+	public function delete()
+	{
 		$this->load->language('release/free_transfer');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -86,7 +94,9 @@ class ControllerReleaseFreeTransfer extends Controller {
 
 		if (isset($this->request->post['selected']) && $this->validateDelete()) {
 			foreach ($this->request->post['selected'] as $free_transfer_id) {
-				$this->model_release_free_transfer->deleteFreeTransfer($free_transfer_id);
+				$this->db->transaction(function () use ($free_transfer_id) {
+					$this->model_release_free_transfer->deleteFreeTransfer($free_transfer_id);
+				});
 			}
 
 			$this->session->data['success'] = $this->language->get('text_success');
@@ -111,7 +121,8 @@ class ControllerReleaseFreeTransfer extends Controller {
 		$this->getList();
 	}
 
-	protected function getList() {
+	protected function getList()
+	{
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
@@ -169,7 +180,7 @@ class ControllerReleaseFreeTransfer extends Controller {
 		$data['free_transfers'] = array();
 
 		$free_transfer_count = $this->model_release_free_transfer->getFreeTransfersCount($filter_data);
-		
+
 		$results = $this->model_release_free_transfer->getFreeTransfers($filter_data);
 
 		foreach ($results as $result) {
@@ -186,7 +197,7 @@ class ControllerReleaseFreeTransfer extends Controller {
 				'export'          	=> $this->url->link('release/free_transfer/exportcsv', 'token=' . $this->session->data['token'] . '&free_transfer_id=' . $result['free_transfer_id'] . $url, true),
 			);
 		}
-		
+
 		$language_items = array(
 			'heading_title',
 			'text_list',
@@ -275,22 +286,28 @@ class ControllerReleaseFreeTransfer extends Controller {
 
 		$this->response->setOutput($this->load->view('release/free_transfer_list', $data));
 	}
-	
-	protected function getForm() {
+
+	protected function getForm()
+	{
 		$data['text_form'] = !isset($this->request->get['free_transfer_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
 
 		$language_items = array(
 			'heading_title',
 			'text_select',
+			'column_customer',
+			'column_customer_group',
+			'column_location',
+			'column_payroll_method',
+			'column_note',
+			'column_amount',
 			'entry_description',
 			'entry_date_process',
 			'entry_fund_account',
-			'entry_customer',
 			'entry_note',
 			'entry_amount',
+			'entry_input_customer',
 			'button_save',
 			'button_cancel',
-			'button_free_transfer_add',
 			'button_remove'
 		);
 		foreach ($language_items as $language_item) {
@@ -318,7 +335,7 @@ class ControllerReleaseFreeTransfer extends Controller {
 		} else {
 			$free_transfer_id = 0;
 		}
-		
+
 		$url = '';
 
 		if (isset($this->request->get['sort'])) {
@@ -361,7 +378,7 @@ class ControllerReleaseFreeTransfer extends Controller {
 		if ($free_transfer_id) {
 			$free_transfer_info = $this->model_release_free_transfer->getFreeTransfer($free_transfer_id);
 		}
-		
+
 		//Text User Modify
 		if (!empty($free_transfer_info)) {
 			$username = $free_transfer_info['username'];
@@ -371,7 +388,7 @@ class ControllerReleaseFreeTransfer extends Controller {
 			$date_modified = date($this->language->get('date_format_jMY'));
 		}
 		$data['text_modified'] = sprintf($this->language->get('text_modified'), $username, $date_modified);
-		
+
 		if (isset($this->request->post['description'])) {
 			$data['description'] = $this->request->post['description'];
 		} elseif (!empty($free_transfer_info)) {
@@ -379,7 +396,7 @@ class ControllerReleaseFreeTransfer extends Controller {
 		} else {
 			$data['description'] = '';
 		}
-		
+
 		if (isset($this->request->post['date_process'])) {
 			$data['date_process'] = $this->request->post['date_process'];
 		} elseif (!empty($free_transfer_info)) {
@@ -387,7 +404,7 @@ class ControllerReleaseFreeTransfer extends Controller {
 		} else {
 			$data['date_process'] = '';
 		}
-		
+
 		if (isset($this->request->post['fund_account_id'])) {
 			$data['fund_account_id'] = $this->request->post['fund_account_id'];
 		} elseif (!empty($free_transfer_info)) {
@@ -395,7 +412,7 @@ class ControllerReleaseFreeTransfer extends Controller {
 		} else {
 			$data['fund_account_id'] = 0;
 		}
-		
+
 		$this->load->model('release/fund_account');
 
 		$fund_accounts = $this->model_release_fund_account->getFundAccounts();
@@ -405,40 +422,36 @@ class ControllerReleaseFreeTransfer extends Controller {
 				'fund_account_text'	=> $fund_account['acc_name'] . '; ' . $fund_account['bank_name'] . ' - ' .  $fund_account['acc_no']
 			);
 		}
-		
+
 		$data['customers'] = array();
 
-		if (!$this->model_release_free_transfer->checkFreeTransferProcessed($free_transfer_id)) {
-			$this->load->model('common/payroll');
-			$period_info = $this->model_common_payroll->getPeriod();
+		$data['status_processed'] = $this->model_release_free_transfer->checkFreeTransferProcessed($free_transfer_id);
 
-			$this->load->model('presence/presence');
-			
-			$filter_data = array(
-				'presence_period_id'	=> $period_info['presence_period_id'],
-				'availability'  		=> true,
-			);
-
-			$customers = $this->model_presence_presence->getCustomers($filter_data);
-		} else {
-			$customers = $this->model_release_free_transfer->getFreeTransferCustomers($free_transfer_id);
-		}
-		
-		foreach ($customers as $customer) {
-			$data['customers'][] = array(
-				'customer_id' 		=> $customer['customer_id'],
-				'customer_text' 	=> $customer['name'] . ' - ' . $customer['customer_group']
-			);
-		}
-		
-		if (isset($this->request->post['free_transfer_customer'])) {
+		if (isset($this->request->post['description'])) {
 			$data['free_transfer_customers'] = $this->request->post['free_transfer_customer'];
+
+			if ($data['free_transfer_customers']) {
+				$this->load->model('common/payroll');
+
+				$data['free_transfer_customers'] = array_map(function ($customer) {
+					$customer_info = $this->model_common_payroll->getCustomer($customer['customer_id']);
+
+					$customer_data = [
+						'name'				=> $customer_info['name'],
+						'customer_group'	=> $customer_info['customer_group'],
+						'location'			=> $customer_info['location'],
+						'payroll_method'	=> $customer_info['payroll_method']
+					];
+
+					return array_merge($customer, $customer_data);
+				}, $data['free_transfer_customers']);
+			}
 		} elseif ($free_transfer_id) {
 			$data['free_transfer_customers'] = $this->model_release_free_transfer->getFreeTransferCustomers($free_transfer_id);
 		} else {
 			$data['free_transfer_customers'] = array();
 		}
-		
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -446,13 +459,14 @@ class ControllerReleaseFreeTransfer extends Controller {
 		$this->response->setOutput($this->load->view('release/free_transfer_form', $data));
 	}
 
-	protected function validateForm() {
+	protected function validateForm()
+	{
 		if (isset($this->request->get['free_transfer_id'])) {
 			$free_transfer_id = $this->request->get['free_transfer_id'];
 		} else {
 			$free_transfer_id = 0;
 		}
-		
+
 		if (!$this->user->hasPermission('modify', 'release/free_transfer')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
@@ -468,23 +482,31 @@ class ControllerReleaseFreeTransfer extends Controller {
 		if (empty($this->request->post['fund_account_id'])) {
 			$this->error['fund_account'] = $this->language->get('error_fund_account');
 		}
-		
+
 		if (empty($this->request->post['free_transfer_customer'])) {
 			$this->error['warning'] = $this->language->get('error_customer');
+		} else {
+			foreach ($this->request->post['free_transfer_customer'] as $free_transfer_customer) {
+				if ((int)$free_transfer_customer['amount'] <= 0) {
+					$this->error['warning'] = $this->language->get('error_amount');
+					break;
+				}
+			}
 		}
 
 		if ($free_transfer_id && $this->model_release_free_transfer->checkFreeTransferProcessed($free_transfer_id)) {
 			$this->error['warning'] = $this->language->get('error_processed');
 		}
-		
+
 		if ($this->error && !isset($this->error['warning'])) {
 			$this->error['warning'] = $this->language->get('error_warning');
 		}
 
 		return !$this->error;
 	}
-	
-	protected function validateDelete() {
+
+	protected function validateDelete()
+	{
 		if (!$this->user->hasPermission('modify', 'release/free_transfer')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
@@ -498,7 +520,8 @@ class ControllerReleaseFreeTransfer extends Controller {
 		return !$this->error;
 	}
 
-	public function exportCsv() {
+	public function exportCsv()
+	{
 		$this->load->language('release/free_transfer');
 
 		$this->load->model('release/free_transfer');
@@ -510,19 +533,19 @@ class ControllerReleaseFreeTransfer extends Controller {
 		}
 
 		$free_transfer_info = $this->model_release_free_transfer->getFreeTransfer($free_transfer_id);
-		
+
 		if (!empty($free_transfer_info) && $this->validateExport()) {
 			$this->load->model('release/fund_account');
 			$fund_account_info = $this->model_release_fund_account->getFundAccount($free_transfer_info['fund_account_id']);
-			
+
 			$currency_code = $this->config->get('config_currency');
 			$date_process = date('Ymd', strtotime($free_transfer_info['date_process']));
-			
+
 			$result_count = $this->model_release_free_transfer->getFreeTransferCustomerCountByMethod($free_transfer_id, 'CIMB');
 			$result_total = $this->model_release_free_transfer->getFreeTransferCustomerTotalByMethod($free_transfer_id, 'CIMB');
-			
+
 			$output = '';
-			$output .= $fund_account_info['acc_no'] . ',' . $fund_account_info['acc_name'] . ',' . $currency_code . ',' . $result_total . ',' . $free_transfer_info['description'] . ',' . $result_count . ',' . $date_process . ',' . $fund_account_info['email']; 
+			$output .= $fund_account_info['acc_no'] . ',' . $fund_account_info['acc_name'] . ',' . $currency_code . ',' . $result_total . ',' . $free_transfer_info['description'] . ',' . $result_count . ',' . $date_process . ',' . $fund_account_info['email'];
 
 			$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
 			$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
@@ -536,7 +559,7 @@ class ControllerReleaseFreeTransfer extends Controller {
 
 			foreach ($results as $result) {
 				$value = '';
-				$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $result['amount'] . ',' . $free_transfer_info['description'] . ',' . $result['email'] . ',,';
+				$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $result['amount'] . ',' . $free_transfer_info['description'] . (!empty($result['note']) ? ': ' . $result['note'] : '') . ',' . $result['email'] . ',,';
 
 				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
 				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
@@ -545,12 +568,12 @@ class ControllerReleaseFreeTransfer extends Controller {
 				$value = str_replace('\\\n', '\n', $value);
 				$value = str_replace('\\\r', '\r', $value);
 				$value = str_replace('\\\t', '\t', $value);
-				
+
 				$output .= "\n" . $value;
 			}
-				
+
 			$filename = $date_process . '_' . str_replace(' ', '_', $free_transfer_info['description']);
-			
+
 			$this->response->addheader('Pragma: public');
 			$this->response->addheader('Expires: 0');
 			$this->response->addheader('Content-Description: File Transfer');
@@ -558,18 +581,59 @@ class ControllerReleaseFreeTransfer extends Controller {
 			$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
 			$this->response->addheader('Content-Transfer-Encoding: binary');
 			$this->response->setOutput($output);
-			// echo $output;
+			// echo '<pre>' . print_r($output, 1);
 		} else {
-		
+
 			$this->index();
 		}
 	}
 
-	protected function validateExport() {
+	protected function validateExport()
+	{
 		if (!$this->user->hasPermission('modify', 'release/free_transfer')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
 		return !$this->error;
+	}
+
+	public function autocomplete()
+	{
+		$this->load->language('release/free_transfer');
+
+		$json = array();
+
+		if (isset($this->request->get['filter_name'])) {
+			$filter_name = $this->request->get['filter_name'];
+
+			$this->load->model('common/payroll');
+			$period_info = $this->model_common_payroll->getPeriod();
+
+			$this->load->model('presence/presence');
+
+			$filter_data = array(
+				'presence_period_id'	=> $period_info['presence_period_id'],
+				'filter_name'			=> $filter_name,
+				'availability'  		=> true,
+				'start'      			=> 0,
+				'limit'      			=> 15
+			);
+
+			$results = $this->model_presence_presence->getCustomers($filter_data);
+
+			foreach ($results as $result) {
+				$json[] = array(
+					'customer_id'		=> $result['customer_id'],
+					'name_set'			=> strip_tags(html_entity_decode(sprintf($this->language->get('text_name_set'), $result['name'], $result['customer_group'], $result['location']), ENT_QUOTES, 'UTF-8')),
+					'name'				=> strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8')),
+					'customer_group'	=> $result['customer_group'],
+					'location'			=> $result['location'],
+					'payroll_method'	=> $result['payroll_method']
+				);
+			}
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
 	}
 }

@@ -8,6 +8,9 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
+3.1.4	17/05/2024
+Free Transfer: Pemilihan Karyawan penerima menggunakan autocomplete.
+
 3.1.3	16/03/2024
 Release: Fitur export draft utk pengecekan gaji sebelum dirilis.
 Bug Fixed: Karyawan baru disebut Berhenti Bekerja karena date_end otomatis diset.
