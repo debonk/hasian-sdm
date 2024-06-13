@@ -58,31 +58,6 @@
 									<?= utf8_strtoupper($code); ?>
 								</td>
 								<?php } ?>
-
-								<!-- <td class="text-center table-evenly-8">
-									<?php echo $column_hke; ?>
-								</td>
-								<td class="text-center table-evenly-8">
-									<?php echo $column_h; ?>
-								</td>
-								<td class="text-center table-evenly-8">
-									<?php echo $column_s; ?>
-								</td>
-								<td class="text-center table-evenly-8">
-									<?php echo $column_i; ?>
-								</td>
-								<td class="text-center table-evenly-8">
-									<?php echo $column_ns; ?>
-								</td>
-								<td class="text-center table-evenly-8">
-									<?php echo $column_ia; ?>
-								</td>
-								<td class="text-center table-evenly-8">
-									<?php echo $column_a; ?>
-								</td>
-								<td class="text-center table-evenly-8">
-									<?php echo $column_c; ?>
-								</td> -->
 							</tr>
 						</thead>
 						<tbody>
@@ -92,37 +67,6 @@
 									<?= $value; ?>
 								</td>
 								<?php } ?>
-
-								<!-- <?php if ($presence_summary) { ?>
-								<td class="text-center nowrap">
-									<?php echo $presence_summary['hke']; ?>
-								</td>
-								<td class="text-center">
-									<?php echo $presence_summary['total_h']; ?>
-								</td>
-								<td class="text-center">
-									<?php echo $presence_summary['total_s']; ?>
-								</td>
-								<td class="text-center">
-									<?php echo $presence_summary['total_i']; ?>
-								</td>
-								<td class="text-center">
-									<?php echo $presence_summary['total_ns']; ?>
-								</td>
-								<td class="text-center">
-									<?php echo $presence_summary['total_ia']; ?>
-								</td>
-								<td class="text-center">
-									<?php echo $presence_summary['total_a']; ?>
-								</td>
-								<td class="text-center">
-									<?php echo $presence_summary['total_c']; ?>
-								</td>
-								<?php } else { ?>
-								<td class="text-center" colspan="8">
-									<?php echo $text_no_results; ?>
-								</td>
-								<?php } ?> -->
 							</tr>
 						</tbody>
 					</table>

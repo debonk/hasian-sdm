@@ -52,7 +52,7 @@ $(document).keypress(function(e) {
 $('#period-info').load('index.php?route=common/period_info&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>&no_shortcut=1');
 
 $('#button-select').on('click', function() {
-	url = 'index.php?route=payroll/payroll/edit&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id . $url; ?>';
+	url = 'index.php?route=payroll/payroll/edit&token=<?= $token . $url; ?>';
 	
 	var select_name = $('select[name=\'select_customer\']').val();
 	

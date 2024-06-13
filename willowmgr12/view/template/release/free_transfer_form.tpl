@@ -198,7 +198,7 @@
     },
     'select': function (item) {
       if (!$('#free-transfer-customer-row' + item['value']).length) {
-        $('input[name=\'free-transfer-customer\']').val('');
+        $('input[name=\'input_free_transfer_customer\']').val('');
 
         html = '<tr id="free-transfer-customer-row' + item['value'] + '">';
         html += '  <td>' + item['customer'];

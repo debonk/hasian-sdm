@@ -8,10 +8,11 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
-4.0.0 - Progress 0
+4.0.0 - Progress 1
 * Presence Status: Add validasi code tidak boleh kosong.
 * Presence Status: Add field status.
 * NEW MODUL: Payroll Type
+* Remove $customer_full_overtime_status
 HKE: Total hadir + total tidak hadir (termasuk C dan CK)
 Schedule: Summarize tanpa centang untuk menghitung seluruh karyawan sesuai filter
 Presence: Kehadiran karyawan sekarang bisa di-sort berdasarkan status kehadiran utama (h, s, i...)
@@ -72,8 +73,15 @@ Contract: Modify date_start by super user
 Contract Type: Add Resign Contract Type
 Contract, Customer, Presence: Menambah filter Contract Type. Improve List
 
+
 3.1.4	17/05/2024
-Free Transfer: Pemilihan Karyawan penerima menggunakan autocomplete.
+Free Transfer: Pemilihan Karyawan menggunakan autocomplete.
+
+====================
+HSDM SOFTWARE 3.1.4 UPDATE
+Release: Penambahan Fitur 'Export Release Draft' jika memerlukan pengecekan gaji sebelum dirilis.
+Free Transfer: Pemilihan Karyawan menggunakan autocomplete.
+====================
 
 3.1.3	16/03/2024
 Release: Fitur export draft utk pengecekan gaji sebelum dirilis.

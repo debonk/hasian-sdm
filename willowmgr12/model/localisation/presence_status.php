@@ -74,10 +74,11 @@ class ModelLocalisationPresenceStatus extends Model
 
 			return $query->rows;
 		} else {
+			// $this->cache->delete('presence_status'); # Uncomment untuk memperbaharui cache
 			$presence_status_data = $this->cache->get('presence_status');
 
 			if (!$presence_status_data) {
-				$query = $this->db->query("SELECT presence_status_id, code, name, status FROM " . DB_PREFIX . "presence_status ORDER BY presence_status_id");
+				$query = $this->db->query("SELECT presence_status_id, code, name, status FROM " . DB_PREFIX . "presence_status WHERE status = 1 ORDER BY presence_status_id");
 
 				$presence_status_data = $query->rows;
 
@@ -130,7 +131,7 @@ class ModelLocalisationPresenceStatus extends Model
 	{
 		$presence_status_data = [];
 
-		$presence_statuses = $this->getPresenceStatuses(['status' => true]);
+		$presence_statuses = $this->getPresenceStatuses();
 		foreach ($presence_statuses as $presence_status) {
 			// $presence_status_data[$presence_status['presence_status_id']] = [
 			// 	'code'	=> $presence_status['code'],
@@ -147,15 +148,13 @@ class ModelLocalisationPresenceStatus extends Model
 	{
 		$presence_status_data = [];
 
-		$presence_statuses = $this->getPresenceStatuses(['status' => true]);
+		$presence_statuses = $this->getPresenceStatuses();
 		foreach ($presence_statuses as $presence_status) {
 			$presence_status_data[$presence_status['presence_status_id']] = [
 				'code'	=> $presence_status['code'],
 				'name'	=> $presence_status['name']
 			];
 		}
-
-		// var_dump(array_combine(array_column($presence_statuses, 'presence_status_id'), $presence_statuses));
 
 		return $presence_status_data;
 	}

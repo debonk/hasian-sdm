@@ -154,20 +154,19 @@ class ModelPresencePresence extends Model
 		return $query->row;
 	}
 
-	public function addPresence($presence_period_id, $customer_id, $date, $presence_status_id)
-	{
-		$sql = "INSERT INTO " . DB_PREFIX . "presence SET presence_period_id = '" . (int)$presence_period_id . "', customer_id = '" . (int)$customer_id . "', date_presence = '" . $this->db->escape($date) . "', presence_status_id = '" . (int)$presence_status_id . "', user_id = '" . (int)$this->user->getId() . "', date_added = NOW()";
-
-		$this->db->query($sql);
-	}
-
-	public function addPresences($presences_data)
+	public function addPresences($presence_period_id, $customer_id, $presences_data)
 	{ # Batch mode
+		$batch_data = [];
+
+		foreach ($presences_data as $date => $presence_data) {
+			$batch_data[] = [$presence_period_id, $customer_id, $date, $presence_data['presence_status_id']];
+		}
+
 		$sql = "INSERT INTO " . DB_PREFIX . "presence (presence_period_id, customer_id, date_presence, presence_status_id, user_id) VALUES ";
 
 		$implode = [];
 
-		foreach ($presences_data as $data) {
+		foreach ($batch_data as $data) {
 			$implode[] = "('" . implode('\', \'', $data) . "', " . (int)$this->user->getId() . ")";
 		}
 
@@ -182,72 +181,32 @@ class ModelPresencePresence extends Model
 	}
 
 	public function deletePresence($presence_period_id, $customer_id)
-	{ //used by: schedule
+	{
 		$this->db->query("DELETE FROM " . DB_PREFIX . "presence WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "presence_total WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'");
 	}
 
 	public function editPresences($presence_period_id, $customer_id, $data)
 	{
+		$this->load->model('localisation/presence_status');
+		$presence_status_data = $this->model_localisation_presence_status->getPresenceStatusIdList();
+
+		$presences_data = [];
+
+		foreach ($data as $date => $presence_status_id) {
+			$presences_data[$date] = [
+				'presence_status_id'	=> $presence_status_id,
+				'presence_code'			=> isset($presence_status_data[$presence_status_id]) ? $presence_status_data[$presence_status_id]['code'] : ''
+			];
+		}
+
 		$this->deletePresence($presence_period_id, $customer_id);
+		$this->addPresences($presence_period_id, $customer_id, $presences_data);
 
-		foreach ($data as $key => $value) {
-			$this->addPresence($presence_period_id, $customer_id, $key, $value);
-		}
+		$this->load->model('presence/schedule');
+		$presence_summary_info = $this->model_presence_schedule->calculatePresenceSummary($presence_period_id, $customer_id, $presences_data);
 
-		$config_presence_status_id = array();
-
-		$presence_statuses = array(
-			'h',
-			's',
-			'i',
-			'ns',
-			'ia',
-			'a',
-			'c',
-			't1',
-			't2',
-			't3'
-		);
-		foreach ($presence_statuses as $presence_status) {
-			$config_presence_status_id[$presence_status] = $this->config->get('payroll_setting_id_' . $presence_status);
-		}
-
-		$presence_summary = array_count_values($data);
-
-		$presences_data = array();
-
-		foreach ($config_presence_status_id as $key => $value) {
-			if (isset($presence_summary[$value])) {
-				$presences_data[$key] = $presence_summary[$value];
-			} else {
-				$presences_data[$key] = 0;
-			}
-		}
-
-		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
-		$customer_info = $this->model_common_payroll->getCustomer($customer_id);
-
-		if (strtotime($customer_info['date_start']) > strtotime($period_info['date_start']) || (isset($customer_info['date_end']) && strtotime($customer_info['date_end']) <= strtotime($period_info['date_end']))) {
-			$default_hke = $this->config->get('payroll_setting_default_hke');
-
-			$this->load->model('overtime/overtime');
-
-			$range_date = array(
-				'start'		=> $period_info['date_start'],
-				'end'		=> $period_info['date_end']
-			);
-
-			$full_overtimes_count = $this->model_overtime_overtime->getFullOvertimesCount($customer_id, $range_date);
-			$default_hke += $full_overtimes_count;
-
-			$presences_data['ns'] += max($default_hke - array_sum($presences_data), 0);
-			//Dgn cara ini, ck akan dianggap ns. Formulasi ulang dgn menggunakan kode presence_status
-		}
-
-		$presences_data['h'] += $presences_data['t1'] + $presences_data['t2'] + $presences_data['t3'];
-
-		$this->addPresenceSummary($presence_period_id, $customer_id, $presences_data);
+		$this->addPresenceSummary($presence_period_id, $customer_id, $presence_summary_info);
 	}
 
 	public function getPresence($customer_id, $date)
@@ -330,7 +289,7 @@ class ModelPresencePresence extends Model
 	}
 
 	public function addPresenceSummary($presence_period_id, $customer_id, $data)
-	{ //used by: schedule
+	{
 		$sql = "INSERT INTO " . DB_PREFIX . "presence_total SET presence_period_id = '" . (int)$presence_period_id . "', customer_id = '" . (int)$customer_id . "'";
 
 		$presence_statuses = array(
@@ -405,7 +364,7 @@ class ModelPresencePresence extends Model
 		);
 
 		$this->load->model('overtime/overtime');
-		$presence_summary_data['full_overtimes_count'] = $this->model_overtime_overtime->getFullOvertimesCount($customer_id, $range_date);
+		$presence_summary_data['total']['full_overtime'] = $this->model_overtime_overtime->getFullOvertimesCount($customer_id, $range_date);
 
 		return $presence_summary_data;
 	}
@@ -416,13 +375,15 @@ class ModelPresencePresence extends Model
 
 		$this->load->model('localisation/presence_status');
 		$presence_statuses = $this->model_localisation_presence_status->getPresenceStatusesData();
+		// print_r($presence_summary);
+		// die(' ---breakpoint--- ');
 
 		$additional_data = json_decode($presence_summary['additional'], true);
 
 		if ($additional_items) {
 			$presence_statuses['additional'] = $additional_items;
 		} elseif ($additional_data) {
-			$presence_statuses['additional'] = (array_merge($presence_statuses['additional'], array_keys($additional_data)));
+			$presence_statuses['additional'] = array_unique(array_merge($presence_statuses['additional'], array_keys($additional_data)));
 		}
 
 		foreach ($presence_statuses as $group => $items) {
@@ -434,7 +395,9 @@ class ModelPresencePresence extends Model
 				case 'primary':
 				case 'secondary':
 					foreach ($presence_status as $code) {
+						if (isset($presence_summary['total_' . $code])) {
 							$presence_summary_data[$presence_group][$code] = $presence_summary['total_' . $code];
+						}
 					}
 
 					break;

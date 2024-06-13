@@ -30,9 +30,9 @@ class ControllerPayrollPayroll extends Controller
 			$presence_period_id = 0;
 		}
 
-		$payroll_period = $this->model_common_payroll->getPeriod($presence_period_id);
+		$period_status_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'generated, approved, released, completed');
 
-		if ($payroll_period && $this->registry->has('framework_load')) {
+		if ($period_status_check && $this->registry->has('framework_load')) {
 			$this->getList();
 		} else {
 			return new Action('error/not_found');
@@ -60,10 +60,10 @@ class ControllerPayrollPayroll extends Controller
 			$customer_id = 0;
 		}
 
-		$payroll_period = $this->model_common_payroll->getPeriod($presence_period_id);
+		$period_status_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'generated, approved, released, completed');
 		$customer_info = $this->model_common_payroll->checkCustomer($customer_id);
 
-		if ($payroll_period && $customer_info) {
+		if ($period_status_check && $customer_info) {
 			$this->getForm();
 		} else {
 			return new Action('error/not_found');
@@ -89,7 +89,7 @@ class ControllerPayrollPayroll extends Controller
 		$url = '';
 
 		if (isset($this->request->get['presence_period_id'])) {
-			$url .= '&presence_period_id=' . $this->request->get['presence_period_id'];
+			$url .= '&presence_period_id=' . $presence_period_id;
 		}
 
 		if (isset($this->request->get['filter_name'])) {
@@ -866,16 +866,6 @@ class ControllerPayrollPayroll extends Controller
 			'text_confirm',
 			'text_presence_summary',
 			'text_payroll_basic',
-			'column_h',
-			'column_s',
-			'column_i',
-			'column_ns',
-			'column_ia',
-			'column_a',
-			'column_c',
-			'column_t1',
-			'column_t2',
-			'column_t3',
 			'column_basic_date_added',
 			'column_gaji_pokok',
 			'column_tunj_jabatan',
@@ -884,7 +874,6 @@ class ControllerPayrollPayroll extends Controller
 			'column_uang_makan',
 			'column_gaji_dasar',
 			'column_action',
-			'column_hke',
 			'button_payroll_update',
 			'button_save',
 			'button_back',
@@ -973,58 +962,56 @@ class ControllerPayrollPayroll extends Controller
 
 		//Start Rincian Gaji
 		$payroll_calculation = $this->model_payroll_payroll->getPayrollDetail($presence_period_id, $customer_id);
-		var_dump($payroll_calculation);
 
-		$this->load->model('localisation/presence_status');
-		$presence_status_data = $this->model_localisation_presence_status->getPresenceStatusCodeList();
-		var_dump($presence_status_data);
+		$data['payroll_basic'] = [];
 
-		// $presence_items = array(
-		// 	'h',
-		// 	's',
-		// 	'i',
-		// 	'ns',
-		// 	'ia',
-		// 	'a',
-		// 	'c',
-		// 	't1',
-		// 	't2',
-		// 	't3',
-		// );
-		// foreach ($presence_items as $presence_item) {
-		// 	$data['total_item'][$presence_item] = $payroll_calculation['presence_summary'][$presence_item];
-		// }
-		$data['total_item'] = $payroll_calculation['presence_summary'];
+		if ($payroll_calculation['payroll_basic']) {
+			$data['payroll_basic']['date_added']	= date($this->language->get('date_format_jMY'), strtotime($payroll_calculation['payroll_basic']['date_added']));
+			$data['payroll_basic']['gaji_pokok']  	= $this->currency->format($payroll_calculation['payroll_basic']['gaji_pokok'], $this->config->get('config_currency'));
+			$data['payroll_basic']['tunj_jabatan']	= $this->currency->format($payroll_calculation['payroll_basic']['tunj_jabatan'], $this->config->get('config_currency'));
+			$data['payroll_basic']['tunj_hadir']  	= $this->currency->format($payroll_calculation['payroll_basic']['tunj_hadir'], $this->config->get('config_currency'));
+			$data['payroll_basic']['tunj_pph']    	= $this->currency->format($payroll_calculation['payroll_basic']['tunj_pph'], $this->config->get('config_currency'));
+			$data['payroll_basic']['uang_makan']  	= $this->currency->format($payroll_calculation['payroll_basic']['uang_makan'], $this->config->get('config_currency'));
 
-		$data['hke'] = $payroll_calculation['presence_summary']['hke'];
-		// var_dump($data);
+			$gaji_dasar = $payroll_calculation['payroll_basic']['gaji_pokok'] + $payroll_calculation['payroll_basic']['tunj_jabatan'] + $payroll_calculation['payroll_basic']['tunj_hadir'] + $payroll_calculation['payroll_basic']['tunj_pph'] + $payroll_calculation['payroll_basic']['uang_makan'] * 25;
+			$data['payroll_basic']['gaji_dasar']  	= $this->currency->format($gaji_dasar, $this->config->get('config_currency'));
+		}
 
-		$data['gaji_pokok']     		= $this->currency->format($payroll_calculation['payroll_basic']['gaji_pokok'], $this->config->get('config_currency'));
-		$data['tunj_jabatan']   		= $this->currency->format($payroll_calculation['payroll_basic']['tunj_jabatan'], $this->config->get('config_currency'));
-		$data['tunj_hadir']     		= $this->currency->format($payroll_calculation['payroll_basic']['tunj_hadir'], $this->config->get('config_currency'));
-		$data['tunj_pph']       		= $this->currency->format($payroll_calculation['payroll_basic']['tunj_pph'], $this->config->get('config_currency'));
-		$data['uang_makan']     		= $this->currency->format($payroll_calculation['payroll_basic']['uang_makan'], $this->config->get('config_currency'));
+		$data['payroll_basic_edit'] = $this->url->link('payroll/payroll_basic/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $customer_id, true);
 
-		$gaji_dasar = $payroll_calculation['payroll_basic']['gaji_pokok'] + $payroll_calculation['payroll_basic']['tunj_jabatan'] + $payroll_calculation['payroll_basic']['tunj_hadir'] + $payroll_calculation['payroll_basic']['tunj_pph'] + $payroll_calculation['payroll_basic']['uang_makan'] * 25;
-		$data['gaji_dasar']     		= $this->currency->format($gaji_dasar, $this->config->get('config_currency'));
-		$data['basic_date_added']		= date($this->language->get('date_format_jMY'), strtotime($payroll_calculation['payroll_basic']['date_added']));
-		$data['payroll_basic_edit'] 	= $this->url->link('payroll/payroll_basic/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $customer_id, true);
+		$data['main_component'] = $payroll_calculation['main_component'];
 
-		if ($payroll_calculation['presence_summary']['full_overtimes_count']) {
-			$data['hke'] .= ' (' . $payroll_calculation['presence_summary']['full_overtimes_count'] . ' ' . $this->language->get('code_full_overtime') . ')';
+		// $data['total_item'] = $payroll_calculation['presence_summary'];
+
+		$data['hke'] = $payroll_calculation['presence_summary']['total']['hke'];
+
+		if (!$payroll_calculation['presence_summary']['total']['full_overtime']) {
+			$data['hke'] .= ' (' . $payroll_calculation['presence_summary']['total']['full_overtime'] . ' ' . $this->language->get('code_full_overtime') . ')';
 		}
 
 		$data['presence_summary_edit'] 	= $this->url->link('presence/presence/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $customer_id . '&presence_period_id=' . $presence_period_id, true);
 
-		$data['payroll_basic_check']    = $payroll_calculation['payroll_basic_check'];
-		$data['presence_summary_check'] = $payroll_calculation['presence_summary_check'];
+		// $data['payroll_basic_check']    = $payroll_calculation['payroll_basic_check'];
+		// $data['presence_summary_check'] = $payroll_calculation['presence_summary_check'];
+
+		$data['presence_summary']['hke'] = $payroll_calculation['presence_summary']['total']['hke'];
+		$data['presence_summary'] = array_merge($data['presence_summary'], $payroll_calculation['presence_summary']['primary'], $payroll_calculation['presence_summary']['additional'], $payroll_calculation['presence_summary']['secondary']);
+
+		$data['presence_summary_count'] = count($data['presence_summary']) + 2;
+		$data['presence_summary_width'] = (100 / $data['presence_summary_count']) . '%';
+
+		$json_presence_item_data = [
+			'primary'		=> [],
+			'additional'	=> [],
+			'secondary'		=> []
+		];
+
+		$data['json_presence_items'] = json_encode(array_intersect_key($payroll_calculation['presence_summary'], $json_presence_item_data));
 
 		$data['payroll_status_check'] = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'generated');
 
 		$data['presence_period_id'] = $presence_period_id;
 		$data['customer_id'] = $customer_id;
-
-		$data['presence_items'] = $presence_items;
 
 		$data['token'] = $this->session->data['token'];
 
@@ -1052,7 +1039,7 @@ class ControllerPayrollPayroll extends Controller
 			// 'text_tunj_pph',
 			// 'text_pot_tunj_hadir',
 			// 'text_pot_gaji_pokok',
-			// 'text_total_earning',
+			// 'text_total_addition',
 			// 'text_total_deduction',
 			'text_grandtotal',
 			'column_addition',
@@ -1068,102 +1055,58 @@ class ControllerPayrollPayroll extends Controller
 		$customer_id = $this->request->get['customer_id'];
 
 		$payroll_calculation = $this->model_payroll_payroll->getPayrollDetail($presence_period_id, $customer_id);
-		// var_dump($payroll_calculation);
 
-		$data['main_components'] = [
-			'addition'			=> [],
-			'deduction'			=> [],
-			'total_addition'	=> 0,
-			'total_deduction'	=> 0
-		];
+		// $data['payroll_detail'] = [
+		// 	'addition'			=> [],
+		// 	'deduction'			=> [],
+		// 	'total'				=> []
+		// ];
+		$data['payroll_detail'] = [];
 
 		$find = [
 			'{hke}',
-			'{total_sakit}',
-			'{total_bolos}',
-			'{um}',
+			'{gp_tj}',
+			'{gp}',
 			'{th}',
-			'{gp_tj}'
+			'{um}',
+			'{thp}'
 		];
 
 		$replace = [
-			$payroll_calculation['presence_summary']['hke'],
-			$payroll_calculation['presence_summary']['total_sakit'],
-			$payroll_calculation['presence_summary']['total_bolos'],
-			$this->currency->format($payroll_calculation['payroll_basic']['uang_makan'], $this->config->get('config_currency')),
+			$payroll_calculation['presence_summary']['total']['hke'],
+			// $payroll_calculation['presence_summary']['total']['total_sakit'],
+			// $payroll_calculation['presence_summary']['total']['total_bolos'],
+			$this->currency->format($payroll_calculation['payroll_basic']['gaji_pokok'] + $payroll_calculation['payroll_basic']['tunj_jabatan'], $this->config->get('config_currency')),
+			$this->currency->format($payroll_calculation['payroll_basic']['gaji_pokok'], $this->config->get('config_currency')),
 			$this->currency->format($payroll_calculation['payroll_basic']['tunj_hadir'], $this->config->get('config_currency')),
-			$this->currency->format($payroll_calculation['payroll_basic']['gaji_pokok'] + $payroll_calculation['tunj_jabatan'], $this->config->get('config_currency'))
+			$this->currency->format($payroll_calculation['payroll_basic']['uang_makan'], $this->config->get('config_currency')),
+			$this->currency->format($payroll_calculation['main_component']['total']['addition'], $this->config->get('config_currency'))
 		];
 
-		foreach ($payroll_calculation['main_component'] as $key	=> $main_components) {
-			foreach ($main_components as $main_component) {
-				$data['main_components'][$key][] = [
-					'title'	=> str_replace($find, $replace, $main_component['title']),
-					'value'	=> $this->currency->format($main_component['value'], $this->config->get('config_currency'))
-				];
+		foreach ($payroll_calculation['main_component'] as $group	=> $main_components) {
+			$data['payroll_detail'][$group] = [];
+
+			foreach ($main_components as $key => $main_component) {
+				if ($group != 'total') {
+					$data['payroll_detail'][$group][$key] = [
+						'title'	=> str_replace($find, $replace, $main_component['title']),
+						'value'	=> $this->currency->format($main_component['value'], $this->config->get('config_currency'))
+					];
+				} else {
+					$data['payroll_detail'][$group][$key] = [
+						'title'	=> $this->language->get('text_total_' . $key),
+						'value'	=> $this->currency->format($main_component, $this->config->get('config_currency'))
+					];
+				}
 			}
 		}
 
-		// $total_sakit			= $payroll_calculation['total_sakit'];
-		// $total_bolos   			= $payroll_calculation['total_bolos'];
-		// $total_t   				= $payroll_calculation['total_t'];
-
-		// $data['gaji_pokok']     		= $this->currency->format($payroll_calculation['gaji_pokok'], $this->config->get('config_currency'));
-		// $data['tunj_jabatan']   		= $this->currency->format($payroll_calculation['tunj_jabatan'], $this->config->get('config_currency'));
-		// $data['tunj_hadir']     		= $this->currency->format($payroll_calculation['tunj_hadir'], $this->config->get('config_currency'));
-		// $data['tunj_pph']       		= $this->currency->format($payroll_calculation['tunj_pph'], $this->config->get('config_currency'));
-		// $data['uang_makan']     		= $this->currency->format($payroll_calculation['uang_makan'], $this->config->get('config_currency'));
-		// $data['total_uang_makan']     	= $this->currency->format($payroll_calculation['total_uang_makan'], $this->config->get('config_currency'));
-
-		// $data['pot_sakit']     			= $this->currency->format($payroll_calculation['pot_sakit'], $this->config->get('config_currency'));
-		// $data['pot_bolos']     			= $this->currency->format($payroll_calculation['pot_bolos'], $this->config->get('config_currency'));
-		// $data['pot_tunj_hadir'] 		= $this->currency->format($payroll_calculation['pot_tunj_hadir'], $this->config->get('config_currency'));
-		// $data['pot_gaji_pokok'] 		= $this->currency->format($payroll_calculation['pot_gaji_pokok'], $this->config->get('config_currency'));
-		// $data['pot_terlambat']  		= $this->currency->format($payroll_calculation['pot_terlambat'], $this->config->get('config_currency'));
-
-		// $data['main_component'] = [];
-
-		// $this->load->model('payroll/payroll_type');
-		// $payroll_type_info = $this->model_payroll_payroll_type->getPayrollTypeDetail(1);
-
-		// if ($payroll_type_info) {
-		// 	foreach ($payroll_type_info['component'] as $key => $components) {
-		// 		var_dump($key);
-		// 		foreach ($components as $component) {
-		// 			// $value = 0;
-		// 			// $value = str_replace(array_keys($payroll_calculation), array_values($payroll_calculation), $component['formula']);
-
-
-		// 			// $data['main_component'][$key][$component['title']] = 0;
-		// 			// var_dump($value);
-		// 			var_dump($component);
-		// 		}
-
-		// 	}
-		// }
-
-
-
-		$data['payroll_basic_check']    = $payroll_calculation['payroll_basic_check'];
-		$data['presence_summary_check'] = $payroll_calculation['presence_summary_check'];
-
-		// if ($payroll_calculation['full_overtimes_count']) {
-		// 	$text_hke = '(' . $payroll_calculation['hke'] . ' - ' . $payroll_calculation['full_overtimes_count'] . ' (' . $this->language->get('code_full_overtime') . '))';
-		// } else {
-		// 	$text_hke = $payroll_calculation['hke'];
-		// }
-
-		// $data['text_total_uang_makan'] 	= sprintf($this->language->get('text_total_uang_makan'), $text_hke, $data['uang_makan']);
-		// $data['text_pot_sakit'] 		= sprintf($this->language->get('text_pot_sakit'), $total_sakit, $data['uang_makan']);
-		// $data['text_pot_bolos'] 		= sprintf($this->language->get('text_pot_bolos'), $total_bolos, $data['uang_makan']);
-		// $data['text_pot_terlambat'] 	= sprintf($this->language->get('text_pot_terlambat'), $total_t, $data['uang_makan']);
-
-		$earning = $payroll_calculation['main_component']['total_addition'];
-		$deduction = $payroll_calculation['main_component']['total_deduction'];
+		$addition = $payroll_calculation['main_component']['total']['addition'];
+		$deduction = $payroll_calculation['main_component']['total']['deduction'];
 
 		// Payroll Components
-		$data['earning_components'] = array();
-		$data['deduction_components'] = array();
+		$addition_components = array();
+		$deduction_components = array();
 		$result_component = array();
 
 		$always_view['overtime'] = 1; //Masukkan ke setting. Tetap di view walaupun nilainya 0.
@@ -1175,16 +1118,16 @@ class ControllerPayrollPayroll extends Controller
 				if (isset($always_view[$component['code']]) && $always_view[$component['code']]) {
 					foreach ($component['quote'] as $quote) {
 						if ($quote['type']) {
-							$earning += $quote['value'];
+							$addition += $quote['value'];
 
-							$data['earning_components'][] = array(
+							$addition_components[] = array(
 								'title'	=> $quote['title'],
 								'value' => $this->currency->format($quote['value'], $this->config->get('config_currency'))
 							);
 						} else {
 							$deduction -= $quote['value'];
 
-							$data['deduction_components'][] = array(
+							$deduction_components[] = array(
 								'title'	=> $quote['title'],
 								'value' => $this->currency->format(-$quote['value'], $this->config->get('config_currency'))
 							);
@@ -1206,14 +1149,14 @@ class ControllerPayrollPayroll extends Controller
 					if ($value < 0) {
 						$deduction -= $value;
 
-						$data['deduction_components'][] = array(
+						$deduction_components[] = array(
 							'title'	=> $key,
 							'value' => $this->currency->format(-$value, $this->config->get('config_currency'))
 						);
 					} elseif ($value > 0) {
-						$earning += $value;
+						$addition += $value;
 
-						$data['earning_components'][] = array(
+						$addition_components[] = array(
 							'title'	=> $key,
 							'value' => $this->currency->format($value, $this->config->get('config_currency'))
 						);
@@ -1226,16 +1169,16 @@ class ControllerPayrollPayroll extends Controller
 			foreach ($components as $component) {
 				if (isset($always_view[$component['code']]) && $always_view[$component['code']]) {
 					if ($component['type']) {
-						$earning += $component['value'];
+						$addition += $component['value'];
 
-						$data['earning_components'][] = array(
+						$addition_components[] = array(
 							'title'	=> $component['title'],
 							'value' => $this->currency->format($component['value'], $this->config->get('config_currency'))
 						);
 					} else {
 						$deduction -= $component['value'];
 
-						$data['deduction_components'][] = array(
+						$deduction_components[] = array(
 							'title'	=> $component['title'],
 							'value' => $this->currency->format(-$component['value'], $this->config->get('config_currency'))
 						);
@@ -1254,14 +1197,14 @@ class ControllerPayrollPayroll extends Controller
 					if ($value < 0) {
 						$deduction -= $value;
 
-						$data['deduction_components'][] = array(
+						$deduction_components[] = array(
 							'title'	=> $key,
 							'value' => $this->currency->format(-$value, $this->config->get('config_currency'))
 						);
 					} elseif ($value > 0) {
-						$earning += $value;
+						$addition += $value;
 
-						$data['earning_components'][] = array(
+						$addition_components[] = array(
 							'title'	=> $key,
 							'value' => $this->currency->format($value, $this->config->get('config_currency'))
 						);
@@ -1270,9 +1213,12 @@ class ControllerPayrollPayroll extends Controller
 			}
 		}
 
-		$data['earning']     	= $this->currency->format($earning, $this->config->get('config_currency'));
-		$data['deduction']     	= $this->currency->format($deduction, $this->config->get('config_currency'));
-		$data['grandtotal']  	= $this->currency->format($earning - $deduction, $this->config->get('config_currency'));
+		$data['payroll_detail']['addition'] = array_merge($data['payroll_detail']['addition'], $addition_components);
+		$data['payroll_detail']['deduction'] = array_merge($data['payroll_detail']['deduction'], $deduction_components);
+
+		$data['payroll_detail']['total']['addition']['value'] = $this->currency->format($addition, $this->config->get('config_currency'));
+		$data['payroll_detail']['total']['deduction']['value'] = $this->currency->format($deduction, $this->config->get('config_currency'));
+		$data['grandtotal'] = $this->currency->format($addition - $deduction, $this->config->get('config_currency'));
 
 		$this->response->setOutput($this->load->view('payroll/payroll_detail_info', $data));
 	}
@@ -1515,10 +1461,10 @@ class ControllerPayrollPayroll extends Controller
 			$this->load->model('presence/absence');
 
 			foreach ($results as $key => $result) {
-				$earning = $result['gaji_pokok'] + $result['tunj_jabatan'] + $result['tunj_hadir'] + $result['tunj_pph'] + $result['total_uang_makan'];
+				$addition = $result['gaji_pokok'] + $result['tunj_jabatan'] + $result['tunj_hadir'] + $result['tunj_pph'] + $result['total_uang_makan'];
 				$deduction = $result['pot_sakit'] + $result['pot_bolos'] + $result['pot_tunj_hadir'] + $result['pot_gaji_pokok'] + $result['pot_terlambat'];
 
-				$net_salary = $earning - $deduction;
+				$net_salary = $addition - $deduction;
 				$component_total['net_salary'] += $net_salary;
 
 				//Payroll Component
@@ -1639,10 +1585,10 @@ class ControllerPayrollPayroll extends Controller
 		}
 
 		if (!empty($payroll_info)) {
-			// $earning = $payroll_info['addition_1'] + $payroll_info['addition_2'] + $payroll_info['addition_3'] + $payroll_info['addition_4'] + $payroll_info['addition_5'];
+			// $addition = $payroll_info['addition_1'] + $payroll_info['addition_2'] + $payroll_info['addition_3'] + $payroll_info['addition_4'] + $payroll_info['addition_5'];
 			// $deduction = $payroll_info['deduction_1'] + $payroll_info['deduction_2'] + $payroll_info['deduction_3'] + $payroll_info['deduction_4'] + $payroll_info['deduction_5'];
 
-			// $net_salary = $earning - $deduction;
+			// $net_salary = $addition - $deduction;
 
 			//Payroll Component
 			$data['component_codes'] = $this->model_payroll_payroll->getPayrollComponentCodes($this->request->get['presence_period_id'], $this->request->get['customer_id']);
@@ -1684,41 +1630,13 @@ class ControllerPayrollPayroll extends Controller
 
 			$payroll_data = [];
 
-			$this->model_payroll_payroll->deletePayroll($this->request->post['presence_period_id'], $this->request->post['customer_id']);
-			$this->model_payroll_payroll->deletePayrollComponent($this->request->post['presence_period_id'], $this->request->post['customer_id']);
-
 			$payroll_calculation = $this->model_payroll_payroll->getPayrollDetail($this->request->post['presence_period_id'], $this->request->post['customer_id']);
 
-			if ($payroll_calculation['payroll_basic_check'] && $payroll_calculation['presence_summary_check']) {
-				// $payroll_data = array(
-				// 	'presence_period_id' => $payroll_calculation['presence_period_id'],
-				// 	'customer_id' 		=> $payroll_calculation['customer_id'],
-				// 	'gaji_pokok'    	=> $payroll_calculation['gaji_pokok'],
-				// 	'tunj_jabatan'  	=> $payroll_calculation['tunj_jabatan'],
-				// 	'tunj_hadir'     	=> $payroll_calculation['tunj_hadir'],
-				// 	'tunj_pph'    		=> $payroll_calculation['tunj_pph'],
-				// 	'uang_makan'    	=> $payroll_calculation['uang_makan'],
-				// 	'total_uang_makan'	=> $payroll_calculation['total_uang_makan'],
-				// 	// 'date_added'		=> $payroll_calculation['date_added'],
-				// 	'pot_sakit'			=> $payroll_calculation['pot_sakit'],
-				// 	'pot_bolos'			=> $payroll_calculation['pot_bolos'],
-				// 	'pot_tunj_hadir'	=> $payroll_calculation['pot_tunj_hadir'],
-				// 	'pot_gaji_pokok'	=> $payroll_calculation['pot_gaji_pokok'],
-				// 	'pot_terlambat'		=> $payroll_calculation['pot_terlambat'],
-				// 	'pot_terlambat'		=> $payroll_calculation['pot_terlambat']
-				// );
-
-				// foreach ($payroll_calculation['main_component'] as $key => $main_components) {
-				// 	foreach ($main_components as $idx => $main_component) {
-				// 		// $payroll_data[]
-				// 		# code...
-				// 	}
-				// }
-
+			if ($payroll_calculation['payroll_basic'] && $payroll_calculation['presence_summary']) {
 				$payroll_data['main_component'] = $payroll_calculation['main_component'];
 				$payroll_data['main_component']['payroll_basic_id'] = $payroll_calculation['payroll_basic']['payroll_basic_id'];
-	
-				// Payroll Sub Components
+
+				# Payroll Sub Components
 				$components = $this->model_payroll_payroll->calculatePayrollComponent($this->request->post['presence_period_id'], $this->request->post['customer_id']);
 
 				foreach ($components as $component) {
@@ -1737,6 +1655,9 @@ class ControllerPayrollPayroll extends Controller
 				}
 
 				$this->db->transaction(function () use ($payroll_data) {
+					$this->model_payroll_payroll->deletePayroll($this->request->post['presence_period_id'], $this->request->post['customer_id']);
+					$this->model_payroll_payroll->deletePayrollComponent($this->request->post['presence_period_id'], $this->request->post['customer_id']);
+
 					$this->model_payroll_payroll->addPayroll($this->request->post['presence_period_id'], $this->request->post['customer_id'], $payroll_data['main_component']);
 
 					if ($payroll_data['sub_component']) {
@@ -1781,7 +1702,7 @@ class ControllerPayrollPayroll extends Controller
 				$json['error'] = $this->language->get('error_status');
 			} else {
 				$total_payroll = $this->model_payroll_payroll->getPayrollSummary($presence_period_id);
-	
+
 				$period_data = array(
 					'total_payroll'	=> $total_payroll['total_net_salary'] + $total_payroll['total_component']
 				);

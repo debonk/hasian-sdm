@@ -1134,7 +1134,7 @@ class ControllerPayrollPayrollRelease extends Controller
 						switch ($this->request->get['action']) {
 							case 'pending':
 							case 'cancelled':
-								if (!$release_info['status_released'] == 'released' || !empty($release_info['date_released'])) {
+								if ($release_info['status_released'] == 'released' || !empty($release_info['date_released'])) {
 									$error_action[] = sprintf($this->language->get('error_status_released'), $release_info['name']);
 
 									break;

@@ -27,8 +27,8 @@ $_['text_subtotal'] 		     = 'Subtotal Komponen Gaji';
 $_['text_success_generated']     = 'Success: %d of %d payrolls generated!';
 $_['text_success']          	 = 'Success: You have modified payrolls!';
 // $_['text_total_customer'] 	  	 = 'Jumlah Karyawan';
+$_['text_total_addition'] 	     = 'Total Pendapatan';
 $_['text_total_deduction'] 	     = 'Total Potongan';
-$_['text_total_earning'] 	     = 'Total Pendapatan';
 // $_['text_total_uang_makan'] 	 = 'Total Uang Makan (%s x %s)';
 // $_['text_tunj_hadir'] 		     = 'Tunjangan Kehadiran';
 // $_['text_tunj_jabatan'] 		 = 'Tunjangan Jabatan';
@@ -68,17 +68,6 @@ $_['column_uang_makan']			 = 'Uang Makan';
 $_['column_gaji_dasar'] 	 	 = 'Gaji Dasar';
 $_['column_component']	 		 = 'Komponen Gaji';
 $_['column_basic_date_added']	 = 'Perubahan Terakhir';
-$_['column_hke']         		 = 'HKE';
-$_['column_h']         			 = 'H';
-$_['column_s']         			 = 'S';
-$_['column_i']         			 = 'I';
-$_['column_ns']         		 = 'NS';
-$_['column_ia']         		 = 'IA';
-$_['column_a']         			 = 'A';
-$_['column_c']         			 = 'C';
-$_['column_t1']         		 = 'T1';
-$_['column_t2']         		 = 'T2';
-$_['column_t3']         		 = 'T3';
 $_['column_note']        	 	 = 'Catatan';
 
 // Entry

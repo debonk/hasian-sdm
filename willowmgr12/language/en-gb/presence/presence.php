@@ -9,7 +9,6 @@ $_['text_success']          	= 'Success: You have modified presence!';
 $_['text_presence_detail']     	= 'Data Kehadiran Harian';
 $_['text_presence_summary']     = 'Ringkasan Kehadiran';
 $_['text_late_summary']         = 'Ringkasan Keterlambatan';
-$_['text_hke']         		 	= 'HKE';
 $_['text_submit_confirm']       = 'Setelah disubmit, Data tidak bisa diedit lagi.\nSubmit?';
 $_['text_submit_success']       = 'Success: Data Kehadiran Karyawan telah diajukan!';
 $_['text_period_info']         	= 'Info Periode';
@@ -38,20 +37,8 @@ $_['column_contract_type']      = 'Jenis Kontrak';
 $_['column_action']             = 'Action';
 $_['column_presence_summary'] 	= 'Data Kehadiran';
 $_['column_period']				= 'Periode';
-$_['column_h']         			= 'H';
-$_['column_s']         			= 'S';
-$_['column_i']         			= 'I';
-$_['column_ns']         		= 'NS';
-$_['column_ia']         		= 'IA';
-$_['column_a']         			= 'A';
-$_['column_c']         			= 'C';
-$_['column_t1']         		= 'T1';
-$_['column_t2']         		= 'T2';
-$_['column_t3']         		= 'T3';
 $_['column_t']     		    	= 'Total T';
-$_['column_hke']          		= 'HKE';
 $_['column_note']          	 	= 'Catatan';
-$_['column_cuti']        	 	= 'Cuti';
 
 // Entry
 $_['entry_presence_period'] 	 = 'Periode';
@@ -61,16 +48,6 @@ $_['entry_location']       		 = 'Lokasi Kerja';
 $_['entry_contract_type']		 = 'Jenis Kontrak';
 $_['entry_payroll_include']      = 'Ikut Dalam Penggajian';
 $_['entry_presence_status']      = 'Status Kehadiran';
-$_['entry_h']      		 		 = 'Hadir';
-$_['entry_s']         			 = 'Sakit';
-$_['entry_i']         			 = 'Izin';
-$_['entry_ns']         		 	 = 'Not Staffed';
-$_['entry_ia']         		 	 = 'Izin Alpa';
-$_['entry_a']         			 = 'Alpa';
-$_['entry_c']         			 = 'Cuti';
-$_['entry_t1']         		 	 = 'Terlambat 1';
-$_['entry_t2']         		 	 = 'Terlambat 2';
-$_['entry_t3']         		 	 = 'Terlambat 3';
 
 // Button
 $_['button_presence_submit']	= 'Submit Presence Summary';

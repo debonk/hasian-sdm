@@ -321,6 +321,7 @@
 								</tr>
 							</thead>
 							<tbody>
+								<?php if ($customers) { ?>
 								<?php foreach ($customers as $customer) { ?>
 								<td class="text-center">
 									<?php if (in_array($customer['customer_id'], $selected)) { ?>
@@ -353,6 +354,13 @@
 								<td class="text-right"><a href="<?= $customer['edit']; ?>" data-toggle="tooltip"
 										title="<?= $button_edit; ?>" class="btn btn-primary"><i
 											class="fa fa-pencil"></i></a></td>
+								</tr>
+								<?php } ?>
+								<?php } else { ?>
+								<tr>
+									<td class="text-center" colspan="25">
+										<?= $text_no_results; ?>
+									</td>
 								</tr>
 								<?php } ?>
 							</tbody>

@@ -302,7 +302,9 @@ class Mail
 				// // 		'allow_self_signed' => true
 				// // 	)
 				// // );
-				
+				var_dump($mail);
+				die(' ---breakpoint--- ');
+							
 				/* Finally send the mail. */
 				$mail->send();
 			

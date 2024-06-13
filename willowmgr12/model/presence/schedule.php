@@ -552,11 +552,11 @@ class ModelPresenceSchedule extends Model
 			'end'		=> $period_info['date_end']
 		);
 
-		// $this->load->model('overtime/overtime');
-		$full_overtimes_count = $this->model_overtime_overtime->getFullOvertimesCount($customer_id, $range_date);
+		$this->load->model('overtime/overtime');
+		$presence_summary_data['total']['full_overtime'] = $this->model_overtime_overtime->getFullOvertimesCount($customer_id, $range_date);
 
-		if (!empty($full_overtimes_count)) {
-			$presence_summary_data['total']['hke'] .= ' (' . $full_overtimes_count . ' ' . $this->language->get('code_full_overtime') . ')';
+		if (!empty($presence_summary_data['total']['full_overtime'])) {
+			$presence_summary_data['total']['hke'] .= ' (' . $presence_summary_data['total']['full_overtime'] . ' ' . $this->language->get('code_full_overtime') . ')';
 		}
 
 		return $presence_summary_data;
@@ -581,17 +581,7 @@ class ModelPresenceSchedule extends Model
 			if ($schedules_info) {
 				$this->model_presence_presence->deletePresence($presence_period_id, $customer_id);
 
-				$presences_data = [];
-
-				foreach ($schedules_info as $date => $schedule_info) {
-					if ($schedule_info['presence_status_id']) {
-						$presences_data[] = [$presence_period_id, $customer_id, $date, $schedule_info['presence_status_id']];
-					}
-				}
-
-				if ($presences_data) {
-					$this->model_presence_presence->addPresences($presences_data);
-				}
+				$this->model_presence_presence->addPresences($presence_period_id, $customer_id, $schedules_info);
 
 				$presence_summary_info = $this->calculatePresenceSummary($presence_period_id, $customer_id, $schedules_info);
 
