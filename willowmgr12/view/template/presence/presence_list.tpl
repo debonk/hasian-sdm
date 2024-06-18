@@ -23,7 +23,8 @@
 				<?php } ?>
 				<?php if ($payroll_status_check) { ?>
 				<button type="button" value="<?php echo $presence_period_id; ?>" id="button-presence-submit"
-					data-loading-text="<?php echo $text_loading; ?>" class="btn btn-warning"><i class="fa fa-share-square-o"></i>
+					data-loading-text="<?php echo $text_loading; ?>" class="btn btn-warning"><i
+						class="fa fa-share-square-o"></i>
 					<?php echo $button_presence_submit; ?>
 				</button>
 				<button type="button" id="button-delete" data-toggle="tooltip" title="<?php echo $button_delete; ?>"
@@ -80,7 +81,7 @@
 			<div class="panel-body">
 				<div class="well">
 					<div class="row">
-						<div class="col-sm-4">
+						<div class="col-sm-3">
 							<div class="form-group">
 								<label class="control-label" for="input-presence-period">
 									<?php echo $entry_presence_period; ?>
@@ -88,7 +89,8 @@
 								<select name="presence_period_id" id="input-presence-period" class="form-control">
 									<?php foreach ($presence_periods as $presence_period) { ?>
 									<?php if ($presence_period['presence_period_id'] == $presence_period_id) { ?>
-									<option value="<?php echo $presence_period['presence_period_id']; ?>" selected="selected">
+									<option value="<?php echo $presence_period['presence_period_id']; ?>"
+										selected="selected">
 										<?php echo date('M y',strtotime($presence_period['period'])); ?>
 									</option>
 									<?php } else { ?>
@@ -100,7 +102,7 @@
 								</select>
 							</div>
 						</div>
-						<div class="col-sm-4">
+						<div class="col-sm-3">
 							<div class="form-group">
 								<label class="control-label" for="input-name">
 									<?php echo $entry_name; ?>
@@ -109,7 +111,7 @@
 									placeholder="<?php echo $entry_name; ?>" id="input-name" class="form-control" />
 							</div>
 						</div>
-						<div class="col-sm-4">
+						<div class="col-sm-3">
 							<div class="form-group">
 								<label class="control-label" for="input-customer-group">
 									<?php echo $entry_customer_group; ?>
@@ -120,7 +122,8 @@
 									</option>
 									<?php foreach ($customer_groups as $customer_group) { ?>
 									<?php if ($customer_group['customer_group_id'] == $filter_customer_group_id) { ?>
-									<option value="<?php echo $customer_group['customer_group_id']; ?>" selected="selected">
+									<option value="<?php echo $customer_group['customer_group_id']; ?>"
+										selected="selected">
 										<?php echo $customer_group['name']; ?>
 									</option>
 									<?php } else { ?>
@@ -132,7 +135,7 @@
 								</select>
 							</div>
 						</div>
-						<div class="col-sm-4">
+						<div class="col-sm-3">
 							<div class="form-group">
 								<label class="control-label" for="input-location">
 									<?php echo $entry_location; ?>
@@ -151,6 +154,25 @@
 										<?php echo $location['name']; ?>
 									</option>
 									<?php } ?>
+									<?php } ?>
+								</select>
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label class="control-label" for="input-contract-type">
+									<?= $entry_contract_type; ?>
+								</label>
+								<select name="filter_contract_type_id" id="input-contract-type" class="form-control">
+									<option value="">
+										<?= $text_all ?>
+									</option>
+									<?php foreach ($contract_types as $contract_type) { ?>
+									<option value="<?= $contract_type['contract_type_id']; ?>"
+										<?=$contract_type['contract_type_id']==$filter_contract_type_id ? 'selected'
+										: '' ; ?>>
+										<?= $contract_type['name']; ?>
+									</option>
 									<?php } ?>
 								</select>
 							</div>
@@ -209,19 +231,22 @@
 									<?php } ?>
 								</select>
 							</div>
-							<button type="button" id="button-filter" class="btn btn-primary pull-right"><i class="fa fa-search"></i>
+							<button type="button" id="button-filter" class="btn btn-primary pull-right"><i
+									class="fa fa-search"></i>
 								<?php echo $button_filter; ?>
 							</button>
 						</div>
 					</div>
 				</div>
-				<form method="post" action="<?php echo $delete; ?>" enctype="multipart/form-data" id="form-presence-total">
+				<form method="post" action="<?php echo $delete; ?>" enctype="multipart/form-data"
+					id="form-presence-total">
 					<div class="table-responsive">
 						<table class="table table-bordered table-hover">
 							<thead>
 								<tr>
 									<td style="width: 1px;" class="text-center" rowspan="2"><input type="checkbox"
-											onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
+											onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" />
+									</td>
 									<td class="text-left" rowspan="2">
 										<?php if ($sort == 'nip') { ?>
 										<a href="<?php echo $sort_nip; ?>" class="<?php echo strtolower($order); ?>">
@@ -246,7 +271,8 @@
 									</td>
 									<td class="text-left" rowspan="2">
 										<?php if ($sort == 'customer_group') { ?>
-										<a href="<?php echo $sort_customer_group; ?>" class="<?php echo strtolower($order); ?>">
+										<a href="<?php echo $sort_customer_group; ?>"
+											class="<?php echo strtolower($order); ?>">
 											<?php echo $column_customer_group; ?>
 										</a>
 										<?php } else { ?>
@@ -257,12 +283,25 @@
 									</td>
 									<td class="text-left" rowspan="2">
 										<?php if ($sort == 'location') { ?>
-										<a href="<?php echo $sort_location; ?>" class="<?php echo strtolower($order); ?>">
+										<a href="<?php echo $sort_location; ?>"
+											class="<?php echo strtolower($order); ?>">
 											<?php echo $column_location; ?>
 										</a>
 										<?php } else { ?>
 										<a href="<?php echo $sort_location; ?>">
 											<?php echo $column_location; ?>
+										</a>
+										<?php } ?>
+									</td>
+									<td class="text-left" rowspan="2">
+										<?php if ($sort == 'contract_type') { ?>
+										<a href="<?php echo $sort_contract_type; ?>"
+											class="<?php echo strtolower($order); ?>">
+											<?php echo $column_contract_type; ?>
+										</a>
+										<?php } else { ?>
+										<a href="<?php echo $sort_contract_type; ?>">
+											<?php echo $column_contract_type; ?>
 										</a>
 										<?php } ?>
 									</td>
@@ -318,10 +357,11 @@
 								<tr>
 									<td class="text-center">
 										<?php if (in_array($customer['customer_id'], $selected)) { ?>
-										<input type="checkbox" name="selected[]" value="<?php echo $customer['customer_id']; ?>"
-											checked="checked" />
+										<input type="checkbox" name="selected[]"
+											value="<?php echo $customer['customer_id']; ?>" checked="checked" />
 										<?php } else { ?>
-										<input type="checkbox" name="selected[]" value="<?php echo $customer['customer_id']; ?>" />
+										<input type="checkbox" name="selected[]"
+											value="<?php echo $customer['customer_id']; ?>" />
 										<?php } ?>
 									</td>
 									<td class="text-left">
@@ -335,6 +375,9 @@
 									</td>
 									<td class="text-left">
 										<?php echo $customer['location']; ?>
+									</td>
+									<td class="text-left">
+										<?php echo $customer['contract_type']; ?>
 									</td>
 									<td class="text-center">
 										<?php echo $customer['hke']; ?>
@@ -372,8 +415,9 @@
 									<td class="text-left">
 										<?php echo $customer['note']; ?>
 									</td>
-									<td class="text-right"><a href="<?php echo $customer['edit']; ?>" data-toggle="tooltip"
-											title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
+									<td class="text-right"><a href="<?php echo $customer['edit']; ?>"
+											data-toggle="tooltip" title="<?php echo $button_edit; ?>"
+											class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
 								</tr>
 								<?php } ?>
 								<?php } else { ?>
@@ -434,6 +478,11 @@
 
 			if (filter_location_id != '*') {
 				url += '&filter_location_id=' + encodeURIComponent(filter_location_id);
+			}
+			var filter_contract_type_id = $('select[name=\'filter_contract_type_id\']').val();
+
+			if (filter_contract_type_id != '*') {
+				url += '&filter_contract_type_id=' + encodeURIComponent(filter_contract_type_id);
 			}
 
 			var filter_payroll_include = $('select[name=\'filter_payroll_include\']').val();

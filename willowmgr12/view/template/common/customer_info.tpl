@@ -24,7 +24,7 @@
 		</tr>
 		<tr>
 		  <td><button data-toggle="tooltip" title="<?php echo $text_employment_period; ?>" class="btn btn-info btn-xs"><i class="fa fa-calendar fa-fw"></i></button></td>
-		  <td><?php echo $employment_period; ?> <span class="text-warning text-bold"><?php echo $contract_status; ?></span></td>
+		  <td><?php echo $employment_period; ?></td>
 		</tr>
 	  </table>
 	</div>
@@ -50,6 +50,10 @@
 			  <td><?php echo $vacation; ?></td>
 		    </tr>
 		  <?php } ?>
+		  <tr>
+			<td><button data-toggle="tooltip" title="<?php echo $text_contract; ?>" class="btn btn-info btn-xs"><i class="fa fa-file-text-o fa-fw"></i></button></td>
+			<td><?php echo $contract; ?></td>
+		  </tr>
 		</tbody>
 	  </table>
 	</div>

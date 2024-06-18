@@ -44,7 +44,7 @@
 			</div>
 			<div class="panel-body">
 				<div class="well">
-					<div class="row flex-container">
+					<div class="flex-container">
 						<div class="flex-item">
 							<div class="form-group">
 								<label class="control-label" for="input-name">
@@ -52,25 +52,6 @@
 								</label>
 								<input type="text" name="filter[name]" value="<?= $filter['name']; ?>"
 									placeholder="<?= $entry_name; ?>" id="input-name" class="form-control" />
-							</div>
-						</div>
-						<div class="flex-item">
-							<div class="form-group">
-								<label class="control-label" for="input-customer-group">
-									<?= $entry_customer_group; ?>
-								</label>
-								<select name="filter[customer_group_id]" id="input-customer-group" class="form-control">
-									<option value="">
-										<?= $text_all; ?>
-									</option>
-									<?php foreach ($customer_groups as $customer_group) { ?>
-									<option value="<?= $customer_group['customer_group_id']; ?>"
-										<?=$customer_group['customer_group_id']==$filter['customer_group_id']
-										? 'selected' : '' ; ?>>
-										<?= $customer_group['name']; ?>
-									</option>
-									<?php } ?>
-								</select>
 							</div>
 						</div>
 						<div class="flex-item">
@@ -95,6 +76,25 @@
 						</div>
 						<div class="flex-item">
 							<div class="form-group">
+								<label class="control-label" for="input-customer-group">
+									<?= $entry_customer_group; ?>
+								</label>
+								<select name="filter[customer_group_id]" id="input-customer-group" class="form-control">
+									<option value="">
+										<?= $text_all; ?>
+									</option>
+									<?php foreach ($customer_groups as $customer_group) { ?>
+									<option value="<?= $customer_group['customer_group_id']; ?>"
+										<?=$customer_group['customer_group_id']==$filter['customer_group_id']
+										? 'selected' : '' ; ?>>
+										<?= $customer_group['name']; ?>
+									</option>
+									<?php } ?>
+								</select>
+							</div>
+						</div>
+						<div class="flex-item">
+							<div class="form-group">
 								<label class="control-label" for="input-location">
 									<?= $entry_location; ?>
 								</label>
@@ -112,7 +112,25 @@
 							</div>
 						</div>
 					</div>
-					<div class="row flex-container">
+					<div class="flex-container">
+						<div class="flex-item">
+							<div class="form-group">
+								<label class="control-label" for="input-contract-type">
+									<?= $entry_contract_type; ?>
+								</label>
+								<select name="filter[contract_type_id]" id="input-contract-type" class="form-control">
+									<option value="">
+										<?= $text_all ?>
+									</option>
+									<?php foreach ($contract_types as $contract_type) { ?>
+									<option value="<?= $contract_type['contract_type_id']; ?>"
+										<?=$contract_type['contract_type_id']==$filter['contract_type_id'] ? 'selected' : '' ; ?>>
+										<?= $contract_type['text']; ?>
+									</option>
+									<?php } ?>
+								</select>
+							</div>
+						</div>
 						<div class="flex-item">
 							<div class="form-group">
 								<label class="control-label" for="input-contract-status">
@@ -140,24 +158,12 @@
 									<option value="*">
 										<?= $text_all; ?>
 									</option>
-									<?php if ($filter['active'] == 1) { ?>
-									<option value="1" selected="selected">
+									<option value="1" <?=$filter['active'] == 1 ? 'selected' : '' ; ?>>
 										<?= $text_active; ?>
 									</option>
-									<?php } else { ?>
-									<option value="1">
-										<?= $text_active; ?>
-									</option>
-									<?php } ?>
-									<?php if ($filter['active'] == -1) { ?>
-									<option value="-1" selected="selected">
+									<option value="-1" <?=$filter['active'] == -1 ? 'selected' : '' ; ?>>
 										<?= $text_inactive; ?>
 									</option>
-									<?php } else { ?>
-									<option value="-1">
-										<?= $text_inactive; ?>
-									</option>
-									<?php } ?>
 								</select>
 							</div>
 						</div>

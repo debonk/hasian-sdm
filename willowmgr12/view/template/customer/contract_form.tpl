@@ -50,6 +50,44 @@
 					<div id="history"></div>
 				</fieldset>
 				<br />
+				<form action="<?= $update; ?>" method="post" enctype="multipart/form-data" id="form-update"
+					class="form-horizontal">
+					<fieldset>
+						<legend>
+							<?= $text_customer_info; ?>
+						</legend>
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="input-date-start">
+								<?= $entry_date_start; ?>
+							</label>
+							<fieldset id="fieldset-date-start" class="col-sm-10" <?=$date_start_locked ? 'disabled' : ''
+								?>>
+								<div class="input-group date">
+									<input type="text" name="date_start" value="<?= $date_start; ?>"
+										placeholder="<?= $entry_date_start; ?>" data-date-format="D MMM YYYY"
+										id="input-date-start" class="form-control" readonly />
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-default"><i
+												class="fa fa-calendar"></i></button>
+									</span>
+								</div>
+								<?php if ($error_date_start) { ?>
+									<div class="text-danger">
+										<?= $error_date_start; ?>
+									</div>
+									<?php } ?>
+								</fieldset>
+						</div>
+						<?php if (!$date_start_locked) { ?>
+						<button type="button" form="form-update" data-toggle="tooltip" title="<?= $button_update; ?>"
+							class="btn btn-warning pull-right"
+							onclick="confirm('<?= $text_confirm; ?>') ? $('#form-update').submit() : false;"><i
+								class="fa fa-exclamation-triangle"></i>
+							<?= $button_update; ?>
+						</button>
+						<?php } ?>
+					</fieldset>
+				</form>
 				<form action="<?= $action; ?>" method="post" enctype="multipart/form-data" id="form-contract"
 					class="form-horizontal">
 					<fieldset>
@@ -66,12 +104,12 @@
 										<?= $text_select ?>
 									</option>
 									<?php foreach ($contract_types as $contract_type) { ?>
-									<?php if ($contract_type['index'] == $contract_type_id) { ?>
-									<option value="<?= $contract_type['index']; ?>" selected="selected">
+									<?php if ($contract_type['contract_type_id'] == $contract_type_id) { ?>
+									<option value="<?= $contract_type['contract_type_id']; ?>" selected="selected">
 										<?= $contract_type['name']; ?>
 									</option>
 									<?php } else { ?>
-									<option value="<?= $contract_type['index']; ?>">
+									<option value="<?= $contract_type['contract_type_id']; ?>">
 										<?= $contract_type['name']; ?>
 									</option>
 									<?php } ?>
@@ -185,7 +223,9 @@
 							</div>
 						</div>
 						<button type="button" form="form-resign" data-toggle="tooltip" title="<?= $button_resign; ?>"
-							class="btn btn-warning pull-right" onclick="confirm('<?= $text_confirm; ?>') ? $('#form-resign').submit() : false;"><i class="fa fa-exclamation-triangle"></i>
+							class="btn btn-warning pull-right"
+							onclick="confirm('<?= $text_confirm; ?>') ? $('#form-resign').submit() : false;"><i
+								class="fa fa-exclamation-triangle"></i>
 							<?= $button_resign; ?>
 						</button>
 					</fieldset>

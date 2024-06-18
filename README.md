@@ -8,6 +8,24 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
+3.1.5	18/06/2024
+Customer Info: Menambah info contract
+Contract: Modify date_start by super user
+Contract Type: Add Resign Contract Type
+Contract, Customer, Presence: Menambah filter Contract Type. Improve List
+
+MODIFY TABLE
+INSERT INTO oc_contract_type (contract_type_id, name, description, duration, sort_order, status) VALUES(0, 'RESIGN', 'Status resign sebelum kontrak berakhir. Jangan dihapus.', 0, -10, 0);
+
+====================
+HSDM SOFTWARE 3.1.5 UPDATE
+
+Contract: Super User bisa mengubah Tanggal Mulai Bekerja karyawan.
+Customer Info: Tambahan info Kontrak
+Contract, Customer, Presence: Tambahan filter Contract Type.
+====================
+
+
 3.1.4	17/05/2024
 Free Transfer: Pemilihan Karyawan penerima menggunakan autocomplete.
 

@@ -14,6 +14,7 @@ class ControllerCommonCustomerInfo extends Controller
 		$language_items = array(
 			'text_customer_detail',
 			'text_additional_info',
+			'text_contract',
 			'text_customer',
 			'text_customer_department',
 			'text_customer_group',
@@ -59,7 +60,8 @@ class ControllerCommonCustomerInfo extends Controller
 			$contract_status = $this->language->get('text_contract_' . $contract_info['contract_status']);
 
 			$data['employment_period'] = $date_start . ' - ' . $date_end;
-			$data['contract_status'] = '(' . $contract_status . ')';
+			// $data['contract_status'] = '(' . $contract_status . ')';
+			$data['contract'] = $contract_info['contract_type'] . ' - ' . $contract_status;
 
 			$data['customer_department'] = $customer_info['customer_department'];
 			$data['customer_group'] = $customer_info['customer_group'];
@@ -90,6 +92,7 @@ class ControllerCommonCustomerInfo extends Controller
 			$data['email'] = '-';
 			$data['telephone'] = '-';
 			$data['vacation'] = '-';
+			$data['contract'] = '-';
 			$data['employment_period'] = '-';
 			$data['contract_status'] = '';
 		}

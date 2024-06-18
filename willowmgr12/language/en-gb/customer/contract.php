@@ -4,10 +4,12 @@ $_['heading_title']				= 'Kontrak Karyawan';
 
 // Text
 $_['text_success']    			= 'Success: You have modified contracts!';
+$_['text_success_date_start']	= 'Success: You have modified employee!';
 $_['text_list']       			= 'Ringkasan Kontrak Karyawan';
 $_['text_add']       			= 'Kontrak Baru';
 $_['text_apply']       			= 'Penerapan Kontrak';
 $_['text_active']				= 'Masih Bekerja';
+$_['text_customer_info']		= 'Info Karyawan';
 $_['text_inactive']				= 'Berhenti Bekerja';
 $_['text_history'		]		= 'Riwayat Kontrak';
 $_['text_information']			= 'Perhatian: %d kontrak karyawan dengan status <a href="%s">%s</a> butuh segera ditindaklanjuti!';
@@ -24,6 +26,7 @@ $_['text_contract_end_soon']	= 'Segera Berakhir';
 $_['text_contract_end_left']	= 'Berakhir %s Hari Lagi';
 $_['text_contract_expired']		= 'Kontrak Selesai';
 $_['text_contract_active']		= 'Aktif';
+$_['text_contract_resign']		= 'Resign';
 
 // Column
 $_['column_nip']            		= 'NIP';
@@ -49,19 +52,22 @@ $_['entry_contract_type']			= 'Jenis Kontrak';
 $_['entry_contract_start']			= 'Awal Kontrak';
 $_['entry_contract_end']			= 'Akhir Kontrak';
 $_['entry_contract_status']			= 'Status Kontrak';
+$_['entry_date_start']				= 'Mulai Bekerja';
 $_['entry_date_end']				= 'Tanggal Berhenti';
 $_['entry_description']				= 'Keterangan';
 $_['entry_end_reason']				= 'Alasan Berhenti';
-$_['entry_status']					= 'Status';
+$_['entry_status']					= 'Status Karyawan';
 
 // Error
 $_['error_contract_end']		= 'Jika bukan Kontrak Tetap, Akhir Kontrak wajib diisi dan lebih besar dari Awal Kontrak!';
 $_['error_contract_start']		= 'Awal Kontrak wajib diisi dan meneruskan kontrak terakhir!';
 $_['error_contract_type']		= 'Tentukan Jenis Kontrak!';
 $_['error_date_end']			= 'Tanggal Berhenti wajib diisi!';
+$_['error_date_start']			= 'Tanggal Mulai Bekerja wajib diisi!';
 $_['error_end_reason']			= 'Alasan Berhenti wajib diisi!';
 
 // Button
+$_['button_update']				= 'Update';
 $_['button_delete']				= 'Delete Last Entry';
 $_['button_resign']				= 'Set Resign';
 

@@ -124,6 +124,7 @@ $_['error_upload_8']                = 'Warning: File upload stopped by extension
 $_['error_upload_999']              = 'Warning: No error code available!';
 $_['error_curl']                    = 'CURL: Error Code(%s): %s';
 $_['error_permission']			 	= 'Warning: You do not have permission to modify this modul!';
+$_['error_permission_1']			= 'Warning: You do not have permission to modify this modul! (Err 1)';
 $_['error_warning']				 	= 'Warning: Please check the form carefully for errors!';
 $_['error_status']				 	= 'Warning: Wrong Period Status! Could not complete this action!';
 $_['error_status_bypass']			= 'Warning: Wrong Period Status!';

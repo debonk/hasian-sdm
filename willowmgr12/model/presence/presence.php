@@ -382,7 +382,8 @@ class ModelPresencePresence extends Model
 
 	public function getPresenceSummaries($presence_period_id, $data = array())
 	{
-		$sql = "SELECT pt.*, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_end, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "presence_total pt LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = pt.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE presence_period_id = '" . (int)$presence_period_id . "'";
+		// $sql = "SELECT pt.*, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_end, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "presence_total pt LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = pt.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE presence_period_id = '" . (int)$presence_period_id . "'";
+		$sql = "SELECT pt.*, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_end, c.customer_group, c.location, c.contract_type_id, c.contract_type FROM " . DB_PREFIX . "presence_total pt LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = pt.customer_id) WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
 		$implode = array();
 
@@ -396,6 +397,10 @@ class ModelPresencePresence extends Model
 
 		if (!empty($data['filter_location_id'])) {
 			$implode[] = "c.location_id = '" . (int)$data['filter_location_id'] . "'";
+		}
+
+		if (isset($data['filter_contract_type_id'])) {
+			$implode[] = "c.contract_type_id = '" . $this->db->escape($data['filter_contract_type_id']) . "'";
 		}
 
 		if (isset($data['filter_payroll_include'])) {
@@ -414,7 +419,8 @@ class ModelPresencePresence extends Model
 			'nip',
 			'name',
 			'customer_group',
-			'location'
+			'location',
+			'contract_type'
 		);
 
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
@@ -448,7 +454,7 @@ class ModelPresencePresence extends Model
 
 	public function getPresenceSummariesCount($presence_period_id, $data = array())
 	{
-		$sql = "SELECT COUNT(*) as total FROM " . DB_PREFIX . "presence_total pt LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = pt.customer_id) WHERE pt.presence_period_id = '" . (int)$presence_period_id . "'";
+		$sql = "SELECT COUNT(*) as total FROM " . DB_PREFIX . "presence_total pt LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = pt.customer_id) WHERE pt.presence_period_id = '" . (int)$presence_period_id . "'";
 
 		$implode = array();
 
@@ -462,6 +468,10 @@ class ModelPresencePresence extends Model
 
 		if (!empty($data['filter_location_id'])) {
 			$implode[] = "c.location_id = '" . (int)$data['filter_location_id'] . "'";
+		}
+
+		if (isset($data['filter_contract_type_id'])) {
+			$implode[] = "c.contract_type_id = '" . $this->db->escape($data['filter_contract_type_id']) . "'";
 		}
 
 		if (isset($data['filter_payroll_include'])) {
@@ -483,7 +493,7 @@ class ModelPresencePresence extends Model
 
 	public function getPresenceSummariesTotal($data = array())
 	{
-		$sql = "SELECT SUM(total_h) as sum_h, SUM(total_s) as sum_s, SUM(total_i) as sum_i, SUM(total_ns) as sum_ns, SUM(total_ia) as sum_ia, SUM(total_a) as sum_a, SUM(total_c) as sum_c, SUM(total_t1) as sum_t1, SUM(total_t2) as sum_t2, SUM(total_t3) as sum_t3 FROM " . DB_PREFIX . "presence_total pt LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = pt.customer_id) WHERE presence_period_id = '" . (int)$data['presence_period_id'] . "'";
+		$sql = "SELECT SUM(total_h) as sum_h, SUM(total_s) as sum_s, SUM(total_i) as sum_i, SUM(total_ns) as sum_ns, SUM(total_ia) as sum_ia, SUM(total_a) as sum_a, SUM(total_c) as sum_c, SUM(total_t1) as sum_t1, SUM(total_t2) as sum_t2, SUM(total_t3) as sum_t3 FROM " . DB_PREFIX . "presence_total pt LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = pt.customer_id) WHERE presence_period_id = '" . (int)$data['presence_period_id'] . "'";
 
 		$implode = array();
 
@@ -497,6 +507,10 @@ class ModelPresencePresence extends Model
 
 		if (!empty($data['filter_location_id'])) {
 			$implode[] = "c.location_id = '" . (int)$data['filter_location_id'] . "'";
+		}
+
+		if (isset($data['filter_contract_type_id'])) {
+			$implode[] = "c.contract_type_id = '" . $this->db->escape($data['filter_contract_type_id']) . "'";
 		}
 
 		if (isset($data['filter_payroll_include'])) {
@@ -516,7 +530,8 @@ class ModelPresencePresence extends Model
 	{
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 
-		$sql = "SELECT pt.*, c.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_end, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "presence_total pt RIGHT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = pt.customer_id AND pt.presence_period_id = '" . (int)$presence_period_id . "') LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE c.status = 1 AND c.date_start <= '" . $period_info['date_end'] . "' AND (c.date_end IS NULL OR c.date_end >= '" . $period_info['date_start'] . "')";
+		// $sql = "SELECT pt.*, c.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_end, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "presence_total pt RIGHT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = pt.customer_id AND pt.presence_period_id = '" . (int)$presence_period_id . "') LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE c.status = 1 AND c.date_start <= '" . $period_info['date_end'] . "' AND (c.date_end IS NULL OR c.date_end >= '" . $period_info['date_start'] . "')";
+		$sql = "SELECT pt.*, c.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_end, c.customer_group, c.location, c.contract_type_id, c.contract_type FROM " . DB_PREFIX . "presence_total pt RIGHT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = pt.customer_id AND pt.presence_period_id = '" . (int)$presence_period_id . "') WHERE c.status = 1 AND c.date_start <= '" . $period_info['date_end'] . "' AND (c.date_end IS NULL OR c.date_end >= '" . $period_info['date_start'] . "')";
 
 		$implode = array();
 
@@ -530,6 +545,10 @@ class ModelPresencePresence extends Model
 
 		if (!empty($data['filter_location_id'])) {
 			$implode[] = "c.location_id = '" . (int)$data['filter_location_id'] . "'";
+		}
+
+		if (isset($data['filter_contract_type_id'])) {
+			$implode[] = "c.contract_type_id = '" . $this->db->escape($data['filter_contract_type_id']) . "'";
 		}
 
 		if (isset($data['filter_payroll_include'])) {
@@ -548,7 +567,8 @@ class ModelPresencePresence extends Model
 			'nip',
 			'name',
 			'customer_group',
-			'location'
+			'location',
+			'contract_type'
 		);
 
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
@@ -584,7 +604,7 @@ class ModelPresencePresence extends Model
 	{
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 
-		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "presence_total pt RIGHT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = pt.customer_id AND pt.presence_period_id = '" . (int)$presence_period_id . "') WHERE c.status = 1 AND c.date_start <= '" . $period_info['date_end'] . "' AND (c.date_end IS NULL OR c.date_end >= '" . $period_info['date_start'] . "')";
+		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "presence_total pt RIGHT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = pt.customer_id AND pt.presence_period_id = '" . (int)$presence_period_id . "') WHERE c.status = 1 AND c.date_start <= '" . $period_info['date_end'] . "' AND (c.date_end IS NULL OR c.date_end >= '" . $period_info['date_start'] . "')";
 
 		$implode = array();
 
@@ -598,6 +618,10 @@ class ModelPresencePresence extends Model
 
 		if (!empty($data['filter_location_id'])) {
 			$implode[] = "c.location_id = '" . (int)$data['filter_location_id'] . "'";
+		}
+
+		if (isset($data['filter_contract_type_id'])) {
+			$implode[] = "c.contract_type_id = '" . $this->db->escape($data['filter_contract_type_id']) . "'";
 		}
 
 		if (isset($data['filter_payroll_include'])) {

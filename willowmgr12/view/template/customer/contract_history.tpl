@@ -3,6 +3,7 @@
     <thead>
       <tr>
         <td><?= $column_contract_type; ?></td>
+        <td><?= $column_duration; ?></td>
         <td><?= $column_contract_start; ?></td>
         <td><?= $column_contract_end; ?></td>
         <td><?= $column_description; ?></td>
@@ -15,6 +16,7 @@
       <?php foreach ($histories as $history) { ?>
       <tr class="<?= !$history['contract_type_id'] ? 'text-warning' : ''; ?>">
         <td><?= $history['contract_type']; ?></td>
+        <td><?= $history['duration']; ?></td>
         <td><?= $history['contract_start']; ?></td>
         <td><?= $history['contract_end']; ?></td>
         <td><?= $history['description']; ?></td>

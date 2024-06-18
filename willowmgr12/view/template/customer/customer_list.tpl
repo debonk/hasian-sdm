@@ -42,92 +42,82 @@
 			</div>
 			<div class="panel-body">
 				<div class="well">
-					<div class="row">
-						<div class="col-sm-3">
+					<div class="flex-container">
+						<div class="flex-item">
 							<div class="form-group">
 								<label class="control-label" for="input-name">
 									<?= $entry_name; ?>
 								</label>
-								<input type="text" name="filter_name" value="<?= $filter_name; ?>" placeholder="<?= $entry_name; ?>"
-									id="input-name" class="form-control" />
+								<input type="text" name="filter[name]" value="<?= $filter['name']; ?>"
+									placeholder="<?= $entry_name; ?>" id="input-name" class="form-control" />
 							</div>
 						</div>
-						<div class="col-sm-3">
+						<div class="flex-item">
 							<div class="form-group">
 								<label class="control-label" for="input-customer-department">
 									<?= $entry_customer_department; ?>
 								</label>
-								<select name="filter_customer_department_id" id="input-customer-department" class="form-control">
-									<option value="*">
+								<select name="filter[customer_department_id]" id="input-customer-department"
+									class="form-control">
+									<option value="">
 										<?= $text_all; ?>
 									</option>
 									<?php foreach ($customer_departments as $customer_department) { ?>
-									<?php if ($customer_department['customer_department_id'] == $filter_customer_department_id) { ?>
-									<option value="<?= $customer_department['customer_department_id']; ?>" selected="selected">
+									<option value="<?= $customer_department['customer_department_id']; ?>"
+										<?=$customer_department['customer_department_id']==$filter['customer_department_id']
+										? 'selected' : '' ; ?>>
 										<?= $customer_department['name']; ?>
 									</option>
-									<?php } else { ?>
-									<option value="<?= $customer_department['customer_department_id']; ?>">
-										<?= $customer_department['name']; ?>
-									</option>
-									<?php } ?>
 									<?php } ?>
 								</select>
 							</div>
 						</div>
-						<div class="col-sm-3">
+						<div class="flex-item">
 							<div class="form-group">
 								<label class="control-label" for="input-customer-group">
 									<?= $entry_customer_group; ?>
 								</label>
-								<select name="filter_customer_group_id" id="input-customer-group" class="form-control">
-									<option value="*">
+								<select name="filter[customer_group_id]" id="input-customer-group" class="form-control">
+									<option value="">
 										<?= $text_all; ?>
 									</option>
 									<?php foreach ($customer_groups as $customer_group) { ?>
-									<?php if ($customer_group['customer_group_id'] == $filter_customer_group_id) { ?>
-									<option value="<?= $customer_group['customer_group_id']; ?>" selected="selected">
+									<option value="<?= $customer_group['customer_group_id']; ?>"
+										<?=$customer_group['customer_group_id']==$filter['customer_group_id']
+										? 'selected' : '' ; ?>>
 										<?= $customer_group['name']; ?>
 									</option>
-									<?php } else { ?>
-									<option value="<?= $customer_group['customer_group_id']; ?>">
-										<?= $customer_group['name']; ?>
-									</option>
-									<?php } ?>
 									<?php } ?>
 								</select>
 							</div>
 						</div>
-						<div class="col-sm-3">
+						<div class="flex-item">
 							<div class="form-group">
 								<label class="control-label" for="input-location">
 									<?= $entry_location; ?>
 								</label>
-								<select name="filter_location_id" id="input-location" class="form-control">
-									<option value="*">
-										<?= $text_all; ?>
+								<select name="filter[location_id]" id="input-location" class="form-control">
+									<option value="">
+										<?= $text_all ?>
 									</option>
 									<?php foreach ($locations as $location) { ?>
-									<?php if ($location['location_id'] == $filter_location_id) { ?>
-									<option value="<?= $location['location_id']; ?>" selected="selected">
+									<option value="<?= $location['location_id']; ?>"
+										<?=$location['location_id']==$filter['location_id'] ? 'selected' : '' ; ?>>
 										<?= $location['name']; ?>
 									</option>
-									<?php } else { ?>
-									<option value="<?= $location['location_id']; ?>">
-										<?= $location['name']; ?>
-									</option>
-									<?php } ?>
 									<?php } ?>
 								</select>
 							</div>
 						</div>
-						<div class="col-sm-3">
+					</div>
+					<div class="flex-container">
+						<div class="flex-item">
 							<div class="form-group">
 								<label class="control-label" for="input-date-added">
 									<?= $entry_date_start; ?>
 								</label>
 								<div class="input-group date">
-									<input type="text" name="filter_date_start" value="<?= $filter_date_start; ?>"
+									<input type="text" name="filter[date_start]" value="<?= $filter['date_start']; ?>"
 										placeholder="<?= $entry_date_start; ?>" data-date-format="MMM YY" id="input-date-added"
 										class="form-control" />
 									<span class="input-group-btn">
@@ -136,74 +126,65 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-sm-3">
+						<div class="flex-item">
 							<div class="form-group">
-								<label class="control-label" for="input-status">
-									<?= $entry_status; ?>
+								<label class="control-label" for="input-contract-type">
+									<?= $entry_contract_type; ?>
 								</label>
-								<select name="filter_status" id="input-status" class="form-control">
-									<option value="*">
-										<?= $text_all; ?>
+								<select name="filter[contract_type_id]" id="input-contract-type" class="form-control">
+									<option value="">
+										<?= $text_all ?>
 									</option>
-									<?php if ($filter_status) { ?>
-									<option value="1" selected="selected">
-										<?= $text_enabled; ?>
-									</option>
-									<?php } else { ?>
-									<option value="1">
-										<?= $text_enabled; ?>
-									</option>
-									<?php } ?>
-									<?php if (!$filter_status && !is_null($filter_status)) { ?>
-									<option value="0" selected="selected">
-										<?= $text_disabled; ?>
-									</option>
-									<?php } else { ?>
-									<option value="0">
-										<?= $text_disabled; ?>
+									<?php foreach ($contract_types as $contract_type) { ?>
+									<option value="<?= $contract_type['contract_type_id']; ?>"
+										<?=$contract_type['contract_type_id']==$filter['contract_type_id'] ? 'selected' : '' ; ?>>
+										<?= $contract_type['name']; ?>
 									</option>
 									<?php } ?>
 								</select>
 							</div>
 						</div>
-						<div class="col-sm-3">
+						<div class="flex-item">
 							<div class="form-group">
 								<label class="control-label" for="input-active">
 									<?= $entry_active; ?>
 								</label>
-								<select name="filter_active" id="input-active" class="form-control">
-									<?php if ($filter_active == '*') { ?>
-									<option value="*" selected="selected">
-										<?= $text_all; ?>
-									</option>
-									<?php } else { ?>
+								<select name="filter[active]" id="input-active" class="form-control">
 									<option value="*">
 										<?= $text_all; ?>
 									</option>
-									<?php } ?>
-									<?php if (is_null($filter_active)) { ?>
-									<option value="1" selected="selected">
+									<option value="1" <?=$filter['active'] == 1 ? 'selected' : '' ; ?>>
 										<?= $text_active; ?>
 									</option>
-									<?php } else { ?>
-									<option value="1">
-										<?= $text_active; ?>
-									</option>
-									<?php } ?>
-									<?php if (!$filter_active && !is_null($filter_active)) { ?>
-									<option value="0" selected="selected">
+									<option value="-1" <?=$filter['active'] == -1 ? 'selected' : '' ; ?>>
 										<?= $text_inactive; ?>
 									</option>
-									<?php } else { ?>
-									<option value="0">
-										<?= $text_inactive; ?>
-									</option>
-									<?php } ?>
 								</select>
 							</div>
 						</div>
-						<div class="col-sm-3">
+						<div class="flex-item">
 							<div class="form-group">
+								<label class="control-label" for="input-status">
+									<?= $entry_status; ?>
+								</label>
+								<select name="filter[status]" id="input-status" class="form-control">
+									<option value="">
+										<?= $text_all; ?>
+									</option>
+									<option value="1" <?=$filter['status'] ? 'selected' : '' ; ?>>
+										<?= $text_enabled; ?>
+									</option>
+									<option value="0" <?=!$filter['status'] && !is_null($filter['status']) ? 'selected' : '' ; ?>>
+										<?= $text_disabled; ?>
+									</option>
+								</select>
+							</div>
+						</div>
+						<div>
+							<div class="form-group">
+								<label>
+									<?= '&nbsp;'; ?>
+								</label>
 								<div>
 									<button type="button" id="button-filter" class="btn btn-primary pull-right"><i
 											class="fa fa-search"></i>
@@ -291,6 +272,17 @@
 										<?php } ?>
 									</td>
 									<td class="text-left">
+										<?php if ($sort == 'contract_type') { ?>
+										<a href="<?= $sort_contract_type; ?>" class="<?= strtolower($order); ?>">
+											<?= $column_contract_type; ?>
+										</a>
+										<?php } else { ?>
+										<a href="<?= $sort_contract_type; ?>">
+											<?= $column_contract_type; ?>
+										</a>
+										<?php } ?>
+									</td>
+									<td class="text-left">
 										<?php if ($sort == 'date_end') { ?>
 										<a href="<?= $sort_date_end; ?>" class="<?= strtolower($order); ?>">
 											<?= $column_date_end; ?>
@@ -309,7 +301,7 @@
 							<tbody>
 								<?php if ($customers) { ?>
 								<?php foreach ($customers as $customer) { ?>
-								<tr>
+								<tr class="<?= $customer['bg_class']; ?>">
 									<td class="text-center">
 										<?php if (in_array($customer['customer_id'], $selected)) { ?>
 										<input type="checkbox" name="selected[]" value="<?= $customer['customer_id']; ?>"
@@ -342,6 +334,9 @@
 									</td>
 									<td class="text-left">
 										<?= $customer['date_start']; ?>
+									</td>
+									<td class="text-left">
+										<?= $customer['contract_type']; ?>
 									</td>
 									<td class="text-left">
 										<?= $customer['date_end']; ?>
@@ -382,7 +377,7 @@
 								<?php } ?>
 								<?php } else { ?>
 								<tr>
-									<td class="text-center" colspan="10">
+									<td class="text-center" colspan="11">
 										<?= $text_no_results; ?>
 									</td>
 								</tr>
@@ -412,50 +407,68 @@
 		$('#button-filter').on('click', function () {
 			url = 'index.php?route=customer/customer&token=<?= $token; ?>';
 
-			var filter_name = $('input[name=\'filter_name\']').val();
+			let filter = [];
 
-			if (filter_name) {
-				url += '&filter_name=' + encodeURIComponent(filter_name);
-			}
+			let filter_items = JSON.parse('<?= $filter_items; ?>');
 
-			var filter_customer_department_id = $('select[name=\'filter_customer_department_id\']').val();
+			for (let i = 0; i < filter_items.length; i++) {
+				filter[filter_items[i]] = $('.well [name=\'filter[' + filter_items[i] + ']\']').val();
 
-			if (filter_customer_department_id != '*') {
-				url += '&filter_customer_department_id=' + encodeURIComponent(filter_customer_department_id);
-			}
-
-			var filter_customer_group_id = $('select[name=\'filter_customer_group_id\']').val();
-
-			if (filter_customer_group_id != '*') {
-				url += '&filter_customer_group_id=' + encodeURIComponent(filter_customer_group_id);
-			}
-
-			var filter_location_id = $('select[name=\'filter_location_id\']').val();
-
-			if (filter_location_id != '*') {
-				url += '&filter_location_id=' + encodeURIComponent(filter_location_id);
-			}
-
-			var filter_status = $('select[name=\'filter_status\']').val();
-
-			if (filter_status != '*') {
-				url += '&filter_status=' + encodeURIComponent(filter_status);
-			}
-
-			var filter_date_start = $('input[name=\'filter_date_start\']').val();
-
-			if (filter_date_start) {
-				url += '&filter_date_start=' + encodeURIComponent(filter_date_start);
-			}
-
-			var filter_active = $('select[name=\'filter_active\']').val();
-
-			if (filter_active != '1') {
-				url += '&filter_active=' + encodeURIComponent(filter_active);
+				if (filter[filter_items[i]]) {
+					url += '&filter_' + filter_items[i] + '=' + encodeURIComponent(filter[filter_items[i]]);
+				}
 			}
 
 			location = url;
 		});
+
+		// $('#button-filter2').on('click', function () {
+		// 	url = 'index.php?route=customer/customer&token=<?= $token; ?>';
+
+		// 	var filter_name = $('input[name=\'filter_name\']').val();
+
+		// 	if (filter_name) {
+		// 		url += '&filter_name=' + encodeURIComponent(filter_name);
+		// 	}
+
+		// 	var filter_customer_department_id = $('select[name=\'filter_customer_department_id\']').val();
+
+		// 	if (filter_customer_department_id != '*') {
+		// 		url += '&filter_customer_department_id=' + encodeURIComponent(filter_customer_department_id);
+		// 	}
+
+		// 	var filter_customer_group_id = $('select[name=\'filter_customer_group_id\']').val();
+
+		// 	if (filter_customer_group_id != '*') {
+		// 		url += '&filter_customer_group_id=' + encodeURIComponent(filter_customer_group_id);
+		// 	}
+
+		// 	var filter_location_id = $('select[name=\'filter_location_id\']').val();
+
+		// 	if (filter_location_id != '*') {
+		// 		url += '&filter_location_id=' + encodeURIComponent(filter_location_id);
+		// 	}
+
+		// 	var filter_status = $('select[name=\'filter_status\']').val();
+
+		// 	if (filter_status != '*') {
+		// 		url += '&filter_status=' + encodeURIComponent(filter_status);
+		// 	}
+
+		// 	var filter_date_start = $('input[name=\'filter_date_start\']').val();
+
+		// 	if (filter_date_start) {
+		// 		url += '&filter_date_start=' + encodeURIComponent(filter_date_start);
+		// 	}
+
+		// 	var filter_active = $('select[name=\'filter_active\']').val();
+
+		// 	if (filter_active != '1') {
+		// 		url += '&filter_active=' + encodeURIComponent(filter_active);
+		// 	}
+
+		// 	location = url;
+		// });
 	</script>
 	<script type="text/javascript">
 		$('input[name=\'filter_name\']').autocomplete({

@@ -236,15 +236,19 @@ class ModelCustomerCustomer extends Model
 			$implode[] = "DATE_FORMAT(date_start,'%b %y') = '" . $this->db->escape($data['filter_date_start']) . "'";
 		}
 
-		if (isset($data['filter_active']) && !is_null($data['filter_active'])) {
-			if (!$data['filter_active']) {
-				$implode[] = "date_end <= CURDATE()";
-			}
-		} else {
-			if (!empty($data['filter_date_end'])) {
-				$implode[] = "(date_end IS NULL OR date_end >= '" . $this->db->escape($data['filter_date_end']) . "')";
+		if (isset($data['filter_contract_type_id'])) {
+			$implode[] = "contract_type_id = '" . $this->db->escape($data['filter_contract_type_id']) . "'";
+		}
+
+		if (isset($data['filter_active']) && $data['filter_active'] != '*') {
+			if ($data['filter_active'] == 1) {
+				if (!empty($data['filter_date_end'])) {
+					$implode[] = "(date_end IS NULL OR date_end >= '" . $this->db->escape($data['filter_date_end']) . "')";
+				} else {
+					$implode[] = "(date_end IS NULL OR date_end >= CURDATE())";
+				}
 			} else {
-				$implode[] = "(date_end IS NULL OR date_end >= CURDATE())";
+				$implode[] = "date_end < CURDATE()";
 			}
 		}
 
@@ -260,6 +264,7 @@ class ModelCustomerCustomer extends Model
 			'location',
 			'email',
 			'date_start',
+			'contract_type',
 			'date_end'
 		);
 
@@ -405,17 +410,19 @@ class ModelCustomerCustomer extends Model
 			$implode[] = "DATE_FORMAT(date_start,'%b %y') = '" . $this->db->escape($data['filter_date_start']) . "'";
 		}
 
-		if (isset($data['filter_active']) && !is_null($data['filter_active'])) {
-			if (!$data['filter_active']) {
-				$implode[] = "(date_end <> '0000-00-00' AND date_end <= CURDATE())";
-			}
-		} else {
-			if (!empty($data['filter_date_end'])) {
-				// $date_end = date($this->language->get('Y-m-d'), strtotime('-2 months', strtotime('2023-09-05')));
+		if (isset($data['filter_contract_type_id'])) {
+			$implode[] = "contract_type_id = '" . $this->db->escape($data['filter_contract_type_id']) . "'";
+		}
 
-				$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end >= '" . $this->db->escape($data['filter_date_end']) . "')";
+		if (isset($data['filter_active']) && $data['filter_active'] != '*') {
+			if ($data['filter_active'] == 1) {
+				if (!empty($data['filter_date_end'])) {
+					$implode[] = "(date_end IS NULL OR date_end >= '" . $this->db->escape($data['filter_date_end']) . "')";
+				} else {
+					$implode[] = "(date_end IS NULL OR date_end >= CURDATE())";
+				}
 			} else {
-				$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end >= CURDATE())";
+				$implode[] = "date_end < CURDATE()";
 			}
 		}
 

@@ -25,10 +25,11 @@ $_['entry_sort_order']  = 'Sort Order';
 $_['entry_status']    	= 'Status';
 
 // Error
-$_['error_permission']  = 'Warning: You do not have permission to modify contract setting!';
-$_['error_name']        = 'Warning: Nama Tipe Kontrak harus diisi 3 - 64 karakter!';
-$_['error_duration']	= 'Warning: Tentukan Durasi ';
-$_['error_contract']    = 'Warning: Tipe Kontrak ini tidak bisa dihapus terhubung dengan data karyawan!';
+$_['error_permission']  	= 'Warning: You do not have permission to modify contract type!';
+$_['error_name']        	= 'Warning: Nama Tipe Kontrak harus diisi 3 - 64 karakter!';
+$_['error_duration']		= 'Warning: Tentukan Durasi ';
+$_['error_contract']    	= 'Warning: Tipe Kontrak ini tidak bisa dihapus karena terhubung dengan %d data karyawan!';
+$_['error_contract_resign']	= 'Warning: Tipe Kontrak ini tidak bisa dihapus karena digunakan untuk status resign!';
 
 // Help
 $_['help_duration']		= 'Set 0 untuk Karyawan Tetap';

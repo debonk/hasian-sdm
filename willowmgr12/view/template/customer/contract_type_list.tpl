@@ -61,7 +61,7 @@
               <tbody>
                 <?php if ($contract_types) { ?>
                 <?php foreach ($contract_types as $contract_type) { ?>
-                <tr>
+                <tr class="<?= $contract_type['contract_type_id'] == 0 ? 'text-danger' : ''; ?>">
                   <td class="text-center"><?php if (in_array($contract_type['contract_type_id'], $selected)) { ?>
                     <input type="checkbox" name="selected[]" value="<?= $contract_type['contract_type_id']; ?>" checked="checked" />
                     <?php } else { ?>

@@ -1,6 +1,7 @@
 <?php
 $_['text_customer_detail']		= 'Data Karyawan'; 
 $_['text_additional_info']		= 'Informasi Tambahan'; 
+$_['text_contract']				= 'Kontrak'; 
 $_['text_customer']				= 'Nama Karyawan'; 
 $_['text_customer_department']	= 'Divisi'; 
 $_['text_customer_group']		= 'Jabatan'; 

@@ -21,6 +21,10 @@ class ModelCustomerContractType extends Model {
 	public function getContractTypes($data = array()) {
 		$sql = "SELECT * FROM " . DB_PREFIX . "contract_type";
 
+		if (!isset($data['filter']['all'])) {
+			$sql .= " WHERE contract_type_id > 0";
+		}
+
 		$sort_data = array(
 			'name',
 			'sort_order'

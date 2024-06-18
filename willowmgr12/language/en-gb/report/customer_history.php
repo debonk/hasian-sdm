@@ -10,6 +10,7 @@ $_['text_edit']       		= '%s: Data karyawan <a href="customer_id=%d">%s</a> dip
 $_['text_reactivate2']		= '%s: <a href="customer_id=%d">%s</a> bekerja kembali sebagai %s (%s) di %s.';
 $_['text_reactivate'] 		= '%s: <a href="customer_id=%d">%s</a> bekerja kembali sebagai %s di %s.';
 $_['text_date_end']   		= '%s: <a href="customer_id=%d">%s</a> telah berhenti bekerja.';
+$_['text_date_start']   	= '%s: Tanggal Mulai Bekerja <a href="customer_id=%d">%s</a> telah diperbaharui menjadi %s.';
 $_['text_mutation2'] 		= '%s: <a href="customer_id=%d">%s</a> pindah tugas dari %s (%s) di %s menjadi %s (%s) di %s.';
 $_['text_mutation'] 		= '%s: <a href="customer_id=%d">%s</a> pindah tugas menjadi %s di %s.';
 $_['text_delete'] 	  		= '%s: Data karyawan %s telah dihapus.';

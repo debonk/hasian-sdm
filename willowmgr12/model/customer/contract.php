@@ -20,7 +20,6 @@ class ModelCustomerContract extends Model
 		$contract_id = $this->db->getLastId();
 
 		$this->db->query("UPDATE " . DB_PREFIX . "customer SET contract_id = '" . (int)$contract_id . "', date_end = " . $contract_end . " WHERE customer_id = '" . (int)$customer_id . "'");
-		// $this->db->query("UPDATE " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON cad.customer_id = c.customer_id SET c.contract_id = '" . (int)$contract_id . "', c.date_end = " . $contract_end . ", cad.end_reason = " . $end_reason . " WHERE c.customer_id = '" . (int)$customer_id . "'");
 	}
 
 	public function deleteContract($customer_id)
@@ -46,13 +45,24 @@ class ModelCustomerContract extends Model
 
 	public function endContract($customer_id, $data)
 	{
-		$sql = "INSERT INTO " . DB_PREFIX . "contract SET customer_id = '" . (int)$customer_id . "', contract_type_id = 0, contract_end = STR_TO_DATE('" . $this->db->escape($data['date_end']) . "', '%e %b %Y'), end_reason = '" . $this->db->escape($data['end_reason']) . "', user_id = '" . (int)$this->user->getId() . "'";
+		$last_contract = $this->getCustomerContract($customer_id);
+
+		$end_reason = $this->db->escape($this->language->get('text_contract_resign'));
+
+		$sql = "INSERT INTO " . DB_PREFIX . "contract SET customer_id = '" . (int)$customer_id . "', contract_type_id = 0, contract_start = '" . $this->db->escape($last_contract['contract_start']) . "', contract_end = STR_TO_DATE('" . $this->db->escape($data['date_end']) . "', '%e %b %Y'), description = '" . $this->db->escape($data['end_reason']) . "', end_reason = '" . $end_reason . "', user_id = '" . (int)$this->user->getId() . "'";
 
 		$this->db->query($sql);
 
 		$contract_id = $this->db->getLastId();
 
 		$this->db->query("UPDATE " . DB_PREFIX . "customer SET contract_id = '" . (int)$contract_id . "', date_end = STR_TO_DATE('" . $this->db->escape($data['date_end']) . "', '%e %b %Y') WHERE customer_id = '" . (int)$customer_id . "'");
+	}
+
+	public function editDateStart($customer_id, $data)
+	{
+		if (isset($data['date_start'])) {
+			$this->db->query("UPDATE " . DB_PREFIX . "customer SET date_start = STR_TO_DATE('" . $this->db->escape($data['date_start']) . "', '%e %b %Y') WHERE customer_id = '" . (int)$customer_id . "'");
+		}
 	}
 
 	// public function getContract($contract_id)
@@ -91,6 +101,10 @@ class ModelCustomerContract extends Model
 
 		if (!empty($data['filter']['location_id'])) {
 			$implode[] = "location_id = '" . (int)$data['filter']['location_id'] . "'";
+		}
+
+		if (isset($data['filter']['contract_type_id'])) {
+			$implode[] = "contract_type_id = '" . $this->db->escape($data['filter']['contract_type_id']) . "'";
 		}
 
 		if (!empty($data['filter']['contract_status'])) {
@@ -173,6 +187,10 @@ class ModelCustomerContract extends Model
 			$implode[] = "location_id = '" . (int)$data['filter']['location_id'] . "'";
 		}
 
+		if (isset($data['filter']['contract_type_id'])) {
+			$implode[] = "contract_type_id = '" . $this->db->escape($data['filter']['contract_type_id']) . "'";
+		}
+
 		if (!empty($data['filter']['contract_status'])) {
 			$implode[] = "contract_status = '" . $this->db->escape($data['filter']['contract_status']) . "'";
 		}
@@ -221,6 +239,13 @@ class ModelCustomerContract extends Model
 	public function getTotalContractHistories($customer_id)
 	{
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "contract WHERE customer_id = '" . (int)$customer_id . "'");
+
+		return $query->row['total'];
+	}
+
+	public function getContractCountByContractTypeId($contract_type_id)
+	{
+		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "contract WHERE contract_type_id = '" . (int)$contract_type_id . "'");
 
 		return $query->row['total'];
 	}

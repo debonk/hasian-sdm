@@ -85,7 +85,7 @@ class ControllerCustomerContractType extends Controller {
 
 		if (isset($this->request->post['selected']) && $this->validateDelete()) {
 			foreach ($this->request->post['selected'] as $contract_type_id) {
-				$this->model_customer_contract_type->deleteContractType($contract_type_id);
+				// $this->model_customer_contract_type->deleteContractType($contract_type_id);
 			}
 
 			$this->session->data['success'] = $this->language->get('text_success');
@@ -182,10 +182,11 @@ class ControllerCustomerContractType extends Controller {
 		$data['contract_types'] = array();
 
 		$filter_data = array(
-			'sort'  => $sort,
-			'order' => $order,
-			'start' => ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit' => $this->config->get('config_limit_admin')
+			'filter'	=> ['all' => true],
+			'sort' 		=> $sort,
+			'order'		=> $order,
+			'start'		=> ($page - 1) * $this->config->get('config_limit_admin'),
+			'limit'		=> $this->config->get('config_limit_admin')
 		);
 
 		$contract_type_count = $this->model_customer_contract_type->getContractTypesCount();
@@ -389,10 +390,18 @@ class ControllerCustomerContractType extends Controller {
 		$this->load->model('customer/contract');
 
 		foreach ($this->request->post['selected'] as $contract_type_id) {
+			if ($contract_type_id == 0) {
+				$this->error['warning'] = $this->language->get('error_contract_resign');
+
+				break;
+			}
+
 			$contract_count = $this->model_customer_contract->getContractCountByContractTypeId($contract_type_id);
 
 			if ($contract_count) {
 				$this->error['warning'] = sprintf($this->language->get('error_contract'), $contract_count);
+
+				break;
 			}
 		}
 

@@ -7,6 +7,7 @@ class ControllerCustomerContract extends Controller
 		'customer_group_id',
 		'customer_department_id',
 		'location_id',
+		'contract_type_id',
 		'contract_status',
 		'active'
 	);
@@ -17,7 +18,7 @@ class ControllerCustomerContract extends Controller
 
 		foreach ($this->filter_items as $filter_item) {
 			if (isset($this->request->get['filter_' . $filter_item])) {
-				$url_filter .= '&filter_' . $filter_item . '=' . $this->request->get['filter_' . $filter_item];
+				$url_filter .= '&filter_' . $filter_item . '=' . urlencode(html_entity_decode($this->request->get['filter_' . $filter_item], ENT_QUOTES, 'UTF-8'));
 			}
 		}
 
@@ -29,7 +30,7 @@ class ControllerCustomerContract extends Controller
 			if (isset($this->request->get['order'])) {
 				$url_filter .= '&order=' . $this->request->get['order'];
 			}
-		}	
+		}
 
 		if (isset($this->request->get['page']) && $excluded_item != 'page') {
 			$url_filter .= '&page=' . $this->request->get['page'];
@@ -63,18 +64,53 @@ class ControllerCustomerContract extends Controller
 
 				# Add to customer_history log
 				$this->load->model('customer/history');
-				
+
 				$history_data = array(
 					'date'				=> $this->request->post['contract_start'],
 					'customer_id' 		=> $this->request->get['customer_id'],
 					'name'        		=> '',
 					'contract_end' 		=> isset($this->request->post['contract_end']) ? $this->request->post['contract_end'] : '...'
 				);
-				
+
 				$this->model_customer_history->addHistory('contract', $history_data);
 			});
 
 			$this->session->data['success'] = $this->language->get('text_success');
+
+			$url = $this->urlFilter();
+
+			$this->response->redirect($this->url->link('customer/contract/add', 'token=' . $this->session->data['token'] . '&customer_id=' . $this->request->get['customer_id'] . $url, true));
+		}
+
+		$this->getForm();
+	}
+
+	public function update()
+	{
+		$this->load->language('customer/contract');
+
+		$this->document->setTitle($this->language->get('heading_title'));
+
+		$this->load->model('customer/contract');
+		
+		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateUpdate()) {
+			$this->db->transaction(function () {
+				$this->model_customer_contract->editDateStart($this->request->get['customer_id'], $this->request->post);
+	
+				# Add to customer_history log
+				$this->load->model('customer/history');
+
+				$history_data = array(
+					'date' 			=> date($this->language->get('date_format_jMY')),
+					'customer_id' 	=> $this->request->get['customer_id'],
+					'name'        	=> '',
+					'date_start' 	=> $this->request->post['date_start']
+				);
+
+				$this->model_customer_history->addHistory('date_start', $history_data);
+			});
+
+			$this->session->data['success'] = $this->language->get('text_success_date_start');
 
 			$url = $this->urlFilter();
 
@@ -104,7 +140,7 @@ class ControllerCustomerContract extends Controller
 					'customer_id' 	=> $this->request->get['customer_id'],
 					'name'        	=> ''
 				);
-				
+
 				$this->model_customer_history->addHistory('date_end', $history_data);
 			});
 
@@ -135,6 +171,7 @@ class ControllerCustomerContract extends Controller
 			'entry_customer_department',
 			'entry_location',
 			'entry_contract_status',
+			'entry_contract_type',
 			'entry_status',
 			'column_date',
 			'column_nip',
@@ -171,24 +208,10 @@ class ControllerCustomerContract extends Controller
 			$filter['active'] = 1;
 		}
 
-		if (isset($this->request->get['sort'])) {
-			$sort = $this->request->get['sort'];
-		} else {
-			$sort = 'name';
-		}
-
-		if (isset($this->request->get['order'])) {
-			$order = $this->request->get['order'];
-		} else {
-			$order = 'ASC';
-		}
-
-		if (isset($this->request->get['page'])) {
-			$page = $this->request->get['page'];
-		} else {
-			$page = 1;
-		}
-
+		$sort = isset($this->request->get['sort']) ? $this->request->get['sort'] : 'name';
+		$order = isset($this->request->get['order']) ? $this->request->get['order'] : 'ASC';
+		$page = isset($this->request->get['page']) ? $this->request->get['page'] : 1;
+		
 		$url = $this->urlFilter();
 
 		$data['breadcrumbs'] = array();
@@ -221,7 +244,7 @@ class ControllerCustomerContract extends Controller
 
 		foreach ($results as $result) {
 			$bg_class = '';
-
+			
 			switch ($result['contract_status']) {
 				case 'none':
 					$contract_status = $this->language->get('text_contract_none');
@@ -261,8 +284,10 @@ class ControllerCustomerContract extends Controller
 					break;
 			}
 
-			if ($result['contract_type']) {
+			if ($result['contract_type_id']) {
 				$contract_type = $result['contract_type'] . ' (' . ($result['duration'] ? sprintf($this->language->get('text_month'), ($result['duration'])) : $this->language->get('text_contract_permanent')) . ')';
+			} elseif (!is_null($result['contract_type_id'])) {
+				$contract_type = $this->language->get('text_contract_resign');
 			} else {
 				$contract_type = '';
 			}
@@ -357,6 +382,16 @@ class ControllerCustomerContract extends Controller
 		$this->load->model('localisation/location');
 		$data['locations'] = $this->model_localisation_location->getLocations();
 
+		$this->load->model('customer/contract_type');
+		$contract_types = $this->model_customer_contract_type->getContractTypes(['filter' => ['all' => true]]);
+
+		foreach ($contract_types as $contract_type) {
+			$data['contract_types'][] = [
+				'contract_type_id'	=> $contract_type['contract_type_id'],
+				'text'				=> $contract_type['name'] . ($contract_type['duration'] ? ' (' . sprintf($this->language->get('text_month'), ($contract_type['duration']))  . ')' : '')
+			];
+		}
+
 		$data['contract_statuses'] = $this->model_customer_contract->getContractStatuses();
 
 		$data['header'] = $this->load->controller('common/header');
@@ -378,15 +413,18 @@ class ControllerCustomerContract extends Controller
 			'text_apply',
 			'text_resign',
 			'text_history',
+			'text_customer_info',
 			'entry_contract_type',
 			'entry_contract_start',
 			'entry_contract_end',
 			'entry_description',
+			'entry_date_start',
 			'entry_date_end',
 			'entry_end_reason',
 			'button_delete',
 			'button_save',
 			'button_resign',
+			'button_update',
 			'button_cancel',
 			'help_resign'
 		);
@@ -403,6 +441,7 @@ class ControllerCustomerContract extends Controller
 			'contract_type',
 			'contract_start',
 			'contract_end',
+			'date_start',
 			'date_end',
 			'end_reason'
 		];
@@ -437,6 +476,7 @@ class ControllerCustomerContract extends Controller
 		} else {
 			$data['action'] = $this->url->link('customer/contract/add', 'token=' . $this->session->data['token'] . '&customer_id=' . $customer_id . $url, true);
 			$data['resign'] = $this->url->link('customer/contract/resign', 'token=' . $this->session->data['token'] . '&customer_id=' . $customer_id . $url, true);
+			$data['update'] = $this->url->link('customer/contract/update', 'token=' . $this->session->data['token'] . '&customer_id=' . $customer_id . $url, true);
 		}
 
 		$data['cancel'] = $this->url->link('customer/contract', 'token=' . $this->session->data['token'] . $url, true);
@@ -477,19 +517,26 @@ class ControllerCustomerContract extends Controller
 			$data['contract_start'] = '';
 		}
 
+		# Tanggal mulai bekerja
+		$this->load->model('common/payroll');
+		$customer_info = $this->model_common_payroll->getCustomer($customer_id);
+
+		if (isset($this->request->post['date_start'])) {
+			$data['date_start'] = $this->request->post['date_start'];
+		} elseif (!empty($customer_info)) {
+			$data['date_start'] = date($this->language->get('date_format_jMY'), strtotime($customer_info['date_start']));
+		} else {
+			$data['date_start'] = '';
+		}
+
 		$data['contract_types'] = [];
 
 		$this->load->model('customer/contract_type');
-		$contract_types = $this->model_customer_contract_type->getContractTypes();
-
-		foreach ($contract_types as $contract_type) {
-			$data['contract_types'][] = [
-				'index'	=> $contract_type['contract_type_id'],
-				'name'	=> $contract_type['name'] . ' (' . ($contract_type['duration'] ? sprintf($this->language->get('text_month'), ($contract_type['duration'])) : $this->language->get('text_contract_permanent')) . ')'
-			];
-		}
+		$data['contract_types'] = $this->model_customer_contract_type->getContractTypes();
 
 		$data['customer_id'] = $customer_id;
+
+		$data['date_start_locked'] = !$this->user->hasPermission('bypass', 'customer/contract') ? true : false;
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -525,7 +572,8 @@ class ControllerCustomerContract extends Controller
 
 			$data['histories'][] = array(
 				'contract_type_id' 	=> $result['contract_type_id'],
-				'contract_type' 	=> $result['contract_type'] . ($duration ? ' (' . $duration . ')' : ''),
+				'contract_type' 	=> $result['contract_type'],
+				'duration' 			=> $duration,
 				'contract_start' 	=> $result['contract_start'] ? date($this->language->get('date_format_jMY'), strtotime($result['contract_start'])) : '-',
 				'contract_end' 		=> $result['contract_end'] ? date($this->language->get('date_format_jMY'), strtotime($result['contract_end'])) : '-',
 				'description' 		=> $result['description'],
@@ -543,6 +591,7 @@ class ControllerCustomerContract extends Controller
 			'column_contract_end',
 			'column_description',
 			'column_date_added',
+			'column_duration',
 			'column_username'
 		);
 		foreach ($language_items as $language_item) {
@@ -584,7 +633,7 @@ class ControllerCustomerContract extends Controller
 					'customer_id' 	=> $this->request->post['customer_id'],
 					'name'        	=> ''
 				);
-				
+
 				$this->model_customer_history->addHistory('contract_delete', $history_data);
 			});
 
@@ -611,7 +660,7 @@ class ControllerCustomerContract extends Controller
 		} else {
 			$this->load->model('customer/contract');
 			$contract_info = $this->model_customer_contract->getCustomerContract($this->request->get['customer_id']);
-
+			
 			if ($contract_info && ($contract_info['contract_end'] >= date('Y-m-d', strtotime($this->request->post['contract_start'])) || $contract_info['date_start'] > date('Y-m-d', strtotime($this->request->post['contract_start'])))) {
 				$this->error['contract_start'] = $this->language->get('error_contract_start');
 			}
@@ -624,6 +673,23 @@ class ControllerCustomerContract extends Controller
 			if (empty($this->request->post['contract_end']) || strtotime($this->request->post['contract_start']) > strtotime($this->request->post['contract_end'])) {
 				$this->error['contract_end'] = $this->language->get('error_contract_end');
 			}
+		}
+
+		if ($this->error && !isset($this->error['warning'])) {
+			$this->error['warning'] = $this->language->get('error_warning');
+		}
+
+		return !$this->error;
+	}
+
+	protected function validateUpdate()
+	{
+		if (!$this->user->hasPermission('bypass', 'customer/contract')) {
+			$this->error['warning'] = $this->language->get('error_permission_1');
+		}
+
+		if (empty($this->request->post['date_start'])) {
+			$this->error['date_start'] = $this->language->get('error_date_start');
 		}
 
 		if ($this->error && !isset($this->error['warning'])) {
@@ -657,7 +723,7 @@ class ControllerCustomerContract extends Controller
 	protected function validateDelete()
 	{
 		if (!$this->user->hasPermission('bypass', 'customer/contract')) {
-			$this->error['warning'] = $this->language->get('error_permission');
+			$this->error['warning'] = $this->language->get('error_permission_1');
 		}
 
 		return !$this->error;

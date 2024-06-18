@@ -84,6 +84,10 @@ class ControllerPresencePresence extends Controller {
 				$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 			}
 
+			if (isset($this->request->get['filter_contract_type_id'])) {
+				$url .= '&filter_contract_type_id=' . $this->request->get['filter_contract_type_id'];
+			}
+
 			if (isset($this->request->get['filter_payroll_include'])) {
 				$url .= '&filter_payroll_include=' . $this->request->get['filter_payroll_include'];
 			}
@@ -141,6 +145,10 @@ class ControllerPresencePresence extends Controller {
 				$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 			}
 
+			if (isset($this->request->get['filter_contract_type_id'])) {
+				$url .= '&filter_contract_type_id=' . $this->request->get['filter_contract_type_id'];
+			}
+
 			if (isset($this->request->get['filter_payroll_include'])) {
 				$url .= '&filter_payroll_include=' . $this->request->get['filter_payroll_include'];
 			}
@@ -168,6 +176,54 @@ class ControllerPresencePresence extends Controller {
 	}
 
 	protected function getList() {
+		$language_items = array(
+			'heading_title',
+			'text_list',
+			'text_confirm',
+			'text_submit_confirm',
+			'text_no_results',
+			'text_all',
+			'text_loading',
+			'text_yes',
+			'text_no',
+			'column_nip',
+			'column_name',
+			'column_customer_group',
+			'column_location',
+			'column_contract_type',
+			'column_action',
+			'column_presence_summary',
+			'column_hke',
+			'column_h',
+			'column_s',
+			'column_i',
+			'column_ns',
+			'column_ia',
+			'column_a',
+			'column_c',
+			'column_t1',
+			'column_t2',
+			'column_t3',
+			'column_note',
+			'entry_presence_period',
+			'entry_name',
+			'entry_customer_group',
+			'entry_location',
+			'entry_contract_type',
+			'entry_payroll_include',
+			'entry_presence_status',
+			'button_edit',
+			'button_presence_submit',
+			'button_back',
+			'button_delete',
+			'button_filter',
+			'button_export',
+			'button_schedule'
+		);
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
+
 		if (isset($this->request->get['presence_period_id'])) {
 			$presence_period_id = $this->request->get['presence_period_id'];
 		} else {
@@ -193,6 +249,12 @@ class ControllerPresencePresence extends Controller {
 			$filter_location_id = $this->request->get['filter_location_id'];
 		} else {
 			$filter_location_id = null;
+		}
+
+		if (isset($this->request->get['filter_contract_type_id'])) {
+			$filter_contract_type_id = $this->request->get['filter_contract_type_id'];
+		} else {
+			$filter_contract_type_id = null;
 		}
 
 		if (isset($this->request->get['filter_payroll_include'])) {
@@ -238,6 +300,10 @@ class ControllerPresencePresence extends Controller {
 
 		if (isset($this->request->get['filter_location_id'])) {
 			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
+		}
+
+		if (isset($this->request->get['filter_contract_type_id'])) {
+			$url .= '&filter_contract_type_id=' . $this->request->get['filter_contract_type_id'];
 		}
 
 		if (isset($this->request->get['filter_payroll_include'])) {
@@ -298,6 +364,7 @@ class ControllerPresencePresence extends Controller {
 			'filter_name'	   	   		=> $filter_name,
 			'filter_customer_group_id' 	=> $filter_customer_group_id,
 			'filter_location_id' 		=> $filter_location_id,
+			'filter_contract_type_id' 	=> $filter_contract_type_id,
 			'filter_payroll_include' 	=> $filter_payroll_include,
 			'filter_presence_code' 		=> $filter_presence_code,
 			'sort'                 		=> $sort,
@@ -321,6 +388,7 @@ class ControllerPresencePresence extends Controller {
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 
 		foreach ($results as $result) {
+			$contract_type = $result['contract_type'] ? $result['contract_type'] : '-';
 			//Get Note
 			$range_date = array(
 				'start'	=> $period_info['date_start'],
@@ -333,7 +401,6 @@ class ControllerPresencePresence extends Controller {
 				$range_date['end'] = min($range_date['end'], $result['date_end']);
 			}
 			//End GetNote Block
-	
 			$absences_info = $this->model_presence_absence->getAbsencesByCustomerDate($result['customer_id'], $range_date);
 			
 			$note = implode(', ', array_filter(array_column($absences_info, 'description')));
@@ -348,6 +415,7 @@ class ControllerPresencePresence extends Controller {
 						'name' 				=> $result['name'],
 						'customer_group' 	=> $result['customer_group'],
 						'location' 			=> $result['location'],
+						'contract_type'     => $contract_type,
 						'hke' 				=> $presence_summary['total_h'] + $presence_summary['total_s'] + $presence_summary['total_i'] + $presence_summary['total_ns'] + $presence_summary['total_ia'] + $presence_summary['total_a'],
 						'total_h' 			=> $presence_summary['total_h'],
 						'total_s'         	=> $presence_summary['total_s'],
@@ -370,6 +438,7 @@ class ControllerPresencePresence extends Controller {
 						'name' 				=> $result['name'],
 						'customer_group' 	=> $result['customer_group'],
 						'location' 			=> $result['location'],
+						'contract_type'     => $contract_type,
 						'hke' 				=> '',
 						'total_h' 			=> '',
 						'total_s'         	=> '',
@@ -393,6 +462,7 @@ class ControllerPresencePresence extends Controller {
 					'name' 				=> $result['name'],
 					'customer_group' 	=> $result['customer_group'],
 					'location' 			=> $result['location'],
+					'contract_type'     => $contract_type,
 					'hke' 				=> $result['total_h'] + $result['total_s'] + $result['total_i'] + $result['total_ns'] + $result['total_ia'] + $result['total_a'],
 					'total_h' 			=> $result['total_h'],
 					'total_s'         	=> $result['total_s'],
@@ -408,52 +478,6 @@ class ControllerPresencePresence extends Controller {
 					'edit'          	=> $this->url->link('presence/presence/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
 				);
 			}
-		}
-
-		$language_items = array(
-			'heading_title',
-			'text_list',
-			'text_confirm',
-			'text_submit_confirm',
-			'text_no_results',
-			'text_all',
-			'text_loading',
-			'text_yes',
-			'text_no',
-			'column_nip',
-			'column_name',
-			'column_customer_group',
-			'column_location',
-			'column_action',
-			'column_presence_summary',
-			'column_hke',
-			'column_h',
-			'column_s',
-			'column_i',
-			'column_ns',
-			'column_ia',
-			'column_a',
-			'column_c',
-			'column_t1',
-			'column_t2',
-			'column_t3',
-			'column_note',
-			'entry_presence_period',
-			'entry_name',
-			'entry_customer_group',
-			'entry_location',
-			'entry_payroll_include',
-			'entry_presence_status',
-			'button_edit',
-			'button_presence_submit',
-			'button_back',
-			'button_delete',
-			'button_filter',
-			'button_export',
-			'button_schedule'
-		);
-		foreach ($language_items as $language_item) {
-			$data[$language_item] = $this->language->get($language_item);
 		}
 
 		$data['token'] = $this->session->data['token'];
@@ -493,6 +517,10 @@ class ControllerPresencePresence extends Controller {
 			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
 		}
 
+		if (isset($this->request->get['filter_contract_type_id'])) {
+			$url .= '&filter_contract_type_id=' . $this->request->get['filter_contract_type_id'];
+		}
+
 		if (isset($this->request->get['filter_payroll_include'])) {
 			$url .= '&filter_payroll_include=' . $this->request->get['filter_payroll_include'];
 		}
@@ -515,6 +543,7 @@ class ControllerPresencePresence extends Controller {
 		$data['sort_name'] = $this->url->link('presence/presence', 'token=' . $this->session->data['token'] . '&sort=name' . $url, true);
 		$data['sort_customer_group'] = $this->url->link('presence/presence', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
 		$data['sort_location'] = $this->url->link('presence/presence', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
+		$data['sort_contract_type'] = $this->url->link('presence/presence', 'token=' . $this->session->data['token'] . '&sort=contract_type' . $url, true);
 
 		$url = '';
 		$url .= '&presence_period_id=' . $presence_period_id;
@@ -529,6 +558,10 @@ class ControllerPresencePresence extends Controller {
 
 		if (isset($this->request->get['filter_location_id'])) {
 			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
+		}
+
+		if (isset($this->request->get['filter_contract_type_id'])) {
+			$url .= '&filter_contract_type_id=' . $this->request->get['filter_contract_type_id'];
 		}
 
 		if (isset($this->request->get['filter_payroll_include'])) {
@@ -565,6 +598,7 @@ class ControllerPresencePresence extends Controller {
 		$data['filter_name'] = $filter_name;
 		$data['filter_customer_group_id'] = $filter_customer_group_id;
 		$data['filter_location_id'] = $filter_location_id;
+		$data['filter_contract_type_id'] = $filter_contract_type_id;
 		$data['filter_payroll_include'] = $filter_payroll_include;
 		$data['filter_presence_code'] = $filter_presence_code;
 		$data['sort'] = $sort;
@@ -578,6 +612,9 @@ class ControllerPresencePresence extends Controller {
 
 		$this->load->model('localisation/presence_status');
 		$data['presence_statuses'] = $this->model_localisation_presence_status->getPresenceStatuses();
+
+		$this->load->model('customer/contract_type');
+		$data['contract_types'] = $this->model_customer_contract_type->getContractTypes(['filter' => ['all' => true]]);
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -659,6 +696,10 @@ class ControllerPresencePresence extends Controller {
 
 		if (isset($this->request->get['filter_location_id'])) {
 			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
+		}
+
+		if (isset($this->request->get['filter_contract_type_id'])) {
+			$url .= '&filter_contract_type_id=' . $this->request->get['filter_contract_type_id'];
 		}
 
 		if (isset($this->request->get['filter_payroll_include'])) {
@@ -977,6 +1018,12 @@ class ControllerPresencePresence extends Controller {
 			$filter_location_id = null;
 		}
 
+		if (isset($this->request->get['filter_contract_type_id'])) {
+			$filter_contract_type_id = $this->request->get['filter_contract_type_id'];
+		} else {
+			$filter_contract_type_id = null;
+		}
+
 		if (isset($this->request->get['filter_payroll_include'])) {
 			$filter_payroll_include = $this->request->get['filter_payroll_include'];
 		} else {
@@ -1009,6 +1056,7 @@ class ControllerPresencePresence extends Controller {
 			'filter_name'	   	   		=> $filter_name,
 			'filter_customer_group_id' 	=> $filter_customer_group_id,
 			'filter_location_id' 		=> $filter_location_id,
+			'filter_contract_type_id' 	=> $filter_contract_type_id,
 			'filter_payroll_include' 	=> $filter_payroll_include,
 			'filter_presence_code' 		=> $filter_presence_code,
 			'sort'                 		=> $sort,
@@ -1161,6 +1209,12 @@ class ControllerPresencePresence extends Controller {
 			$filter_location_id = null;
 		}
 
+		if (isset($this->request->get['filter_contract_type_id'])) {
+			$filter_contract_type_id = $this->request->get['filter_contract_type_id'];
+		} else {
+			$filter_contract_type_id = null;
+		}
+
 		if (isset($this->request->get['filter_payroll_include'])) {
 			$filter_payroll_include = $this->request->get['filter_payroll_include'];
 		} else {
@@ -1176,6 +1230,7 @@ class ControllerPresencePresence extends Controller {
 			'filter_name'	   	   		=> $filter_name,
 			'filter_customer_group_id' 	=> $filter_customer_group_id,
 			'filter_location_id' 		=> $filter_location_id,
+			'filter_contract_type_id' 	=> $filter_contract_type_id,
 			'filter_payroll_include'	=> $filter_payroll_include
 		);
 
