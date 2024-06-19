@@ -481,7 +481,7 @@
 			}
 			var filter_contract_type_id = $('select[name=\'filter_contract_type_id\']').val();
 
-			if (filter_contract_type_id != '*') {
+			if (filter_contract_type_id) {
 				url += '&filter_contract_type_id=' + encodeURIComponent(filter_contract_type_id);
 			}
 

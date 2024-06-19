@@ -59,7 +59,7 @@ class ControllerCustomerCustomer extends Controller
 
 		$this->load->model('customer/customer');
 
-		if (($this->request->server['REQUEST_METHOD'] == 'POST') && !$this->validateForm()) {
+		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
 			$this->db->transaction(function () {
 				$customer_id = $this->model_customer_customer->addCustomer($this->request->post);
 

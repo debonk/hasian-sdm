@@ -8,6 +8,9 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
+3.1.5a	19/06/2024
+Some Bug Fixed
+
 3.1.5	18/06/2024
 Customer Info: Menambah info contract
 Contract: Modify date_start by super user

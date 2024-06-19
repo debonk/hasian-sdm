@@ -421,57 +421,9 @@
 
 			location = url;
 		});
-
-		// $('#button-filter2').on('click', function () {
-		// 	url = 'index.php?route=customer/customer&token=<?= $token; ?>';
-
-		// 	var filter_name = $('input[name=\'filter_name\']').val();
-
-		// 	if (filter_name) {
-		// 		url += '&filter_name=' + encodeURIComponent(filter_name);
-		// 	}
-
-		// 	var filter_customer_department_id = $('select[name=\'filter_customer_department_id\']').val();
-
-		// 	if (filter_customer_department_id != '*') {
-		// 		url += '&filter_customer_department_id=' + encodeURIComponent(filter_customer_department_id);
-		// 	}
-
-		// 	var filter_customer_group_id = $('select[name=\'filter_customer_group_id\']').val();
-
-		// 	if (filter_customer_group_id != '*') {
-		// 		url += '&filter_customer_group_id=' + encodeURIComponent(filter_customer_group_id);
-		// 	}
-
-		// 	var filter_location_id = $('select[name=\'filter_location_id\']').val();
-
-		// 	if (filter_location_id != '*') {
-		// 		url += '&filter_location_id=' + encodeURIComponent(filter_location_id);
-		// 	}
-
-		// 	var filter_status = $('select[name=\'filter_status\']').val();
-
-		// 	if (filter_status != '*') {
-		// 		url += '&filter_status=' + encodeURIComponent(filter_status);
-		// 	}
-
-		// 	var filter_date_start = $('input[name=\'filter_date_start\']').val();
-
-		// 	if (filter_date_start) {
-		// 		url += '&filter_date_start=' + encodeURIComponent(filter_date_start);
-		// 	}
-
-		// 	var filter_active = $('select[name=\'filter_active\']').val();
-
-		// 	if (filter_active != '1') {
-		// 		url += '&filter_active=' + encodeURIComponent(filter_active);
-		// 	}
-
-		// 	location = url;
-		// });
 	</script>
 	<script type="text/javascript">
-		$('input[name=\'filter_name\']').autocomplete({
+		$('input[name=\'filter[name]\']').autocomplete({
 			'source': function (request, response) {
 				$.ajax({
 					url: 'index.php?route=customer/customer/autocomplete&token=<?= $token; ?>&filter_name=' + encodeURIComponent(request),
@@ -487,7 +439,7 @@
 				});
 			},
 			'select': function (item) {
-				$('input[name=\'filter_name\']').val(item['label']);
+				$('input[name=\'filter[name]\']').val(item['label']);
 			}
 		});
 	</script>
