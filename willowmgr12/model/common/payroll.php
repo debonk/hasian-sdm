@@ -118,8 +118,7 @@ class ModelCommonPayroll extends Model
 
 	public function getCustomer($customer_id)
 	{
-		// $query = $this->db->query("SELECT DISTINCT customer_id, store_id, firstname, lastname, nip, nik, date_start, c.image, payroll_include, full_overtime, skip_trial_status, health_insurance, life_insurance, employment_insurance, pension_insurance, email, c.telephone, acc_no, date_end, status, c.customer_department_id, c.customer_group_id, c.location_id, c.address_id, cdd.name AS customer_department, cgd.name AS customer_group, l.name AS location, pm.name AS payroll_method FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (cdd.customer_department_id = c.customer_department_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE c.customer_id = '" . (int)$customer_id . "'");
-		$query = $this->db->query("SELECT DISTINCT c.customer_id, store_id, firstname, lastname, c.name, nip, nik, date_start, c.image, payroll_include, full_overtime, skip_trial_status, health_insurance, life_insurance, employment_insurance, pension_insurance, cad.registered_wage, email, c.telephone, acc_no, date_end, status, c.customer_department_id, c.customer_group_id, c.location_id, c.address_id, customer_department, customer_group, location, pm.name AS payroll_method, cad.payroll_type_id FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON (cad.customer_id = c.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE c.customer_id = '" . (int)$customer_id . "'");
+		$query = $this->db->query("SELECT DISTINCT c.customer_id, store_id, firstname, lastname, c.name, nip, nik, date_start, c.image, payroll_include, payroll_type_id, health_insurance, life_insurance, employment_insurance, pension_insurance, cad.registered_wage, email, c.telephone, acc_no, date_end, status, c.customer_department_id, c.customer_group_id, c.location_id, c.address_id, customer_department, customer_group, location, pm.name AS payroll_method FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON (cad.customer_id = c.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE c.customer_id = '" . (int)$customer_id . "'");
 
 		return $query->row;
 	}
@@ -146,7 +145,7 @@ class ModelCommonPayroll extends Model
 	}
 
 	public function getLocation($location_id)
-	{ //customer_info
+	{
 		$query = $this->db->query("SELECT DISTINCT name FROM " . DB_PREFIX . "location WHERE location_id = '" . (int)$location_id . "'");
 
 		return $query->row['name'];
@@ -181,7 +180,6 @@ class ModelCommonPayroll extends Model
 
 	public function getScheduleByDate($customer_id, $date)
 	{
-		// $sql = "SELECT DISTINCT s.customer_id, s.date, s.schedule_type_id, st.name, st.time_start, st.time_end, pl.time_login, pl.time_logout FROM " . DB_PREFIX . "schedule s LEFT JOIN " . DB_PREFIX . "schedule_type st ON (st.schedule_type_id = s.schedule_type_id) LEFT JOIN " . DB_PREFIX . "presence_log pl ON (pl.customer_id = s.customer_id AND pl.date = s.date) WHERE s.customer_id = '" . (int)$customer_id . "' AND s.date = '" . $this->db->escape($date) . "'";
 		$sql = "SELECT DISTINCT s.customer_id, s.date, s.schedule_type_id, st.code, st.time_start, st.time_end FROM " . DB_PREFIX . "schedule s LEFT JOIN " . DB_PREFIX . "schedule_type st ON (st.schedule_type_id = s.schedule_type_id) WHERE s.customer_id = '" . (int)$customer_id . "' AND s.date = '" . $this->db->escape($date) . "'";
 
 		$query = $this->db->query($sql);

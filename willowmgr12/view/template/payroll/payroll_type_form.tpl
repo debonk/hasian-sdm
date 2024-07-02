@@ -51,6 +51,20 @@
 							<?php } ?>
 						</div>
 					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-description">
+							<?= $entry_description; ?>
+						</label>
+						<div class="col-sm-10">
+							<input type="text" name="description" value="<?= $description; ?>" placeholder="<?= $entry_description; ?>"
+								id="input-description" class="form-control" />
+							<?php if ($error_description) { ?>
+							<div class="text-danger">
+								<?= $error_description; ?>
+							</div>
+							<?php } ?>
+						</div>
+					</div>
 					<?php foreach ($payroll_type_components as $direction => $direction_item) { ?>
 					<legend>
 						<?= $direction_title[$direction]; ?>
@@ -62,11 +76,22 @@
 								<td>
 									<?= $entry_title; ?>
 								</td>
-								<td>
-									<?= $entry_description; ?>
+								<td style="width:35%">
+									<?= $entry_type; ?>
+									<select id="component-type-<?= $direction ?>"
+										class="hidden">
+										<option value="">
+											<?= $text_select ?>
+										</option>
+										<?php foreach ($main_components[$direction] as $code => $description) { ?>
+										<option value="<?= $code; ?>">
+											<?= $description; ?>
+										</option>
+										<?php } ?>
+									</select>
 								</td>
 								<td>
-									<?= $entry_formula; ?>
+									<?= $entry_variable; ?>
 								</td>
 								<td>
 									<?= $entry_sort_order; ?>
@@ -79,16 +104,29 @@
 						<tbody>
 							<?php foreach ($direction_item as $key => $payroll_type_component) { ?>
 							<tr id="payroll-type-component-<?= $direction; ?>-row<?= $key; ?>">
-								<td><input type="text" name="payroll_type_component[<?= $key; ?>][title]"
+								<td><input type="text"
+										name="payroll_type_component[<?= $direction; ?>][<?= $key; ?>][title]"
 										class="form-control" value="<?= $payroll_type_component['title']; ?>"
 										placeholder="<?= $entry_title; ?>" /></td>
-								<td><input type="text" name="payroll_type_component[<?= $key; ?>][description]"
-										class="form-control" value="<?= $payroll_type_component['description']; ?>"
-										placeholder="<?= $entry_description; ?>" /></td>
-								<td><input type="text" name="payroll_type_component[<?= $key; ?>][formula]"
-										class="form-control" value="<?= $payroll_type_component['formula']; ?>"
-										placeholder="<?= $entry_formula; ?>" /></td>
-								<td><input type="text" name="payroll_type_component[<?= $key; ?>][sort_order]"
+								<td><select name="payroll_type_component[<?= $direction; ?>][<?= $key; ?>][code]"
+										class="form-control">
+										<option value="">
+											<?= $text_select ?>
+										</option>
+										<?php foreach ($main_components[$direction] as $code => $description) { ?>
+										<option value="<?= $code; ?>" <?=$payroll_type_component['code']==$code
+											? 'selected' : '' ; ?>>
+											<?= $description; ?>
+										</option>
+										<?php } ?>
+									</select>
+								</td>
+								<td><input type="text"
+										name="payroll_type_component[<?= $direction; ?>][<?= $key; ?>][variable]"
+										class="form-control" value="<?= $payroll_type_component['variable']; ?>"
+										placeholder="<?= $entry_variable; ?>" /></td>
+								<td><input type="text"
+										name="payroll_type_component[<?= $direction; ?>][<?= $key; ?>][sort_order]"
 										class="form-control" value="<?= $payroll_type_component['sort_order']; ?>"
 										placeholder="<?= $entry_sort_order; ?>" /></td>
 								<td class="text-right"><button type="button"
@@ -100,7 +138,9 @@
 						</tbody>
 						<tfoot>
 							<tr>
-								<td colspan="4"></td>
+								<td colspan="4" class="text-primary"><i>
+										<?= $note . ($direction == 'deduction' ? $text_note_deduction : ''); ?>
+									</i></td>
 								<td class="text-right"><button type="button"
 										onclick="addPayrollType('<?= $direction; ?>');" data-toggle="tooltip"
 										title="<?= $button_payroll_type_add; ?>" class="btn btn-primary"><i
@@ -120,17 +160,18 @@
 	function addPayrollType(direction) {
 		let html = '';
 		html += '<tr id="payroll-type-component-' + direction + '-row' + component_row[direction] + '">';
-		html += '  <td><input type="text" name="payroll_type_component[' + direction + '][' + component_row[direction] + '][title]" placeholder="<?= $entry_title; ?>" class="form-control" />';
-		html += '  <td><input type="text" name="payroll_type_component[' + direction + '][' + component_row[direction] + '][description]" placeholder="<?= $entry_description; ?>" class="form-control" />';
-		html += '  <td><input type="text" name="payroll_type_component[' + direction + '][' + component_row[direction] + '][formula]" placeholder="<?= $entry_formula; ?>" class="form-control" />';
-		html += '  <td><input type="text" name="payroll_type_component[' + direction + '][' + component_row[direction] + '][sort_order]" placeholder="<?= $entry_sort_order; ?>" class="form-control" />';
+		html += '  <td><input type="text" name="payroll_type_component[' + direction + '][' + component_row[direction] + '][title]" placeholder="<?= $entry_title; ?>" class="form-control" /></td>';
+		html += '  <td><select name="payroll_type_component[' + direction + '][' + component_row[direction] + '][code]" class="form-control">';
+		html += $('#component-type-' + direction).html();
+		html += '  </select></td>';
+		html += '  <td><input type="text" name="payroll_type_component[' + direction + '][' + component_row[direction] + '][variable]" placeholder="<?= $entry_variable; ?>" class="form-control" /></td>';
+		html += '  <td><input type="text" name="payroll_type_component[' + direction + '][' + component_row[direction] + '][sort_order]" placeholder="<?= $entry_sort_order; ?>" class="form-control" /></td>';
 		html += '  <td class="text-right"><button type="button" onclick="$(\'#payroll-type-component-' + direction + '-row' + component_row[direction] + '\').remove();" data-toggle="tooltip" title="<?= $button_remove; ?>" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
 		html += '</tr>';
 
 		$('#payroll-type-component-' + direction + ' tbody').append(html);
 
 		component_row[direction]++;
-		console.log(component_row[direction]);
 	}
 </script>
 <?= $footer; ?>

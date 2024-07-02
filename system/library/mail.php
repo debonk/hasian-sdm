@@ -251,8 +251,8 @@ class Mail
 
 			try {
 				/* Set the mail sender. */
-				// $mail->setFrom($this->from, $this->sender);
-				$mail->setFrom($this->smtp_username, $this->sender);
+				$mail->setFrom($this->from, $this->sender);
+				// $mail->setFrom($this->smtp_username, $this->sender);
 
 				/* Add a recipient. */
 				$mail->addAddress($this->to);
@@ -302,8 +302,6 @@ class Mail
 				// // 		'allow_self_signed' => true
 				// // 	)
 				// // );
-				var_dump($mail);
-				die(' ---breakpoint--- ');
 							
 				/* Finally send the mail. */
 				$mail->send();

@@ -1,19 +1,49 @@
 <?php
-class ControllerPayrollPayrollType extends Controller {
+class ControllerPayrollPayrollType extends Controller
+{
 	private $error = array();
+	private $filter_items = array();
 
-	public function index() {
+	private function urlFilter($excluded_item = null)
+	{
+		$url_filter = '';
+
+		foreach ($this->filter_items as $filter_item) {
+			if (isset($this->request->get['filter_' . $filter_item])) {
+				$url_filter .= '&filter_' . $filter_item . '=' . urlencode(html_entity_decode($this->request->get['filter_' . $filter_item], ENT_QUOTES, 'UTF-8'));
+			}
+		}
+
+		if ($excluded_item != 'sort') {
+			if (isset($this->request->get['sort'])) {
+				$url_filter .= '&sort=' . $this->request->get['sort'];
+			}
+
+			if (isset($this->request->get['order'])) {
+				$url_filter .= '&order=' . $this->request->get['order'];
+			}
+		}
+
+		if (isset($this->request->get['page']) && $excluded_item != 'page') {
+			$url_filter .= '&page=' . $this->request->get['page'];
+		}
+
+		return $url_filter;
+	}
+
+	public function index()
+	{
 		$this->load->language('payroll/payroll_type');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('payroll/payroll_type');
-		
+
 		$this->getList();
-		
 	}
 
-	public function add() {
+	public function add()
+	{
 		$this->load->language('payroll/payroll_type');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -21,23 +51,14 @@ class ControllerPayrollPayrollType extends Controller {
 		$this->load->model('payroll/payroll_type');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$this->model_payroll_payroll_type->addPayrollType($this->request->post);
+			$this->db->transaction(function () {
+				$this->model_payroll_payroll_type->addPayrollType($this->request->post);
+			});
+
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$url = '';
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
-			}
+			$url = $this->urlFilter();
 
 			$this->response->redirect($this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'] . $url, true));
 		}
@@ -45,7 +66,8 @@ class ControllerPayrollPayrollType extends Controller {
 		$this->getForm();
 	}
 
-	public function edit() {
+	public function edit()
+	{
 		$this->load->language('payroll/payroll_type');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -53,23 +75,14 @@ class ControllerPayrollPayrollType extends Controller {
 		$this->load->model('payroll/payroll_type');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$this->model_payroll_payroll_type->editPayrollType($this->request->get['payroll_type_id'], $this->request->post);
+			$this->db->transaction(function () {
+				$this->model_payroll_payroll_type->editPayrollType($this->request->get['payroll_type_id'], $this->request->post);
+			});
+
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$url = '';
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
-			}
+			$url = $this->urlFilter();
 
 			$this->response->redirect($this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'] . $url, true));
 		}
@@ -77,7 +90,8 @@ class ControllerPayrollPayrollType extends Controller {
 		$this->getForm();
 	}
 
-	public function delete() {
+	public function delete()
+	{
 		$this->load->language('payroll/payroll_type');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -85,25 +99,15 @@ class ControllerPayrollPayrollType extends Controller {
 		$this->load->model('payroll/payroll_type');
 
 		if (isset($this->request->post['selected']) && $this->validateDelete()) {
-			foreach ($this->request->post['selected'] as $payroll_type_id) {
-				$this->model_payroll_payroll_type->deletePayrollType($payroll_type_id);
-			}
+			$this->db->transaction(function () {
+				foreach ($this->request->post['selected'] as $payroll_type_id) {
+					$this->model_payroll_payroll_type->deletePayrollType($payroll_type_id);
+				}
+			});
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$url = '';
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
-			}
+			$url = $this->urlFilter();
 
 			$this->response->redirect($this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'] . $url, true));
 		}
@@ -111,17 +115,35 @@ class ControllerPayrollPayrollType extends Controller {
 		$this->getList();
 	}
 
-	protected function getList() {
+	protected function getList()
+	{
+		$language_items = array(
+			'heading_title',
+			'text_list',
+			'text_no_results',
+			'text_confirm',
+			'column_description',
+			'column_name',
+			'column_username',
+			'column_date_modified',
+			'column_action',
+			'button_add',
+			'button_edit',
+			'button_delete'
+		);
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
-			$sort = 'ft.date_process';
+			$sort = 'name';
 		}
 
 		if (isset($this->request->get['order'])) {
 			$order = $this->request->get['order'];
 		} else {
-			$order = 'DESC';
+			$order = 'ASC';
 		}
 
 		if (isset($this->request->get['page'])) {
@@ -130,19 +152,7 @@ class ControllerPayrollPayrollType extends Controller {
 			$page = 1;
 		}
 
-		$url = '';
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
-
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
+		$url = $this->urlFilter();
 
 		$data['breadcrumbs'] = array();
 
@@ -153,61 +163,38 @@ class ControllerPayrollPayrollType extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'] . $url, true)
+			'href' => $this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'], true)
 		);
 
 		$data['add'] = $this->url->link('payroll/payroll_type/add', 'token=' . $this->session->data['token'] . $url, true);
 		$data['delete'] = $this->url->link('payroll/payroll_type/delete', 'token=' . $this->session->data['token'] . $url, true);
 
-		$filter_data = array(
-			'sort'  => $sort,
-			'order' => $order,
-			'start' => ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit' => $this->config->get('config_limit_admin')
-		);
+		$limit = $this->config->get('config_limit_admin');
 
 		$data['payroll_types'] = array();
 
-		$payroll_type_count = $this->model_payroll_payroll_type->getPayrollTypesCount($filter_data);
-		
+		$filter_data = array(
+			'sort'  	=> $sort,
+			'order' 	=> $order,
+			'start' 	=> ($page - 1) * $limit,
+			'limit' 	=> $limit
+		);
+
 		$results = $this->model_payroll_payroll_type->getPayrollTypes($filter_data);
 
 		foreach ($results as $result) {
 			$data['payroll_types'][] = array(
 				'payroll_type_id' 	=> $result['payroll_type_id'],
+				'name' 				=> $result['name'],
 				'description' 		=> $result['description'],
-				'date_process' 		=> date($this->language->get('date_format_jMY'), strtotime($result['date_process'])),
-				'fund_account' 		=> $result['acc_name'] . '</br> (' . $result['bank_name'] . ' - ' . $result['acc_no'] . ')',
-				'count' 			=> $result['count'],
-				'total' 			=> $this->currency->format($result['total'], $this->config->get('config_currency')),
-				'date_modified' 	=> date($this->language->get('date_format_jMY'), strtotime($result['date_modified'])),
 				'username'    		=> $result['username'],
-				'edit'          	=> $this->url->link('payroll/payroll_type/edit', 'token=' . $this->session->data['token'] . '&payroll_type_id=' . $result['payroll_type_id'] . $url, true),
-				'export'          	=> $this->url->link('payroll/payroll_type/exportcsv', 'token=' . $this->session->data['token'] . '&payroll_type_id=' . $result['payroll_type_id'] . $url, true),
+				'date_modified' 	=> date($this->language->get('date_format_jMY'), strtotime($result['date_modified'])),
+				'edit'          	=> $this->url->link('payroll/payroll_type/edit', 'token=' . $this->session->data['token'] . '&payroll_type_id=' . $result['payroll_type_id'] . $url, true)
 			);
 		}
-		
-		$language_items = array(
-			'heading_title',
-			'text_list',
-			'text_no_results',
-			'text_confirm',
-			'column_description',
-			'column_date_process',
-			'column_fund_account',
-			'column_count',
-			'column_total',
-			'column_date_modified',
-			'column_username',
-			'column_action',
-			'button_add',
-			'button_edit',
-			'button_delete',
-			'button_export_csv'
-		);
-		foreach ($language_items as $language_item) {
-			$data[$language_item] = $this->language->get($language_item);
-		}
+
+		$payroll_type_count = $this->model_payroll_payroll_type->getPayrollTypesCount($filter_data);
+
 
 		$data['token'] = $this->session->data['token'];
 
@@ -231,7 +218,7 @@ class ControllerPayrollPayrollType extends Controller {
 			$data['selected'] = array();
 		}
 
-		$url = '';
+		$url = $this->urlFilter('sort');
 
 		if ($order == 'ASC') {
 			$url .= '&order=DESC';
@@ -239,32 +226,22 @@ class ControllerPayrollPayrollType extends Controller {
 			$url .= '&order=ASC';
 		}
 
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
+		$data['sort_name'] = $this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'] . '&sort=pt.name' . $url, true);
+		$data['sort_description'] = $this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'] . '&sort=pt.description' . $url, true);
+		$data['sort_username'] = $this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'] . '&sort=u.username' . $url, true);
+		$data['sort_date_modified'] = $this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'] . '&sort=pt.date_modified' . $url, true);
 
-		$data['sort_date_process'] = $this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'] . '&sort=ft.date_process' . $url, true);
-		$data['sort_date_modified'] = $this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'] . '&sort=ft.date_modified' . $url, true);
-
-		$url = '';
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
+		$url = $this->urlFilter('page');
 
 		$pagination = new Pagination();
 		$pagination->total = $payroll_type_count;
 		$pagination->page = $page;
-		$pagination->limit = $this->config->get('config_limit_admin');
+		$pagination->limit = $limit;
 		$pagination->url = $this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'] . $url . '&page={page}', true);
 
 		$data['pagination'] = $pagination->render();
 
-		$data['results'] = sprintf($this->language->get('text_pagination'), ($payroll_type_count) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($payroll_type_count - $this->config->get('config_limit_admin'))) ? $payroll_type_count : ((($page - 1) * $this->config->get('config_limit_admin')) + $this->config->get('config_limit_admin')), $payroll_type_count, ceil($payroll_type_count / $this->config->get('config_limit_admin')));
+		$data['results'] = sprintf($this->language->get('text_pagination'), ($payroll_type_count) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($payroll_type_count - $limit)) ? $payroll_type_count : ((($page - 1) * $limit) + $limit), $payroll_type_count, ceil($payroll_type_count / $limit));
 
 		$data['sort'] = $sort;
 		$data['order'] = $order;
@@ -275,18 +252,20 @@ class ControllerPayrollPayrollType extends Controller {
 
 		$this->response->setOutput($this->load->view('payroll/payroll_type_list', $data));
 	}
-	
-	protected function getForm() {
+
+	protected function getForm()
+	{
 		$data['text_form'] = !isset($this->request->get['payroll_type_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
 
 		$language_items = array(
 			'heading_title',
-			// 'text_select',
+			'text_select',
+			'text_note_deduction',
 			'entry_action',
 			'entry_name',
-			'entry_calculation',
+			'entry_type',
 			'entry_description',
-			'entry_formula',
+			'entry_variable',
 			'entry_sort_order',
 			'entry_title',
 			'button_save',
@@ -303,8 +282,7 @@ class ControllerPayrollPayrollType extends Controller {
 		$errors = array(
 			'warning',
 			'name',
-			// 'title',
-			// 'formula'
+			'description'
 		);
 		foreach ($errors as $error) {
 			if (isset($this->error[$error])) {
@@ -314,12 +292,8 @@ class ControllerPayrollPayrollType extends Controller {
 			}
 		}
 
-		if (isset($this->request->get['payroll_type_id'])) {
-			$payroll_type_id = $this->request->get['payroll_type_id'];
-		} else {
-			$payroll_type_id = 0;
-		}
-		
+		$url = $this->urlFilter();
+
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
@@ -329,8 +303,10 @@ class ControllerPayrollPayrollType extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'], true)
+			'href' => $this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'] . $url, true)
 		);
+
+		$payroll_type_id = isset($this->request->get['payroll_type_id']) ? $this->request->get['payroll_type_id'] : 0;
 
 		if (!$payroll_type_id) {
 			$data['action'] = $this->url->link('payroll/payroll_type/add', 'token=' . $this->session->data['token'], true);
@@ -343,39 +319,38 @@ class ControllerPayrollPayrollType extends Controller {
 			'href' => $data['action']
 		);
 
-		$data['cancel'] = $this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'], true);
+		$data['cancel'] = $this->url->link('payroll/payroll_type', 'token=' . $this->session->data['token'] . $url, true);
 
 		if ($payroll_type_id) {
 			$payroll_type_info = $this->model_payroll_payroll_type->getPayrollType($payroll_type_id);
 		}
-		
-		if (isset($this->request->post['name'])) {
-			$data['name'] = $this->request->post['name'];
-		} elseif (!empty($payroll_type_info)) {
-			$data['name'] = $payroll_type_info['name'];
-		} else {
-			$data['name'] = '';
+
+		$field_items = array(
+			'name',
+			'description'
+		);
+		foreach ($field_items as $field) {
+			if (isset($this->request->post[$field])) {
+				$data[$field] = $this->request->post[$field];
+			} elseif (!empty($payroll_type_info)) {
+				$data[$field] = $payroll_type_info[$field];
+			} else {
+				$data[$field] = null;
+			}
 		}
-		
-		if (isset($this->request->post['description'])) {
-			$data['description'] = $this->request->post['description'];
-		} elseif (!empty($payroll_type_info)) {
-			$data['description'] = $payroll_type_info['description'];
-		} else {
-			$data['description'] = '';
-		}
-		
+
+		$data['payroll_type_components'] = [
+			'addition'		=> [],
+			'deduction'		=> []
+		];
+
 		if (isset($this->request->post['payroll_type_component'])) {
-			$data['payroll_type_components'] = $this->request->post['payroll_type_component'];
+			$data['payroll_type_components'] = array_merge($data['payroll_type_components'], $this->request->post['payroll_type_component']);
 		} elseif ($payroll_type_id) {
 			$data['payroll_type_components'] = $this->model_payroll_payroll_type->getPayrollTypeComponents($payroll_type_id);
-		} else {
-			$data['payroll_type_components'] = [
-				'addition'		=> [],
-				'deduction'		=> []
-			];
 		}
-		// var_dump($data['payroll_type_components']);
+
+		$data['main_components'] = $this->model_payroll_payroll_type->getMainComponentsDescription();
 
 		$data['direction_title'] = [
 			'addition'		=> $this->language->get('text_addition'),
@@ -387,14 +362,26 @@ class ControllerPayrollPayrollType extends Controller {
 			'deduction'		=> count($data['payroll_type_components']['deduction'])
 		];
 
+		// Text User Modify
+		if (!empty($absence_info)) {
+			$data['text_modified'] = sprintf($this->language->get('text_modified'), $payroll_type_info['username'], date($this->language->get('datetime_format_jMY'), strtotime($payroll_type_info['date_modified'])));
+		} else {
+			$data['text_modified'] = sprintf($this->language->get('text_created'), $this->user->getUserName(), date($this->language->get('datetime_format_jMY')));
+		}
+
+		$this->load->model('localisation/presence_status');
+		$presence_statuses = $this->model_localisation_presence_status->getPresenceStatusesData();
+
+		$note = array_merge(['hke'], $presence_statuses['primary'], $presence_statuses['additional'], $presence_statuses['secondary']);
+
+		$note = array_map(function ($e) {
+			return '{' . $e . '}';
+		}, $note);
+
+		$data['note'] = sprintf($this->language->get('text_note'), implode(', ', $note));
+
 		$data['component_row'] = json_encode($component_row);
 
-
-		// var_dump($data['payroll_type_components']);
-
-		// $data['addition_row'] = count($data['payroll_type_components']['addition']);
-		// $data['deduction_row'] = count($data['payroll_type_components']['deduction']);
-		
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -402,128 +389,71 @@ class ControllerPayrollPayrollType extends Controller {
 		$this->response->setOutput($this->load->view('payroll/payroll_type_form', $data));
 	}
 
-	protected function validateForm() {
-		if (isset($this->request->get['payroll_type_id'])) {
-			$payroll_type_id = $this->request->get['payroll_type_id'];
-		} else {
-			$payroll_type_id = 0;
-		}
-		
+	protected function validateForm()
+	{
 		if (!$this->user->hasPermission('modify', 'payroll/payroll_type')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
-		if ((utf8_strlen($this->request->post['description']) < 1) || (utf8_strlen(trim($this->request->post['description'])) > 128)) {
+		if ((utf8_strlen($this->request->post['name']) < 5) || (utf8_strlen(trim($this->request->post['name'])) > 100)) {
+			$this->error['name'] = $this->language->get('error_name');
+		}
+
+		if (utf8_strlen(trim($this->request->post['description'])) > 255) {
 			$this->error['description'] = $this->language->get('error_description');
 		}
 
-		if (empty($this->request->post['date_process']) || strtotime($this->request->post['date_process']) < strtotime('today')) {
-			$this->error['date_process'] = $this->language->get('error_date_process');
+		$payroll_type_component = [
+			'addition'	=> isset($this->request->post['payroll_type_component']['addition']) ? $this->request->post['payroll_type_component']['addition'] : [],
+			'deduction'	=> isset($this->request->post['payroll_type_component']['deduction']) ? $this->request->post['payroll_type_component']['deduction'] : []
+		];
+
+		# Jumlah komponen masing2 maksimal 5.
+		if (count($payroll_type_component['addition']) > 5) {
+			$this->error['warning'] = $this->language->get('error_component_count');
 		}
 
-		if (empty($this->request->post['fund_account_id'])) {
-			$this->error['fund_account'] = $this->language->get('error_fund_account');
-		}
-		
-		if (empty($this->request->post['payroll_type_component'])) {
-			$this->error['warning'] = $this->language->get('error_component');
+		if (in_array('pot_prop_all', array_column($payroll_type_component['deduction'], 'code'))) {
+			$component_limit = 6;
+		} else {
+			$component_limit = 5;
 		}
 
-		if ($payroll_type_id && $this->model_payroll_payroll_type->checkPayrollTypeProcessed($payroll_type_id)) {
-			$this->error['warning'] = $this->language->get('error_processed');
+		if (count($payroll_type_component['deduction']) > $component_limit) {
+			$this->error['warning'] = $this->language->get('error_component_count');
 		}
-		
+
+		$post_data = array_merge($payroll_type_component['addition'], $payroll_type_component['deduction']);
+
+		foreach ($post_data as $post) {
+			if (!$post['title'] || !$post['code'] || !$post['variable']) {
+				$this->error['warning'] = $this->language->get('error_component');
+
+				break;
+			}
+		}
+
 		if ($this->error && !isset($this->error['warning'])) {
 			$this->error['warning'] = $this->language->get('error_warning');
 		}
 
 		return !$this->error;
 	}
-	
-	protected function validateDelete() {
+
+	protected function validateDelete()
+	{
 		if (!$this->user->hasPermission('modify', 'payroll/payroll_type')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
+
+		$this->load->model('customer/customer');
 
 		foreach ($this->request->post['selected'] as $payroll_type_id) {
-			if ($this->model_payroll_payroll_type->checkPayrollTypeProcessed($payroll_type_id)) {
-				$this->error['warning'] = $this->language->get('error_processed');
+			$customer_count = $this->model_customer_customer->getTotalCustomersByPayrollTypeId($payroll_type_id);
+
+			if ($customer_count) {
+				$this->error['warning'] = sprintf($this->language->get('error_customer'), $customer_count);
 			}
-		}
-
-		return !$this->error;
-	}
-
-	public function exportCsv() {
-		$this->load->language('payroll/payroll_type');
-
-		$this->load->model('payroll/payroll_type');
-
-		if (isset($this->request->get['payroll_type_id'])) {
-			$payroll_type_id = $this->request->get['payroll_type_id'];
-		} else {
-			$payroll_type_id = 0;
-		}
-
-		$payroll_type_info = $this->model_payroll_payroll_type->getPayrollType($payroll_type_id);
-		
-		if (!empty($payroll_type_info) && $this->validateExport()) {
-			$this->load->model('release/fund_account');
-			$fund_account_info = $this->model_release_fund_account->getFundAccount($payroll_type_info['fund_account_id']);
-			
-			$currency_code = $this->config->get('config_currency');
-			$date_process = date('Ymd', strtotime($payroll_type_info['date_process']));
-			
-			$result_count = $this->model_payroll_payroll_type->getPayrollTypeComponentCountByMethod($payroll_type_id, 'CIMB');
-			$result_total = $this->model_payroll_payroll_type->getPayrollTypeComponentTotalByMethod($payroll_type_id, 'CIMB');
-			
-			$output = '';
-			$output .= $fund_account_info['acc_no'] . ',' . $fund_account_info['acc_name'] . ',' . $currency_code . ',' . $result_total . ',' . $payroll_type_info['description'] . ',' . $result_count . ',' . $date_process . ',' . $fund_account_info['email']; 
-
-			$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
-			$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
-			$output = str_replace('\\', '\\\\', $output);
-			$output = str_replace('\'', '\\\'', $output);
-			$output = str_replace('\\\n', '\n', $output);
-			$output = str_replace('\\\r', '\r', $output);
-			$output = str_replace('\\\t', '\t', $output);
-
-			$results = $this->model_payroll_payroll_type->getPayrollTypeComponentsByMethod($payroll_type_id, 'CIMB');
-
-			foreach ($results as $result) {
-				$value = '';
-				$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $result['amount'] . ',' . $payroll_type_info['description'] . ',' . $result['email'] . ',,';
-
-				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
-				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
-				$value = str_replace('\\', '\\\\', $value);
-				$value = str_replace('\'', '\\\'', $value);
-				$value = str_replace('\\\n', '\n', $value);
-				$value = str_replace('\\\r', '\r', $value);
-				$value = str_replace('\\\t', '\t', $value);
-				
-				$output .= "\n" . $value;
-			}
-				
-			$filename = $date_process . '_' . str_replace(' ', '_', $payroll_type_info['description']);
-			
-			$this->response->addheader('Pragma: public');
-			$this->response->addheader('Expires: 0');
-			$this->response->addheader('Content-Description: File Transfer');
-			$this->response->addheader('Content-Type: application/octet-stream');
-			$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
-			$this->response->addheader('Content-Transfer-Encoding: binary');
-			$this->response->setOutput($output);
-			// echo $output;
-		} else {
-		
-			$this->index();
-		}
-	}
-
-	protected function validateExport() {
-		if (!$this->user->hasPermission('modify', 'payroll/payroll_type')) {
-			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
 		return !$this->error;

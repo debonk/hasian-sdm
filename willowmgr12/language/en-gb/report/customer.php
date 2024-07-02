@@ -34,7 +34,6 @@ $_['entry_default']					= 'Alamat Domisili';
 $_['entry_email']					= 'E-Mail';
 $_['entry_employment_insurance']	= 'BPJS Ketenagakerjaan';
 $_['entry_employment_insurance_id']	= 'No. BPJS Ketenagakerjaan';
-$_['entry_full_overtime']			= 'Premi 12 Jam';
 $_['entry_gender']					= 'Jenis Kelamin';
 $_['entry_health_insurance']		= 'BPJS Kesehatan';
 $_['entry_health_insurance_id']		= 'No. BPJS Kesehatan';

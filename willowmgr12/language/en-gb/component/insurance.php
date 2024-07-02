@@ -3,12 +3,12 @@
 $_['heading_title']	= 'BPJS';
 		
 # Text		
-$_['text_component']   		= 'Komponen Gaji';
-$_['text_success']     		= 'Success: You have modified komponen gaji - BPJS!';
-$_['text_edit']        		= 'Edit Komponen Gaji - BPJS';
-$_['text_wage_min']        	= 'Upah Minimum';
-$_['text_wage_real']        = 'Upah Karyawan';
-$_['text_wage_both']        = 'Upah Karyawan dengan Upah Minimum';
+$_['text_component']   			= 'Komponen Gaji';
+$_['text_success_component']	= 'Success: You have modified komponen gaji - BPJS!';
+$_['text_edit']        			= 'Edit Komponen Gaji - BPJS';
+$_['text_wage_min']        		= 'Upah Minimum';
+$_['text_wage_real']        	= 'Upah Karyawan';
+$_['text_wage_both']        	= 'Upah Karyawan dengan Upah Minimum';
 		
 $_['text_health'] 	   		= 'BPJS Kesehatan';
 $_['text_jht'] 	   	   		= 'BPJS Ketenagakerjaan (JHT)';

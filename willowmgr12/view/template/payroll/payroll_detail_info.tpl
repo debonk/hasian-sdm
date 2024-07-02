@@ -19,7 +19,7 @@
 						<?= $component['title']; ?>
 					</td>
 					<td class="text-right">
-						<?= $component['value']; ?>
+						<?= $component['text']; ?>
 					</td>
 				</tr>
 				<?php } ?>
@@ -28,7 +28,7 @@
 						<?= $payroll_detail['total']['addition']['title']; ?>
 					</td>
 					<td class="text-right">
-						<?= $payroll_detail['total']['addition']['value']; ?>
+						<?= $payroll_detail['total']['addition']['text']; ?>
 					</td>
 				</tr>
 				<?php } else { ?>
@@ -58,7 +58,7 @@
 						<?= $component['title']; ?>
 					</td>
 					<td class="text-right text-danger">
-						<?= $component['value']; ?>
+						<?= $component['text']; ?>
 					</td>
 				</tr>
 				<?php } ?>
@@ -66,7 +66,7 @@
 					<?= $payroll_detail['total']['deduction']['title']; ?>
 				</td>
 				<td class="text-right text-danger">
-					<?= $payroll_detail['total']['deduction']['value']; ?>
+					<?= $payroll_detail['total']['deduction']['text']; ?>
 				</td>
 				<tr>
 					<td class="text-right text-bold">

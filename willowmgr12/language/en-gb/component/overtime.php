@@ -3,10 +3,10 @@
 $_['heading_title']    = 'Lembur';
 
 // Text
-$_['text_component']   = 'Komponen Gaji';
-$_['text_success']     = 'Success: You have modified komponen gaji - lembur!';
-$_['text_edit']        = 'Edit Komponen Gaji - Lembur';
-$_['text_description'] = '%s: %s';
+$_['text_component']			= 'Komponen Gaji';
+$_['text_success_component']	= 'Success: You have modified komponen gaji - lembur!';
+$_['text_edit']       			= 'Edit Komponen Gaji - Lembur';
+$_['text_description']			= '%s: %s';
 
 // Entry
 $_['entry_status']     = 'Status';

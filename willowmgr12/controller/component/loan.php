@@ -12,7 +12,7 @@ class ControllerComponentLoan extends Controller {
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$this->model_setting_setting->editSetting('loan', $this->request->post);
 
-			$this->session->data['success'] = $this->language->get('text_success');
+			$this->session->data['success'] = $this->language->get('text_success_component');
 
 			$this->response->redirect($this->url->link('extension/component', 'token=' . $this->session->data['token'], true));
 		}

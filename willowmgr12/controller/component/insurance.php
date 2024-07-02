@@ -13,7 +13,7 @@ class ControllerComponentInsurance extends Controller {
 			$this->request->post['insurance_date_start'] = strtotime('25 ' . $this->request->post['insurance_date_start']);
 			$this->model_setting_setting->editSetting('insurance', $this->request->post);
 
-			$this->session->data['success'] = $this->language->get('text_success');
+			$this->session->data['success'] = $this->language->get('text_success_component');
 
 			$this->response->redirect($this->url->link('extension/component', 'token=' . $this->session->data['token'], true));
 		}

@@ -13,11 +13,7 @@ class ModelComponentInsurance extends Model
 
 			$quote_data = array();
 
-			if ($customer_info['skip_trial_status']) {
-				$date_start = date('Y-m-', strtotime($customer_info['date_start'])) . '01';
-			} else {
-				$date_start = date('Y-m-', strtotime('+ 3 months', strtotime($customer_info['date_start']))) . '01';
-			}
+			$date_start = date('Y-m-', strtotime($customer_info['date_start'])) . '01';
 
 			$health_insurance_check = strtotime($period) > strtotime('+ ' . $this->config->get('insurance_activation_health') . ' months', strtotime($date_start));
 			$non_jht_insurance_check = strtotime($period) > strtotime('+ ' . $this->config->get('insurance_activation_non_jht') . ' months', strtotime($date_start));
@@ -25,7 +21,6 @@ class ModelComponentInsurance extends Model
 			$jp_insurance_check = strtotime($period) > strtotime('+ ' . $this->config->get('insurance_activation_jp') . ' months', strtotime($date_start));
 
 			$calculation_base = !empty($customer_info['registered_wage']) ? 'registered_wage' : $this->config->get('insurance_calculation_base');
-			// $calculation_base = $this->config->get('insurance_calculation_base');
 
 			$insurance_date_start = $this->config->get('insurance_date_start');
 
@@ -40,26 +35,33 @@ class ModelComponentInsurance extends Model
 
 				case 'wage_real':
 					if ($health_insurance_check || $non_jht_insurance_check) {
-						$payroll_calculation = $this->model_payroll_payroll->getPayrollDetail($presence_period_id, $customer_id);
+						// $this->load->model('presence/presence');
+						$presence_summary_info = $this->model_presence_presence->getPresenceSummary($presence_period_id, $customer_id);
 
-						$wage_health = $payroll_calculation['gaji_dasar'] - $payroll_calculation['total_potongan'];
+						$payroll_calculation = $this->model_payroll_payroll->calculatePayrollBasic($customer_id, $presence_summary_info);
+
+						$wage_health = $payroll_calculation['main_component']['total']['addition'] - $payroll_calculation['main_component']['total']['deduction'];
 						$wage_tk = $wage_health;
 					}
 
 					break;
 
 				case 'wage_both':
-					$payroll_calculation = $this->model_payroll_payroll->getPayrollDetail($presence_period_id, $customer_id);
+						// $this->load->model('presence/presence');
+						$presence_summary_info = $this->model_presence_presence->getPresenceSummary($presence_period_id, $customer_id);
+
+						$payroll_calculation = $this->model_payroll_payroll->calculatePayrollBasic($customer_id, $presence_summary_info);
+						$wage_real = $payroll_calculation['main_component']['total']['addition'] - $payroll_calculation['main_component']['total']['deduction'];
 
 					# BPJS Kesehatan: Pembayaran di awal bulan (Pembayaran Maju)
 					if ($health_insurance_check) {
 						$wage_min = (strtotime('+1 month', strtotime($period)) < $insurance_date_start) ? $this->config->get('insurance_min_wage_old') : $this->config->get('insurance_min_wage');
-						$wage_health = max($payroll_calculation['gaji_dasar'] - $payroll_calculation['total_potongan'], $wage_min);
+						$wage_health = max($wage_real, $wage_min);
 					}
 
 					if ($non_jht_insurance_check) {
 						$wage_min = (strtotime($period) < $insurance_date_start) ? $this->config->get('insurance_min_wage_old') : $this->config->get('insurance_min_wage');
-						$wage_tk = max($payroll_calculation['gaji_dasar'] - $payroll_calculation['total_potongan'], $wage_min);
+						$wage_tk = max($wage_real, $wage_min);
 					}
 
 					break;
@@ -76,7 +78,7 @@ class ModelComponentInsurance extends Model
 
 					break;
 			}
-
+						
 			$values = array();
 
 			# Index [0] = total, Index [1] = Perusahaan
@@ -124,31 +126,6 @@ class ModelComponentInsurance extends Model
 					);
 				}
 			}
-
-			// if ($non_jht_insurance_check && $customer_info['life_insurance']) {
-			// 	if ($jp_insurance_check && $customer_info['pension_insurance']) {
-			// 		$values[0] = -ceil($wage_tk * 0.0924);
-			// 		$values[1] = ceil($wage_tk * 0.0624);
-			// 		$text = $this->language->get('text_jp');
-			// 	} elseif ($jht_insurance_check && $customer_info['employment_insurance']) {
-			// 		$values[0] = -ceil($wage_tk * 0.0624);
-			// 		$values[1] = ceil($wage_tk * 0.0424);
-			// 		$text = $this->language->get('text_jht');
-			// 	} else {
-			// 		$values[0] = -ceil($wage_tk * 0.0054);
-			// 		$values[1] = ceil($wage_tk * 0.0054);
-			// 		$text = $this->language->get('text_non_jht');
-			// 	}
-
-			// 	foreach ($values as $key => $value) {
-			// 		$quote_data[] = array(
-			// 			'type'		=> $key,
-			// 			'item'		=> (int)date('n', strtotime($period)),
-			// 			'title'		=> $text,
-			// 			'value'		=> ceil($value)
-			// 		);
-			// 	}
-			// }
 
 			if (!empty($quote_data)) {
 				$status = true;

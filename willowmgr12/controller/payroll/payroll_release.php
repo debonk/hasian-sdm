@@ -19,7 +19,8 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		foreach ($this->filter_items as $filter_item) {
 			if (isset($this->request->get['filter_' . $filter_item])) {
-				$url_filter .= '&filter_' . $filter_item . '=' . $this->request->get['filter_' . $filter_item];
+				// $url_filter .= '&filter_' . $filter_item . '=' . $this->request->get['filter_' . $filter_item];
+				$url_filter .= '&filter_' . $filter_item . '=' . urlencode(html_entity_decode($this->request->get['filter_' . $filter_item], ENT_QUOTES, 'UTF-8'));
 			}
 		}
 
@@ -192,8 +193,6 @@ class ControllerPayrollPayrollRelease extends Controller
 			$view_status_check = $this->model_common_payroll->checkPeriodStatus($result['presence_period_id'], 'released, completed');
 			$complete_status_check = $this->model_common_payroll->checkPeriodStatus($result['presence_period_id'], 'completed');
 
-			// $release_count = $this->model_payroll_payroll_release->getReleasesCount($result['presence_period_id']);
-
 			if ($result['date_release']) {
 				$date_release = date($this->language->get('date_format_jMY'), strtotime($result['date_release']));
 
@@ -216,7 +215,6 @@ class ControllerPayrollPayrollRelease extends Controller
 				'fund_acc_no' 		=> $result['bank_name'] . ' - ' . $result['acc_no'],
 				'total_payroll' 	=> $this->currency->format($result['total_payroll'], $this->config->get('config_currency')),
 				'date_release' 		=> $date_release,
-				// 'release_check' 	=> $release_status_check && $release_count,
 				'release_check' 	=> $release_status_check,
 				'release'          	=> $this->url->link('payroll/payroll_release/edit', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $result['presence_period_id'] . $url, true),
 				'view_check'		=> $view_status_check,
@@ -363,8 +361,6 @@ class ControllerPayrollPayrollRelease extends Controller
 		$data['send'] = $this->url->link('payroll/payroll_release/send', 'token=' . $this->session->data['token'] . $url, true);
 		$data['back'] = $this->url->link('payroll/payroll_release', 'token=' . $this->session->data['token'], true);
 
-		// $action_href = $this->url->link('payroll/payroll_release/action', 'token=' . $this->session->data['token'] . $url, true);
-
 		$limit = $this->config->get('config_limit_admin');
 
 		$data['payroll_releases'] = [];
@@ -418,7 +414,7 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		$payroll_release_count = $this->model_payroll_payroll_release->getReleasesCount($presence_period_id, $filter_data);
 
-		//Status Check 
+		// Status Check 
 		$data['released_status_check'] = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'released');
 
 		if (isset($this->error['warning'])) {
@@ -737,7 +733,7 @@ class ControllerPayrollPayrollRelease extends Controller
 		$filter_data = [];
 		$filter_data['filter'] = $filter;
 
-		//Text Period
+		// Text Period
 		$payroll_period = $this->model_common_payroll->getPeriod($presence_period_id);
 
 		if (!empty($payroll_period) && $payroll_period['fund_account_id']) {

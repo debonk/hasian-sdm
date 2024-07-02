@@ -1,13 +1,6 @@
 <?php
 class ModelPayrollPayroll extends Model
 {
-	public function getOvertimeStatus($customer_id)
-	{
-		$query = $this->db->query("SELECT DISTINCT full_overtime FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "'");
-
-		return $query->row['full_overtime'];
-	}
-
 	public function getPayrollPeriods($data = array())
 	{
 		$sql = "SELECT pp.*, ps.name AS payroll_status FROM " . DB_PREFIX . "presence_period pp LEFT JOIN " . DB_PREFIX . "payroll_status ps ON (ps.payroll_status_id = pp.payroll_status_id)";
@@ -188,7 +181,6 @@ class ModelPayrollPayroll extends Model
 	public function getTotalPayrolls($presence_period_id, $data = array())
 	{
 		$sql = "SELECT COUNT(payroll_id) AS total FROM " . DB_PREFIX . "v_payroll WHERE presence_period_id = '" . (int)$presence_period_id . "'";
-		// $sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) WHERE p.presence_period_id = '" . (int)$presence_period_id . "'";
 
 		$implode = array();
 
@@ -217,152 +209,24 @@ class ModelPayrollPayroll extends Model
 		return $query->row['total'];
 	}
 
-	// protected function calculatePresenceSummary($presence_period_id, $customer_id)
-	// { //getPayrollDetail
-	// 	$this->load->model('presence/presence');
-
-	// 	$presence_summary_info = $this->model_presence_presence->getPresenceSummary($presence_period_id, $customer_id);
-	// 	var_dump($presence_summary_info);
-
-	// 	// if (!empty($presence_summary_info)) {
-	// 	// 	$h 						= $presence_summary_info['total_h'];
-	// 	// 	$s     					= $presence_summary_info['total_s'];
-	// 	// 	$i    					= $presence_summary_info['total_i'];
-	// 	// 	$ns     				= $presence_summary_info['total_ns'];
-	// 	// 	$ia     				= $presence_summary_info['total_ia'];
-	// 	// 	$a     					= $presence_summary_info['total_a'];
-	// 	// 	$c     					= $presence_summary_info['total_c'];
-	// 	// 	$t1     				= $presence_summary_info['total_t1'];
-	// 	// 	$t2     				= $presence_summary_info['total_t2'];
-	// 	// 	$t3     				= $presence_summary_info['total_t3'];
-	// 	// 	$hke     				= $presence_summary_info['hke'];
-	// 	// 	$total_sakit			= $presence_summary_info['total_sakit'];
-	// 	// 	$total_bolos			= $presence_summary_info['total_bolos'];
-	// 	// 	$total_absen			= $presence_summary_info['total_absen'];
-	// 	// 	// $total_t    			= $presence_summary_info['total_t'];
-	// 	// 	$full_overtimes_count	= $presence_summary_info['full_overtimes_count'];
-
-	// 	// 	$presence_summary_check = 1;
-	// 	// } else {
-	// 	// 	$h 					= 0;
-	// 	// 	$s     				= 0;
-	// 	// 	$i    				= 0;
-	// 	// 	$ns     			= 0;
-	// 	// 	$ia     			= 0;
-	// 	// 	$a     				= 0;
-	// 	// 	$c     				= 0;
-	// 	// 	$t1     			= 0;
-	// 	// 	$t2     			= 0;
-	// 	// 	$t3     			= 0;
-	// 	// 	$hke				= 0;
-	// 	// 	$total_sakit		= 0;
-	// 	// 	$total_bolos		= 0;
-	// 	// 	$total_absen		= 0;
-	// 	// 	// $total_t			= 0;
-	// 	// 	$full_overtimes_count = 0;
-
-	// 	// 	$presence_summary_check = 0;
-	// 	// }
-
-	// 	// return array(
-	// 	// 	'h'      				=> $h,
-	// 	// 	's'      				=> $s,
-	// 	// 	'i'       				=> $i,
-	// 	// 	'ns'       				=> $ns,
-	// 	// 	'ia'       				=> $ia,
-	// 	// 	'a'       				=> $a,
-	// 	// 	'c'       				=> $c,
-	// 	// 	't1'       				=> $t1,
-	// 	// 	't2'       				=> $t2,
-	// 	// 	't3'       				=> $t3,
-	// 	// 	'hke'					=> $hke,
-	// 	// 	'total_sakit'       	=> $total_sakit,
-	// 	// 	'total_bolos'       	=> $total_bolos,
-	// 	// 	'total_absen'       	=> $total_absen,
-	// 	// 	// 'total_t'       		=> $total_t, //remove
-	// 	// 	'full_overtimes_count'	=> $full_overtimes_count,
-	// 	// 	'presence_summary_check' => $presence_summary_check,
-	// 	// );
-	// 	return $presence_summary_info;
-	// }
-
-	// private function calculateMainComponent($formula, $presence_data)
-	// {
-	// 	$value_data = 0;
-	// 	var_dump($formula, $presence_data);
-	// 	switch ($formula) {
-	// 		case '{gp}':
-	// 			$value_data = $presence_data['gp'];
-
-	// 			break;
-
-	// 		default:
-	// 			# code...
-	// 			break;
-	// 	}
-
-	// 	return $value_data;
-	// }
-
-	// private $main_component = [
-	// 	'addition'			=> [
-	// 		'gp'			=> '',
-	// 		'tj'			=> '',
-	// 		'th'			=> '',
-	// 		'pph'			=> '',
-	// 		'total_um'		=> '{hke} x {um}'
-	// 	],
-	// 	'deduction'	=> [
-	// 		'pot_um'		=> '{total_absen} * {um}',
-	// 		'pot_pph'		=> '',
-	// 		'pot_th'		=> '',
-	// 		'pot_gp_tj'		=> '',
-	// 		'pot_t'			=> '({t1}+{t2}+{t3})*{um}',
-	// 		'pot_t_2'		=> '({t1}+3*{t2}+5*{t3})*{um}',
-	// 	]
-	// ];
-
 	public function calculatePayrollBasic($customer_id, $presence_data)
 	{
-		// $hke     							= $presence_data['total']['hke'] - $presence_data['total']['full_overtime'];
-		// $presence_data['total']['absen']		= $presence_data['total']['hke'] - $presence_data['primary']['h'];
-		// $presence_data['total']['a_ia']			= $presence_data['primary']['ia'] + $presence_data['primary']['a'];
-		// $presence_data['total']['a_ia_ns']		= $presence_data['total']['a_ia'] + $presence_data['primary']['ns'];
-		// $presence_data['total']['s_i_a_ia_ns']	= $presence_data['primary']['s'] + $presence_data['primary']['i'] + $presence_data['total']['a_ia_ns'];
-		// $presence_data['total']['s_i_a_ia_']	= $presence_data['primary']['s'] + $presence_data['primary']['i'] + $presence_data['total']['a_ia'];
-
 		$main_component = [
 			'addition'	=> [],
 			'deduction'	=> [],
 			'total'		=> [
-				// 'addition'	=> 0,
-				// 'deduction'	=> 0
+				'addition'	=> 0,
+				'deduction'	=> 0
 			]
 		];
-		// $payroll_basic_check = 0;
 
 		$this->load->model('payroll/payroll_basic');
 		$payroll_basic_info = $this->model_payroll_payroll_basic->getPayrollBasicByCustomer($customer_id);
 
 		if (!empty($payroll_basic_info)) {
-			// $customer_full_overtime_status = $this->getOvertimeStatus($customer_id);
-
-			// if ($customer_full_overtime_status) {
-			// 	$payroll_basic_info['gaji_pokok'] *=  1.6;
-			// 	// $tunj_jabatan   = $payroll_basic_info['tunj_jabatan'];
-			// 	$payroll_basic_info['tunj_hadir'] *= 1.5;
-			// 	$payroll_basic_info['tunj_pph'] *= 1.5;
-			// 	$payroll_basic_info['uang_makan'] *= 2;
-			// }
-
 			$payroll_basic_info['gaji_dasar'] = $payroll_basic_info['gaji_pokok'] + $payroll_basic_info['tunj_jabatan'] + $payroll_basic_info['tunj_hadir'] + $payroll_basic_info['tunj_pph'] + $payroll_basic_info['uang_makan'] * 25;
 
-			// $gaji_pokok     = $payroll_basic_info['gaji_pokok'];
-			// $tunj_jabatan   = $payroll_basic_info['tunj_jabatan'];
-			// $tunj_hadir     = $payroll_basic_info['tunj_hadir'];
 			$tunj_pph       = $payroll_basic_info['tunj_pph'];
-			// $uang_makan     = $payroll_basic_info['uang_makan'];
-			// $date_added     = $payroll_basic_info['date_added'];
 
 			//jika cuti melahirkan (1 bulan penuh), koreksi lagi jika cuti tidak penuh 1 bulan
 			if ($presence_data['total']['hke'] < 10) {
@@ -436,9 +300,21 @@ class ModelPayrollPayroll extends Model
 
 								break;
 
+							case 'pot_gp_tj':
+								$value = floor((($payroll_basic_info['gaji_pokok'] + $payroll_basic_info['tunj_jabatan']) / $presence_data['total']['hke'] * $var) / 5000) * 5000;
+								$subtitle = $var . '/' . $presence_data['total']['hke'] . ' x {gp}';
+
+								break;
+
 							case 'pot_gp':
 								$value = floor(($payroll_basic_info['gaji_pokok'] / $presence_data['total']['hke'] * $var) / 5000) * 5000;
-								$subtitle = $var . '/' . $presence_data['total']['hke'] . ' x {gp_tj}';
+								$subtitle = $var . '/' . $presence_data['total']['hke'] . ' x {gp}';
+
+								break;
+
+							case 'pot_tj':
+								$value = floor(($payroll_basic_info['tunj_jabatan'] / $presence_data['total']['hke'] * $var) / 5000) * 5000;
+								$subtitle = $var . '/' . $presence_data['total']['hke'] . ' x {gp}';
 
 								break;
 
@@ -452,11 +328,6 @@ class ModelPayrollPayroll extends Model
 								$subtitle = min(1, $var) * 100 . '% x {th}';
 								break;
 
-							case 'pot_t':
-								$value = $var * $payroll_basic_info['uang_makan'];
-								$subtitle = '≈' . $var . ' x {um}';
-								break;
-
 							case 'pot_prop_all':
 								$pot_all_var = $var;
 								$pot_all_title = $component['title'] . ' (' . ($presence_data['total']['hke'] - $presence_data['primary']['h']) . '/' . $presence_data['total']['hke'] . ' x {thp})';
@@ -466,7 +337,7 @@ class ModelPayrollPayroll extends Model
 								break;
 						}
 
-						if ($value) {
+						if ($component['code'] != 'pot_prop_all') {
 							$main_component[$key][] = [
 								'title'	=> $component['title'] . ($subtitle ? ' (' . $subtitle . ')' : ''),
 								'value'	=> $value
@@ -478,9 +349,9 @@ class ModelPayrollPayroll extends Model
 				}
 
 				# Pot proporsional yang memotong THP secara pro rata, tanpa memperhitungkan presence lain.
-				if (($pot_all_var)) {
+				if (!empty($pot_all_var)) {
 					unset($main_component['deduction']);
-					
+
 					$value = floor((($presence_data['total']['hke'] - $presence_data['primary']['h']) / $presence_data['total']['hke'] * $main_component['total']['addition']) / 5000) * 5000;
 
 					$main_component['deduction'][] = [
@@ -491,250 +362,258 @@ class ModelPayrollPayroll extends Model
 					$main_component['total']['deduction'] = $value;
 				}
 			}
-
-			// $payroll_basic_check = 1;
 		}
 
 		return array(
 			'payroll_basic'		    => $payroll_basic_info,
 			'main_component'        => $main_component
-			// 'payroll_basic_check'	=> $payroll_basic_check
-		);
-	}
-
-	public function calculatePayrollBasicDel($customer_id, $presence_data)
-	{
-		// $hke     							= $presence_data['total']['hke'] - $presence_data['total']['full_overtime'];
-		$presence_data['total']['absen']		= $presence_data['total']['hke'] - $presence_data['primary']['h'];
-		$presence_data['total']['a_ia']			= $presence_data['primary']['ia'] + $presence_data['primary']['a'];
-		$presence_data['total']['a_ia_ns']		= $presence_data['total']['a_ia'] + $presence_data['primary']['ns'];
-		$presence_data['total']['s_i_a_ia_ns']	= $presence_data['primary']['s'] + $presence_data['primary']['i'] + $presence_data['total']['a_ia_ns'];
-		$presence_data['total']['s_i_a_ia_']	= $presence_data['primary']['s'] + $presence_data['primary']['i'] + $presence_data['total']['a_ia'];
-
-		$main_component = [
-			'addition'	=> [],
-			'deduction'	=> [],
-			'total'		=> [
-				// 'addition'	=> 0,
-				// 'deduction'	=> 0
-			]
-		];
-		$payroll_basic_check = 0;
-
-		$this->load->model('payroll/payroll_basic');
-		$payroll_basic_info = $this->model_payroll_payroll_basic->getPayrollBasicByCustomer($customer_id);
-
-		if (!empty($payroll_basic_info)) {
-			$customer_full_overtime_status = $this->getOvertimeStatus($customer_id);
-
-			if ($customer_full_overtime_status) {
-				$payroll_basic_info['gaji_pokok'] *=  1.6;
-				// $tunj_jabatan   = $payroll_basic_info['tunj_jabatan'];
-				$payroll_basic_info['tunj_hadir'] *= 1.5;
-				$payroll_basic_info['tunj_pph'] *= 1.5;
-				$payroll_basic_info['uang_makan'] *= 2;
-			}
-
-			$payroll_basic_info['gaji_dasar'] = $payroll_basic_info['gaji_pokok'] + $payroll_basic_info['tunj_jabatan'] + $payroll_basic_info['tunj_hadir'] + $payroll_basic_info['tunj_pph'] + $payroll_basic_info['uang_makan'] * 25;
-
-			// $gaji_pokok     = $payroll_basic_info['gaji_pokok'];
-			// $tunj_jabatan   = $payroll_basic_info['tunj_jabatan'];
-			// $tunj_hadir     = $payroll_basic_info['tunj_hadir'];
-			$tunj_pph       = $payroll_basic_info['tunj_pph'];
-			// $uang_makan     = $payroll_basic_info['uang_makan'];
-			// $date_added     = $payroll_basic_info['date_added'];
-
-			//jika cuti melahirkan (1 bulan penuh), koreksi lagi jika cuti tidak penuh 1 bulan
-			if ($presence_data['total']['hke'] < 10) {
-				$tunj_pph       = 0;
-			}
-
-			$customer_info = $this->model_common_payroll->getCustomer($customer_id);
-
-			$this->load->model('payroll/payroll_type');
-			$payroll_type_info = $this->model_payroll_payroll_type->getPayrollTypeComponents($customer_info['payroll_type_id']);
-			var_dump($payroll_type_info);
-
-
-			// $a = '7 * 50000;';
-
-			// // var_dump($this->db->escape($a));
-			// eval('$b = @(' . $a . ');');
-			// var_dump($b);
-
-
-			if ($payroll_type_info) {
-				foreach ($payroll_type_info as $key => $components) {
-					foreach ($components as $component) {
-						$value = 0;
-						$subtitle = '';
-
-						switch ($component['code']) {
-							case 'gp':
-								$value = $payroll_basic_info['gaji_pokok'];
-								break;
-
-							case 'tj':
-								$value = $payroll_basic_info['tunj_jabatan'];
-								break;
-
-							case 'th':
-								$value = $payroll_basic_info['tunj_hadir'];
-								break;
-
-							case 'pph':
-								$value = $tunj_pph;
-								break;
-
-							case 'total_um':
-								$value = $presence_data['total']['hke'] * $payroll_basic_info['uang_makan'];
-								$subtitle = $presence_data['total']['hke'] . ' x {um}';
-								break;
-
-							case 'pot_um':
-								$value = $presence_data['total']['absen'] * $payroll_basic_info['uang_makan'];
-								$subtitle = $presence_data['total']['absen'] . ' x {um}';
-								break;
-
-							case 'pot_pph':
-								$value = min(1, $presence_data['total']['a_ia_ns']) * $tunj_pph;
-								break;
-
-							case 'pot_gp_tj':
-								if ($presence_data['total']['s_i_a_ia_ns'] > 5) {
-									$value = floor((($payroll_basic_info['gaji_pokok'] + $payroll_basic_info['tunj_jabatan']) / ($presence_data['total']['hke'] - 5) * ($presence_data['total']['s_i_a_ia_ns'] - 5)) / 5000) * 5000;
-									$subtitle = ($presence_data['total']['s_i_a_ia_ns'] - 5) . '/' . ($presence_data['total']['hke'] - 5) . ' x {gp_tj}';
-								}
-
-								break;
-
-							case 'pot_gp':
-								$value = floor(($payroll_basic_info['gaji_pokok'] / $presence_data['total']['hke'] * ($presence_data['total']['a_ia_ns'])) / 5000) * 5000;
-								$subtitle = '≈' . ($presence_data['total']['a_ia_ns'] / $presence_data['total']['hke'] * 100) . '% x {gp}';
-
-								break;
-
-							case 'pot_th':
-								$value = min(5, $presence_data['total']['s_i_a_ia_ns']) * 0.2 * $payroll_basic_info['tunj_hadir'];
-								$subtitle = min(5, $presence_data['total']['s_i_a_ia_ns']) * 20 . '% x {th}';
-								break;
-
-							case 'pot_t':
-								$value = ($presence_data['secondary']['t1'] + $presence_data['secondary']['t2'] + $presence_data['secondary']['t3']) * $payroll_basic_info['uang_makan'];
-								$subtitle = ($presence_data['secondary']['t1'] + $presence_data['secondary']['t2'] + $presence_data['secondary']['t3']) . ' x {um}';
-								break;
-
-							case 'pot_t_2':
-								$value = ($presence_data['secondary']['t1'] + 3 * $presence_data['secondary']['t2'] + 5 * $presence_data['secondary']['t3']) * $payroll_basic_info['uang_makan'];
-								$subtitle = '≈' . ($presence_data['secondary']['t1'] + 3 * $presence_data['secondary']['t2'] + 5 * $presence_data['secondary']['t3']) . ' x {um}';
-								break;
-
-							default:
-								break;
-						}
-
-						$main_component[$key][] = [
-							'title'	=> $component['title'] . ($subtitle ? ' (' . $subtitle . ')' : ''),
-							// 'item'	=> $component['item'],
-							'value'	=> $value
-						];
-
-						$main_component['total'][$key] += $value;
-						// $main_component['total'][$key] = isset($main_component['total'][$key]) ? $main_component['total'][$key] + $value : $value;
-					}
-				}
-			}
-
-			$payroll_basic_check = 1;
-		}
-
-		return array(
-			'payroll_basic'		    => $payroll_basic_info,
-			'main_component'        => $main_component,
-			'payroll_basic_check'	=> $payroll_basic_check
 		);
 	}
 
 	public function getPayrollDetail($presence_period_id, $customer_id)
 	{
 		$this->load->model('presence/presence');
-
 		$presence_summary_info = $this->model_presence_presence->getPresenceSummary($presence_period_id, $customer_id);
-
-		// $presence_summary_info = $this->calculatePresenceSummary($presence_period_id, $customer_id);
 
 		if ($this->model_common_payroll->checkPeriodStatus($presence_period_id, 'approved, released, completed')) {
 			$payroll_info = $this->getPayroll($presence_period_id, $customer_id);
 
-			# Handling old version V3
-			if ($payroll_info['payroll_basic_id']) {
-				$this->load->model('payroll/payroll_basic');
-				$payroll_basic_info = $this->model_payroll_payroll_basic->getPayrollBasic($payroll_info['payroll_basic_id']);
+			if (!$payroll_info) {
+				$payroll_id = 0;
+
+				$payroll_info = [
+					'payroll_basic'		=> [],
+					'main_component'	=> [],
+					'sub_component'		=> []
+				];
 			} else {
-				$payroll_basic_info = [
-					'gaji_pokok'	=> $payroll_info['addition_0'],
-					'tunj_jabatan'	=> $payroll_info['addition_1'],
-					'tunj_hadir'	=> $payroll_info['addition_2'],
-					'tunj_pph'		=> $payroll_info['addition_3'],
-					'uang_makan'	=> $payroll_info['addition_4'] / $presence_summary_info['total']['hke'],
-					'date_added'	=> $payroll_info['date_added']
+				# Handling old version V3
+				if ($payroll_info['payroll_basic_id']) {
+					$this->load->model('payroll/payroll_basic');
+					$payroll_basic_info = $this->model_payroll_payroll_basic->getPayrollBasic($payroll_info['payroll_basic_id']);
+				} else {
+					$payroll_basic_info = [
+						'gaji_pokok'	=> $payroll_info['addition_0'],
+						'tunj_jabatan'	=> $payroll_info['addition_1'],
+						'tunj_hadir'	=> $payroll_info['addition_2'],
+						'tunj_pph'		=> $payroll_info['addition_3'],
+						'uang_makan'	=> $payroll_info['addition_4'] / $presence_summary_info['total']['hke'],
+						'date_added'	=> $payroll_info['date_added']
+					];
+				}
+
+				# Handling old version V3
+				if ($payroll_info['title']) {
+					$main_component_title = json_decode($payroll_info['title'], 1);
+				} else {
+					$main_component_title = [
+						'addition'	=> ['Gaji Pokok', 'Tunjangan Jabatan', 'Tunjangan Kehadiran', 'Premi Prestasi Hadir', 'Total Uang Makan ({hke} x {um})'],
+						'deduction'	=> ['Potongan Sakit ({total_sakit} x {um})', 'Potongan Alpa ({total_bolos} x {um}) + PPH', 'Potongan Tunjangan Kehadiran', 'Potongan Gaji Pokok & Jabatan', 'Potongan Terlambat (≈' . $payroll_info['deduction_4'] / $payroll_basic_info['uang_makan'] . ' x {um})']
+					];
+				}
+
+				$payroll_info['main_component'] = [
+					'addition'			=> [],
+					'deduction'			=> [],
+					'total'				=> [
+						'addition'	=> 0,
+						'deduction'	=> 0
+					]
 				];
+
+				foreach ($main_component_title as $group => $titles) {
+					foreach ($titles as $i => $title) {
+						$payroll_info['main_component'][$group][] = [
+							'title'	=> $title,
+							'value'	=> $payroll_info[$group . '_' . $i]
+						];
+
+						$payroll_info['main_component']['total'][$group] += $payroll_info[$group . '_' . $i];
+					}
+				}
+
+				$payroll_info['payroll_basic'] = $payroll_basic_info;
+
+				$payroll_id = $payroll_info['payroll_id'];
 			}
-
-			# Handling old version V3
-			if ($payroll_info['title']) {
-				$main_component_title = json_decode($payroll_info['title'], 1);
-			} else {
-				$main_component_title = [
-					'addition'	=> ['Gaji Pokok', 'Tunjangan Jabatan', 'Tunjangan Kehadiran', 'Premi Prestasi Hadir', 'Total Uang Makan ({hke} x {um})'],
-					'deduction'	=> ['Potongan Sakit ({total_sakit} x {um})', 'Potongan Alpa ({total_bolos} x {um}) + PPH', 'Potongan Tunjangan Kehadiran', 'Potongan Gaji Pokok & Jabatan', 'Potongan Terlambat (≈' . $payroll_info['deduction_4'] / $payroll_basic_info['uang_makan'] . ' x {um})']
-				];
-			}
-
-			$payroll_info['main_component'] = [
-				'addition'			=> [],
-				'deduction'			=> [],
-				'total'				=> []
-			];
-
-			for ($i = 0; $i < 5; $i++) {
-				$payroll_info['main_component']['addition'][] = [
-					'title'	=> $main_component_title['addition'][$i],
-					'value'	=> $payroll_info['addition_' . $i]
-				];
-
-				$payroll_info['main_component']['total']['addition'] += $payroll_info['addition_' . $i];
-
-				$payroll_info['main_component']['deduction'][] = [
-					'title'	=> $main_component_title['deduction'][$i],
-					'value'	=> $payroll_info['deduction_' . $i]
-				];
-
-				$payroll_info['main_component']['total']['deduction'] += $payroll_info['deduction_' . $i];
-			}
-
-			$payroll_info['payroll_basic'] = $payroll_basic_info;
-
-			$payroll_basic_check = 1;
-			$payroll_id = $payroll_info['payroll_id'];
 		} else {
-			// $presence_data = array(
-			// 	'hke'					=> $presence_summary_info['hke'],
-			// 	'full_overtimes_count'	=> $presence_summary_info['full_overtimes_count'],
-			// 	'total_sakit'   		=> $presence_summary_info['total_sakit'],
-			// 	'total_bolos'   		=> $presence_summary_info['total_bolos'],
-			// 	'total_t'       		=> $presence_summary_info['total_t'],
-			// );
-
-			// $payroll_info = $this->calculatePayrollBasic($customer_id, $presence_data);
 			$payroll_info = $this->calculatePayrollBasic($customer_id, $presence_summary_info);
 
-			$payroll_basic_check = $payroll_info['payroll_basic_check'];
 			$payroll_id = 0;
 		}
 
-		// $gaji_dasar			= $payroll_info['gaji_pokok'] + $payroll_info['tunj_jabatan'] + $payroll_info['tunj_hadir'] + $payroll_info['tunj_pph'] + $payroll_info['total_uang_makan'];
-		// $total_potongan		= $payroll_info['pot_sakit'] + $payroll_info['pot_bolos'] + $payroll_info['pot_tunj_hadir'] + $payroll_info['pot_gaji_pokok'] + $payroll_info['pot_terlambat'];
+		if ($payroll_info['payroll_basic']) {
+			$find = [
+				'{hke}',
+				'{gp_tj}',
+				'{gp}',
+				'{th}',
+				'{um}',
+				'{thp}',
+				'{total_sakit}', # Handling v3
+				'{total_bolos}' # Handling v3
+			];
+
+			$replace = [
+				$presence_summary_info['total']['hke'],
+				$this->currency->format($payroll_info['payroll_basic']['gaji_pokok'] + $payroll_info['payroll_basic']['tunj_jabatan'], $this->config->get('config_currency')),
+				$this->currency->format($payroll_info['payroll_basic']['gaji_pokok'], $this->config->get('config_currency')),
+				$this->currency->format($payroll_info['payroll_basic']['tunj_hadir'], $this->config->get('config_currency')),
+				$this->currency->format($payroll_info['payroll_basic']['uang_makan'], $this->config->get('config_currency')),
+				$this->currency->format($payroll_info['main_component']['total']['addition'], $this->config->get('config_currency')),
+				$presence_summary_info['primary']['s'] + $presence_summary_info['primary']['i'],
+				$presence_summary_info['primary']['ns'] + $presence_summary_info['primary']['ia'] + $presence_summary_info['primary']['a']
+			];
+		}
+
+		foreach ($payroll_info['main_component'] as $group => $main_components) {
+			foreach ($main_components as $key => $main_component) {
+				if ($group != 'total') {
+					$payroll_info['main_component'][$group][$key] = [
+						'title'	=> str_replace($find, $replace, $main_component['title']),
+						'value'	=> $main_component['value'],
+						'text'	=> $this->currency->format($main_component['value'], $this->config->get('config_currency'))
+					];
+				} else {
+					$payroll_info['main_component'][$group][$key] = [
+						'title'	=> $this->language->get('text_total_' . $key),
+						'value'	=> $main_component,
+						'text'	=> $this->currency->format($main_component, $this->config->get('config_currency'))
+					];
+				}
+			}
+		}
+
+		$payroll_info['sub_component'] = [
+			'addition'			=> [],
+			'deduction'			=> [],
+			'total'				=> [
+				'addition'	=> 0,
+				'deduction'	=> 0
+			]
+		];
+
+		$result_component = array();
+
+		$always_view['overtime'] = 1; //Masukkan ke setting. Tetap di view walaupun nilainya 0.
+
+		if ($this->model_common_payroll->checkPeriodStatus($presence_period_id, 'generated')) {
+			$components = $this->calculatePayrollComponent($presence_period_id, $customer_id);
+
+			foreach ($components as $component) {
+				if (isset($always_view[$component['code']]) && $always_view[$component['code']]) {
+					foreach ($component['quote'] as $quote) {
+						if ($quote['type']) {
+							$payroll_info['sub_component']['total']['addition'] += $quote['value'];
+
+							$payroll_info['sub_component']['addition'][] = array(
+								'title'	=> $quote['title'],
+								'value'	=> $quote['value'],
+								'text' => $this->currency->format($quote['value'], $this->config->get('config_currency'))
+							);
+						} else {
+							$payroll_info['sub_component']['total']['deduction'] -= $quote['value'];
+
+							$payroll_info['sub_component']['addition'][] = array(
+								'title'	=> $quote['title'],
+								'value'	=> -$quote['value'],
+								'text' => $this->currency->format(-$quote['value'], $this->config->get('config_currency'))
+							);
+						}
+					}
+				} else {
+					foreach ($component['quote'] as $quote) {
+						if (!isset($result_component[$quote['title']])) {
+							$result_component[$quote['title']] = 0;
+						}
+
+						$result_component[$quote['title']] += $quote['value'];
+					}
+				}
+			}
+
+			if ($result_component) {
+				foreach ($result_component as $key => $value) {
+					if ($value < 0) {
+						$payroll_info['sub_component']['total']['deduction'] -= $value;
+
+						$payroll_info['sub_component']['deduction'][] = array(
+							'title'	=> $key,
+							'value'	=> -$value,
+							'text'	=> $this->currency->format(-$value, $this->config->get('config_currency'))
+						);
+					} elseif ($value > 0) {
+						$payroll_info['sub_component']['total']['addition'] += $value;
+
+						$payroll_info['sub_component']['addition'][] = array(
+							'title'	=> $key,
+							'value'	=> $value,
+							'text' => $this->currency->format($value, $this->config->get('config_currency'))
+						);
+					}
+				}
+			}
+		} else {
+			$components = $this->getPayrollComponents($presence_period_id, $customer_id);
+
+			foreach ($components as $component) {
+				if (isset($always_view[$component['code']]) && $always_view[$component['code']]) {
+					if ($component['type']) {
+						$payroll_info['sub_component']['total']['addition'] += $component['value'];
+
+						$payroll_info['sub_component']['addition'][] = array(
+							'title'	=> $component['title'],
+							'value'	=> $component['value'],
+							'text'	=> $this->currency->format($component['value'], $this->config->get('config_currency'))
+						);
+					} else {
+						$payroll_info['sub_component']['total']['deduction'] -= $component['value'];
+
+						$payroll_info['sub_component']['deduction'][] = array(
+							'title'	=> $component['title'],
+							'value'	=> -$component['value'],
+							'text'	=> $this->currency->format(-$component['value'], $this->config->get('config_currency'))
+						);
+					}
+				} else {
+					if (!isset($result_component[$component['title']])) {
+						$result_component[$component['title']] = 0;
+					}
+
+					$result_component[$component['title']] += $component['value'];
+				}
+			}
+
+			if ($result_component) {
+				foreach ($result_component as $key => $value) {
+					if ($value < 0) {
+						$payroll_info['sub_component']['total']['deduction'] -= $value;
+
+						$payroll_info['sub_component']['deduction'][] = array(
+							'title'	=> $key,
+							'value' => -$value,
+							'text' => $this->currency->format(-$value, $this->config->get('config_currency'))
+						);
+					} elseif ($value > 0) {
+						$payroll_info['sub_component']['total']['addition'] += $value;
+
+						$payroll_info['sub_component']['addition'][] = array(
+							'title'	=> $key,
+							'value' => $value,
+							'text' => $this->currency->format($value, $this->config->get('config_currency'))
+						);
+					}
+				}
+			}
+		}
+
+		foreach ($payroll_info['sub_component']['total'] as $key => $value) {
+			$payroll_info['sub_component']['total'][$key] = array(
+				'title'	=> $this->language->get('text_total_' . $key),
+				'value'	=> $value,
+				'text'	=> $this->currency->format($value, $this->config->get('config_currency'))
+			);
+		}
 
 		return array(
 			'payroll_id'           		=> $payroll_id,
@@ -743,39 +622,7 @@ class ModelPayrollPayroll extends Model
 			'presence_summary'			=> $presence_summary_info,
 			'payroll_basic'				=> $payroll_info['payroll_basic'],
 			'main_component'        	=> $payroll_info['main_component'],
-			// 'presence_summary_check'	=> $presence_summary_info['presence_summary_check'],
-			// 'payroll_basic_check'		=> $payroll_basic_check
-
-			// 'hke'					=> $presence_summary_info['hke'],
-			// 'h'      				=> $presence_summary_info['h'],
-			// 's'      				=> $presence_summary_info['s'],
-			// 'i'       				=> $presence_summary_info['i'],
-			// 'ns'       				=> $presence_summary_info['ns'],
-			// 'ia'       				=> $presence_summary_info['ia'],
-			// 'a'       				=> $presence_summary_info['a'],
-			// 'c'       				=> $presence_summary_info['c'],
-			// 't1'       				=> $presence_summary_info['t1'],
-			// 't2'       				=> $presence_summary_info['t2'],
-			// 't3'       				=> $presence_summary_info['t3'],
-			// 'full_overtimes_count'  => $presence_summary_info['full_overtimes_count'],
-			// 'total_sakit'       	=> $presence_summary_info['total_sakit'],
-			// 'total_bolos'       	=> $presence_summary_info['total_bolos'],
-			// 'total_t'       		=> $presence_summary_info['total_t'],
-			// 'gaji_pokok'            => $payroll_info['gaji_pokok'],
-			// 'tunj_jabatan'          => $payroll_info['tunj_jabatan'],
-			// 'tunj_hadir'            => $payroll_info['tunj_hadir'],
-			// 'tunj_pph'              => $payroll_info['tunj_pph'],
-			// 'uang_makan'            => $payroll_info['uang_makan'],
-			// 'date_added'            => $payroll_info['date_added'],
-
-			// 'total_uang_makan'      => $payroll_info['total_uang_makan'],
-			// 'gaji_dasar'			=> $gaji_dasar,
-			// 'pot_sakit'		        => $payroll_info['pot_sakit'],
-			// 'pot_bolos'		        => $payroll_info['pot_bolos'],
-			// 'pot_tunj_hadir'	    => $payroll_info['pot_tunj_hadir'],
-			// 'pot_gaji_pokok'	    => $payroll_info['pot_gaji_pokok'],
-			// 'pot_terlambat'         => $payroll_info['pot_terlambat'],
-			// 'total_potongan'        => $total_potongan,
+			'sub_component'        		=> $payroll_info['sub_component'],
 		);
 	}
 

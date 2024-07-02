@@ -27,8 +27,6 @@ class ModelPayrollPayrollBasic extends Model {
 	}
 
 	public function getCustomerPayrollBasics($data = array()) {
-		// $this->createView();
-		
 		$hke_default = $this->config->has('payroll_setting_default_hke') ? $this->config->get('payroll_setting_default_hke') : 25;
 
 		$sql = "SELECT pb.*, c.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.customer_department_id, cdd.name AS customer_department, c.customer_group_id, cgd.name AS customer_group, c.location_id, l.name AS location, (pb.gaji_pokok + pb.tunj_jabatan + pb.tunj_hadir + pb.tunj_pph + (" . (int)$hke_default . " * pb.uang_makan)) AS gaji_dasar FROM " . DB_PREFIX . "customer c LEFT JOIN (" . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (cdd.customer_department_id = c.customer_department_id) LEFT JOIN " . DB_PREFIX . "payroll_basic pb ON (pb.payroll_basic_id = c.payroll_basic_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND c.payroll_include = 1";

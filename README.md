@@ -8,22 +8,39 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
-4.0.0 - Progress 1
-* Presence Status: Add validasi code tidak boleh kosong.
-* Presence Status: Add field status.
-* NEW MODUL: Payroll Type
-* Remove $customer_full_overtime_status
+4.0.a	02/07/2024
+Presence Status: Add field status.
+NEW MODUL: Payroll Type
+Customer: Menerapkan payroll_type ke modul customer. Tambahan filter payroll_type dan payroll include.
+Payroll, Payroll Release, APP > Payroll: Menyesuaikan perhitungan gaji sehingga menggunakan Payroll Type
+Customer: Remove $customer_skip_trial_status (Masa Percobaan)
+Customer: Remove $customer_full_overtime_status (Premi 12 Jam)
+Remove DRM/Day Off Component
 HKE: Total hadir + total tidak hadir (termasuk C dan CK)
 Schedule: Summarize tanpa centang untuk menghitung seluruh karyawan sesuai filter
 Presence: Kehadiran karyawan sekarang bisa di-sort berdasarkan status kehadiran utama (h, s, i...)
 APP > Schedule: Add last period schedule
 Setting: Add Late Tolerance
 
+Bug Fixed: Release: release info hilang jika filter nama lengkap aktif
 Schedule: Repair Calculation
 Presence: Repair Calculation
 Presence Status: Remove Code
-* Bug Fixed: Component: Heading title dan Description ?
 Bug Fixed: Dashboard > Customer: Karyawan bulan lalu selalu 0%
+
+====================
+HSDM SOFTWARE 4.0.0a UPDATE
+
++ PAYROLL TYPE: Metode perhitungan pendapatan dan potongan bisa diatur berbeda untuk setiap karyawan (Juga bisa digunakan untuk karyawan harian)
++ Employee: Pengaturan Perhitungan Penggajian (Payroll Type) diset di modul Employee.
++ Presence: Kehadiran karyawan sudah bisa di-sort berdasarkan status kehadiran utama (h, s, i...)
++ Schedule: Summarize (tanpa centang) kini menyesuaikan dgn filter yang sedang digunakan. (Sebelumnya otomatis untuk seluruh karyawan)
++ Fitur Toleransi Keterlambatan. Sehingga tidak perlu diatur pada jadwal.
++ Presence, Payroll: Nilai HKE yang ditunjukkan adalah total HK keseluruhan: Total hadir + total tidak hadir (termasuk C dan CK). Sebelumnya C dan CK tidak termasuk dalam HKE
++ Karyawan bisa melihat data jadwal dan kehadiran bulan berjalan dan bulan lalu. (Sebelumnya hanya bulan berjalan)
++ Employee: Data Premi 12 Jam dan Skip Masa Percobaan dihapus.
+
+====================
 
 <!-- NEW TABLE -->
 oc_payroll_type
@@ -36,33 +53,38 @@ ALTER TABLE `oc_presence_total` CHANGE `date_added` `date_added` DATETIME NOT NU
 ALTER TABLE oc_presence_total ADD additional TEXT NULL AFTER total_t3;
 
 
-ALTER TABLE oc_customer_add_data ADD payroll_type_id INT(11) DEFAULT 1 NULL;
-ALTER TABLE oc_customer_add_data MODIFY COLUMN payroll_type_id int(11) NULL;
+ALTER TABLE oc_customer ADD payroll_type_id INT(11) DEFAULT 1 NULL AFTER payroll_basic_id;
+ALTER TABLE oc_customer MODIFY COLUMN payroll_type_id int(11) NULL;
+ALTER TABLE oc_customer DROP COLUMN full_overtime;
+ALTER TABLE oc_customer DROP COLUMN skip_trial_status;
 
-ALTER TABLE oc_payroll CHANGE gaji_pokok addition_0 int(11) NULL;
-ALTER TABLE oc_payroll MODIFY COLUMN addition_0 int(11) NULL;
-ALTER TABLE oc_payroll CHANGE tunj_jabatan addition_1 int(11) NULL;
-ALTER TABLE oc_payroll MODIFY COLUMN addition_1 int(11) NULL;
-ALTER TABLE oc_payroll CHANGE tunj_hadir addition_2 int(11) NULL;
-ALTER TABLE oc_payroll MODIFY COLUMN addition_2 int(11) NULL;
-ALTER TABLE oc_payroll CHANGE tunj_pph addition_3 int(11) NULL;
-ALTER TABLE oc_payroll MODIFY COLUMN addition_3 int(11) NULL;
-ALTER TABLE oc_payroll CHANGE total_uang_makan addition_4 int(11) NULL;
-ALTER TABLE oc_payroll MODIFY COLUMN addition_4 int(11) NULL;
-ALTER TABLE oc_payroll CHANGE pot_sakit deduction_0 int(11) NULL;
-ALTER TABLE oc_payroll MODIFY COLUMN deduction_0 int(11) NULL;
-ALTER TABLE oc_payroll CHANGE pot_bolos deduction_1 int(11) NULL;
-ALTER TABLE oc_payroll MODIFY COLUMN deduction_1 int(11) NULL;
-ALTER TABLE oc_payroll CHANGE pot_tunj_hadir deduction_2 int(11) NULL;
-ALTER TABLE oc_payroll MODIFY COLUMN deduction_2 int(11) NULL;
-ALTER TABLE oc_payroll CHANGE pot_gaji_pokok deduction_3 int(11) NULL;
-ALTER TABLE oc_payroll MODIFY COLUMN deduction_3 int(11) NULL;
-ALTER TABLE oc_payroll CHANGE pot_terlambat deduction_4 int(11) NULL;
-ALTER TABLE oc_payroll MODIFY COLUMN deduction_4 int(11) NULL;
-ALTER TABLE oc_payroll MODIFY COLUMN uang_makan int(11) DEFAULT 0 NULL;
-ALTER TABLE oc_payroll CHANGE uang_makan uang_makan int(11) DEFAULT 0 NULL AFTER date_added;
+ALTER TABLE oc_payroll CHANGE gaji_pokok addition_0 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll MODIFY COLUMN addition_0 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll CHANGE tunj_jabatan addition_1 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll MODIFY COLUMN addition_1 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll CHANGE tunj_hadir addition_2 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll MODIFY COLUMN addition_2 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll CHANGE tunj_pph addition_3 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll MODIFY COLUMN addition_3 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll CHANGE total_uang_makan addition_4 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll MODIFY COLUMN addition_4 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll CHANGE pot_sakit deduction_0 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll MODIFY COLUMN deduction_0 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll CHANGE pot_bolos deduction_1 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll MODIFY COLUMN deduction_1 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll CHANGE pot_tunj_hadir deduction_2 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll MODIFY COLUMN deduction_2 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll CHANGE pot_gaji_pokok deduction_3 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll MODIFY COLUMN deduction_3 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll CHANGE pot_terlambat deduction_4 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll MODIFY COLUMN deduction_4 int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll MODIFY COLUMN uang_makan int(11) NOT NULL DEFAULT '0';
+ALTER TABLE oc_payroll CHANGE uang_makan uang_makan int(11) NOT NULL DEFAULT '0' AFTER date_added;
 ALTER TABLE oc_payroll ADD title text NULL AFTER deduction_4;
-ALTER TABLE oc_payroll ADD payroll_basic_id int(11) DEFAULT 0 NOT NULL AFTER customer_id;
+ALTER TABLE oc_payroll ADD payroll_basic_id int(11) NOT NULL DEFAULT '0' AFTER customer_id;
+
+3.1.5b	20/06/2024
+Bug Fixed: Schedule: File template
 
 3.1.5a	19/06/2024
 Some Bug Fixed

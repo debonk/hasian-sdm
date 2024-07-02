@@ -3,10 +3,10 @@
 $_['heading_title']    = 'Potongan';
 
 // Text
-$_['text_component']   = 'Komponen Gaji';
-$_['text_success']     = 'Success: You have modified komponen gaji - potongan lain!';
-$_['text_edit']        = 'Edit Komponen Gaji - Potongan Lain';
-$_['text_description'] = 'Potongan Lain: %s';
+$_['text_component']			= 'Komponen Gaji';
+$_['text_success_component']	= 'Success: You have modified komponen gaji - potongan lain!';
+$_['text_edit']       			= 'Edit Komponen Gaji - Potongan Lain';
+$_['text_description']			= 'Potongan Lain: %s';
 
 // Entry
 $_['entry_status']     = 'Status';

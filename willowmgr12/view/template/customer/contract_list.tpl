@@ -56,6 +56,25 @@
 						</div>
 						<div class="flex-item">
 							<div class="form-group">
+								<label class="control-label" for="input-customer-group">
+									<?= $entry_customer_group; ?>
+								</label>
+								<select name="filter[customer_group_id]" id="input-customer-group" class="form-control">
+									<option value="">
+										<?= $text_all; ?>
+									</option>
+									<?php foreach ($customer_groups as $customer_group) { ?>
+									<option value="<?= $customer_group['customer_group_id']; ?>"
+										<?=$customer_group['customer_group_id']==$filter['customer_group_id']
+										? 'selected' : '' ; ?>>
+										<?= $customer_group['name']; ?>
+									</option>
+									<?php } ?>
+								</select>
+							</div>
+						</div>
+						<div class="flex-item">
+							<div class="form-group">
 								<label class="control-label" for="input-customer-department">
 									<?= $entry_customer_department; ?>
 								</label>
@@ -69,25 +88,6 @@
 										<?=$customer_department['customer_department_id']==$filter['customer_department_id']
 										? 'selected' : '' ; ?>>
 										<?= $customer_department['name']; ?>
-									</option>
-									<?php } ?>
-								</select>
-							</div>
-						</div>
-						<div class="flex-item">
-							<div class="form-group">
-								<label class="control-label" for="input-customer-group">
-									<?= $entry_customer_group; ?>
-								</label>
-								<select name="filter[customer_group_id]" id="input-customer-group" class="form-control">
-									<option value="">
-										<?= $text_all; ?>
-									</option>
-									<?php foreach ($customer_groups as $customer_group) { ?>
-									<option value="<?= $customer_group['customer_group_id']; ?>"
-										<?=$customer_group['customer_group_id']==$filter['customer_group_id']
-										? 'selected' : '' ; ?>>
-										<?= $customer_group['name']; ?>
 									</option>
 									<?php } ?>
 								</select>
@@ -124,7 +124,8 @@
 									</option>
 									<?php foreach ($contract_types as $contract_type) { ?>
 									<option value="<?= $contract_type['contract_type_id']; ?>"
-										<?=$contract_type['contract_type_id']==$filter['contract_type_id'] ? 'selected' : '' ; ?>>
+										<?=$contract_type['contract_type_id']==$filter['contract_type_id'] ? 'selected'
+										: '' ; ?>>
 										<?= $contract_type['text']; ?>
 									</option>
 									<?php } ?>
@@ -158,10 +159,10 @@
 									<option value="*">
 										<?= $text_all; ?>
 									</option>
-									<option value="1" <?=$filter['active'] == 1 ? 'selected' : '' ; ?>>
+									<option value="1" <?=$filter['active']==1 ? 'selected' : '' ; ?>>
 										<?= $text_active; ?>
 									</option>
-									<option value="-1" <?=$filter['active'] == -1 ? 'selected' : '' ; ?>>
+									<option value="-1" <?=$filter['active']==-1 ? 'selected' : '' ; ?>>
 										<?= $text_inactive; ?>
 									</option>
 								</select>
@@ -220,7 +221,9 @@
 									<a href="<?= $sort_contract_type; ?>" <?=($sort=='contract_type' ) ? 'class="' .
 										strtolower($order) . '"' : '' ; ?> >
 										<?= $column_contract_type; ?>
-									</a> |
+									</a>
+								</td>
+								<td>
 									<a href="<?= $sort_duration; ?>" <?=($sort=='duration' ) ? 'class="' .
 										strtolower($order) . '"' : '' ; ?> >
 										<?= $column_duration; ?>
@@ -270,6 +273,9 @@
 								</td>
 								<td>
 									<?= $customer['contract_type']; ?>
+								</td>
+								<td>
+									<?= $customer['duration']; ?>
 								</td>
 								<td>
 									<?= $customer['contract_start']; ?>

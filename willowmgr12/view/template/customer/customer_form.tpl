@@ -152,27 +152,6 @@
 											<?php } ?>
 										</fieldset>
 									</div>
-									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-skip-trial-status"><span
-												data-toggle="tooltip" title="<?= $help_skip_trial_status; ?>">
-												<?= $entry_skip_trial_status; ?>
-											</span></label>
-										<div class="col-sm-9">
-											<div class="checkbox">
-												<label>
-													<?php if ($skip_trial_status) { ?>
-													<input type="checkbox" name="skip_trial_status" value="1"
-														checked="checked" id="input-skip-trial-status"
-														<?=$skip_trial_status_locked ? 'disabled' : '' ?> />
-													<?php } else { ?>
-													<input type="checkbox" name="skip_trial_status" value="1"
-														id="input-skip-trial-status" <?php echo
-														$skip_trial_status_locked ? 'disabled' : '' ?> />
-													<?php } ?>
-												</label>
-											</div>
-										</div>
-									</div>
 									<div class="form-group required">
 										<label class="col-sm-3 control-label" for="input-customer-department">
 											<?= $entry_customer_department; ?>
@@ -252,30 +231,6 @@
 													<?= $location['name']; ?>
 												</option>
 												<?php } ?>
-												<?php } ?>
-											</select>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-full-overtime">
-											<?= $entry_full_overtime; ?>
-										</label>
-										<div class="col-sm-9">
-											<select name="full_overtime" id="input-full-overtime" class="form-control">
-												<?php if ($full_overtime) { ?>
-												<option value="1" selected="selected">
-													<?= $text_yes; ?>
-												</option>
-												<option value="0">
-													<?= $text_no; ?>
-												</option>
-												<?php } else { ?>
-												<option value="1">
-													<?= $text_yes; ?>
-												</option>
-												<option value="0" selected="selected">
-													<?= $text_no; ?>
-												</option>
 												<?php } ?>
 											</select>
 										</div>
@@ -436,6 +391,25 @@
 											</select>
 										</div>
 									</div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label" for="input-payroll-type">
+											<?= $entry_payroll_type; ?>
+										</label>
+										<div class="col-sm-9">
+											<select name="payroll_type_id" id="input-payroll-type"
+												class="form-control">
+												<option value="">
+													<?= $text_select; ?>
+												</option>
+												<?php foreach ($payroll_types as $payroll_type) { ?>
+												<option value="<?= $payroll_type['payroll_type_id']; ?>"
+													<?= $payroll_type['payroll_type_id'] == $payroll_type_id ? 'selected' : ''; ?>>
+													<?= $payroll_type['name']; ?>
+												</option>
+												<?php } ?>
+											</select>
+										</div>
+									</div>
 									<div class="form-group required">
 										<label class="col-sm-3 control-label" for="input-payroll-method">
 											<?= $entry_payroll_method; ?>
@@ -444,16 +418,10 @@
 											<select name="payroll_method_id" id="input-payroll-method"
 												class="form-control">
 												<?php foreach ($payroll_methods as $payroll_method) { ?>
-												<?php if ($payroll_method['payroll_method_id'] == $payroll_method_id) { ?>
 												<option value="<?= $payroll_method['payroll_method_id']; ?>"
-													selected="selected">
+													<?= $payroll_method['payroll_method_id'] == $payroll_method_id ? 'selected' : ''; ?>>
 													<?= $payroll_method['name']; ?>
 												</option>
-												<?php } else { ?>
-												<option value="<?= $payroll_method['payroll_method_id']; ?>">
-													<?= $payroll_method['name']; ?>
-												</option>
-												<?php } ?>
 												<?php } ?>
 											</select>
 										</div>

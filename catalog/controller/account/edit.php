@@ -95,7 +95,7 @@ class ControllerAccountEdit extends Controller
 		}
 
 		if ($contract_info['contract_type']) {
-			$contract_type = $contract_info['contract_type'] . ' (' . ($contract_info['duration'] ? sprintf($this->language->get('text_month'), ($contract_info['duration'])) : $this->language->get('text_contract_permanent')) . ')';
+			$contract_type = $contract_info['contract_type'];
 		} else {
 			$contract_type = '';
 		}

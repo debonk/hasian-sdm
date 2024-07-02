@@ -408,7 +408,7 @@ input[type="radio"], .radio input[type="radio"], .radio-inline input[type="radio
 	height: 16px \0;
 	-webkit-appearance: none;
 	background: white;
-	border: 1px solid #dcdcdc;
+	border: 1px solid #a2a2a2;
 	border: 1px solid transparent \0;
 	border-radius: 1px;
 }

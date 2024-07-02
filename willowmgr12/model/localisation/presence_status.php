@@ -10,7 +10,7 @@ class ModelLocalisationPresenceStatus extends Model
 
 	public function addPresenceStatus($data)
 	{
-		$this->db->query("INSERT INTO " . DB_PREFIX . "presence_status SET name = '" . $this->db->escape($data['name']) . "', code = '" . $this->db->escape($data['code']) . "', last_notif = '" . (int)$data['last_notif'] . "'");
+		$this->db->query("INSERT INTO " . DB_PREFIX . "presence_status SET name = '" . $this->db->escape($data['name']) . "', code = '" . $this->db->escape($data['code']) . "', last_notif = '" . (int)$data['last_notif'] . "', status = '" . (int)$data['status'] . "'");
 
 		$this->cache->delete('presence_status');
 	}
@@ -18,9 +18,9 @@ class ModelLocalisationPresenceStatus extends Model
 	public function editPresenceStatus($presence_status_id, $data)
 	{
 		if (isset($data['code'])) {
-			$this->db->query("UPDATE " . DB_PREFIX . "presence_status SET name = '" . $this->db->escape($data['name']) . "', code = '" . $this->db->escape($data['code']) . "', last_notif = '" . (int)$data['last_notif'] . "' WHERE presence_status_id = '" . (int)$presence_status_id . "'");
+			$this->db->query("UPDATE " . DB_PREFIX . "presence_status SET name = '" . $this->db->escape($data['name']) . "', code = '" . $this->db->escape($data['code']) . "', last_notif = '" . (int)$data['last_notif'] . "', status = '" . (int)$data['status'] . "' WHERE presence_status_id = '" . (int)$presence_status_id . "'");
 		} else {
-			$this->db->query("UPDATE " . DB_PREFIX . "presence_status SET name = '" . $this->db->escape($data['name']) . "', last_notif = '" . (int)$data['last_notif'] . "' WHERE presence_status_id = '" . (int)$presence_status_id . "'");
+			$this->db->query("UPDATE " . DB_PREFIX . "presence_status SET name = '" . $this->db->escape($data['name']) . "', last_notif = '" . (int)$data['last_notif'] . "', status = '" . (int)$data['status'] . "' WHERE presence_status_id = '" . (int)$presence_status_id . "'");
 		}
 
 		$this->cache->delete('presence_status');
@@ -34,7 +34,7 @@ class ModelLocalisationPresenceStatus extends Model
 	}
 
 	public function getPresenceStatus($presence_status_id)
-	{ //used by: absence
+	{
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "presence_status WHERE presence_status_id = '" . (int)$presence_status_id . "'");
 
 		return $query->row;
@@ -43,14 +43,23 @@ class ModelLocalisationPresenceStatus extends Model
 	public function getPresenceStatuses($data = array())
 	{
 		if ($data) {
-			// $sql = "SELECT * FROM " . DB_PREFIX . "presence_status ORDER BY presence_status_id";
 			$sql = "SELECT * FROM " . DB_PREFIX . "presence_status";
 
 			if (isset($data['status'])) {
 				$sql .= " WHERE status = '" . (int)$data['status'] . "'";
 			}
 
-			$sql .= " ORDER BY presence_status_id";
+			$sort_data = array(
+				'name',
+				'code',
+				'status'
+			);
+	
+			if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+				$sql .= " ORDER BY " . $data['sort'];
+			} else {
+				$sql .= " ORDER BY presence_status_id";
+			}
 
 			if (isset($data['order']) && ($data['order'] == 'DESC')) {
 				$sql .= " DESC";
@@ -97,8 +106,6 @@ class ModelLocalisationPresenceStatus extends Model
 			$sql .= " WHERE status = '" . (int)$data['status'] . "'";
 		}
 
-		$sql .= " ORDER BY presence_status_id";
-
 		$query = $this->db->query($sql);
 
 		return $query->row['total'];
@@ -133,12 +140,7 @@ class ModelLocalisationPresenceStatus extends Model
 
 		$presence_statuses = $this->getPresenceStatuses();
 		foreach ($presence_statuses as $presence_status) {
-			// $presence_status_data[$presence_status['presence_status_id']] = [
-			// 	'code'	=> $presence_status['code'],
-			// 	'name'	=> $presence_status['name']
-			// ];
 			$presence_status_data[$presence_status['code']] = $presence_status['name'];
-			// $presence_status_data[$presence_status['code']] = $presence_status;
 		}
 
 		return $presence_status_data;

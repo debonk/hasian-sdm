@@ -1095,11 +1095,6 @@ class ControllerPresenceSchedule extends Controller
 			'status'					=> 1
 		];
 
-		// $filter_name = isset($this->request->get['filter_name']) ? $this->request->get['filter_name'] : '';
-		// $filter_customer_group_id = isset($this->request->get['filter_customer_group_id']) ? (int)$this->request->get['filter_customer_group_id'] : 0;
-		// $filter_customer_department_id = isset($this->request->get['filter_customer_department_id']) ? (int)$this->request->get['filter_customer_department_id'] : 0;
-		// $filter_location_id = isset($this->request->get['filter_location_id']) ? (int)$this->request->get['filter_location_id'] : 0;
-
 		$title_color = 'FF76933c';
 		$table_head_format = [
 			'fill' => [
@@ -1196,7 +1191,8 @@ class ControllerPresenceSchedule extends Controller
 				$spreadsheet->getSheetByName('Tipe Jadwal')->getStyle('A1')->getFont()->getColor()->setARGB($title_color);
 				$spreadsheet->getActiveSheet()->getStyle('A2:D2')->applyFromArray($table_head_format);
 
-				$this->load->model('customer/customer');
+				$this->load->model('presence/presence');
+				// $this->load->model('customer/customer');
 				$this->load->model('presence/schedule_type');
 
 				$filter_data = [
@@ -1209,9 +1205,11 @@ class ControllerPresenceSchedule extends Controller
 					'filter_status'   				=> 1
 				];
 
-				$customer_count = $this->model_customer_customer->getTotalCustomers($filter_data);
+				$customer_count = $this->model_presence_presence->getTotalCustomers($filter_data);
+				$customers = $this->model_presence_presence->getCustomers($filter_data);
 
-				$customers = $this->model_customer_customer->getCustomers($filter_data);
+				// $customer_count = $this->model_customer_customer->getTotalCustomers($filter_data);
+				// $customers = $this->model_customer_customer->getCustomers($filter_data);
 
 				$customer_groups = array_unique(array_column($customers, 'customer_group_id'));
 
@@ -1313,7 +1311,7 @@ class ControllerPresenceSchedule extends Controller
 				foreach ($customers as $key => $customer) {
 					$customer_data[] = [
 						$key + 1,
-						trim($customer['firstname']) . ' [' . trim($customer['lastname']) . ']',
+						trim($customer['name']),
 						$customer['customer_group'],
 						$customer['customer_department'],
 						$customer['location'],

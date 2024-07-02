@@ -284,8 +284,6 @@ class ControllerCustomerContract extends Controller
 
 			if ($result['contract_type_id']) {
 				$contract_type = $result['contract_type'] . ' (' . ($result['duration'] ? sprintf($this->language->get('text_month'), ($result['duration'])) : $this->language->get('text_contract_permanent')) . ')';
-			} elseif (!is_null($result['contract_type_id'])) {
-				$contract_type = $this->language->get('text_contract_resign');
 			} else {
 				$contract_type = '';
 			}
@@ -297,7 +295,8 @@ class ControllerCustomerContract extends Controller
 				'customer_group' 		=> $result['customer_group'],
 				'customer_department' 	=> $result['customer_department'],
 				'location' 				=> $result['location'],
-				'contract_type'    		=> $contract_type,
+				'contract_type'    		=> $result['contract_type'],
+				'duration'    			=> $result['duration'] ? sprintf($this->language->get('text_month'), ($result['duration'])) : $this->language->get('text_contract_permanent'),
 				'contract_start'   		=> $result['contract_start'],
 				'contract_end'   		=> $result['contract_end'],
 				'contract_status'  		=> $contract_status,

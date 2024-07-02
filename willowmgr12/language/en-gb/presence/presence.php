@@ -59,8 +59,7 @@ $_['error_presence_lock']        = 'Warning: Data Hadir dihitung otomatis. Entry
 $_['error_vacation']             = 'Warning: Total cuti melebihi batas maksimum yang diizinkan!';
 $_['error_data']            	 = 'Warning: Data Gaji harus dihapus terlebih dahulu!';
 $_['error_not_found']			 = 'Warning: Data Kehadiran Karyawan tidak ditemukan!';
-// $_['error_status']               = 'Warning: Wrong Status! Could not complete this action!';
 $_['error_not_manual_setting']	 = 'Warning: Pengaturan ditentukan untuk menghitung otomatis!';
 
-//Information
+// Information
 $_['info_no_data']				 = 'Info: Data Kehadiran %d orang karyawan masih kosong!';

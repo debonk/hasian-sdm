@@ -26,167 +26,83 @@
 				<?= $text_period; ?>
 			</h3>
 			<legend>
-				<?= $text_earning; ?>
+				<?= $text_addition; ?>
 			</legend>
 			<div class="col-sm-1"></div>
 			<div class="table-responsive col-sm-11">
-				<table class="table table-hover">
+				<table class="table table-hover text-left">
 					<tbody>
+						<?php if ($payroll_detail['addition']) { ?>
+						<?php foreach ($payroll_detail['addition'] as $component) { ?>
 						<tr>
 							<td width="50%">
-								<?= $text_gaji_pokok; ?>
+								<?= $component['title']; ?>
 							</td>
-							<td>
-								<?= $gaji_pokok; ?>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<?= $text_tunj_jabatan; ?>
-							</td>
-							<td>
-								<?= $tunj_jabatan; ?>
+							<td class="text-right">
+								<?= $component['text']; ?>
 							</td>
 						</tr>
-						<tr>
-							<td>
-								<?= $text_tunj_hadir; ?>
-							</td>
-							<td>
-								<?= $tunj_hadir; ?>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<?= $text_total_uang_makan; ?>
-							</td>
-							<td>
-								<?= $uang_makan ?>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<?= $text_tunj_pph; ?>
-							</td>
-							<td>
-								<?= $tunj_pph; ?>
-							</td>
-						</tr>
-						<?php if ($earning_components) { ?>
-						<?php foreach ($earning_components as $component) { ?>
-						<tr>
-							<td>
-								<?php echo $component['title']; ?>
-							</td>
-							<td>
-								<?php echo $component['value']; ?>
-							</td>
-						</tr>
-						<?php } ?>
 						<?php } ?>
 					</tbody>
 					<tfoot>
 						<tr>
 							<td class="text-right">
-								<h4>
-									<?= $text_total_earning; ?>
-								</h4>
+								<h4><?= $payroll_detail['total']['addition']['title']; ?></h4>
 							</td>
-							<td>
-								<h4>
-									<?= $earning; ?>
-								</h4>
+							<td class="text-right">
+								<h4><?= $payroll_detail['total']['addition']['text']; ?></h4>
 							</td>
 						</tr>
 					</tfoot>
 				</table>
 			</div>
+			<?php } ?>
 			<legend>
 				<?= $text_deduction; ?>
 			</legend>
 			<div class="col-sm-1"></div>
 			<div class="table-responsive col-sm-11">
-				<table class="table table-hover">
+				<table class="table table-hover text-left">
 					<tbody>
+						<?php if ($payroll_detail['deduction']) { ?>
+						<?php foreach ($payroll_detail['deduction'] as $component) { ?>
 						<tr>
 							<td width="50%">
-								<?= $text_pot_sakit; ?>
+								<?= $component['title']; ?>
 							</td>
-							<td>
-								<?= $pot_sakit; ?>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<?= $text_pot_bolos; ?>
-							</td>
-							<td>
-								<?= $pot_bolos; ?>
+							<td class="text-right">
+								<?= $component['text']; ?>
 							</td>
 						</tr>
-						<tr>
-							<td>
-								<?= $text_pot_tunj_hadir; ?>
-							</td>
-							<td>
-								<?= $pot_tunj_hadir; ?>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<?= $text_pot_gaji_pokok; ?>
-							</td>
-							<td>
-								<?= $pot_gaji_pokok ?>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<?= $text_pot_terlambat; ?>
-							</td>
-							<td>
-								<?= $pot_terlambat; ?>
-							</td>
-						</tr>
-						<?php if ($deduction_components) { ?>
-						<?php foreach ($deduction_components as $component) { ?>
-						<tr>
-							<td>
-								<?php echo $component['title']; ?>
-							</td>
-							<td>
-								<?php echo $component['value']; ?>
-							</td>
-						</tr>
-						<?php } ?>
 						<?php } ?>
 					</tbody>
 					<tfoot>
 						<tr>
 							<td class="text-right">
-								<h4>
-									<?= $text_total_deduction; ?>
-								</h4>
+								<h4><?= $payroll_detail['total']['deduction']['title']; ?></h4>
 							</td>
-							<td>
-								<h4>
-									<?= $deduction; ?>
-								</h4>
+							<td class="text-right">
+								<h4><?= $payroll_detail['total']['deduction']['text']; ?></h4>
 							</td>
 						</tr>
 					</tfoot>
 				</table>
 			</div>
+			<?php } ?>
 			<legend>
 				<?= $text_grandtotal; ?>
 			</legend>
 			<div class="col-sm-1"></div>
 			<div col-sm-11">
-				<h3 class="text-center"><?= $grandtotal; ?></h3>
+				<h3 class="text-center">
+					<?= $grandtotal; ?>
+				</h3>
 			</div>
 			<hr>
 			<?php } else { ?>
-				<p><?php echo $error_no_result; ?></p>
+			<p>
+				<?php echo $error_no_result; ?>
+			</p>
 			<?php } ?>
 			<div class="buttons clearfix">
 				<div class="pull-left"><a href="<?= $back; ?>" class="btn btn-default">

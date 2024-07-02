@@ -267,6 +267,27 @@ class ModelPresencePresence extends Model
 		return $applied_schedule;
 	}
 
+	public function getFullOvertimesCount($customer_id, $date = array())
+	{
+		$sql = "SELECT COUNT(o.overtime_id) AS total FROM " . DB_PREFIX . "overtime o LEFT JOIN " . DB_PREFIX . "overtime_type ot ON (ot.overtime_type_id = o.overtime_type_id) WHERE customer_id = '" . (int)$customer_id . "' AND ot.duration > 7 AND o.approved = 1";
+
+		if (isset($date['start']) || isset($date['end'])) {
+			if (empty($date['start']) || $date['start'] == '0000-00-00') {
+				$date['start'] = date('Y-m-d', strtotime('-2 days'));
+			}
+
+			if (empty($date['end']) || $date['end'] == '0000-00-00' || $date['end'] < $date['start']) {
+				$date['end'] = date('Y-m-d', strtotime('+6 days', strtotime($date['start'])));
+			}
+
+			$sql .= " AND o.date >= '" . $this->db->escape($date['start']) . "' AND o.date <= '" . $this->db->escape($date['end']) . "'";
+		}
+
+		$query = $this->db->query($sql);
+
+		return $query->row['total'];
+	}
+
 	public function addScheduleTime($customer_id, $date, $action, $time_in, $time_out)
 	{
 		if ($action == 'login') {
@@ -324,6 +345,81 @@ class ModelPresencePresence extends Model
 	}
 
 	public function getPresenceSummary($presence_period_id, $customer_id)
+	{
+		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "presence_total WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'";
+
+		$query = $this->db->query($sql);
+
+		$presence_summary_data = $this->calculatePresenceSummaryData($query->row);
+
+		# Perhitungan Jumlah Lembur Harian (Lembur Penuh)
+		$period_info = $this->getPeriod($presence_period_id);
+
+		$range_date = array(
+			'start'		=> $period_info['date_start'],
+			'end'		=> $period_info['date_end']
+		);
+
+		$presence_summary_data['total']['full_overtime'] = $this->getFullOvertimesCount($customer_id, $range_date);
+
+		return $presence_summary_data;
+	}
+
+	public function calculatePresenceSummaryData($presence_summary, $additional_items = [])
+	{
+		$presence_summary_data = [];
+
+		$this->load->model('localisation/presence_status');
+		$presence_statuses = $this->model_localisation_presence_status->getPresenceStatusesData();
+
+		$additional_data = !empty($presence_summary['additional']) ? json_decode($presence_summary['additional'], true) : [];
+
+		if ($additional_items) {
+			$presence_statuses['additional'] = $additional_items;
+		} elseif ($additional_data) {
+			$presence_statuses['additional'] = array_unique(array_merge($presence_statuses['additional'], array_keys($additional_data)));
+		}
+
+		foreach ($presence_statuses as $group => $items) {
+			$presence_summary_data[$group] = array_fill_keys($items, 0);
+		}
+
+		foreach ($presence_statuses as $presence_group => $presence_status) {
+			switch ($presence_group) {
+				case 'primary':
+				case 'secondary':
+					foreach ($presence_status as $code) {
+						if (isset($presence_summary['total_' . $code])) {
+							$presence_summary_data[$presence_group][$code] = $presence_summary['total_' . $code];
+						}
+					}
+
+					break;
+
+				case 'additional':
+					foreach ($presence_status as $code) {
+						if (isset($additional_data[$code])) {
+							$presence_summary_data[$presence_group][$code] = $additional_data[$code];
+						}
+					}
+
+					break;
+
+				case 'total':
+					$presence_summary_data['total']['hke'] = array_sum($presence_summary_data['primary']) + array_sum($presence_summary_data['additional']);
+					$presence_summary_data['total']['t'] = array_sum($presence_summary_data['secondary']);
+
+					break;
+
+				default:
+					break;
+			}
+		}
+
+		return $presence_summary_data;
+	}
+
+	public function getPresenceSummaryDel($presence_period_id, $customer_id)
 	{
 		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "presence_total WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'";
 

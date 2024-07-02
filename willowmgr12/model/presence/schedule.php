@@ -9,7 +9,6 @@ class ModelPresenceSchedule extends Model
 	public function deleteSchedules($presence_period_id, $customer_id)
 	{
 		$this->db->query("DELETE FROM " . DB_PREFIX . "schedule WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'");
-		// $this->db->query("DELETE FROM " . DB_PREFIX . "schedule WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "' AND date > CURDATE()");
 	}
 
 	public function editSchedule($presence_period_id, $customer_id, $data = array())
@@ -54,7 +53,6 @@ class ModelPresenceSchedule extends Model
 
 	public function getScheduleCustomers($presence_period_id, $data = array())
 	{
-		// $sql = "SELECT DISTINCT s.customer_id, c.nip, c.firstname, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_end, c.date_added, c.customer_department_id, c.customer_group_id, cgd.name AS customer_group, c.location_id, c.payroll_include, l.name AS location FROM " . DB_PREFIX . "schedule s LEFT JOIN (" . DB_PREFIX . "customer c, " . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (c.customer_id = s.customer_id AND cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND s.presence_period_id = '" . (int)$presence_period_id . "'";
 		$sql = "SELECT DISTINCT s.customer_id, c.nip, c.firstname, c.name, c.date_start, c.date_end, c.date_added, c.customer_group_id, c.customer_group, c.customer_department_id, c.customer_department, c.location_id, c.location, c.payroll_include FROM " . DB_PREFIX . "schedule s LEFT JOIN " . DB_PREFIX . "v_customer c ON c.customer_id = s.customer_id WHERE c.language_id = '" . (int)$this->config->get('config_language_id') . "' AND s.presence_period_id = '" . (int)$presence_period_id . "'";
 
 		$implode = array();

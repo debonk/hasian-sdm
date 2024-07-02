@@ -1,35 +1,69 @@
 <?php
-class ModelPayrollPayrollType extends Model {
-	public function addPayrollType($data) {
-		$this->db->query("INSERT INTO " . DB_PREFIX . "payroll_type SET description = '" . $this->db->escape($data['description']) . "', date_process = STR_TO_DATE('" . $this->db->escape($data['date_process']) . "', '%e %b %Y'), fund_account_id = '" . (int)$data['fund_account_id'] . "', user_id = '" . (int)$this->user->getId() . "', date_modified = NOW()");
+class ModelPayrollPayrollType extends Model
+{
+	private $main_components = [
+		'addition'			=> [
+			'gp',
+			'tj',
+			'th',
+			'pph',
+			'total_um'
+		],
+		'deduction'	=> [
+			'pot_um',
+			'pot_pph',
+			'pot_gp_tj_5',
+			'pot_gp_tj',
+			'pot_gp',
+			'pot_tj',
+			'pot_th_20',
+			'pot_th_100',
+			'pot_prop_all'
+		]
+	];
+
+	public function addPayrollType($data)
+	{
+		$this->db->query("INSERT INTO " . DB_PREFIX . "payroll_type SET name = '" . $this->db->escape($data['name']) . "', description = '" . $this->db->escape($data['description']) . "', user_id = '" . (int)$this->user->getId() . "'");
 
 		$payroll_type_id = $this->db->getLastId();
 
 		if (isset($data['payroll_type_component'])) {
-			foreach ($data['payroll_type_component'] as $value) {
-				$this->db->query("INSERT INTO " . DB_PREFIX . "payroll_type_component SET payroll_type_id = '" . (int)$payroll_type_id . "', customer_id = '" . (int)$value['customer_id'] . "', note = '" . $this->db->escape($value['note']) . "', amount = '" . (int)$value['amount'] . "'");
+			foreach ($data['payroll_type_component'] as $group => $payroll_type_component) {
+				$direction = ($group == 'addition') ? 1 : -1;
+
+				foreach ($payroll_type_component as $value) {
+					$this->db->query("INSERT INTO " . DB_PREFIX . "payroll_type_component SET payroll_type_id = '" . (int)$payroll_type_id . "', code = '" . $this->db->escape($value['code']) . "', title = '" . $this->db->escape($value['title']) . "', direction = '" . (int)$direction . "', variable = '" . $this->db->escape($value['variable']) . "', sort_order = '" . (int)$value['sort_order'] . "'");
+				}
 			}
 		}
 	}
 
-	public function editPayrollType($payroll_type_id, $data) {
-		$this->db->query("UPDATE " . DB_PREFIX . "payroll_type SET description = '" . $this->db->escape($data['description']) . "', date_process = STR_TO_DATE('" . $this->db->escape($data['date_process']) . "', '%e %b %Y'), fund_account_id = '" . (int)$data['fund_account_id'] . "', user_id = '" . (int)$this->user->getId() . "', date_modified = NOW() WHERE payroll_type_id = '" . (int)$payroll_type_id . "'");
+	public function editPayrollType($payroll_type_id, $data)
+	{
+		$this->db->query("UPDATE " . DB_PREFIX . "payroll_type SET name = '" . $this->db->escape($data['name']) . "', description = '" . $this->db->escape($data['description']) . "', user_id = '" . (int)$this->user->getId() . "' WHERE payroll_type_id = '" . (int)$payroll_type_id . "'");
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "payroll_type_component WHERE payroll_type_id = '" . (int)$payroll_type_id . "'");
 
 		if (isset($data['payroll_type_component'])) {
-			foreach ($data['payroll_type_component'] as $value) {
-				$this->db->query("INSERT INTO " . DB_PREFIX . "payroll_type_component SET payroll_type_id = '" . (int)$payroll_type_id . "', customer_id = '" . (int)$value['customer_id'] . "', note = '" . $this->db->escape($value['note']) . "', amount = '" . (int)$value['amount'] . "'");
+			foreach ($data['payroll_type_component'] as $group => $payroll_type_component) {
+				$direction = ($group == 'addition') ? 1 : -1;
+
+				foreach ($payroll_type_component as $value) {
+					$this->db->query("INSERT INTO " . DB_PREFIX . "payroll_type_component SET payroll_type_id = '" . (int)$payroll_type_id . "', code = '" . $this->db->escape($value['code']) . "', title = '" . $this->db->escape($value['title']) . "', direction = '" . (int)$direction . "', variable = '" . $this->db->escape($value['variable']) . "', sort_order = '" . (int)$value['sort_order'] . "'");
+				}
 			}
 		}
 	}
 
-	public function deletePayrollType($payroll_type_id) {
+	public function deletePayrollType($payroll_type_id)
+	{
 		$this->db->query("DELETE FROM " . DB_PREFIX . "payroll_type WHERE payroll_type_id = '" . (int)$payroll_type_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "payroll_type_component WHERE payroll_type_id = '" . (int)$payroll_type_id . "'");
 	}
 
-	public function getPayrollType($payroll_type_id) {
+	public function getPayrollType($payroll_type_id)
+	{
 		$sql = "SELECT * FROM " . DB_PREFIX . "payroll_type WHERE payroll_type_id = '" . (int)$payroll_type_id . "'";
 
 		$query = $this->db->query($sql);
@@ -37,18 +71,21 @@ class ModelPayrollPayrollType extends Model {
 		return $query->row;
 	}
 
-	public function getPayrollTypes($data = array()) {
-		$sql = "SELECT * FROM " . DB_PREFIX . "payroll_type ft LEFT JOIN " . DB_PREFIX . "fund_account fa ON (fa.fund_account_id = ft.fund_account_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = ft.user_id) LEFT JOIN " . DB_PREFIX . "payroll_type_component ftc ON (ftc.payroll_type_id = ft.payroll_type_id) GROUP BY ftc.payroll_type_id";
+	public function getPayrollTypes($data = array())
+	{
+		$sql = "SELECT pt.*, u.username FROM " . DB_PREFIX . "payroll_type pt LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = pt.user_id)";
 
 		$sort_data = array(
-			'ft.date_process',
-			'ft.date_modified'
+			'pt.name',
+			'pt.description',
+			'u.username',
+			'pt.date_modified'
 		);
 
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
 			$sql .= " ORDER BY " . $data['sort'];
 		} else {
-			$sql .= " ORDER BY ft.date_modified";
+			$sql .= " ORDER BY pt.name";
 		}
 
 		if (isset($data['order']) && ($data['order'] == 'DESC')) {
@@ -70,21 +107,23 @@ class ModelPayrollPayrollType extends Model {
 		}
 
 		$query = $this->db->query($sql);
-		
+
 		return $query->rows;
 	}
 
-	public function getPayrollTypesCount($data = array()) {
+	public function getPayrollTypesCount($data = array())
+	{
 		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "payroll_type";
 
 		$query = $this->db->query($sql);
-		
+
 		return $query->row['total'];
 	}
 
-	public function getPayrollTypeComponents($payroll_type_id) {
+	public function getPayrollTypeComponents($payroll_type_id)
+	{
 		$sql = "SELECT * FROM " . DB_PREFIX . "payroll_type_component WHERE payroll_type_id = '" . (int)$payroll_type_id . "' ORDER BY sort_order ASC";
-		
+
 		$query = $this->db->query($sql);
 
 		$payroll_type_component_data = [
@@ -103,53 +142,16 @@ class ModelPayrollPayrollType extends Model {
 		return $payroll_type_component_data;
 	}
 
-	// public function getPayrollTypeDetail($payroll_type_id = 1) {
-	// 	$payroll_type_data = $this->getPayrollType($payroll_type_id);
+	public function getMainComponentsDescription()
+	{
+		$main_component_data = [];
 
-	// 	if ($payroll_type_data) {
-	// 		$payroll_type_data['component'] = $this->getPayrollTypeComponents($payroll_type_id);
-	// 	}
-		
-	// 	return $payroll_type_data;
-	// }
-	
-	public function getPayrollTypeComponentCountByMethod($payroll_type_id, $method) {
-		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "payroll_type_component ftc";
-
-		if ($method) {
-			$sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ftc.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) AND pm.name = '" . $this->db->escape($method) . "' AND c.acc_no <> ''";
+		foreach ($this->main_components as $group => $components) {
+			foreach ($components as $component) {
+				$main_component_data[$group][$component] = $this->language->get('text_' . $component);
+			}
 		}
 
-		$sql .= " WHERE ftc.payroll_type_id = '" . (int)$payroll_type_id . "'";
-		
-		$query = $this->db->query($sql);
-
-		return $query->row['total'];
-	}
-
-	public function getPayrollTypeComponentTotalByMethod($payroll_type_id, $method) {
-		$sql = "SELECT SUM(ftc.amount) AS total FROM " . DB_PREFIX . "payroll_type_component ftc";
-
-		if ($method) {
-			$sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ftc.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) AND pm.name = '" . $this->db->escape($method) . "' AND c.acc_no <> ''";
-		}
-
-		$sql .= " WHERE ftc.payroll_type_id = '" . (int)$payroll_type_id . "'";
-		
-		$query = $this->db->query($sql);
-
-		return $query->row['total'];
-	}
-
-	public function checkPayrollTypeProcessed($payroll_type_id) {
-		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "payroll_type WHERE payroll_type_id = '" . (int)$payroll_type_id . "' AND date_process < CURDATE()";
-
-		$query = $this->db->query($sql);
-
-		if ($query->row) {
-			return true;
-		} else {
-			return false;
-		}
+		return $main_component_data;
 	}
 }

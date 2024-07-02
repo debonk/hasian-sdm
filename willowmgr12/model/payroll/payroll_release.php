@@ -85,7 +85,7 @@ class ModelPayrollPayrollRelease extends Model
 
 	public function getRelease($presence_period_id, $customer_id)
 	{
-		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "v_release WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL) AND presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'";
+		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "v_payroll WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL) AND presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'";
 
 		$query = $this->db->query($sql);
 
@@ -94,8 +94,7 @@ class ModelPayrollPayrollRelease extends Model
 
 	public function getReleases($presence_period_id, $data = array())
 	{
-		// $sql = "SELECT DISTINCT p.presence_period_id, p.customer_id, p.statement_sent, (p.gaji_pokok + p.tunj_jabatan + p.tunj_hadir + p.tunj_pph + p.total_uang_makan - p.pot_sakit - p.pot_bolos - p.pot_tunj_hadir - p.pot_gaji_pokok - p.pot_terlambat) as net_salary, SUM(pcv.value) as component, c.nip, c.email, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.acc_no, cgd.name AS customer_group, pm.name AS payroll_method FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.customer_id = p.customer_id AND pcv.presence_period_id = '" . (int)$presence_period_id . "') LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.presence_period_id = '" . (int)$presence_period_id . "'";
-		$sql = "SELECT * FROM " . DB_PREFIX . "v_release WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
+		$sql = "SELECT * FROM " . DB_PREFIX . "v_payroll WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 
 		$implode = array();
 
@@ -193,7 +192,7 @@ class ModelPayrollPayrollRelease extends Model
 
 	public function getReleasesCount($presence_period_id, $data = array())
 	{
-		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "v_release WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
+		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "v_payroll WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 
 		$implode = array();
 
@@ -254,7 +253,7 @@ class ModelPayrollPayrollRelease extends Model
 
 	public function getMethodsSummary($presence_period_id, $data = array())
 	{
-		$sql = "SELECT payroll_method, COUNT(*) AS count, SUM(net_salary + COALESCE(component, 0)) AS total  FROM " . DB_PREFIX . "v_release WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
+		$sql = "SELECT payroll_method, COUNT(*) AS count, SUM(net_salary + COALESCE(component, 0)) AS total  FROM " . DB_PREFIX . "v_payroll WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL)";
 
 		$implode = array();
 
@@ -344,64 +343,6 @@ class ModelPayrollPayrollRelease extends Model
 			$this->load->model('payroll/payroll');
 			$payroll_info = $this->model_payroll_payroll->getPayrollDetail($presence_period_id, $customer_id);
 
-			$earning = $payroll_info['gaji_dasar'];
-			$deduction = $payroll_info['total_potongan'];
-
-			// Payroll Components
-			$earning_components = array();
-			$deduction_components = array();
-
-			$components_info = $this->model_payroll_payroll->getPayrollComponents($presence_period_id, $customer_id);
-
-			if ($components_info) {
-				$complete_report_config = 0; //Masukkan ke setting. complete = tunjangan komponen dr persh dibreakdown.
-
-				if ($complete_report_config) {
-					foreach ($components_info as $component) {
-						if ($component['type']) {
-							$earning += $component['value'];
-
-							$earning_components[] = array(
-								'title'	=> $component['title'],
-								'value' => $this->currency->format($component['value'], $this->config->get('config_currency'))
-							);
-						} else {
-							$deduction -= $component['value'];
-
-							$deduction_components[] = array(
-								'title'	=> $component['title'],
-								'value' => $this->currency->format(-$component['value'], $this->config->get('config_currency'))
-							);
-						}
-					}
-				} else {
-					foreach ($components_info as $component_info) {
-						$result_component[$component_info['title']] = 0;
-					}
-					foreach ($components_info as $component_info) {
-						$result_component[$component_info['title']] += $component_info['value'];
-					}
-
-					foreach ($result_component as $key => $value) {
-						if ($value < 0) {
-							$deduction -= $value;
-
-							$deduction_components[] = array(
-								'title'	=> $key,
-								'value' => $this->currency->format(-$value, $this->config->get('config_currency'))
-							);
-						} elseif ($value > 0) {
-							$earning += $value;
-
-							$earning_components[] = array(
-								'title'	=> $key,
-								'value' => $this->currency->format($value, $this->config->get('config_currency'))
-							);
-						}
-					}
-				}
-			}
-
 			$message .= sprintf($this->language->get('text_firstname'), $customer_info['firstname']) . "\n";
 			$message .= sprintf($this->language->get('text_lastname'), $customer_info['lastname']) . "\n";
 			$message .= sprintf($this->language->get('text_nip'), $customer_info['nip']) . "\n";
@@ -417,63 +358,69 @@ class ModelPayrollPayrollRelease extends Model
 			$message .= sprintf($this->language->get('text_payroll_method'), $text_payroll_method) . "\n";
 			$message .= "------------------------------------------------------------\n\n";
 
-			if ($payroll_info['full_overtimes_count']) {
-				$payroll_info['hke'] .= ' (' . $payroll_info['full_overtimes_count'] . ' ' . $this->language->get('code_full_overtime') . ')';
+			if ($payroll_info['presence_summary']['total']['full_overtime']) {
+				$payroll_info['presence_summary']['total']['hke'] .= ' (' . $payroll_info['presence_summary']['total']['full_overtime'] . ' ' . $this->language->get('code_full_overtime') . ')';
 			}
 
 			$message .= $this->language->get('text_presence') . "\n";
-			$message .= sprintf($this->language->get('text_hke'), $payroll_info['hke']) . "\n";
-			$message .= sprintf($this->language->get('text_h'), $payroll_info['h']) . "\n";
-			$message .= sprintf($this->language->get('text_s'), $payroll_info['s']) . "\n";
-			$message .= sprintf($this->language->get('text_i'), $payroll_info['i']) . "\n";
-			$message .= sprintf($this->language->get('text_ns'), $payroll_info['ns']) . "\n";
-			$message .= sprintf($this->language->get('text_a'), $payroll_info['ia'] + $payroll_info['a']) . "\n";
-			$message .= sprintf($this->language->get('text_c'), $payroll_info['c']) . "\n";
-			$message .= sprintf($this->language->get('text_t1'), $payroll_info['t1']) . "\n";
-			$message .= sprintf($this->language->get('text_t2'), $payroll_info['t2']) . "\n";
-			$message .= sprintf($this->language->get('text_t3'), $payroll_info['t3']) . "\n";
+			$message .= sprintf($this->language->get('text_hke'), $payroll_info['presence_summary']['total']['hke']) . "\n";
+
+			$presence_summary = array_merge($payroll_info['presence_summary']['primary'], $payroll_info['presence_summary']['additional'], $payroll_info['presence_summary']['secondary']);
+
+			$this->load->model('localisation/presence_status');
+			$presence_status_list = $this->model_localisation_presence_status->getPresenceStatusCodeList();
+
+			foreach ($presence_summary as $key => $value) {
+				if (($this->language->get('text_' . $key) != 'text_' . $key)) {
+					$message .= sprintf($this->language->get('text_' . $key), $value) . "\n";
+				} else {
+					$message .= $presence_status_list[$key] . ': ' . $value . "\n";
+				}
+			}
 
 			$message .= "------------------------------------------------------------\n\n";
 
-			$uang_makan = $this->currency->format($payroll_info['uang_makan'], $this->config->get('config_currency'));
-			$message .= $this->language->get('text_earning') . "\n";
-			$message .= sprintf($this->language->get('text_gaji_pokok'), $this->currency->format($payroll_info['gaji_pokok'], $this->config->get('config_currency'))) . "\n";
-			$message .= sprintf($this->language->get('text_tunj_jabatan'), $this->currency->format($payroll_info['tunj_jabatan'], $this->config->get('config_currency'))) . "\n";
-			$message .= sprintf($this->language->get('text_tunj_hadir'), $this->currency->format($payroll_info['tunj_hadir'], $this->config->get('config_currency'))) . "\n";
-			$message .= sprintf($this->language->get('text_tunj_pph'), $this->currency->format($payroll_info['tunj_pph'], $this->config->get('config_currency'))) . "\n";
-			$message .= sprintf($this->language->get('text_total_uang_makan'), $payroll_info['hke'], $uang_makan, $this->currency->format($payroll_info['total_uang_makan'], $this->config->get('config_currency'))) . "\n";
-			$message .= sprintf($this->language->get('text_gaji_dasar'), $this->currency->format($payroll_info['gaji_dasar'], $this->config->get('config_currency'))) . "\n";
+			$payroll_detail = [
+				'addition'			=> [],
+				'deduction'			=> [],
+				'total'				=> [
+					'addition'	=> [],
+					'deduction'	=> []
+				]
+			];
 
-			foreach ($earning_components as $earning_component) {
-				$message  .= $earning_component['title'] . ': ' . $earning_component['value'] . "\n";
+			$payroll_detail['addition'] = array_merge($payroll_info['main_component']['addition'], $payroll_info['sub_component']['addition']);
+			$payroll_detail['deduction'] = array_merge($payroll_info['main_component']['deduction'], $payroll_info['sub_component']['deduction']);
+
+			foreach ($payroll_detail['total'] as $key => $value) {
+				$payroll_detail['total'][$key] = [
+					'title'	=> $this->language->get('text_total_' . $key),
+					'value'	=> $payroll_info['main_component']['total'][$key]['value'] + $payroll_info['sub_component']['total'][$key]['value'],
+					'text'	=> $this->currency->format($payroll_info['main_component']['total'][$key]['value'] + $payroll_info['sub_component']['total'][$key]['value'], $this->config->get('config_currency'))
+				];
 			}
 
-			$message .= "------------------------------------------------------------\n";
-			$message .= sprintf($this->language->get('text_total_earning'), $this->currency->format($earning, $this->config->get('config_currency'))) . "\n";
-			$message .= "------------------------------------------------------------\n\n";
+			$grandtotal = $payroll_detail['total']['addition']['value'] - $payroll_detail['total']['deduction']['value'];
 
-			$message .= $this->language->get('text_deduction') . "\n";
-			$message .= sprintf($this->language->get('text_pot_sakit'), $payroll_info['total_sakit'], $uang_makan, $this->currency->format($payroll_info['pot_sakit'], $this->config->get('config_currency'))) . "\n";
-			$message .= sprintf($this->language->get('text_pot_bolos'), $payroll_info['total_bolos'], $uang_makan, $this->currency->format($payroll_info['pot_bolos'], $this->config->get('config_currency'))) . "\n";
-			$message .= sprintf($this->language->get('text_pot_tunj_hadir'), $this->currency->format($payroll_info['pot_tunj_hadir'], $this->config->get('config_currency'))) . "\n";
-			$message .= sprintf($this->language->get('text_pot_gaji_pokok'), $this->currency->format($payroll_info['pot_gaji_pokok'], $this->config->get('config_currency'))) . "\n";
-			$message .= sprintf($this->language->get('text_pot_terlambat'), $payroll_info['total_t'], $uang_makan, $this->currency->format($payroll_info['pot_terlambat'], $this->config->get('config_currency'))) . "\n";
+			foreach (array_keys($payroll_detail['total']) as $group) {
+				$message .= $this->language->get('text_' . $group) . "\n";
 
-			foreach ($deduction_components as $deduction_component) {
-				$message  .= $deduction_component['title'] . ': ' . $deduction_component['value'] . "\n";
+				foreach ($payroll_detail[$group] as $component) {
+					$message .= $component['title'] . ': ' . $component['text'] . "\n";
+				}
+
+				$message .= "------------------------------------------------------------\n";
+				$message .= sprintf($this->language->get('text_total_' . $group), $payroll_detail['total'][$group]['text']) . "\n";
+				$message .= "------------------------------------------------------------\n\n";
 			}
 
-			$message .= "------------------------------------------------------------\n";
-			$message .= sprintf($this->language->get('text_total_deduction'), $this->currency->format($deduction, $this->config->get('config_currency'))) . "\n";
-			$message .= "------------------------------------------------------------\n";
-
-			$message .= sprintf($this->language->get('text_grandtotal'), $this->currency->format($earning - $deduction, $this->config->get('config_currency'))) . "\n";
+			$message .= sprintf($this->language->get('text_grandtotal'), $this->currency->format($grandtotal, $this->config->get('config_currency'))) . "\n";
 			$message .= "============================================================\n\n";
 			$message .= $this->language->get('text_note') . "\n";
 
 			// echo $subject;
-			// echo $message;
-
+			// echo '<pre>' . print_r($message, 1); die(' ---breakpoint--- ');
+			
 			$mail = new Mail();
 			$mail->protocol = $this->config->get('config_mail_protocol');
 			$mail->parameter = $this->config->get('config_mail_parameter');

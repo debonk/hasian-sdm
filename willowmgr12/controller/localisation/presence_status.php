@@ -111,10 +111,28 @@ class ControllerLocalisationPresenceStatus extends Controller {
 	}
 
 	protected function getList() {
+		$language_items = array(
+			'heading_title',
+			'text_list',
+			'text_no_results',
+			'text_confirm',
+			'column_name',
+			'column_code',
+			'column_last_notif',
+			'column_status',
+			'column_action',
+			'button_add',
+			'button_edit',
+			'button_delete'
+		);
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
+
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
-			$sort = 'name';
+			$sort = 'presence_status_id';
 		}
 
 		if (isset($this->request->get['order'])) {
@@ -152,7 +170,7 @@ class ControllerLocalisationPresenceStatus extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('localisation/presence_status', 'token=' . $this->session->data['token'] . $url, true)
+			'href' => $this->url->link('localisation/presence_status', 'token=' . $this->session->data['token'], true)
 		);
 
 		$data['add'] = $this->url->link('localisation/presence_status/add', 'token=' . $this->session->data['token'] . $url, true);
@@ -177,25 +195,9 @@ class ControllerLocalisationPresenceStatus extends Controller {
 				'name'            => $result['name'],
 				'code'            => $result['code'],
 				'last_notif'      => $result['last_notif'] ? $result['last_notif'] : '',
+				'status'          => $result['status'] ? $this->language->get('text_enabled') : $this->language->get('text_disabled'),
 				'edit'            => $this->url->link('localisation/presence_status/edit', 'token=' . $this->session->data['token'] . '&presence_status_id=' . $result['presence_status_id'] . $url, true)
 			);
-		}
-
-		$language_items = array(
-			'heading_title',
-			'text_list',
-			'text_no_results',
-			'text_confirm',
-			'column_name',
-			'column_code',
-			'column_last_notif',
-			'column_action',
-			'button_add',
-			'button_edit',
-			'button_delete'
-		);
-		foreach ($language_items as $language_item) {
-			$data[$language_item] = $this->language->get($language_item);
 		}
 
 		if (isset($this->error['warning'])) {
@@ -231,6 +233,8 @@ class ControllerLocalisationPresenceStatus extends Controller {
 		}
 
 		$data['sort_name'] = $this->url->link('localisation/presence_status', 'token=' . $this->session->data['token'] . '&sort=name' . $url, true);
+		$data['sort_code'] = $this->url->link('localisation/presence_status', 'token=' . $this->session->data['token'] . '&sort=code' . $url, true);
+		$data['sort_status'] = $this->url->link('localisation/presence_status', 'token=' . $this->session->data['token'] . '&sort=status' . $url, true);
 
 		$url = '';
 
@@ -267,9 +271,12 @@ class ControllerLocalisationPresenceStatus extends Controller {
 
 		$language_items = array(
 			'heading_title',
+			'text_enabled',
+			'text_disabled',
 			'entry_name',
 			'entry_code',
 			'entry_last_notif',
+			'entry_status',
 			'entry_sort_order',
 			'help_last_notif',
 			'button_save',
@@ -340,28 +347,20 @@ class ControllerLocalisationPresenceStatus extends Controller {
 			$presence_status_info = $this->model_localisation_presence_status->getPresenceStatus($this->request->get['presence_status_id']);
 		}
 	
-		if (isset($this->request->post['name'])) {
-			$data['name'] = $this->request->post['name'];
-		} elseif (!empty($presence_status_info)) {
-			$data['name'] = $presence_status_info['name'];
-		} else {
-			$data['name'] = '';
-		}
-
-		if (isset($this->request->post['code'])) {
-			$data['code'] = $this->request->post['code'];
-		} elseif (!empty($presence_status_info)) {
-			$data['code'] = $presence_status_info['code'];
-		} else {
-			$data['code'] = '';
-		}
-
-		if (isset($this->request->post['last_notif'])) {
-			$data['last_notif'] = $this->request->post['last_notif'];
-		} elseif (!empty($presence_status_info)) {
-			$data['last_notif'] = $presence_status_info['last_notif'];
-		} else {
-			$data['last_notif'] = '';
+		$field_items = array(
+			'name',
+			'code',
+			'last_notif',
+			'status'
+		);
+		foreach ($field_items as $field) {
+			if (isset($this->request->post[$field])) {
+				$data[$field] = $this->request->post[$field];
+			} elseif (!empty($presence_status_info)) {
+				$data[$field] = $presence_status_info[$field];
+			} else {
+				$data[$field] = '';
+			}
 		}
 
 		$data['header'] = $this->load->controller('common/header');

@@ -34,7 +34,7 @@ class ControllerAccountPayroll extends Controller
 
 		$language_items = [
 			'heading_title',
-			'text_earning',
+			'text_addition',
 			'text_deduction',
 			'text_gaji_pokok',
 			'text_tunj_jabatan',
@@ -43,7 +43,7 @@ class ControllerAccountPayroll extends Controller
 			'text_pot_tunj_hadir',
 			'text_pot_gaji_pokok',
 			'text_total_deduction',
-			'text_total_earning',
+			'text_total_addition',
 			'text_grandtotal',
 			'error_no_result',
 			'button_back'
@@ -60,90 +60,32 @@ class ControllerAccountPayroll extends Controller
 			$payroll_info = $this->model_account_payroll->getPayrollDetail($period_info['presence_period_id'], $this->customer->getId());
 		}
 
-		if (!empty($payroll_info) && $payroll_info['status_released'] == 'released') {
-			$data['payroll_check'] = true;
+		$data['payroll_detail'] = [
+			'addition'			=> [],
+			'deduction'			=> [],
+			'total'				=> [
+				'addition'	=> [],
+				'deduction'	=> []
+			]
+		];
+
+		if (!empty($payroll_info)) {
+			$data['payroll_detail']['addition'] = array_merge($payroll_info['main_component']['addition'], $payroll_info['sub_component']['addition']);
+			$data['payroll_detail']['deduction'] = array_merge($payroll_info['main_component']['deduction'], $payroll_info['sub_component']['deduction']);
+
+			foreach (array_keys($data['payroll_detail']['total']) as $key) {
+				$data['payroll_detail']['total'][$key] = [
+					'title'	=> $this->language->get('text_total_' . $key),
+					'value'	=> $payroll_info['main_component']['total'][$key]['value'] + $payroll_info['sub_component']['total'][$key]['value'],
+					'text'	=> $this->currency->format($payroll_info['main_component']['total'][$key]['value'] + $payroll_info['sub_component']['total'][$key]['value'], $this->config->get('config_currency'))
+				];
+			}
+			
+			$data['grandtotal'] = $this->currency->format($data['payroll_detail']['total']['addition']['value'] - $data['payroll_detail']['total']['deduction']['value'], $this->config->get('config_currency'));
 
 			$data['text_period'] = sprintf($this->language->get('text_period'), date($this->language->get('date_format_m_y'), strtotime($period_info['period'])));
 
-			$data['gaji_pokok']     		= $this->currency->format($payroll_info['gaji_pokok'], $this->config->get('config_currency'));
-			$data['tunj_jabatan']   		= $this->currency->format($payroll_info['tunj_jabatan'], $this->config->get('config_currency'));
-			$data['tunj_hadir']     		= $this->currency->format($payroll_info['tunj_hadir'], $this->config->get('config_currency'));
-			$data['tunj_pph']       		= $this->currency->format($payroll_info['tunj_pph'], $this->config->get('config_currency'));
-			$data['uang_makan']     		= $this->currency->format($payroll_info['uang_makan'], $this->config->get('config_currency'));
-			$data['total_uang_makan']     	= $this->currency->format($payroll_info['total_uang_makan'], $this->config->get('config_currency'));
-
-			$data['pot_sakit']     			= $this->currency->format($payroll_info['pot_sakit'], $this->config->get('config_currency'));
-			$data['pot_bolos']     			= $this->currency->format($payroll_info['pot_bolos'], $this->config->get('config_currency'));
-			$data['pot_tunj_hadir'] 		= $this->currency->format($payroll_info['pot_tunj_hadir'], $this->config->get('config_currency'));
-			$data['pot_gaji_pokok'] 		= $this->currency->format($payroll_info['pot_gaji_pokok'], $this->config->get('config_currency'));
-			$data['pot_terlambat']  		= $this->currency->format($payroll_info['pot_terlambat'], $this->config->get('config_currency'));
-
-			$data['text_total_uang_makan'] 	= sprintf($this->language->get('text_total_uang_makan'), $payroll_info['hke'], $data['uang_makan']);
-			$data['text_pot_sakit'] 		= sprintf($this->language->get('text_pot_sakit'), $payroll_info['total_sakit'], $data['uang_makan']);
-			$data['text_pot_bolos'] 		= sprintf($this->language->get('text_pot_bolos'), $payroll_info['total_bolos'], $data['uang_makan']);
-			$data['text_pot_terlambat'] 	= sprintf($this->language->get('text_pot_terlambat'), $payroll_info['total_t'], $data['uang_makan']);
-
-			$earning = $payroll_info['gaji_dasar'];
-			$deduction = $payroll_info['total_potongan'];
-
-			// Payroll Components
-			$data['earning_components'] = [];
-			$data['deduction_components'] = [];
-			$result_component = [];
-
-			$always_view['overtime'] = 1; //Masukkan ke setting. Tetap di view walaupun nilainya 0.
-
-			$components = $this->model_account_payroll->getPayrollComponents($period_info['presence_period_id'], $this->customer->getId());
-
-			foreach ($components as $component) {
-				if (isset($always_view[$component['code']]) && $always_view[$component['code']]) {
-					if ($component['type']) {
-						$earning += $component['value'];
-
-						$data['earning_components'][] = array(
-							'title'	=> $component['title'],
-							'value' => $this->currency->format($component['value'], $this->config->get('config_currency'))
-						);
-					} else {
-						$deduction -= $component['value'];
-
-						$data['deduction_components'][] = array(
-							'title'	=> $component['title'],
-							'value' => $this->currency->format(-$component['value'], $this->config->get('config_currency'))
-						);
-					}
-				} else {
-					if (!isset($result_component[$component['title']])) {
-						$result_component[$component['title']] = 0;
-					}
-
-					$result_component[$component['title']] += $component['value'];
-				}
-			}
-
-			if ($result_component) {
-				foreach ($result_component as $key => $value) {
-					if ($value < 0) {
-						$deduction -= $value;
-
-						$data['deduction_components'][] = array(
-							'title'	=> $key,
-							'value' => $this->currency->format(-$value, $this->config->get('config_currency'))
-						);
-					} elseif ($value > 0) {
-						$earning += $value;
-
-						$data['earning_components'][] = array(
-							'title'	=> $key,
-							'value' => $this->currency->format($value, $this->config->get('config_currency'))
-						);
-					}
-				}
-			}
-
-			$data['earning']     	= $this->currency->format($earning, $this->config->get('config_currency'));
-			$data['deduction']     	= $this->currency->format($deduction, $this->config->get('config_currency'));
-			$data['grandtotal']  	= $this->currency->format($earning - $deduction, $this->config->get('config_currency'));
+			$data['payroll_check'] = true;
 		}
 
 		$data['back'] = $this->url->link('account/account', '', true);

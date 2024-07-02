@@ -429,7 +429,6 @@
 <script type="text/javascript">
   $('#period-info').load('index.php?route=common/period_info&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>');
 
-  // $('#release-info').load('index.php?route=payroll/payroll_release/releaseinfo&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>');
   $('#release-info').load('index.php?route=payroll/payroll_release/releaseinfo&token=<?= $token . $url; ?>');
 
   $(document).keypress(function (e) {

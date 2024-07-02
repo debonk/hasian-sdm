@@ -206,6 +206,7 @@ class ControllerPresencePresence extends Controller
 			'entry_name',
 			'entry_customer_group',
 			'entry_location',
+			'entry_contract_type',
 			'entry_payroll_include',
 			'entry_presence_status',
 			'button_edit',
@@ -385,11 +386,11 @@ class ControllerPresencePresence extends Controller
 		//Get absence Note
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 
-		// $data['presence_data_title'] = [];
-
 		foreach ($results as $result) {
-			$contract_type = $result['contract_type'] ? $result['contract_type'] : '-';
-
+			if (!$result['contract_type']) {
+				$result['contract_type'] = '-';
+			}
+			
 			$result['presence_data'] = $this->model_presence_presence->calculatePresenceSummaryData($result, $additional_items);
 
 			$presence_data = [];
@@ -419,8 +420,6 @@ class ControllerPresencePresence extends Controller
 			$result['presence_data'] = array_merge($presence_data, $result['presence_data']['primary'], $result['presence_data']['additional'], $result['presence_data']['secondary']);
 
 			$data['customers'][] = $result;
-
-			// $data['presence_data_title'] = array_merge($data['presence_data_title'], $result['presence_data']);
 		}
 
 		$data['token'] = $this->session->data['token'];
@@ -693,7 +692,7 @@ class ControllerPresencePresence extends Controller
 		$this->load->model('presence/schedule');
 		$this->load->model('overtime/overtime');
 		$schedules_info = $this->model_presence_schedule->getFinalSchedules($presence_period_id, $customer_id, $range_date);
-
+		
 		$presences_info = $this->model_presence_presence->getFinalPresences($customer_id, $range_date);
 
 		//Form Calendar
@@ -1176,7 +1175,7 @@ class ControllerPresencePresence extends Controller
 	}
 
 	public function overridePresence()
-	{ //used by: payroll_form
+	{
 		$this->load->language('presence/presence');
 
 		$json = array();

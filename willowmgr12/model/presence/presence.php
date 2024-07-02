@@ -375,10 +375,8 @@ class ModelPresencePresence extends Model
 
 		$this->load->model('localisation/presence_status');
 		$presence_statuses = $this->model_localisation_presence_status->getPresenceStatusesData();
-		// print_r($presence_summary);
-		// die(' ---breakpoint--- ');
 
-		$additional_data = json_decode($presence_summary['additional'], true);
+		$additional_data = !empty($presence_summary['additional']) ? json_decode($presence_summary['additional'], true) : [];
 
 		if ($additional_items) {
 			$presence_statuses['additional'] = $additional_items;
@@ -427,7 +425,6 @@ class ModelPresencePresence extends Model
 
 	public function getPresenceSummaries($presence_period_id, $data = array())
 	{
-		// $sql = "SELECT pt.*, c.nip, c.firstname, c.lastname, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_end, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "presence_total pt LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = pt.customer_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 		$sql = "SELECT pt.*, c.nip, c.firstname, c.lastname, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_end, c.customer_group, c.location, c.contract_type_id, c.contract_type FROM " . DB_PREFIX . "presence_total pt LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = pt.customer_id) WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
 		$implode = array();
@@ -453,7 +450,24 @@ class ModelPresencePresence extends Model
 		}
 
 		if (isset($data['filter_presence_code'])) {
-			$implode[] = "pt.total_" . $this->db->escape($data['filter_presence_code']) . " > 0";
+			$presence_code_data = [ # Next ubah ke sistem array filter dan pisahkan filter primary dengan additional
+				'h',
+				's',
+				'i',
+				'ns',
+				'ia',
+				'a',
+				'c',
+				't1',
+				't2',
+				't3'
+			];
+
+			if (in_array($this->db->escape($data['filter_presence_code']), $presence_code_data)) {
+				$implode[] = "pt.total_" . $this->db->escape($data['filter_presence_code']) . " > 0";
+			} else {
+				$implode[] = "pt.additional LIKE ('%\"" . $this->db->escape($data['filter_presence_code']) . "\"%')";
+			}
 		}
 
 		if ($implode) {
@@ -534,7 +548,24 @@ class ModelPresencePresence extends Model
 		}
 
 		if (isset($data['filter_presence_code'])) {
-			$implode[] = "pt.total_" . $this->db->escape($data['filter_presence_code']) . " > 0";
+			$presence_code_data = [ # Next ubah ke sistem array filter dan pisahkan filter primary dengan additional
+				'h',
+				's',
+				'i',
+				'ns',
+				'ia',
+				'a',
+				'c',
+				't1',
+				't2',
+				't3'
+			];
+
+			if (in_array($this->db->escape($data['filter_presence_code']), $presence_code_data)) {
+				$implode[] = "pt.total_" . $this->db->escape($data['filter_presence_code']) . " > 0";
+			} else {
+				$implode[] = "pt.additional LIKE ('%" . $this->db->escape($data['filter_presence_code']) . "%')";
+			}
 		}
 
 		if ($implode) {
@@ -548,9 +579,9 @@ class ModelPresencePresence extends Model
 
 	public function getPresenceSummariesTotal($data = array())
 	{
-		$sql = "SELECT SUM(total_h) as total_h, SUM(total_s) as total_s, SUM(total_i) as total_i, SUM(total_ns) as total_ns, SUM(total_ia) as total_ia, SUM(total_a) as total_a, SUM(total_c) as total_c, SUM(total_t1) as total_t1, SUM(total_t2) as total_t2, SUM(total_t3) as total_t3 FROM " . DB_PREFIX . "presence_total pt LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = pt.customer_id) WHERE presence_period_id = '" . (int)$data['presence_period_id'] . "'";
-		// $sql = "SELECT SUM(total_h) as sum_h, SUM(total_s) as sum_s, SUM(total_i) as sum_i, SUM(total_ns) as sum_ns, SUM(total_ia) as sum_ia, SUM(total_a) as sum_a, SUM(total_c) as sum_c, SUM(total_t1) as sum_t1, SUM(total_t2) as sum_t2, SUM(total_t3) as sum_t3 FROM " . DB_PREFIX . "presence_total pt LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = pt.customer_id) WHERE presence_period_id = '" . (int)$data['presence_period_id'] . "'";
+		$sql = "SELECT SUM(total_h) as total_h, SUM(total_s) as total_s, SUM(total_i) as total_i, SUM(total_ns) as total_ns, SUM(total_ia) as total_ia, SUM(total_a) as total_a, SUM(total_c) as total_c, SUM(total_t1) as total_t1, SUM(total_t2) as total_t2, SUM(total_t3) as total_t3 FROM " . DB_PREFIX . "presence_total pt LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = pt.customer_id) WHERE presence_period_id = '" . (int)$data['presence_period_id'] . "'";
 
+		$implode_sql = '';
 		$implode = array();
 
 		if (!empty($data['filter_name'])) {
@@ -579,17 +610,19 @@ class ModelPresencePresence extends Model
 
 		$query = $this->db->query($sql . $implode_sql);
 
-		$sql = "SELECT pt.additional FROM " . DB_PREFIX . "presence_total pt LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = pt.customer_id) WHERE presence_period_id = '" . (int)$data['presence_period_id'] . "'";
+		$sql = "SELECT pt.additional FROM " . DB_PREFIX . "presence_total pt LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = pt.customer_id) WHERE presence_period_id = '" . (int)$data['presence_period_id'] . "'";
 
 		$additional_query = $this->db->query($sql . $implode_sql);
 
 		$additional_sum_data = [];
 		foreach ($additional_query->rows as $row) {
-			foreach (json_decode($row['additional'], 1) as $key => $value) {
-				if (!isset($additional_sum_data[$key])) {
-					$additional_sum_data[$key] = $value;
-				} else {
-					$additional_sum_data[$key] += $value;
+			if ($row['additional']) {
+				foreach (json_decode($row['additional'], 1) as $key => $value) {
+					if (!isset($additional_sum_data[$key])) {
+						$additional_sum_data[$key] = $value;
+					} else {
+						$additional_sum_data[$key] += $value;
+					}
 				}
 			}
 		}
@@ -604,7 +637,6 @@ class ModelPresencePresence extends Model
 	{
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 
-		// $sql = "SELECT pt.*, c.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_end, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "presence_total pt RIGHT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = pt.customer_id AND pt.presence_period_id = '" . (int)$presence_period_id . "') LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) WHERE c.status = 1 AND c.date_start <= '" . $period_info['date_end'] . "' AND (c.date_end IS NULL OR c.date_end >= '" . $period_info['date_start'] . "')";
 		$sql = "SELECT pt.*, c.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.date_start, c.date_end, c.customer_group, c.location, c.contract_type_id, c.contract_type FROM " . DB_PREFIX . "presence_total pt RIGHT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = pt.customer_id AND pt.presence_period_id = '" . (int)$presence_period_id . "') WHERE c.status = 1 AND c.date_start <= '" . $period_info['date_end'] . "' AND (c.date_end IS NULL OR c.date_end >= '" . $period_info['date_start'] . "')";
 
 		$implode = array();
@@ -630,7 +662,24 @@ class ModelPresencePresence extends Model
 		}
 
 		if (isset($data['filter_presence_code'])) {
-			$implode[] = "pt.total_" . $this->db->escape($data['filter_presence_code']) . " > 0";
+			$presence_code_data = [ # Next ubah ke sistem array filter dan pisahkan filter primary dengan additional
+				'h',
+				's',
+				'i',
+				'ns',
+				'ia',
+				'a',
+				'c',
+				't1',
+				't2',
+				't3'
+			];
+
+			if (in_array($this->db->escape($data['filter_presence_code']), $presence_code_data)) {
+				$implode[] = "pt.total_" . $this->db->escape($data['filter_presence_code']) . " > 0";
+			} else {
+				$implode[] = "pt.additional LIKE ('%" . $this->db->escape($data['filter_presence_code']) . "%')";
+			}
 		}
 
 		if ($implode) {
@@ -681,56 +730,6 @@ class ModelPresencePresence extends Model
 
 		$query = $this->db->query($sql);
 
-		// $this->load->model('localisation/presence_status');
-		// $presence_statuses = $this->model_localisation_presence_status->getPresenceStatusesData();
-
-		// $presence_summary_data = $query->rows;
-
-		// foreach ($presence_summary_data as $idx => $presence_summary) {
-		// 	$presence_data = [];
-		// 	$additional_data = json_decode($presence_summary['additional'], true);
-
-		// 	foreach ($presence_statuses as $presence_group => $presence_status) {
-		// 		switch ($presence_group) {
-		// 			case 'primary':
-		// 			case 'secondary':
-		// 				foreach ($presence_status as $code) {
-		// 					if (isset($presence_summary['total_' . $code])) {
-		// 						$presence_data[$presence_group][$code] = $presence_summary['total_' . $code];
-		// 					} else {
-		// 						$presence_data[$presence_group][$code] = 0;
-		// 					}
-		// 				}
-
-		// 				break;
-
-		// 			case 'additional':
-		// 				foreach ($presence_status as $code) {
-		// 					if (isset($additional_data[$code])) {
-		// 						$presence_data[$presence_group][$code] = $additional_data[$code];
-		// 					} else {
-		// 						$presence_data[$presence_group][$code] = 0;
-		// 					}
-		// 				}
-
-		// 				break;
-
-		// 			case 'total':
-		// 				$presence_data['total']['hke'] = array_sum($presence_data['primary']) + array_sum($presence_data['additional']);
-		// 				$presence_data['total']['t'] = array_sum($presence_data['secondary']);
-
-		// 				break;
-
-		// 			default:
-		// 				# code...
-		// 				break;
-		// 		}
-		// 	}
-
-		// 	$presence_summary_data[$idx]['presence_data'] = $presence_data;
-		// }
-
-		// return $presence_summary_data;
 		return $query->rows;
 	}
 
@@ -763,7 +762,24 @@ class ModelPresencePresence extends Model
 		}
 
 		if (isset($data['filter_presence_code'])) {
-			$implode[] = "pt.total_" . $this->db->escape($data['filter_presence_code']) . " > 0";
+			$presence_code_data = [ # Next ubah ke sistem array filter dan pisahkan filter primary dengan additional
+				'h',
+				's',
+				'i',
+				'ns',
+				'ia',
+				'a',
+				'c',
+				't1',
+				't2',
+				't3'
+			];
+
+			if (in_array($this->db->escape($data['filter_presence_code']), $presence_code_data)) {
+				$implode[] = "pt.total_" . $this->db->escape($data['filter_presence_code']) . " > 0";
+			} else {
+				$implode[] = "pt.additional LIKE ('%" . $this->db->escape($data['filter_presence_code']) . "%')";
+			}
 		}
 
 		if ($implode) {

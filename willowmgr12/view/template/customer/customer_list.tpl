@@ -109,8 +109,6 @@
 								</select>
 							</div>
 						</div>
-					</div>
-					<div class="flex-container">
 						<div class="flex-item">
 							<div class="form-group">
 								<label class="control-label" for="input-date-added">
@@ -126,6 +124,8 @@
 								</div>
 							</div>
 						</div>
+					</div>
+					<div class="flex-container">
 						<div class="flex-item">
 							<div class="form-group">
 								<label class="control-label" for="input-contract-type">
@@ -139,6 +139,42 @@
 									<option value="<?= $contract_type['contract_type_id']; ?>"
 										<?=$contract_type['contract_type_id']==$filter['contract_type_id'] ? 'selected' : '' ; ?>>
 										<?= $contract_type['name']; ?>
+									</option>
+									<?php } ?>
+								</select>
+							</div>
+						</div>
+						<div class="flex-item">
+							<div class="form-group">
+								<label class="control-label" for="input-payroll-include">
+									<?= $entry_payroll_include; ?>
+								</label>
+								<select name="filter[payroll_include]" id="input-payroll-include" class="form-control">
+									<option value="*">
+										<?= $text_all ?>
+									</option>
+									<option value="1" <?= (isset($filter['payroll_include']) && $filter['payroll_include']) ? 'selected' : ''; ?>>
+										<?= $text_yes; ?>
+									</option>
+									<option value="0" <?= (isset($filter['payroll_include']) && !$filter['payroll_include']) ? 'selected' : ''; ?>>
+										<?= $text_no; ?>
+									</option>
+								</select>
+							</div>
+						</div>
+						<div class="flex-item">
+							<div class="form-group">
+								<label class="control-label" for="input-payroll-type">
+									<?= $entry_payroll_type; ?>
+								</label>
+								<select name="filter[payroll_type_id]" id="input-payroll-type" class="form-control">
+									<option value="">
+										<?= $text_all ?>
+									</option>
+									<?php foreach ($payroll_types as $payroll_type) { ?>
+									<option value="<?= $payroll_type['payroll_type_id']; ?>"
+										<?=$payroll_type['payroll_type_id']==$filter['payroll_type_id'] ? 'selected' : '' ; ?>>
+										<?= $payroll_type['name']; ?>
 									</option>
 									<?php } ?>
 								</select>

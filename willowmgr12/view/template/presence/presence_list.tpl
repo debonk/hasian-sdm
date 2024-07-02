@@ -184,24 +184,12 @@
 									<option value="*">
 										<?= $text_all ?>
 									</option>
-									<?php if (isset($filter_payroll_include) && $filter_payroll_include) { ?>
-									<option value="1" selected="selected">
+									<option value="1" <?= (isset($filter_payroll_include) && $filter_payroll_include) ? 'selected' : ''; ?>>
 										<?= $text_yes; ?>
 									</option>
-									<?php } else { ?>
-									<option value="1">
-										<?= $text_yes; ?>
-									</option>
-									<?php } ?>
-									<?php if (isset($filter_payroll_include) && !$filter_payroll_include) { ?>
-									<option value="0" selected="selected">
+									<option value="0" <?= (isset($filter_payroll_include) && !$filter_payroll_include) ? 'selected' : ''; ?>>
 										<?= $text_no; ?>
 									</option>
-									<?php } else { ?>
-									<option value="0">
-										<?= $text_no; ?>
-									</option>
-									<?php } ?>
 								</select>
 							</div>
 						</div>
@@ -343,6 +331,9 @@
 								<td>
 									<?= $customer['location']; ?>
 								</td>
+								<td>
+									<?= $customer['contract_type']; ?>
+								</td>
 								<?php foreach ($customer['presence_data'] as $presence_data) { ?>
 								<td class="text-center">
 									<?= $presence_data; ?>
@@ -415,6 +406,7 @@
 			if (filter_location_id != '*') {
 				url += '&filter_location_id=' + encodeURIComponent(filter_location_id);
 			}
+
 			var filter_contract_type_id = $('select[name=\'filter_contract_type_id\']').val();
 
 			if (filter_contract_type_id) {

@@ -20,7 +20,7 @@ class ControllerStartupDbView extends Controller
 	{
 		switch ($view_name) {
 			case 'v_customer':
-				$view_sql = "SELECT c.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cdd.name AS customer_department, cgd.name AS customer_group, l.name AS location, cgd.language_id FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (c.customer_department_id = cdd.customer_department_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id AND cdd.language_id = cgd.language_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id)";
+				$view_sql = "SELECT c.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cdd.name AS customer_department, cgd.name AS customer_group, l.name AS location, cgd.language_id, cn.contract_type_id, ct.name AS contract_type, ct.duration FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (c.customer_department_id = cdd.customer_department_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id AND cdd.language_id = cgd.language_id) LEFT JOIN " . DB_PREFIX . "location l ON (l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "contract cn ON (cn.contract_id = c.contract_id) LEFT JOIN " . DB_PREFIX . "contract_type ct ON (ct.contract_type_id = cn.contract_type_id)";
 
 				break;
 
@@ -84,12 +84,7 @@ class ControllerStartupDbView extends Controller
 				break;
 
 			case 'v_payroll':
-				$view_sql = "SELECT p.*, (p.addition_0 + p.addition_1 + p.addition_2 + p.addition_3 + p.addition_4 - p.deduction_0 - p.deduction_1 - p.deduction_2 - p.deduction_3 - p.deduction_4) as net_salary, SUM(pcv.value) as component, c.nip, c.email, c.name, c.lastname, c.acc_no, c.customer_group_id, c.customer_group, c.customer_department_id, c.customer_department, c.location_id, c.location, c.language_id, pm.payroll_method_id, pm.name AS payroll_method, pp.period FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.customer_id = p.customer_id AND pcv.presence_period_id = p.presence_period_id) LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) LEFT JOIN " . DB_PREFIX . "presence_period pp ON (pp.presence_period_id = p.presence_period_id) GROUP BY p.customer_id, p.presence_period_id;";
-
-				break;
-
-			case 'v_release':
-				$view_sql = "SELECT p.*, (p.addition_0 + p.addition_1 + p.addition_2 + p.addition_3 + p.addition_4 - p.deduction_0 - p.deduction_1 - p.deduction_2 - p.deduction_3 - p.deduction_4) as net_salary, SUM(pcv.value) as component, c.nip, c.email, c.name, c.lastname, c.acc_no, c.customer_group_id, c.customer_group, c.customer_department_id, c.customer_department, c.location_id, c.location, c.language_id, pm.payroll_method_id, pm.name AS payroll_method, pp.period FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.customer_id = p.customer_id AND pcv.presence_period_id = p.presence_period_id) LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) LEFT JOIN " . DB_PREFIX . "presence_period pp ON (pp.presence_period_id = p.presence_period_id) GROUP BY p.customer_id, p.presence_period_id;";
+				$view_sql = "SELECT p.*, (p.addition_0 + p.addition_1 + p.addition_2 + p.addition_3 + p.addition_4 - p.deduction_0 - p.deduction_1 - p.deduction_2 - p.deduction_3 - p.deduction_4) as net_salary, SUM(pcv.value) as component, c.nip, c.email, c.firstname, c.lastname, c.name, c.date_start, c.date_end, c.acc_no, c.customer_group_id, c.customer_group, c.customer_department_id, c.customer_department, c.location_id, c.location, c.language_id, pm.payroll_method_id, pm.name AS payroll_method, pp.period FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.customer_id = p.customer_id AND pcv.presence_period_id = p.presence_period_id) LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) LEFT JOIN " . DB_PREFIX . "presence_period pp ON (pp.presence_period_id = p.presence_period_id) GROUP BY p.customer_id, p.presence_period_id;";
 
 				break;
 

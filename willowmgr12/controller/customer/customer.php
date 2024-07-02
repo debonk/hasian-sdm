@@ -9,6 +9,8 @@ class ControllerCustomerCustomer extends Controller
 		'location_id',
 		'date_start',
 		'contract_type_id',
+		'payroll_include',
+		'payroll_type_id',
 		'status',
 		'active'
 	);
@@ -227,6 +229,8 @@ class ControllerCustomerCustomer extends Controller
 			'entry_name',
 			'entry_email',
 			'entry_contract_type',
+			'entry_payroll_include',
+			'entry_payroll_type',
 			'entry_customer_department',
 			'entry_customer_group',
 			'entry_location',
@@ -304,6 +308,8 @@ class ControllerCustomerCustomer extends Controller
 			'filter_status'            		=> $filter['status'],
 			'filter_date_start'        		=> $filter['date_start'],
 			'filter_contract_type_id'       => $filter['contract_type_id'],
+			'filter_payroll_include'		=> $filter['payroll_include'],
+			'filter_payroll_type_id'		=> $filter['payroll_type_id'],
 			'filter_active'            		=> $filter['active'],
 			'sort'                     		=> $sort,
 			'order'                    		=> $order,
@@ -417,6 +423,9 @@ class ControllerCustomerCustomer extends Controller
 		$this->load->model('customer/contract_type');
 		$data['contract_types'] = $this->model_customer_contract_type->getContractTypes(['filter' => ['all' => true]]);
 
+		$this->load->model('payroll/payroll_type');
+		$data['payroll_types'] = $this->model_payroll_payroll_type->getPayrollTypes();
+
 		$this->load->model('setting/store');
 		$data['stores'] = $this->model_setting_store->getStores();
 
@@ -459,7 +468,6 @@ class ControllerCustomerCustomer extends Controller
 			'entry_employment_insurance',
 			'entry_employment_insurance_id',
 			'entry_firstname',
-			'entry_full_overtime',
 			'entry_gender',
 			'entry_health_insurance',
 			'entry_health_insurance_id',
@@ -476,16 +484,15 @@ class ControllerCustomerCustomer extends Controller
 			'entry_npwp',
 			'entry_password',
 			'entry_payroll_include',
+			'entry_payroll_type',
 			'entry_payroll_method',
 			'entry_pension_insurance',
 			'entry_postcode',
 			'entry_registered_wage',
-			'entry_skip_trial_status',
 			'entry_status',
 			'entry_telephone',
 			'entry_zone',
 			'help_lastname',
-			'help_skip_trial_status',
 			'help_health_insurance',
 			'help_employment_insurance',
 			'help_npwp_address',
@@ -495,7 +502,6 @@ class ControllerCustomerCustomer extends Controller
 			'button_address_add',
 			'button_remove',
 			'button_upload',
-			// 'button_reactivate',
 			'tab_general',
 			'tab_additional',
 			'tab_address'
@@ -582,16 +588,15 @@ class ControllerCustomerCustomer extends Controller
 			'nik'						=> null,
 			'firstname'					=> null,
 			'lastname'					=> null,
-			'skip_trial_status'			=> true,
 			'email'						=> null,
 			'telephone'					=> null,
 			'children'					=> null,
 			'payroll_include'			=> true,
+			'payroll_type_id'			=> null,
 			'children'					=> null,
 			'npwp'						=> null,
 			'npwp_address'				=> null,
 			'acc_no'					=> null,
-			'full_overtime'				=> null,
 			'health_insurance'			=> true,
 			'life_insurance'			=> true,
 			'employment_insurance'		=> false,
@@ -601,6 +606,7 @@ class ControllerCustomerCustomer extends Controller
 			'employment_insurance_id'	=> null,
 			'status'					=> true,
 			'id_card_address_id'		=> null,
+			'payroll_type_id'			=> null,
 			'address_id'				=> null
 		);
 		foreach ($input_items as $input_item => $default_value) {
@@ -615,7 +621,6 @@ class ControllerCustomerCustomer extends Controller
 
 		if (isset($this->request->post['firstname'])) {
 			$fields_data = [
-				'skip_trial_status',
 				'health_insurance',
 				'employment_insurance',
 				'pension_insurance',
@@ -692,6 +697,9 @@ class ControllerCustomerCustomer extends Controller
 		$this->load->model('localisation/payroll_method');
 		$data['payroll_methods'] = $this->model_localisation_payroll_method->getPayrollMethods();
 
+		$this->load->model('payroll/payroll_type');
+		$data['payroll_types'] = $this->model_payroll_payroll_type->getPayrollTypes();
+
 		$this->load->model('localisation/country');
 		$data['countries'] = $this->model_localisation_country->getCountries();
 
@@ -751,12 +759,10 @@ class ControllerCustomerCustomer extends Controller
 
 		$data['date_start_locked'] = false;
 		$data['date_end_locked'] = false;
-		$data['skip_trial_status_locked'] = false;
 
 		if (isset($this->request->get['customer_id'])) {
 			if (isset($data['date_start']) && !empty(strtotime($data['date_start']))) {
 				$data['date_start_locked'] = true;
-				$data['skip_trial_status_locked'] = true;
 			}
 
 			if (!empty(strtotime($data['date_end']))) {
@@ -1076,18 +1082,8 @@ class ControllerCustomerCustomer extends Controller
 			foreach ($results as $result) {
 				$json[] = array(
 					'customer_id'       		=> $result['customer_id'],
-					// 'customer_department_id'	=> $result['customer_department_id'],
-					// 'customer_group_id' 		=> $result['customer_group_id'],
 					'name'              		=> strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8')),
-					// 'customer_department'    	=> $result['customer_department'],
-					// 'customer_group'    		=> $result['customer_group'],
-					// 'nip'          				=> $result['nip'],
-					// 'firstname'         		=> $result['firstname'],
-					// 'lastname'          		=> $result['lastname'],
-					'email'             		=> $result['email'],
-					// 'telephone'         		=> $result['telephone'],
-					// 'custom_field'      		=> json_decode($result['custom_field'], true),
-					// 'address'           		=> $this->model_customer_customer->getAddresses($result['customer_id'])
+					'email'             		=> $result['email']
 				);
 			}
 		}
