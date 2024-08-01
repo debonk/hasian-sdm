@@ -18,8 +18,8 @@ class ControllerDashboardCustomer extends Controller {
 
 		$date_previous_month = date('Y-m-d', strtotime('-1 month'));
 		$period_info = $this->model_common_payroll->getPeriodByDate($date_previous_month);
-	
-		$previous_month = $this->model_presence_presence->getTotalCustomers(array('presence_period_id' => $period_info['presence_period_id']));
+
+		$previous_month = $period_info ? $this->model_presence_presence->getTotalCustomers(array('presence_period_id' => $period_info['presence_period_id'])) : 0;
 
 		$difference = $current_month - $previous_month;
 

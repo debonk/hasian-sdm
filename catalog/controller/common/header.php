@@ -55,7 +55,8 @@ class ControllerCommonHeader extends Controller {
 			'text_schedule',
 			'text_login',
 			'text_logout',
-			'text_category'
+			'text_category',
+			'text_vacation'
 		];
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
@@ -78,6 +79,7 @@ class ControllerCommonHeader extends Controller {
 		$data['login'] = $this->url->link('account/login', '', true);
 		$data['schedule'] = $this->url->link('account/schedule', '', true);
 		$data['logout'] = $this->url->link('account/logout', '', true);
+		$data['vacation'] = $this->url->link('account/vacation', '', true);
 
 		// Menu
 		$this->load->model('catalog/category');

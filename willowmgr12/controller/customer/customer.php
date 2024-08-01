@@ -406,6 +406,8 @@ class ControllerCustomerCustomer extends Controller
 
 		$data['results'] = sprintf($this->language->get('text_pagination'), ($customer_count) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($customer_count - $limit)) ? $customer_count : ((($page - 1) * $limit) + $limit), $customer_count, ceil($customer_count / $limit));
 
+		$data['superuser'] = !$this->user->hasPermission('bypass', 'customer/customer') ? false : true;
+
 		$data['filter_items'] = json_encode($this->filter_items);
 		$data['filter'] = $filter;
 		$data['sort'] = $sort;

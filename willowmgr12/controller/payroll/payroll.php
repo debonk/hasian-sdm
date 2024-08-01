@@ -628,7 +628,7 @@ class ControllerPayrollPayroll extends Controller
 		$data['export'] = $this->url->link('payroll/payroll/export', 'token=' . $this->session->data['token'] . $url, true);
 		$data['back'] = $this->url->link('payroll/payroll', 'token=' . $this->session->data['token'], true);
 
-		$data['payroll_status_check'] = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'generated');
+		$data['payroll_status_check'] = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'generated, approved, released');
 
 		$data['information'] = null;
 		if ($data['payroll_status_check']) {
@@ -1154,7 +1154,7 @@ class ControllerPayrollPayroll extends Controller
 					break;
 				}
 
-				if (!$this->model_common_payroll->checkPeriodStatus($presence_period_id, 'generated')) {
+				if (!$this->model_common_payroll->checkPeriodStatus($presence_period_id, 'generated, approved, released')) {
 					$this->error = $this->language->get('error_status');
 
 					break;

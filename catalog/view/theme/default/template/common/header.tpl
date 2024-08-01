@@ -63,6 +63,7 @@
                 <li><a href="<?php echo $schedule; ?>"><?php echo $text_schedule; ?></a></li>
                 <li><a href="<?php echo $payroll_basic; ?>"><?php echo $text_payroll_basic; ?></a></li>
                 <li><a href="<?php echo $payroll; ?>"><?php echo $text_payroll; ?></a></li>
+                <li><a href="<?php echo $vacation; ?>"><?php echo $text_vacation; ?></a></li>
                 <li><a href="<?php echo $password; ?>"><?php echo $text_password; ?></a></li>
                 <li><a href="<?php echo $logout; ?>"><?php echo $text_logout; ?></a></li>
                 <?php } else { ?>

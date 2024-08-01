@@ -413,6 +413,8 @@ class ModelPresenceSchedule extends Model
 			$presences_data = $this->model_presence_presence->getFinalPresences($customer_id, $range_date);
 		}
 
+		$customer_info = $this->model_common_payroll->getCustomer($customer_id);
+
 		foreach ($schedules_data as $date => $schedule_data) {
 			if ($schedule_data['time_in'] != '0000-00-00 00:00:00' && strtotime($date) <= strtotime('today')) {
 				if (isset($schedule_data['time_login'])) {
@@ -444,6 +446,12 @@ class ModelPresenceSchedule extends Model
 				}
 			}
 
+			if (($customer_info['date_start'] > $date) || ($customer_info['date_end'] && ($customer_info['date_end'] < $date))) {
+				$presence_status_id = $this->config->get('payroll_setting_id_ns');
+			} elseif (strtotime($date) > strtotime('today')) {
+				$presence_status_id = 0;
+			}
+			
 			$schedules_data[$date] = array(
 				'applied'				=> $schedule_data['applied'],
 				'schedule_type_id'		=> $schedule_data['schedule_type_id'],
@@ -460,6 +468,8 @@ class ModelPresenceSchedule extends Model
 				'bg_class'				=> $schedule_data['bg_class']
 			);
 		}
+
+		// var_dump($schedules_data);
 
 		//Apply Absences
 		$absences_info = $this->model_presence_absence->getAbsencesByCustomerDate($customer_id, $range_date);

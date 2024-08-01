@@ -30,7 +30,7 @@
 							<td width="50%">
 								<?= $text_gaji_pokok; ?>
 							</td>
-							<td>
+							<td class="text-right">
 								<?= $gaji_pokok; ?>
 							</td>
 						</tr>
@@ -38,7 +38,7 @@
 							<td>
 								<?= $text_tunj_jabatan; ?>
 							</td>
-							<td>
+							<td class="text-right">
 								<?= $tunj_jabatan; ?>
 							</td>
 						</tr>
@@ -46,7 +46,7 @@
 							<td>
 								<?= $text_tunj_hadir; ?>
 							</td>
-							<td>
+							<td class="text-right">
 								<?= $tunj_hadir; ?>
 							</td>
 						</tr>
@@ -54,7 +54,7 @@
 							<td>
 								<?= $text_uang_makan; ?>
 							</td>
-							<td>
+							<td class="text-right">
 								<?= $uang_makan ?>
 							</td>
 						</tr>
@@ -62,7 +62,7 @@
 							<td>
 								<?= $text_tunj_pph; ?>
 							</td>
-							<td>
+							<td class="text-right">
 								<?= $tunj_pph; ?>
 							</td>
 						</tr>
@@ -74,7 +74,7 @@
 									<?= $text_gaji_dasar; ?>
 								</h4>
 							</td>
-							<td>
+							<td class="text-right">
 								<h4>
 									<?= $gaji_dasar; ?>
 								</h4>

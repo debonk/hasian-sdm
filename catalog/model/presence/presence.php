@@ -32,7 +32,7 @@ class ModelPresencePresence extends Model
 
 	public function getCustomers($data = array())
 	{
-		$sql = "SELECT c.customer_id, nip, firstname, lastname, c.name, image, c.date_added, customer_group_id, customer_group, location_id, location, active_finger FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON cad.customer_id = c.customer_id WHERE language_id = '" . (int)$this->config->get('config_language_id') . "' AND status = 1";
+		$sql = "SELECT c.customer_id, nip, firstname, lastname, c.name, image, c.date_added, customer_group_id, customer_group, location_id, location, active_finger FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON cad.customer_id = c.customer_id WHERE language_id = '" . (int)$this->config->get('config_language_id') . "' AND c.status = 1 AND c.date_start <= CURDATE() AND (c.date_end >= CURDATE() OR c.date_end IS NULL)";
 
 		$implode = array();
 

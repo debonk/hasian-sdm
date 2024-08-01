@@ -85,7 +85,7 @@ class ControllerLocalisationPresenceStatus extends Controller {
 
 		if (isset($this->request->post['selected']) && $this->validateDelete()) {
 			foreach ($this->request->post['selected'] as $presence_status_id) {
-				// $this->model_localisation_presence_status->deletePresenceStatus($presence_status_id);
+				$this->model_localisation_presence_status->deletePresenceStatus($presence_status_id);
 			}
 
 			$this->session->data['success'] = $this->language->get('text_success');

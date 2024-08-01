@@ -343,6 +343,7 @@ class ControllerUserUserPermission extends Controller {
 			'dashboard/presence',
 			'dashboard/customer',
 			'dashboard/online',
+			'startup/db_view',
 
 			'dashboard/map',
 			'dashboard/chart'

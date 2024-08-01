@@ -43,7 +43,7 @@
       </div>
       <div class="panel-body">
         <div class="well">
-          <div class="row flex-container">
+          <div class="flex-container">
             <div class="flex-item">
               <div class="form-group">
                 <label class="control-label" for="input-name">
@@ -109,7 +109,7 @@
               </div>
             </div>
           </div>
-          <div class="row flex-container">
+          <div class="flex-container">
             <div class="flex-item">
               <div class="form-group">
                 <label class="control-label" for="input-period">

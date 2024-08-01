@@ -54,6 +54,25 @@
 						</div>
 						<div class="flex-item">
 							<div class="form-group">
+								<label class="control-label" for="input-customer-group">
+									<?= $entry_customer_group; ?>
+								</label>
+								<select name="filter[customer_group_id]" id="input-customer-group" class="form-control">
+									<option value="">
+										<?= $text_all; ?>
+									</option>
+									<?php foreach ($customer_groups as $customer_group) { ?>
+									<option value="<?= $customer_group['customer_group_id']; ?>"
+										<?=$customer_group['customer_group_id']==$filter['customer_group_id']
+										? 'selected' : '' ; ?>>
+										<?= $customer_group['name']; ?>
+									</option>
+									<?php } ?>
+								</select>
+							</div>
+						</div>
+						<div class="flex-item">
+							<div class="form-group">
 								<label class="control-label" for="input-customer-department">
 									<?= $entry_customer_department; ?>
 								</label>
@@ -67,25 +86,6 @@
 										<?=$customer_department['customer_department_id']==$filter['customer_department_id']
 										? 'selected' : '' ; ?>>
 										<?= $customer_department['name']; ?>
-									</option>
-									<?php } ?>
-								</select>
-							</div>
-						</div>
-						<div class="flex-item">
-							<div class="form-group">
-								<label class="control-label" for="input-customer-group">
-									<?= $entry_customer_group; ?>
-								</label>
-								<select name="filter[customer_group_id]" id="input-customer-group" class="form-control">
-									<option value="">
-										<?= $text_all; ?>
-									</option>
-									<?php foreach ($customer_groups as $customer_group) { ?>
-									<option value="<?= $customer_group['customer_group_id']; ?>"
-										<?=$customer_group['customer_group_id']==$filter['customer_group_id']
-										? 'selected' : '' ; ?>>
-										<?= $customer_group['name']; ?>
 									</option>
 									<?php } ?>
 								</select>
@@ -116,10 +116,11 @@
 								</label>
 								<div class="input-group date">
 									<input type="text" name="filter[date_start]" value="<?= $filter['date_start']; ?>"
-										placeholder="<?= $entry_date_start; ?>" data-date-format="MMM YY" id="input-date-added"
-										class="form-control" />
+										placeholder="<?= $entry_date_start; ?>" data-date-format="MMM YY"
+										id="input-date-added" class="form-control" />
 									<span class="input-group-btn">
-										<button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+										<button type="button" class="btn btn-default"><i
+												class="fa fa-calendar"></i></button>
 									</span>
 								</div>
 							</div>
@@ -137,7 +138,8 @@
 									</option>
 									<?php foreach ($contract_types as $contract_type) { ?>
 									<option value="<?= $contract_type['contract_type_id']; ?>"
-										<?=$contract_type['contract_type_id']==$filter['contract_type_id'] ? 'selected' : '' ; ?>>
+										<?=$contract_type['contract_type_id']==$filter['contract_type_id'] ? 'selected'
+										: '' ; ?>>
 										<?= $contract_type['name']; ?>
 									</option>
 									<?php } ?>
@@ -153,10 +155,12 @@
 									<option value="*">
 										<?= $text_all ?>
 									</option>
-									<option value="1" <?= (isset($filter['payroll_include']) && $filter['payroll_include']) ? 'selected' : ''; ?>>
+									<option value="1" <?=(isset($filter['payroll_include']) &&
+										$filter['payroll_include']) ? 'selected' : '' ; ?>>
 										<?= $text_yes; ?>
 									</option>
-									<option value="0" <?= (isset($filter['payroll_include']) && !$filter['payroll_include']) ? 'selected' : ''; ?>>
+									<option value="0" <?=(isset($filter['payroll_include']) &&
+										!$filter['payroll_include']) ? 'selected' : '' ; ?>>
 										<?= $text_no; ?>
 									</option>
 								</select>
@@ -173,7 +177,8 @@
 									</option>
 									<?php foreach ($payroll_types as $payroll_type) { ?>
 									<option value="<?= $payroll_type['payroll_type_id']; ?>"
-										<?=$payroll_type['payroll_type_id']==$filter['payroll_type_id'] ? 'selected' : '' ; ?>>
+										<?=$payroll_type['payroll_type_id']==$filter['payroll_type_id'] ? 'selected'
+										: '' ; ?>>
 										<?= $payroll_type['name']; ?>
 									</option>
 									<?php } ?>
@@ -189,10 +194,10 @@
 									<option value="*">
 										<?= $text_all; ?>
 									</option>
-									<option value="1" <?=$filter['active'] == 1 ? 'selected' : '' ; ?>>
+									<option value="1" <?=$filter['active']==1 ? 'selected' : '' ; ?>>
 										<?= $text_active; ?>
 									</option>
-									<option value="-1" <?=$filter['active'] == -1 ? 'selected' : '' ; ?>>
+									<option value="-1" <?=$filter['active']==-1 ? 'selected' : '' ; ?>>
 										<?= $text_inactive; ?>
 									</option>
 								</select>
@@ -210,7 +215,8 @@
 									<option value="1" <?=$filter['status'] ? 'selected' : '' ; ?>>
 										<?= $text_enabled; ?>
 									</option>
-									<option value="0" <?=!$filter['status'] && !is_null($filter['status']) ? 'selected' : '' ; ?>>
+									<option value="0" <?=!$filter['status'] && !is_null($filter['status']) ? 'selected'
+										: '' ; ?>>
 										<?= $text_disabled; ?>
 									</option>
 								</select>
@@ -237,7 +243,8 @@
 							<thead>
 								<tr>
 									<td style="width: 1px;" class="text-center"><input type="checkbox"
-											onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
+											onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" />
+									</td>
 									<td class="text-center">
 										<?= $column_image; ?>
 									</td>
@@ -340,15 +347,17 @@
 								<tr class="<?= $customer['bg_class']; ?>">
 									<td class="text-center">
 										<?php if (in_array($customer['customer_id'], $selected)) { ?>
-										<input type="checkbox" name="selected[]" value="<?= $customer['customer_id']; ?>"
-											checked="checked" />
+										<input type="checkbox" name="selected[]"
+											value="<?= $customer['customer_id']; ?>" checked="checked" />
 										<?php } else { ?>
-										<input type="checkbox" name="selected[]" value="<?= $customer['customer_id']; ?>" />
+										<input type="checkbox" name="selected[]"
+											value="<?= $customer['customer_id']; ?>" />
 										<?php } ?>
 									</td>
 									<td class="text-center">
 										<?php if ($customer['image']) { ?>
-										<img src="<?= $customer['image']; ?>" alt="<?= $customer['name']; ?>" class="img-thumbnail" />
+										<img src="<?= $customer['image']; ?>" alt="<?= $customer['name']; ?>"
+											class="img-thumbnail" />
 										<?php } else { ?>
 										<span class="img-thumbnail list"><i class="fa fa-camera fa-2x"></i></span>
 										<?php } ?>
@@ -378,36 +387,41 @@
 										<?= $customer['date_end']; ?>
 									</td>
 									<td class="text-right nowrap">
-										<a href="<?= $customer['view']; ?>" data-toggle="tooltip" title="<?= $button_view; ?>"
-											class="btn btn-info" target="_blank" rel="noopener noreferrer"><i class="fa fa-eye"></i></a>
+										<a href="<?= $customer['view']; ?>" data-toggle="tooltip"
+											title="<?= $button_view; ?>" class="btn btn-info" target="_blank"
+											rel="noopener noreferrer"><i class="fa fa-eye"></i></a>
+										<?php if ($superuser) { ?>
 										<div class="btn-group" data-toggle="tooltip" title="<?= $button_login; ?>">
-											<button type="button" data-toggle="dropdown" class="btn btn-info dropdown-toggle"><i
-													class="fa fa-lock"></i></button>
+											<button type="button" data-toggle="dropdown"
+												class="btn btn-info dropdown-toggle"><i class="fa fa-lock"></i></button>
 											<ul class="dropdown-menu pull-right">
-												<li><a
-														href="index.php?route=customer/customer/login&token=<?= $token; ?>&customer_id=<?= $customer['customer_id']; ?>&store_id=0"
+												<li><a href="index.php?route=customer/customer/login&token=<?= $token; ?>&customer_id=<?= $customer['customer_id']; ?>&store_id=0"
 														target="_blank" rel="noopener noreferrer">
 														<?= $text_default; ?>
 													</a></li>
 												<?php foreach ($stores as $store) { ?>
-												<li><a
-														href="index.php?route=customer/customer/login&token=<?= $token; ?>&customer_id=<?= $customer['customer_id']; ?>&store_id=<?= $store['store_id']; ?>"
+												<li><a href="index.php?route=customer/customer/login&token=<?= $token; ?>&customer_id=<?= $customer['customer_id']; ?>&store_id=<?= $store['store_id']; ?>"
 														target="_blank" rel="noopener noreferrer">
 														<?= $store['name']; ?>
 													</a></li>
 												<?php } ?>
 											</ul>
 										</div>
-										<?php if ($customer['unlock']) { ?>
-										<a href="<?= $customer['unlock']; ?>" data-toggle="tooltip" title="<?= $button_unlock; ?>"
-											class="btn btn-warning"><i class="fa fa-unlock"></i></a>
-										<?php } else { ?>
-										<button type="button" class="btn btn-warning" disabled><i class="fa fa-unlock"></i></button>
 										<?php } ?>
-										<a href="<?= $customer['contract']; ?>" data-toggle="tooltip" title="<?= $button_contract; ?>"
-											class="btn btn-primary" target="_blank" rel="noopener noreferrer"><i class="fa fa-file-text-o"></i></a>
-										<a href="<?= $customer['edit']; ?>" data-toggle="tooltip" title="<?= $button_edit; ?>"
-											class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+										<?php if ($customer['unlock']) { ?>
+										<a href="<?= $customer['unlock']; ?>" data-toggle="tooltip"
+											title="<?= $button_unlock; ?>" class="btn btn-warning"><i
+												class="fa fa-unlock"></i></a>
+										<?php } else { ?>
+										<button type="button" class="btn btn-warning" disabled><i
+												class="fa fa-unlock"></i></button>
+										<?php } ?>
+										<a href="<?= $customer['contract']; ?>" data-toggle="tooltip"
+											title="<?= $button_contract; ?>" class="btn btn-primary" target="_blank"
+											rel="noopener noreferrer"><i class="fa fa-file-text-o"></i></a>
+										<a href="<?= $customer['edit']; ?>" data-toggle="tooltip"
+											title="<?= $button_edit; ?>" class="btn btn-primary"><i
+												class="fa fa-pencil"></i></a>
 									</td>
 								</tr>
 								<?php } ?>

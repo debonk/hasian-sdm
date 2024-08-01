@@ -85,7 +85,7 @@ class ControllerCustomerCustomerDepartment extends Controller {
 
 		if (isset($this->request->post['selected']) && $this->validateDelete()) {
 			foreach ($this->request->post['selected'] as $customer_department_id) {
-				// $this->model_customer_customer_department->deleteCustomerDepartment($customer_department_id);
+				$this->model_customer_customer_department->deleteCustomerDepartment($customer_department_id);
 			}
 
 			$this->session->data['success'] = $this->language->get('text_success');

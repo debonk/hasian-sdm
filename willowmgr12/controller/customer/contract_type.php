@@ -85,7 +85,7 @@ class ControllerCustomerContractType extends Controller {
 
 		if (isset($this->request->post['selected']) && $this->validateDelete()) {
 			foreach ($this->request->post['selected'] as $contract_type_id) {
-				// $this->model_customer_contract_type->deleteContractType($contract_type_id);
+				$this->model_customer_contract_type->deleteContractType($contract_type_id);
 			}
 
 			$this->session->data['success'] = $this->language->get('text_success');

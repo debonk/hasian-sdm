@@ -14,3 +14,4 @@ $_['text_payroll']			= 'Rincian Gaji';
 $_['text_paid_leave']		= 'Riwayat Cuti';
 $_['text_logged']  			= 'Hello, %s';
 $_['text_logout']   		= 'Logout';
+$_['text_vacation']   		= 'Riwayat Cuti';

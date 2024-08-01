@@ -8,6 +8,19 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
+4.0.0	01/08/2024
+NEW MODUL: Report Payroll: Termasuk group report berdasarkan jabatan, divisi, lokasi.
+Payroll > Export: Bisa dilakukan jika status = generated, approved, released. (sebelumnya hanya status = generated)
+Bug Fixed: Header Menu: Riwayat Cuti tidak ada 
+APP > Login: Karyawan yang tidak aktif tidak muncul lagi pada halaman login
+Schedule: Menentukan status NS jika sudah diset jadwal sblmnya
+Schedule: Jika tanggal belum berlalu, kehadiran tidak menunjukkan off.
+Customer: Login by Customer only by superuser
+
+MODIFY DATA
+Presence Status: Ganti nama --- menjadi Off
+Presence Status: Ganti nama Belum/Tidak Aktif menjadi Tidak Aktif
+
 4.0.a	02/07/2024
 Presence Status: Add field status.
 NEW MODUL: Payroll Type

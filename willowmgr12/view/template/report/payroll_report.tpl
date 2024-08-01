@@ -1,51 +1,38 @@
 <div class="table-responsive">
-	<table class="table table-bordered">
+	<table class="table table-bordered text-left">
 		<thead>
 			<tr>
-				<td class="text-left">
-					<?php echo $column_nip; ?>
+				<td>
+					<?= $column_nip; ?>
 				</td>
-				<td class="text-left">
-					<?php if ($sort == 'customer') { ?>
-					<a href="<?php echo $sort_customer; ?>" class="<?php echo strtolower($order); ?>">
-						<?php echo $column_customer; ?>
+				<td>
+					<a href="<?= $sort_name; ?>" class="<?= ($sort == 'name') ? strtolower($order) : ''; ?>">
+						<?= $column_name; ?>
 					</a>
-					<?php } else { ?>
-					<a href="<?php echo $sort_customer; ?>">
-						<?php echo $column_customer; ?>
-					</a>
-					<?php } ?>
 				</td>
-				<td class="text-left">
-					<?php if ($sort == 'customer_group') { ?>
-					<a href="<?php echo $sort_customer_group; ?>" class="<?php echo strtolower($order); ?>">
-						<?php echo $column_customer_group; ?>
+				<td>
+					<a href="<?= $sort_customer_group; ?>" class="<?= ($sort == 'customer_group') ? strtolower($order) : ''; ?>">
+						<?= $column_customer_group; ?>
 					</a>
-					<?php } else { ?>
-					<a href="<?php echo $sort_customer_group; ?>">
-						<?php echo $column_customer_group; ?>
-					</a>
-					<?php } ?>
 				</td>
-				<td class="text-left">
-					<?php if ($sort == 'location') { ?>
-					<a href="<?php echo $sort_location; ?>" class="<?php echo strtolower($order); ?>">
-						<?php echo $column_location; ?>
+				<td>
+					<a href="<?= $sort_customer_department; ?>" class="<?= ($sort == 'customer_department') ? strtolower($order) : ''; ?>">
+						<?= $column_customer_department; ?>
 					</a>
-					<?php } else { ?>
-					<a href="<?php echo $sort_location; ?>">
-						<?php echo $column_location; ?>
+				</td>
+				<td>
+					<a href="<?= $sort_location; ?>" class="<?= ($sort == 'location') ? strtolower($order) : ''; ?>">
+						<?= $column_location; ?>
 					</a>
-					<?php } ?>
 				</td>
 				<td class="text-right">
-					<?php echo $column_net_salary; ?>
+					<?= $column_net_salary; ?>
 				</td>
 				<td class="text-center">
-					<?php echo $column_component; ?>
+					<?= $column_component; ?>
 				</td>
 				<td class="text-right">
-					<?php echo $column_grandtotal; ?>
+					<?= $column_grandtotal; ?>
 				</td>
 			</tr>
 		</thead>
@@ -53,37 +40,40 @@
 			<?php if ($payrolls) { ?>
 			<?php foreach ($payrolls as $payroll) { ?>
 			<tr>
-				<td class="text-left">
-					<?php echo $payroll['nip']; ?>
+				<td>
+					<?= $payroll['nip']; ?>
 				</td>
-				<td class="text-left">
-					<?php echo $payroll['customer']; ?>
+				<td>
+					<?= $payroll['name']; ?>
 				</td>
-				<td class="text-left">
-					<?php echo $payroll['customer_group']; ?>
+				<td>
+					<?= $payroll['customer_group']; ?>
 				</td>
-				<td class="text-left">
-					<?php echo $payroll['location']; ?>
+				<td>
+					<?= $payroll['customer_department']; ?>
 				</td>
-				<td class="text-left">
-					<?php echo $payroll['net_salary']; ?>
+				<td>
+					<?= $payroll['location']; ?>
 				</td>
-				<td class="text-left">
+				<td class="text-right">
+					<?= $payroll['net_salary']; ?>
+				</td>
+				<td>
 				  <?php foreach ($component_codes as $code) { ?>
 				  <div class="col-sm-6 nowrap">
-					<?php echo $text_component[$code] . ': ' . $payroll['component_data'][$code]; ?>
+					<?= $text_component[$code] . ': ' . $payroll['component_data'][$code]; ?>
 					</div>
 				  <?php } ?>
 					</td>
-				<td class="text-left">
-					<?php echo $payroll['grandtotal']; ?>
+				<td class="text-right">
+					<?= $payroll['grandtotal']; ?>
 				</td>
 			</tr>
 			<?php } ?>
 			<?php } else { ?>
 			<tr>
 				<td class="text-center" colspan="9">
-					<?php echo $text_no_results; ?>
+					<?= $text_no_results; ?>
 				</td>
 			</tr>
 			<?php } ?>
@@ -92,9 +82,9 @@
 </div>
 <div class="row">
 	<div class="col-sm-6 text-left">
-		<?php echo $pagination; ?>
+		<?= $pagination; ?>
 	</div>
 	<div class="col-sm-6 text-right">
-		<?php echo $results; ?>
+		<?= $results; ?>
 	</div>
 </div>
