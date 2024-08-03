@@ -34,9 +34,7 @@ class ControllerAccountSchedule extends Controller
 
 		$language_items = [
 			'heading_title',
-			'text_unsupport',
 			'text_no_results',
-			'button_login',
 			'button_back'
 		];
 		foreach ($language_items as $language_item) {
@@ -62,7 +60,7 @@ class ControllerAccountSchedule extends Controller
 			$this->load->model('account/schedule');
 			$this->load->model('account/customer');
 
-			$schedules_data = $this->model_account_schedule->getFinalSchedules($this->customer->getId(), $range_date);
+			$schedules_data = $this->model_account_schedule->getFinalSchedules($period_info['presence_period_id'], $this->customer->getId(), $range_date);
 
 			$data['list_days'] = explode(' ', $this->language->get('text_days'));
 

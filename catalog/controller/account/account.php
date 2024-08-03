@@ -34,6 +34,74 @@ class ControllerAccountAccount extends Controller
 		}
 
 		$language_items = [
+			// 'heading_title',
+			// 'text_unsupport',
+			// 'error_retrieve',
+			// 'button_login',
+			// 'button_logout',
+		];
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
+
+		$data['warning'] = [];
+
+		# Contract
+		$this->load->model('account/customer');
+		$contract_info = $this->model_account_customer->getCustomerContract($this->customer->getId());
+
+		if ($contract_info['contract_status'] == 'end_soon') {
+			$contract_end_left = date_diff(date_create($contract_info['contract_end']), date_create(date('Y-m-d')))->days;
+
+			$data['warning'] = sprintf($this->language->get('text_contract_end_left'), $contract_end_left) . ' ' . $this->language->get('text_contract_renew');
+		} elseif ($contract_info['contract_status'] == 'end_today') {
+			$data['warning'] = $this->language->get('text_contract_' . $contract_info['contract_status']);
+		}
+
+		$data['column_left'] = $this->load->controller('common/column_left');
+		$data['column_right'] = $this->load->controller('common/column_right');
+		$data['content_top'] = $this->load->controller('common/content_top');
+		$data['content_bottom'] = $this->load->controller('common/content_bottom');
+		$data['footer'] = $this->load->controller('common/footer');
+		$data['header'] = $this->load->controller('common/header');
+
+		$this->response->setOutput($this->load->view('account/account', $data));
+	}
+
+	# Under Development
+	public function indexWithGPSLogin()
+	{
+		if (!$this->customer->isLogged()) {
+			$this->session->data['redirect'] = $this->url->link('account/account', '', true);
+
+			$this->response->redirect($this->url->link('account/login', '', true));
+		}
+
+		$this->load->language('account/account');
+
+		$this->document->setTitle($this->language->get('heading_title'));
+
+		$data['breadcrumbs'] = array();
+
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('text_home'),
+			'href' => $this->url->link('common/home')
+		);
+
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('text_account'),
+			'href' => $this->url->link('account/account', '', true)
+		);
+
+		if (isset($this->session->data['success'])) {
+			$data['success'] = $this->session->data['success'];
+
+			unset($this->session->data['success']);
+		} else {
+			$data['success'] = '';
+		}
+
+		$language_items = [
 			'heading_title',
 			'text_unsupport',
 			'error_retrieve',
@@ -56,7 +124,7 @@ class ControllerAccountAccount extends Controller
 		} else {
 			$data['action'] = 'login';
 		}
-				
+
 		// Temporary to cek log
 		$data['log'] = '';
 
@@ -73,9 +141,7 @@ class ControllerAccountAccount extends Controller
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
 
-		// Change this template when login by phone is active
-		// $this->response->setOutput($this->load->view('account/account', $data));
-		$this->response->setOutput($this->load->view('account/account_wo_login', $data));
+		$this->response->setOutput($this->load->view('account/account_w_login', $data));
 	}
 
 	public function validateLog()
@@ -87,9 +153,9 @@ class ControllerAccountAccount extends Controller
 		if (!$this->customer->isLogged()) {
 			$json['redirect'] = $this->url->link('account/login', '', true);
 		}
-		
+
 		$customer_id = $this->customer->getId();
-		
+
 		$this->load->model('presence/presence');
 
 		$login_start = $this->config->get('payroll_setting_login_start');
@@ -102,7 +168,7 @@ class ControllerAccountAccount extends Controller
 		} else {
 			$action = 'login';
 		}
-		
+
 		switch ($json) {
 			case false:
 				if ($log_info) {
@@ -132,10 +198,10 @@ class ControllerAccountAccount extends Controller
 				}
 
 				$schedule_check = $this->config->get('payroll_setting_schedule_check'); # Cek validasi jadwal
-		
+
 				if ($schedule_check) {
 					$schedule_info = $this->model_presence_presence->getAppliedSchedule($customer_id, $schedule_date);
-	
+
 					if (!$schedule_info || !$schedule_info['schedule_type_id']) { //Cek ga ada jadwal
 						$json['error'] = $this->language->get('error_absence');
 
@@ -180,11 +246,11 @@ class ControllerAccountAccount extends Controller
 						}
 					}
 				}
-		
+
 				$this->model_presence_presence->addScheduleTime($customer_id, $schedule_date, $action, $time_in, $time_out);
 
 				$json['process_verification'] = true;
-				
+
 				break;
 
 			default:
@@ -216,25 +282,25 @@ class ControllerAccountAccount extends Controller
 
 			if (abs($latitude - $config_latitude) > $config_tolerance || abs($longitude - $config_longitude) > $config_tolerance) {
 				$json['error'] = $this->language->get('error_login');
-				
+
 				$status = 'Too Far!';
 			} else {
 				#login block
 				$customer_id = $this->customer->getId();
-		
+
 				$this->load->model('presence/presence');
-		
+
 				$login_start = $this->config->get('payroll_setting_login_start');
-		
+
 				$schedule_date = date('Y-m-d', strtotime('+' . $login_start . ' minutes'));
 				$log_info = $this->model_presence_presence->getLog($customer_id, $schedule_date);
-		
+
 				if ($log_info && $log_info['time_login'] != '0000-00-00 00:00:00') {
 					$action = 'logout';
 				} else {
 					$action = 'login';
 				}
-				
+
 				$this->model_presence_presence->addLog($customer_id, $schedule_date, $action);
 
 				$this->session->data['success'] = $this->language->get('text_success_' . $action);
@@ -249,7 +315,6 @@ class ControllerAccountAccount extends Controller
 
 			$this->log($json['location']);
 			$this->log($json['pos']);
-
 		} else {
 			$json['error'] = $this->language->get('error_retrieve');
 		}

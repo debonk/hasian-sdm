@@ -237,7 +237,7 @@ class ModelPresenceSchedule extends Model
 
 	public function getFinalSchedules($presence_period_id, $customer_id, $range_date = [])
 	{
-		$schedules_data = array();
+		$schedules_data = [];
 
 		if (empty($range_date)) {
 			$period_info = $this->model_common_payroll->getPeriod($presence_period_id);

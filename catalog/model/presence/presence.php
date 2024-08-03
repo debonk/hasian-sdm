@@ -344,6 +344,97 @@ class ModelPresencePresence extends Model
 		return $query->row;
 	}
 
+	public function getPresenceStatuses()
+	{
+		$presence_status_data = $this->cache->get('presence_status');
+
+		if (!$presence_status_data) {
+			$query = $this->db->query("SELECT presence_status_id, code, name FROM " . DB_PREFIX . "presence_status ORDER BY presence_status_id");
+
+			$presence_status_data = $query->rows;
+
+			$this->cache->set('presence_status', $presence_status_data);
+		}
+
+		return $presence_status_data;
+	}
+
+	public function getPresenceStatusIdList()
+	{
+		$presence_status_data = [];
+
+		$presence_statuses = $this->getPresenceStatuses();
+		foreach ($presence_statuses as $presence_status) {
+			$presence_status_data[$presence_status['presence_status_id']] = [
+				'code'	=> $presence_status['code'],
+				'name'	=> $presence_status['name']
+			];
+		}
+
+		return $presence_status_data;
+	}
+
+	public function getPresences($customer_id, $range_date)
+	{
+		$sql = "SELECT * FROM " . DB_PREFIX . "presence WHERE customer_id = '" . (int)$customer_id . "' AND date_presence >= '" . $this->db->escape($range_date['start']) . "' AND date_presence <= '" . $this->db->escape($range_date['end']) . "' ORDER BY date_presence ASC";
+
+		$query = $this->db->query($sql);
+
+		return $query->rows;
+	}
+
+	public function getFinalPresences($customer_id, $range_date)
+	{
+		$presences_info = $this->getPresences($customer_id, $range_date);
+
+		$presences_data = array();
+
+		$presence_status_data = $this->getPresenceStatusIdList();
+
+		foreach ($presences_info as $presence_info) {
+			$presences_data[$presence_info['date_presence']] = array(
+				'presence_status_id'	=> $presence_info['presence_status_id'],
+				'presence_status'		=> $presence_status_data[$presence_info['presence_status_id']]['name'],
+				'note'					=> '',
+				'locked'				=> 0
+			);
+		}
+
+		$this->load->model('account/schedule');
+		$exchanges_info = $this->model_account_schedule->getExchangesByCustomerDate($customer_id, $range_date);
+
+		foreach ($exchanges_info as $exchange_info) {
+			if ($exchange_info['date_from'] <> $exchange_info['date_to']) {
+				$presences_data[$exchange_info['date_from']] = array(
+					'presence_status_id' => 0,
+					'presence_status'	=> 'X',
+					'note'				=> $exchange_info['description'],
+					'locked'			=> 1
+				);
+			}
+		}
+
+		$absences_info = $this->model_account_schedule->getAbsencesByCustomerDate($customer_id, $range_date);
+
+		foreach ($absences_info as $absence_info) {
+			if ($absence_info['approved']) {
+				$presence_status_id = $absence_info['presence_status_id'];
+				$presence_status = $absence_info['presence_status'];
+			} else {
+				$presence_status = $presence_status_data[$this->config->get('payroll_setting_id_ia')]['name'];
+			}
+
+			$presences_data[$absence_info['date']] = array(
+				'presence_status_id' => $presence_status_id,
+				'presence_status'	=> $presence_status,
+				'note'				=> $absence_info['description'],
+				'locked'			=> 1
+			);
+		}
+
+		return $presences_data;
+	}
+
 	public function getPresenceSummary($presence_period_id, $customer_id)
 	{
 		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "presence_total WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'";

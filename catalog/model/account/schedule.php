@@ -51,56 +51,72 @@ class ModelAccountSchedule extends Model
 		return $query->rows;
 	}
 
-	public function getPresenceStatuses()
-	{
-		$presence_status_data = $this->cache->get('presence_status');
+	// public function getPresenceStatuses()
+	// {
+	// 	$presence_status_data = $this->cache->get('presence_status');
 
-		if (!$presence_status_data) {
-			$query = $this->db->query("SELECT presence_status_id, code, name FROM " . DB_PREFIX . "presence_status ORDER BY presence_status_id");
+	// 	if (!$presence_status_data) {
+	// 		$query = $this->db->query("SELECT presence_status_id, code, name FROM " . DB_PREFIX . "presence_status ORDER BY presence_status_id");
 
-			$presence_status_data = $query->rows;
+	// 		$presence_status_data = $query->rows;
 
-			$this->cache->set('presence_status', $presence_status_data);
-		}
+	// 		$this->cache->set('presence_status', $presence_status_data);
+	// 	}
 
-		return $presence_status_data;
-	}
+	// 	return $presence_status_data;
+	// }
+
+	// public function getPresenceStatusIdList()
+	// {
+	// 	$presence_status_data = [];
+
+	// 	$presence_statuses = $this->getPresenceStatuses();
+	// 	foreach ($presence_statuses as $presence_status) {
+	// 		$presence_status_data[$presence_status['presence_status_id']] = [
+	// 			'code'	=> $presence_status['code'],
+	// 			'name'	=> $presence_status['name']
+	// 		];
+	// 	}
+
+	// 	return $presence_status_data;
+	// }
 
 	public function calculatePresence($time_in, $time_login) {
 		if (empty($time_login) || $time_login == '0000-00-00 00:00:00') {
-			// $presence_status_id = $this->config->get('payroll_setting_id_a');
-			$presence_code = 'a';
+			$presence_status_id = $this->config->get('payroll_setting_id_a');
+			// $presence_code = 'a';
 			
 		} else {
 			$time_in_obj = strtotime($this->db->escape($time_in));
 			$time_login_obj = strtotime($this->db->escape($time_login));
 			
-			$late = floor(($time_login_obj - $time_in_obj)/60);
+			$late = floor(($time_login_obj - $time_in_obj) / 60) - max(0, $this->config->get('payroll_setting_late_tolerance'));
+			// $late = floor(($time_login_obj - $time_in_obj)/60);
 		
 			switch (true) {
 				case ($late > 30): 
-					// $presence_status_id = $this->config->get('payroll_setting_id_t3');
-					$presence_code = 't3';
+					$presence_status_id = $this->config->get('payroll_setting_id_t3');
+					// $presence_code = 't3';
 					break;
 					
 				case ($late > 15): 
-					// $presence_status_id = $this->config->get('payroll_setting_id_t2');
-					$presence_code = 't2';
+					$presence_status_id = $this->config->get('payroll_setting_id_t2');
+					// $presence_code = 't2';
 					break;
 					
 				case ($late > 0): 
-					// $presence_status_id = $this->config->get('payroll_setting_id_t1');
-					$presence_code = 't1';
+					$presence_status_id = $this->config->get('payroll_setting_id_t1');
+					// $presence_code = 't1';
 					break;
 					
 				default:
-					// $presence_status_id = $this->config->get('payroll_setting_id_h');
-					$presence_code = 'h';
+					$presence_status_id = $this->config->get('payroll_setting_id_h');
+					// $presence_code = 'h';
 			}
 		}
 		
-		// return $presence_status_id;
-		return $presence_code;
+		return $presence_status_id;
+		// return $presence_code;
 	}
 
 	public function getAbsencesByCustomerDate($customer_id, $date = array()) {
@@ -111,17 +127,30 @@ class ModelAccountSchedule extends Model
 		return $query->rows;
 	}
 
-	public function getFinalSchedules($customer_id, $range_date)
+	
+	public function getFinalSchedules($presence_period_id, $customer_id, $range_date)
 	{
-		$customer_info = $this->model_account_customer->getCustomer($customer_id);
-
 		$schedules_data = [];
 
-		$range_date['start'] = max($range_date['start'], $customer_info['date_start']);
+		$this->load->model('presence/presence');
 
-		if ($customer_info['date_end']) {
-			$range_date['end'] = min($range_date['end'], $customer_info['date_end']);
+		if (empty($range_date)) {
+			$period_info = $this->model_presence_presence->getPeriod($presence_period_id);
+
+			$range_date = array(
+				'start'	=> $period_info['date_start'],
+				'end'	=> $period_info['date_end']
+			);
 		}
+
+		// $customer_info = $this->model_account_customer->getCustomer($customer_id);
+
+
+		// $range_date['start'] = max($range_date['start'], $customer_info['date_start']);
+
+		// if ($customer_info['date_end']) {
+		// 	$range_date['end'] = min($range_date['end'], $customer_info['date_end']);
+		// }
 
 		if ($range_date['start'] > $range_date['end']) {
 			return $schedules_data;
@@ -251,7 +280,7 @@ class ModelAccountSchedule extends Model
 				);
 			}
 
-			# Blok jika absensi tanpa menggunakan jadwal. Develop Later..
+			# Bagian ini jika absensi tanpa validasi jadwal. Develop Later..
 			if (!isset($schedules_data[$log_info['date']])) {
 				$schedules_data[$log_info['date']] = [
 					'applied'			=> '-',
@@ -268,56 +297,73 @@ class ModelAccountSchedule extends Model
 			$schedules_data[$log_info['date']] = array_merge($schedules_data[$log_info['date']], $logs_data);
 		}
 
-		$presence_statuses_data = [];
+		$presence_status_data = [];
 
-		$presence_statuses = $this->getPresenceStatuses();
+		$this->load->model('presence/presence');
+		$presence_status_data = $this->model_presence_presence->getPresenceStatusIdList();
 
-		foreach ($presence_statuses as $presence_status) {
-			$presence_statuses_data[$presence_status['code']] = array(
-				'presence_status_id'	=> $presence_status['presence_status_id'],
-				'name'					=> $presence_status['name']
-			);
+		$period_submitted_check = !$this->model_account_payroll->checkPeriodStatus($presence_period_id, 'pending, processing');
+		if ($period_submitted_check) {
+			$presences_data = $this->model_presence_presence->getFinalPresences($customer_id, $range_date);
 		}
+
+		$customer_info = $this->model_account_customer->getCustomer($customer_id);
 
 		foreach ($schedules_data as $date => $schedule_data) {
 			if ($schedule_data['time_in'] != '0000-00-00 00:00:00' && strtotime($date) <= strtotime('today')) {
 				if (isset($schedule_data['time_login'])) {
 					$time_login = $schedule_data['time_login'];
 					$time_logout = $schedule_data['time_logout'];
-					$presence_code = $this->calculatePresence($schedule_data['time_in'], $time_login);
+					// $presence_code = $this->calculatePresence($schedule_data['time_in'], $time_login);
+					$presence_status_id = isset($presences_data[$date]) ? $presences_data[$date]['presence_status_id'] : $this->calculatePresence($schedule_data['time_in'], $time_login);
 				} else {
 					$time_login = '0000-00-00 00:00:00';
 					$time_logout = '0000-00-00 00:00:00';
-					$presence_code = 'a';
+					// $presence_code = 'a';
+					if (isset($presences_data[$date])) {
+						$presence_status_id = $presences_data[$date]['presence_status_id'];
+					} else {
+						$presence_status_id = strtotime($schedule_data['time_in']) <= strtotime('now') ? $this->config->get('payroll_setting_id_a') : null;
+					}
 				}
 			} else {
 				if (isset($schedule_data['time_login'])) {
 					$time_login = $schedule_data['time_login'];
 					$time_logout = $schedule_data['time_logout'];
-					$presence_code = 'h';
+					$presence_status_id = isset($presences_data[$date]) ? $presences_data[$date]['presence_status_id'] : $this->config->get('payroll_setting_id_h');
+					// $presence_code = 'h';
 				} else {
 					$time_login = '0000-00-00 00:00:00';
 					$time_logout = '0000-00-00 00:00:00';
-					$presence_code = 'off';
+					$presence_status_id = isset($presences_data[$date]) ? $presences_data[$date]['presence_status_id'] : $this->config->get('payroll_setting_id_off');
+					// $presence_code = 'off';
 				}
 			}
 
+			if (($customer_info['date_start'] > $date) || ($customer_info['date_end'] && ($customer_info['date_end'] < $date))) {
+				$presence_status_id = $this->config->get('payroll_setting_id_ns');
+			} elseif (strtotime($date) > strtotime('today')) {
+				$presence_status_id = 0;
+			}
+
 			$schedules_data[$date] = array(
-				'applied'			=> $schedule_data['applied'],
-				'schedule_type_id'	=> $schedule_data['schedule_type_id'],
-				'schedule_type'		=> $schedule_data['schedule_type'],
-				'time_in'			=> $schedule_data['time_in'],
-				'time_out'			=> $schedule_data['time_out'],
-				'time_login'		=> $time_login,
-				'time_logout'		=> $time_logout,
-				'presence_code'		=> $presence_code,
-				'presence_status_id' => isset($presence_statuses_data[$presence_code]) ? $presence_statuses_data[$presence_code]['presence_status_id'] : '-',
-				'presence_status'	=> isset($presence_statuses_data[$presence_code]) ? $presence_statuses_data[$presence_code]['name'] : '-',
-				'note'				=> $schedule_data['note'],
-				'schedule_bg'		=> $schedule_data['schedule_bg'],
-				'bg_class'			=> $schedule_data['bg_class']
+				'applied'				=> $schedule_data['applied'],
+				'schedule_type_id'		=> $schedule_data['schedule_type_id'],
+				'schedule_type'			=> $schedule_data['schedule_type'],
+				'time_in'				=> $schedule_data['time_in'],
+				'time_out'				=> $schedule_data['time_out'],
+				'time_login'			=> $time_login,
+				'time_logout'			=> $time_logout,
+				'presence_status_id'	=> $presence_status_id,
+				'presence_status'		=> isset($presence_status_data[$presence_status_id]) ? $presence_status_data[$presence_status_id]['name'] : '-',
+				'presence_code'			=> isset($presence_status_data[$presence_status_id]) ? $presence_status_data[$presence_status_id]['code'] : '',
+				'note'					=> $schedule_data['note'],
+				'schedule_bg'			=> $schedule_data['schedule_bg'],
+				'bg_class'				=> $schedule_data['bg_class']
 			);
 		}
+
+		// var_dump($schedules_data);
 
 		//Apply Absences
 		$absences_info = $this->getAbsencesByCustomerDate($customer_id, $range_date);
@@ -325,17 +371,22 @@ class ModelAccountSchedule extends Model
 		foreach ($absences_info as $absence_info) {
 			if ($absence_info['approved']) {
 				$absences_data = array(
-					'applied'			=> 'absence',
-					'presence_code'		=> $absence_info['presence_code'],
-					'presence_status_id' => $absence_info['presence_status_id'],
-					'presence_status'	=> $absence_info['presence_status'],
-					'note'				=> $absence_info['description'],
-					'bg_class'			=> 'primary'
+					'applied'				=> 'absence',
+					'presence_code'			=> $absence_info['presence_code'],
+					'presence_status_id'	=> $absence_info['presence_status_id'],
+					'presence_status'		=> $absence_info['presence_status'],
+					'note'					=> $absence_info['description'],
+					'bg_class'				=> 'primary'
 				);
 			} else {
+				$presence_status_id = $this->config->get('payroll_setting_id_ia');
+
 				$absences_data = array(
-					'note'				=> $absence_info['description'],
-					'bg_class'			=> 'danger'
+					'presence_status_id'	=> $presence_status_id,
+					'presence_status'		=> isset($presence_status_data[$presence_status_id]) ? $presence_status_data[$presence_status_id]['name'] : '-',
+					'presence_code'			=> isset($presence_status_data[$presence_status_id]) ? $presence_status_data[$presence_status_id]['code'] : '',
+					'note'					=> $absence_info['description'],
+					'bg_class'				=> 'danger'
 				);
 			}
 
