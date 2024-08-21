@@ -112,7 +112,7 @@ class ModelLocalisationPayrollMethod extends Model {
 			$payroll_method_data = $this->cache->get('payroll_method.' . (int)$this->config->get('config_language_id'));
 
 			if (!$payroll_method_data) {
-				$query = $this->db->query("SELECT payroll_method_id, name FROM " . DB_PREFIX . "payroll_method WHERE language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY name");
+				$query = $this->db->query("SELECT payroll_method_id, code, name FROM " . DB_PREFIX . "payroll_method WHERE language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY name");
 
 				$payroll_method_data = $query->rows;
 

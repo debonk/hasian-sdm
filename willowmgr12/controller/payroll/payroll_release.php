@@ -296,6 +296,7 @@ class ControllerPayrollPayrollRelease extends Controller
 			'button_back',
 			'button_filter',
 			'button_payroll_complete',
+			'button_export',
 			'button_export_cimb',
 			'button_action'
 		];
@@ -528,6 +529,24 @@ class ControllerPayrollPayrollRelease extends Controller
 				'href'	=> $this->url->link('payroll/payroll_release/action', 'token=' . $this->session->data['token'] . '&action=' . $action . $url, true),
 				'text'	=> $this->language->get('button_' . $action)
 			];
+		}
+
+		$data['exports'] = [];
+
+		$data['exports'][] = [
+			// 'href'	=> $this->url->link('payroll/payroll_release/export', 'token=' . $this->session->data['token'] . '&code=draft' . $url, true),
+			'href'	=> $this->url->link('payroll/payroll_release/export', 'token=' . $this->session->data['token'] . '&payroll_method_id=0' . $url, true),
+			'text'	=> $this->language->get('button_draft')
+		];
+
+		foreach ($data['payroll_methods'] as $payroll_method) {
+			// if ($payroll_method['code'] != 'none') {
+			$data['exports'][] = [
+				// 'href'	=> $this->url->link('payroll/payroll_release/export', 'token=' . $this->session->data['token'] . '&code=' . $payroll_method['code'] . $url, true),
+				'href'	=> $this->url->link('payroll/payroll_release/export', 'token=' . $this->session->data['token'] . '&payroll_method_id=' . $payroll_method['payroll_method_id'] . $url, true),
+				'text'	=> $payroll_method['name']
+			];
+			// }
 		}
 
 		$data['url'] = $url;
@@ -855,254 +874,6 @@ class ControllerPayrollPayrollRelease extends Controller
 		$this->response->setOutput(json_encode($json));
 	}
 
-	public function exportCimb()
-	{
-		$this->load->language('payroll/payroll_release');
-
-		$this->load->model('common/payroll');
-		$this->load->model('payroll/payroll_release');
-		$this->load->model('payroll/payroll');
-
-		if (isset($this->request->get['presence_period_id'])) {
-			$presence_period_id = $this->request->get['presence_period_id'];
-		} else {
-			$presence_period_id = 0;
-		}
-
-		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
-
-		if (!empty($period_info) && $this->validateAction()) {
-			foreach ($this->filter_items as $filter_item) {
-				if (isset($this->request->get['filter_' . $filter_item])) {
-					$filter[$filter_item] = $this->request->get['filter_' . $filter_item];
-				} else {
-					$filter[$filter_item] = null;
-				}
-			}
-
-			$period = date('M_Y', strtotime($period_info['period']));
-
-			$currency_code = $this->config->get('config_currency');
-			$date_release = date('Ymd', strtotime($period_info['date_release']));
-
-			$output = '';
-			$sub_output = '';
-			$sum_grandtotal = 0;
-			$customer_total = 0;
-
-			$filter_selection = [];
-			$grand_results = [];
-
-			if (isset($this->request->post['selected'])) {
-				foreach ($this->request->post['selected'] as $selected) {
-					$code = explode('-', $selected);
-
-					$filter_selection[$code[0]][] = $code[1];
-				}
-			} else {
-				$filter_selection[$presence_period_id] = [];
-
-				$filter['status_released'] = 'unreleased';
-			}
-
-			foreach ($filter_selection as $presence_period_id => $filter_customers) {
-				$filter_customers = implode(',', $filter_customers);
-
-				$filter_data = array(
-					'filter'  	=> $filter,
-				);
-
-				$filter_data['filter']['customer_ids'] = $filter_customers;
-
-				$results = $this->model_payroll_payroll_release->getReleases($presence_period_id, $filter_data);
-
-				$grand_results = array_merge($grand_results, $results);
-			}
-
-			foreach ($grand_results as $result) {
-				if ((!is_null($result['status_released']) && $result['status_released'] != 'pending') || $result['date_released']) {
-					continue;
-				}
-
-				$this->model_payroll_payroll_release->editPayrollReleaseStatus($result['presence_period_id'], $result['customer_id'], 'released', $date_release);
-
-				if ($result['payroll_method'] != 'CIMB') {
-					continue;
-				}
-
-				$grandtotal = $result['net_salary'] + $result['component'];
-
-				if (!$grandtotal) {
-					continue;
-				}
-
-				$customer_period = date('M_Y', strtotime($result['period']));
-
-				$sum_grandtotal += $grandtotal;
-				$customer_total++;
-
-				$value = '';
-				$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $grandtotal . ',Payroll_' . $customer_period . ',' . $result['email'] . ',,';
-
-				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
-				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
-				$value = str_replace('\\', '\\\\',	$value);
-				$value = str_replace('\'', '\\\'',	$value);
-				$value = str_replace('\\\n', '\n',	$value);
-				$value = str_replace('\\\r', '\r',	$value);
-				$value = str_replace('\\\t', '\t',	$value);
-
-				$sub_output .= "\n" . $value;
-			}
-
-			$this->load->model('release/fund_account');
-			$fund_account_info = $this->model_release_fund_account->getFundAccount($period_info['fund_account_id']);
-
-			$output .= $fund_account_info['acc_no'] . ',' . $fund_account_info['acc_name'] . ',' . $currency_code . ',' . $sum_grandtotal . ',Payroll_' . $period . ',' . $customer_total . ',' . $date_release . ',' . $fund_account_info['email'];
-
-			$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
-			$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
-			$output = str_replace('\\', '\\\\',	$output);
-			$output = str_replace('\'', '\\\'',	$output);
-			$output = str_replace('\\\n', '\n',	$output);
-			$output = str_replace('\\\r', '\r',	$output);
-			$output = str_replace('\\\t', '\t',	$output);
-
-			$output .= $sub_output;
-
-			$filename = date('Ym', strtotime($period_info['period'])) . '_Payroll_' . $period;
-
-			$this->response->addheader('Pragma: public');
-			$this->response->addheader('Expires: 0');
-			$this->response->addheader('Content-Description: File Transfer');
-			$this->response->addheader('Content-Type: application/octet-stream');
-			$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
-			$this->response->addheader('Content-Transfer-Encoding: binary');
-			$this->response->setOutput($output);
-			// echo $output;
-
-		} else {
-
-			$this->info();
-		}
-	}
-
-	public function exportDraft()
-	{
-		$this->load->language('payroll/payroll_release');
-
-		$this->load->model('common/payroll');
-		$this->load->model('payroll/payroll_release');
-		$this->load->model('payroll/payroll');
-
-		if (isset($this->request->get['presence_period_id'])) {
-			$presence_period_id = $this->request->get['presence_period_id'];
-		} else {
-			$presence_period_id = 0;
-		}
-
-		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
-
-		if (!empty($period_info)) {
-			foreach ($this->filter_items as $filter_item) {
-				if (isset($this->request->get['filter_' . $filter_item])) {
-					$filter[$filter_item] = $this->request->get['filter_' . $filter_item];
-				} else {
-					$filter[$filter_item] = null;
-				}
-			}
-
-			$period = date('M_Y', strtotime($period_info['period']));
-
-			$output = '';
-			$sub_output = '';
-
-			$filter_selection = [];
-			$grand_results = [];
-
-			if (isset($this->request->post['selected'])) {
-				foreach ($this->request->post['selected'] as $selected) {
-					$code = explode('-', $selected);
-
-					$filter_selection[$code[0]][] = $code[1];
-				}
-			} else {
-				$filter_selection[$presence_period_id] = [];
-
-				$filter['status_released'] = 'unreleased';
-			}
-
-			foreach ($filter_selection as $presence_period_id => $filter_customers) {
-				$filter_customers = implode(',', $filter_customers);
-
-				$filter_data = array(
-					'filter'  	=> $filter,
-				);
-
-				$filter_data['filter']['customer_ids'] = $filter_customers;
-
-				$results = $this->model_payroll_payroll_release->getReleases($presence_period_id, $filter_data);
-
-				$grand_results = array_merge($grand_results, $results);
-			}
-
-			foreach ($grand_results as $result) {
-				if ((!is_null($result['status_released']) && $result['status_released'] != 'pending') || $result['date_released']) {
-					continue;
-				}
-
-				if ($result['payroll_method'] != 'CIMB') {
-					continue;
-				}
-
-				$grandtotal = $result['net_salary'] + $result['component'];
-
-				if (!$grandtotal) {
-					continue;
-				}
-
-				$value = '';
-				$value .= $result['lastname'] . ',' . $result['customer_group'] . ',' . $result['customer_department'] . ',' . $result['location'] . ',' . $result['payroll_method'] . ',' . ($result['acc_no'] ? $this->language->get('text_yes') : $this->language->get('text_no')) . ',' . $grandtotal;
-
-				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
-				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
-				$value = str_replace('\\', '\\\\',	$value);
-				$value = str_replace('\'', '\\\'',	$value);
-				$value = str_replace('\\\n', '\n',	$value);
-				$value = str_replace('\\\r', '\r',	$value);
-				$value = str_replace('\\\t', '\t',	$value);
-
-				$sub_output .= "\n" . $value;
-			}
-
-			$output .= $this->language->get('column_name') . ',' . $this->language->get('column_customer_group') . ',' . $this->language->get('column_customer_department') . ',' . $this->language->get('column_location') . ',' . $this->language->get('column_payroll_method') . ',' . $this->language->get('column_acc_no') . ',' . $this->language->get('column_net_salary');
-
-			$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
-			$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
-			$output = str_replace('\\', '\\\\',	$output);
-			$output = str_replace('\'', '\\\'',	$output);
-			$output = str_replace('\\\n', '\n',	$output);
-			$output = str_replace('\\\r', '\r',	$output);
-			$output = str_replace('\\\t', '\t',	$output);
-
-			$output .= $sub_output;
-
-			$filename = 'DRAFT_Payroll_' . $period;
-
-			$this->response->addheader('Pragma: public');
-			$this->response->addheader('Expires: 0');
-			$this->response->addheader('Content-Description: File Transfer');
-			$this->response->addheader('Content-Type: application/octet-stream');
-			$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
-			$this->response->addheader('Content-Transfer-Encoding: binary');
-			$this->response->setOutput($output);
-			// echo $output;
-		} else {
-
-			$this->info();
-		}
-	}
-
 	public function action()
 	{
 		$this->load->language('payroll/payroll_release');
@@ -1171,6 +942,533 @@ class ControllerPayrollPayrollRelease extends Controller
 			}
 		} else {
 			$this->getList();
+		}
+	}
+
+	public function export()
+	{
+		$this->load->language('payroll/payroll_release');
+
+		$this->document->setTitle($this->language->get('heading_title'));
+
+		$this->load->model('common/payroll');
+		$this->load->model('payroll/payroll_release');
+
+		// if (isset($this->request->get['presence_period_id']) && isset($this->request->get['code']) && $this->validateAction()) {
+		if (isset($this->request->get['presence_period_id']) && isset($this->request->get['payroll_method_id']) && $this->validateAction()) {
+			if (isset($this->request->get['payroll_method_id']) && $this->request->get['payroll_method_id'] == 0) {
+				$code = 'draft';
+			} else {
+				$this->load->model('localisation/payroll_method');
+
+				$payroll_method_info = $this->model_localisation_payroll_method->getPayrollMethod($this->request->get['payroll_method_id']);
+
+				$code = isset($payroll_method_info['code']) ? $payroll_method_info['code'] : '';
+			}
+
+			$this->db->transaction(function () use ($code) {
+				switch ($code) {
+					case 'draft':
+						$this->exportDraft();
+
+						break;
+
+					case 'cimb':
+						$this->exportCimb();
+
+						break;
+
+					case 'mandiri':
+						$this->exportMandiri();
+
+						break;
+
+					default:
+						$this->exportOther();
+
+						break;
+				}
+			});
+		} else {
+			$this->getList();
+		}
+	}
+
+	public function exportDraft()
+	{
+		$presence_period_id = isset($this->request->get['presence_period_id']) ? $this->request->get['presence_period_id'] : 0;
+
+		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
+
+		if (!empty($period_info)) {
+			foreach ($this->filter_items as $filter_item) {
+				if (isset($this->request->get['filter_' . $filter_item])) {
+					$filter[$filter_item] = $this->request->get['filter_' . $filter_item];
+				} else {
+					$filter[$filter_item] = null;
+				}
+			}
+
+			$period = date('M_Y', strtotime($period_info['period']));
+
+			$output = '';
+			$sub_output = '';
+
+			$filter_selection = [];
+			$grand_results = [];
+
+			if (isset($this->request->post['selected'])) {
+				foreach ($this->request->post['selected'] as $selected) {
+					$code = explode('-', $selected);
+
+					$filter_selection[$code[0]][] = $code[1];
+				}
+			} else {
+				$filter_selection[$presence_period_id] = [];
+
+				$filter['status_released'] = 'unreleased';
+			}
+
+			foreach ($filter_selection as $presence_period_id => $filter_customers) {
+				$filter_customers = implode(',', $filter_customers);
+
+				$filter_data = array(
+					'filter'  	=> $filter,
+				);
+
+				$filter_data['filter']['customer_ids'] = $filter_customers;
+
+				$results = $this->model_payroll_payroll_release->getReleases($presence_period_id, $filter_data);
+
+				$grand_results = array_merge($grand_results, $results);
+			}
+
+			foreach ($grand_results as $result) {
+				if ((!is_null($result['status_released']) && $result['status_released'] != 'pending') || $result['date_released']) {
+					continue;
+				}
+
+				$grandtotal = $result['net_salary'] + $result['component'];
+
+				$value = '';
+				$value .= $result['lastname'] . ',' . $result['customer_group'] . ',' . $result['customer_department'] . ',' . $result['location'] . ',' . $result['payroll_method'] . ',' . $result['acc_no'] . ',' . $grandtotal;
+
+				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
+				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
+				$value = str_replace('\\', '\\\\',	$value);
+				$value = str_replace('\'', '\\\'',	$value);
+				$value = str_replace('\\\n', '\n',	$value);
+				$value = str_replace('\\\r', '\r',	$value);
+				$value = str_replace('\\\t', '\t',	$value);
+
+				$sub_output .= "\n" . $value;
+			}
+
+			$output .= $this->language->get('column_name') . ',' . $this->language->get('column_customer_group') . ',' . $this->language->get('column_customer_department') . ',' . $this->language->get('column_location') . ',' . $this->language->get('column_payroll_method') . ',' . $this->language->get('column_acc_no') . ',' . $this->language->get('column_net_salary');
+
+			$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
+			$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
+			$output = str_replace('\\', '\\\\',	$output);
+			$output = str_replace('\'', '\\\'',	$output);
+			$output = str_replace('\\\n', '\n',	$output);
+			$output = str_replace('\\\r', '\r',	$output);
+			$output = str_replace('\\\t', '\t',	$output);
+
+			$output .= $sub_output;
+
+			$filename = date('Ym', strtotime($period_info['period'])) . '_Payroll_' . $period . '_DRAFT';
+
+			$this->response->addheader('Pragma: public');
+			$this->response->addheader('Expires: 0');
+			$this->response->addheader('Content-Description: File Transfer');
+			$this->response->addheader('Content-Type: application/octet-stream');
+			$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
+			$this->response->addheader('Content-Transfer-Encoding: binary');
+			$this->response->setOutput($output);
+			// echo '<pre>' . print_r($output, 1); 
+		} else {
+
+			$this->info();
+		}
+	}
+
+	protected function exportCimb()
+	{
+		$presence_period_id = isset($this->request->get['presence_period_id']) ? $this->request->get['presence_period_id'] : 0;
+
+		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
+
+		if (!empty($period_info)) {
+			foreach ($this->filter_items as $filter_item) {
+				if (isset($this->request->get['filter_' . $filter_item])) {
+					$filter[$filter_item] = $this->request->get['filter_' . $filter_item];
+				} else {
+					$filter[$filter_item] = null;
+				}
+			}
+
+			$period = date('M_Y', strtotime($period_info['period']));
+
+			$currency_code = $this->config->get('config_currency');
+			$date_release = date('Ymd', strtotime($period_info['date_release']));
+
+			$output = '';
+			$sub_output = '';
+			$sum_grandtotal = 0;
+			$customer_total = 0;
+
+			$filter_selection = [];
+			$grand_results = [];
+
+			if (isset($this->request->post['selected'])) {
+				foreach ($this->request->post['selected'] as $selected) {
+					$code = explode('-', $selected);
+
+					$filter_selection[$code[0]][] = $code[1];
+				}
+			} else {
+				$filter_selection[$presence_period_id] = [];
+
+				$filter['status_released'] = 'unreleased';
+			}
+
+			foreach ($filter_selection as $presence_period_id => $filter_customers) {
+				$filter_customers = implode(',', $filter_customers);
+
+				$filter_data = array(
+					'filter'  	=> $filter,
+				);
+
+				$filter_data['filter']['customer_ids'] = $filter_customers;
+
+				$results = $this->model_payroll_payroll_release->getReleases($presence_period_id, $filter_data);
+
+				$grand_results = array_merge($grand_results, $results);
+			}
+
+			foreach ($grand_results as $result) {
+				if ((!is_null($result['status_released']) && $result['status_released'] != 'pending') || $result['date_released']) {
+					continue;
+				}
+
+				if ($result['payroll_method_id'] != $this->request->get['payroll_method_id']) {
+					continue;
+				}
+
+				$release_data = [
+					'date_released'				=> $date_release,
+					'release_payroll_method_id'	=> $result['payroll_method_id'],
+					'release_acc_no'			=> $result['acc_no']
+				];
+				$this->model_payroll_payroll_release->editPayrollReleaseStatus($result['presence_period_id'], $result['customer_id'], 'released', $release_data);
+
+				$grandtotal = $result['net_salary'] + $result['component'];
+
+				if (!$grandtotal) {
+					continue;
+				}
+
+				$customer_period = date('M_Y', strtotime($result['period']));
+
+				$sum_grandtotal += $grandtotal;
+				$customer_total++;
+
+				$value = '';
+				$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $grandtotal . ',Payroll_' . $customer_period . ',' . $result['email'] . ',,';
+
+				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
+				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
+				$value = str_replace('\\', '\\\\',	$value);
+				$value = str_replace('\'', '\\\'',	$value);
+				$value = str_replace('\\\n', '\n',	$value);
+				$value = str_replace('\\\r', '\r',	$value);
+				$value = str_replace('\\\t', '\t',	$value);
+
+				$sub_output .= "\n" . $value;
+			}
+
+			$this->load->model('release/fund_account');
+			$fund_account_info = $this->model_release_fund_account->getFundAccount($period_info['fund_account_id']);
+
+			$output .= $fund_account_info['acc_no'] . ',' . $fund_account_info['acc_name'] . ',' . $currency_code . ',' . $sum_grandtotal . ',Payroll_' . $period . ',' . $customer_total . ',' . $date_release . ',' . $fund_account_info['email'];
+
+			$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
+			$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
+			$output = str_replace('\\', '\\\\',	$output);
+			$output = str_replace('\'', '\\\'',	$output);
+			$output = str_replace('\\\n', '\n',	$output);
+			$output = str_replace('\\\r', '\r',	$output);
+			$output = str_replace('\\\t', '\t',	$output);
+
+			$output .= $sub_output;
+
+			$payroll_method_info = $this->model_localisation_payroll_method->getPayrollMethod($this->request->get['payroll_method_id']);
+			$filename = date('Ym', strtotime($period_info['period'])) . '_Payroll_' . $period . '_' . $payroll_method_info['name'];
+
+			$this->response->addheader('Pragma: public');
+			$this->response->addheader('Expires: 0');
+			$this->response->addheader('Content-Description: File Transfer');
+			$this->response->addheader('Content-Type: application/octet-stream');
+			$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
+			$this->response->addheader('Content-Transfer-Encoding: binary');
+			$this->response->setOutput($output);
+			// echo '<pre>' . print_r($output, 1); 
+		} else {
+
+			$this->info();
+		}
+	}
+
+	public function exportMandiri()
+	{
+		$presence_period_id = isset($this->request->get['presence_period_id']) ? $this->request->get['presence_period_id'] : 0;
+
+		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
+
+		if (!empty($period_info)) {
+			foreach ($this->filter_items as $filter_item) {
+				if (isset($this->request->get['filter_' . $filter_item])) {
+					$filter[$filter_item] = $this->request->get['filter_' . $filter_item];
+				} else {
+					$filter[$filter_item] = null;
+				}
+			}
+
+			$period = date('M_Y', strtotime($period_info['period']));
+
+			$currency_code = $this->config->get('config_currency');
+			$date_release = date('Ymd', strtotime($period_info['date_release']));
+
+			$output = '';
+			$sub_output = '';
+			$sum_grandtotal = 0;
+			$customer_total = 0;
+
+			$filter_selection = [];
+			$grand_results = [];
+
+			if (isset($this->request->post['selected'])) {
+				foreach ($this->request->post['selected'] as $selected) {
+					$code = explode('-', $selected);
+
+					$filter_selection[$code[0]][] = $code[1];
+				}
+			} else {
+				$filter_selection[$presence_period_id] = [];
+
+				$filter['status_released'] = 'unreleased';
+			}
+
+			foreach ($filter_selection as $presence_period_id => $filter_customers) {
+				$filter_customers = implode(',', $filter_customers);
+
+				$filter_data = array(
+					'filter'  	=> $filter,
+				);
+
+				$filter_data['filter']['customer_ids'] = $filter_customers;
+
+				$results = $this->model_payroll_payroll_release->getReleases($presence_period_id, $filter_data);
+
+				$grand_results = array_merge($grand_results, $results);
+			}
+
+			foreach ($grand_results as $result) {
+				if ((!is_null($result['status_released']) && $result['status_released'] != 'pending') || $result['date_released']) {
+					continue;
+				}
+
+				if ($result['payroll_method_id'] != $this->request->get['payroll_method_id']) {
+					continue;
+				}
+
+				$release_data = [
+					'date_released'				=> $date_release,
+					'release_payroll_method_id'	=> $result['payroll_method_id'],
+					'release_acc_no'			=> $result['acc_no']
+				];
+				$this->model_payroll_payroll_release->editPayrollReleaseStatus($result['presence_period_id'], $result['customer_id'], 'released', $release_data);
+
+				$grandtotal = $result['net_salary'] + $result['component'];
+
+				if (!$grandtotal) {
+					continue;
+				}
+
+				$customer_period = date('M_Y', strtotime($result['period']));
+
+				$sum_grandtotal += $grandtotal;
+				$customer_total++;
+
+				$value = '';
+				$value .= '(\')' . $result['acc_no'] . '|' . $result['lastname'] . '||||' . $currency_code . '|' . $grandtotal . '|' . 'Payroll_' . $customer_period . '||IBU|||||||Y|' . $result['email'] . '|||||||||||||||||||||OUR|1|E|||(\')';
+
+				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
+				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
+				$value = str_replace('\\', '\\\\',	$value);
+				$value = str_replace('\'', '\\\'',	$value);
+				$value = str_replace('\\\n', '\n',	$value);
+				$value = str_replace('\\\r', '\r',	$value);
+				$value = str_replace('\\\t', '\t',	$value);
+				$value = str_replace('|', "\t",	$value);
+				$value = str_replace("(\')", "'", $value);
+
+				$sub_output .= "\n" . $value;
+			}
+
+			$this->load->model('release/fund_account');
+			$fund_account_info = $this->model_release_fund_account->getFundAccount($period_info['fund_account_id']);
+
+			$output .= 'P' . '|' . $date_release . '|' . '(\')' . $fund_account_info['acc_no'] . '|' . $customer_total . '|' . $sum_grandtotal;
+
+			$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
+			$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
+			$output = str_replace('\\', '\\\\',	$output);
+			$output = str_replace('\'', '\\\'',	$output);
+			$output = str_replace('\\\n', '\n',	$output);
+			$output = str_replace('\\\r', '\r',	$output);
+			$output = str_replace('\\\t', '\t',	$output);
+			$output = str_replace('|', "\t", $output);
+			$output = str_replace('|', "\t", $output);
+			$output = str_replace("(\')", "'", $output);
+
+			$output .= $sub_output;
+
+			$payroll_method_info = $this->model_localisation_payroll_method->getPayrollMethod($this->request->get['payroll_method_id']);
+			$filename = date('Ym', strtotime($period_info['period'])) . '_Payroll_' . $period . '_' . $payroll_method_info['name'];
+
+			$this->response->addheader('Pragma: public');
+			$this->response->addheader('Expires: 0');
+			$this->response->addheader('Content-Description: File Transfer');
+			$this->response->addheader('Content-Type: application/octet-stream');
+			$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.xls');
+			$this->response->addheader('Content-Transfer-Encoding: binary');
+			$this->response->setOutput($output);
+		} else {
+
+			$this->info();
+		}
+	}
+
+	public function exportOther()
+	{
+		$presence_period_id = isset($this->request->get['presence_period_id']) ? $this->request->get['presence_period_id'] : 0;
+
+		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
+
+		if (!empty($period_info)) {
+			foreach ($this->filter_items as $filter_item) {
+				if (isset($this->request->get['filter_' . $filter_item])) {
+					$filter[$filter_item] = $this->request->get['filter_' . $filter_item];
+				} else {
+					$filter[$filter_item] = null;
+				}
+			}
+
+			$period = date('M_Y', strtotime($period_info['period']));
+
+			$date_release = date('Ymd', strtotime($period_info['date_release']));
+
+			$output = '';
+			$sub_output = '';
+
+			$filter_selection = [];
+			$grand_results = [];
+
+			if (isset($this->request->post['selected'])) {
+				foreach ($this->request->post['selected'] as $selected) {
+					$code = explode('-', $selected);
+
+					$filter_selection[$code[0]][] = $code[1];
+				}
+			} else {
+				$filter_selection[$presence_period_id] = [];
+
+				$filter['status_released'] = 'unreleased';
+			}
+
+			foreach ($filter_selection as $presence_period_id => $filter_customers) {
+				$filter_customers = implode(',', $filter_customers);
+
+				$filter_data = array(
+					'filter'  	=> $filter,
+				);
+
+				$filter_data['filter']['customer_ids'] = $filter_customers;
+
+				$results = $this->model_payroll_payroll_release->getReleases($presence_period_id, $filter_data);
+
+				$grand_results = array_merge($grand_results, $results);
+			}
+
+			foreach ($grand_results as $result) {
+				if ((!is_null($result['status_released']) && $result['status_released'] != 'pending') || $result['date_released']) {
+					continue;
+				}
+
+				if ($result['payroll_method_id'] != $this->request->get['payroll_method_id']) {
+					continue;
+				}
+
+				$release_data = [
+					'date_released'				=> $date_release,
+					'release_payroll_method_id'	=> $result['payroll_method_id'],
+					'release_acc_no'			=> $result['acc_no']
+				];
+				$this->model_payroll_payroll_release->editPayrollReleaseStatus($result['presence_period_id'], $result['customer_id'], 'released', $release_data);
+
+				$grandtotal = $result['net_salary'] + $result['component'];
+
+				if (!$grandtotal) {
+					continue;
+				}
+
+				$grandtotal = $result['net_salary'] + $result['component'];
+
+				$value = '';
+				$value .= $result['lastname'] . ',' . $result['customer_group'] . ',' . $result['customer_department'] . ',' . $result['location'] . ',' . $result['payroll_method'] . ',' . $result['acc_no'] . ',' . $grandtotal;
+
+				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
+				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
+				$value = str_replace('\\', '\\\\',	$value);
+				$value = str_replace('\'', '\\\'',	$value);
+				$value = str_replace('\\\n', '\n',	$value);
+				$value = str_replace('\\\r', '\r',	$value);
+				$value = str_replace('\\\t', '\t',	$value);
+
+				$sub_output .= "\n" . $value;
+			}
+
+			$output .= $this->language->get('column_name') . ',' . $this->language->get('column_customer_group') . ',' . $this->language->get('column_customer_department') . ',' . $this->language->get('column_location') . ',' . $this->language->get('column_payroll_method') . ',' . $this->language->get('column_acc_no') . ',' . $this->language->get('column_net_salary');
+
+			$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
+			$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
+			$output = str_replace('\\', '\\\\',	$output);
+			$output = str_replace('\'', '\\\'',	$output);
+			$output = str_replace('\\\n', '\n',	$output);
+			$output = str_replace('\\\r', '\r',	$output);
+			$output = str_replace('\\\t', '\t',	$output);
+
+			$output .= $sub_output;
+
+			$payroll_method_info = $this->model_localisation_payroll_method->getPayrollMethod($this->request->get['payroll_method_id']);
+			if ($payroll_method_info['code'] != 'none') {
+				$output .= "\n\n" . $this->language->get('text_no_template');
+			}
+
+			$filename = date('Ym', strtotime($period_info['period'])) . '_Payroll_' . $period . '_' . $payroll_method_info['name'];
+
+			$this->response->addheader('Pragma: public');
+			$this->response->addheader('Expires: 0');
+			$this->response->addheader('Content-Description: File Transfer');
+			$this->response->addheader('Content-Type: application/octet-stream');
+			$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
+			$this->response->addheader('Content-Transfer-Encoding: binary');
+			$this->response->setOutput($output);
+			// echo '<pre>' . print_r($output, 1); 
+		} else {
+
+			$this->info();
 		}
 	}
 

@@ -14,6 +14,7 @@ $_['text_fund_email'] 	  	   	 = 'Email :';
 $_['text_information'] 	 		 = 'Sebagian data payroll telah lebih dari %s bulan. Silahkan set status menjadi Complete untuk mengurangi data aktif.';
 $_['text_list']                  = 'Daftar Gaji';
 $_['text_method'] 	 			 = '%s (%d orang) :';
+$_['text_no_template'] 	 		 = 'BANK TEMPLATE NOT FOUND! CONTACT YOUR WEB PROGRAMMER!';
 $_['text_payroll_period']        = 'Periode: %s, Status: %s';
 $_['text_period_list']           = 'Daftar Periode Pembagian Gaji';
 $_['text_release_info'] 	  	 = 'Info Pembagian Gaji';
@@ -64,9 +65,10 @@ $_['entry_statement_sent'] 	 	= 'Statement Sent';
 
 // Button
 $_['button_action']				= 'Action';
-$_['button_draft']				= 'Export Release Draft';
+$_['button_draft']				= 'Export Draft';
 $_['button_release']			= 'Release Payroll';
 $_['button_payroll_complete'] 	= 'Complete Payroll';
+$_['button_export'] 			= 'Export Release';
 $_['button_export_cimb'] 		= 'Export to CIMB';
 $_['button_send'] 				= 'Send Statement';
 $_['button_uncomplete'] 		= 'Completed & Archived. Click to Unarchive';

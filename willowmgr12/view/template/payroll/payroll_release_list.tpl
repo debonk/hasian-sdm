@@ -14,6 +14,23 @@
             class="fa fa-upload"></i>
           <?= $button_export_cimb; ?>
         </button>
+        <span class="dropdown">
+          <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown"><i
+              class="fa fa-tasks"></i>
+            <?= $button_export; ?>
+          </button>
+          <ul class="dropdown-menu pull-right" id="menu-payroll-method">
+            <?php foreach ($exports as $export) { ?>
+            <?php $href = $export['href'] ?>
+            <li><a href="#"
+                onclick="confirm('<?= $text_confirm; ?>') ? $('#form-payroll-release-list').attr('action', '<?= $href; ?>').submit() : false;">
+                <?= $export['text']; ?>
+              </a></li>
+            <?php } ?>
+          </ul>
+        </span>
+
+
         <?php } else { ?>
         <button type="button" class="btn btn-warning disabled"><i class="fa fa-check"></i>
           <?= $button_payroll_complete; ?>
@@ -455,7 +472,7 @@
     location = url;
   });
 
-  $('#menu-action a').on('click', function (e) {
+  $('#menu-action a, #menu-payroll-method a').on('click', function (e) {
     e.preventDefault();
   });
 

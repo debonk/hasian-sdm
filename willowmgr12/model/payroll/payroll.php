@@ -408,7 +408,7 @@ class ModelPayrollPayroll extends Model
 				} else {
 					$main_component_title = [
 						'addition'	=> ['Gaji Pokok', 'Tunjangan Jabatan', 'Tunjangan Kehadiran', 'Premi Prestasi Hadir', 'Total Uang Makan ({hke} x {um})'],
-						'deduction'	=> ['Potongan Sakit ({total_sakit} x {um})', 'Potongan Alpa ({total_bolos} x {um}) + PPH', 'Potongan Tunjangan Kehadiran', 'Potongan Gaji Pokok & Jabatan', 'Potongan Terlambat (≈' . $payroll_info['deduction_4'] / $payroll_basic_info['uang_makan'] . ' x {um})']
+						'deduction'	=> ['Potongan Sakit ({total_sakit} x {um})', 'Potongan Alpa ({total_bolos} x {um}) + PPH', 'Potongan Tunjangan Kehadiran', 'Potongan Gaji Pokok & Jabatan', 'Potongan Terlambat (≈' . ($payroll_basic_info['uang_makan'] ? $payroll_info['deduction_4'] / $payroll_basic_info['uang_makan'] : 0) . ' x {um})']
 					];
 				}
 

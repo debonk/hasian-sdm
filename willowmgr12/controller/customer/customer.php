@@ -275,6 +275,10 @@ class ControllerCustomerCustomer extends Controller
 			$filter['active'] = 1;
 		}
 
+		if ($filter['payroll_include'] == '*') {
+			$filter['payroll_include'] = null;
+		}
+
 		$sort = isset($this->request->get['sort']) ? $this->request->get['sort'] : 'name';
 		$order = isset($this->request->get['order']) ? $this->request->get['order'] : 'ASC';
 		$page = isset($this->request->get['page']) ? $this->request->get['page'] : 1;
@@ -299,7 +303,7 @@ class ControllerCustomerCustomer extends Controller
 		$data['customers'] = array();
 
 		$limit = $this->config->get('config_limit_admin');
-
+		
 		$filter_data = array(
 			'filter_name'              		=> $filter['name'],
 			'filter_customer_department_id' => $filter['customer_department_id'],

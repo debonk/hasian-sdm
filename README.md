@@ -8,6 +8,19 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
+4.0.2
+<!-- Release > Form: Set multiple fund source -->
+Payroll Method: Add Bank Mandiri
+Release: Release untuk multiple bank.
+Bug Fixed: Customer > List: Filter payroll include error.
+
+MODIFY TABLE
+ALTER TABLE oc_payroll_method ADD code varchar(16) NOT NULL AFTER payroll_method_id;
+ALTER TABLE oc_payroll ADD release_payroll_method_id int(11) NULL AFTER status_released;
+ALTER TABLE oc_payroll ADD release_acc_no TINYTEXT NULL AFTER release_payroll_method_id;
+
+UPDATE oc_payroll p, oc_customer c SET p.release_acc_no = c.acc_no, p.release_payroll_method_id = c.payroll_method_id WHERE p.customer_id = c.customer_id AND p.date_released IS NOT NULL
+
 4.0.1	03/08/2024
 APP > Account: New Notification
 Bug Fixed: APP > Schedule: Tanggal belum berlalu, kehadiran menunjukkan off.

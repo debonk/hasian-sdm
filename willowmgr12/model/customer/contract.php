@@ -49,7 +49,13 @@ class ModelCustomerContract extends Model
 
 		$end_reason = $this->db->escape($this->language->get('text_contract_resign'));
 
-		$sql = "INSERT INTO " . DB_PREFIX . "contract SET customer_id = '" . (int)$customer_id . "', contract_type_id = 0, contract_start = '" . $this->db->escape($last_contract['contract_start']) . "', contract_end = STR_TO_DATE('" . $this->db->escape($data['date_end']) . "', '%e %b %Y'), description = '" . $this->db->escape($data['end_reason']) . "', end_reason = '" . $end_reason . "', user_id = '" . (int)$this->user->getId() . "'";
+		if (empty($last_contract['contract_start'])) {
+			$contract_start = 'NULL';
+		} else {
+			$contract_start = "'" . date('Y-m-d', strtotime($this->db->escape($last_contract['contract_start']))) . "'";
+		}
+
+		$sql = "INSERT INTO " . DB_PREFIX . "contract SET customer_id = '" . (int)$customer_id . "', contract_type_id = 0, contract_start = " . $contract_start . ", contract_end = STR_TO_DATE('" . $this->db->escape($data['date_end']) . "', '%e %b %Y'), description = '" . $this->db->escape($data['end_reason']) . "', end_reason = '" . $end_reason . "', user_id = '" . (int)$this->user->getId() . "'";
 
 		$this->db->query($sql);
 
