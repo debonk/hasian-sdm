@@ -4,7 +4,7 @@ $_['heading_title']              = 'Pembagian Gaji';
 
 // Text
 $_['text_complete_success']      = 'Success: Penggajian karyawan periode ini telah selesai!';
-$_['text_confirm_release'] 		 = 'Warning: Export CIMB hanya boleh 1x per karyawan. Pastikan data yang dipilih telah sesuai.\nLanjutkan?';
+$_['text_confirm_release'] 		 = 'Warning: Export Release (kecuali draft) hanya boleh 1x per karyawan. Pastikan data yang dipilih telah sesuai.\nLanjutkan?';
 $_['text_confirm_send_all'] 	 = 'Send Payroll Statement to All Employees?';
 $_['text_edit']                  = 'Edit Akun Sumber Dana';
 $_['text_fund_acc_name'] 	  	 = 'Nama :';
@@ -69,7 +69,7 @@ $_['button_draft']				= 'Export Draft';
 $_['button_release']			= 'Release Payroll';
 $_['button_payroll_complete'] 	= 'Complete Payroll';
 $_['button_export'] 			= 'Export Release';
-$_['button_export_cimb'] 		= 'Export to CIMB';
+// $_['button_export_cimb'] 		= 'Export to CIMB';
 $_['button_send'] 				= 'Send Statement';
 $_['button_uncomplete'] 		= 'Completed & Archived. Click to Unarchive';
 $_['button_pending'] 			= 'Set Selected as Pending';

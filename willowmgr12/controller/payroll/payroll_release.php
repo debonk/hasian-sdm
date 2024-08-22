@@ -297,7 +297,6 @@ class ControllerPayrollPayrollRelease extends Controller
 			'button_filter',
 			'button_payroll_complete',
 			'button_export',
-			'button_export_cimb',
 			'button_action'
 		];
 		foreach ($language_items as $language_item) {
@@ -358,7 +357,6 @@ class ControllerPayrollPayrollRelease extends Controller
 			'href' => $this->url->link('payroll/payroll_release/info', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $presence_period_id, true)
 		);
 
-		$data['export_cimb'] = $this->url->link('payroll/payroll_release/exportCimb', 'token=' . $this->session->data['token'] . $url, true);
 		$data['send'] = $this->url->link('payroll/payroll_release/send', 'token=' . $this->session->data['token'] . $url, true);
 		$data['back'] = $this->url->link('payroll/payroll_release', 'token=' . $this->session->data['token'], true);
 
@@ -516,7 +514,6 @@ class ControllerPayrollPayrollRelease extends Controller
 		$actions = [
 			'pending',
 			'cancelled',
-			'draft',
 			'send'
 		];
 
@@ -534,19 +531,15 @@ class ControllerPayrollPayrollRelease extends Controller
 		$data['exports'] = [];
 
 		$data['exports'][] = [
-			// 'href'	=> $this->url->link('payroll/payroll_release/export', 'token=' . $this->session->data['token'] . '&code=draft' . $url, true),
 			'href'	=> $this->url->link('payroll/payroll_release/export', 'token=' . $this->session->data['token'] . '&payroll_method_id=0' . $url, true),
 			'text'	=> $this->language->get('button_draft')
 		];
 
 		foreach ($data['payroll_methods'] as $payroll_method) {
-			// if ($payroll_method['code'] != 'none') {
 			$data['exports'][] = [
-				// 'href'	=> $this->url->link('payroll/payroll_release/export', 'token=' . $this->session->data['token'] . '&code=' . $payroll_method['code'] . $url, true),
 				'href'	=> $this->url->link('payroll/payroll_release/export', 'token=' . $this->session->data['token'] . '&payroll_method_id=' . $payroll_method['payroll_method_id'] . $url, true),
 				'text'	=> $payroll_method['name']
 			];
-			// }
 		}
 
 		$data['url'] = $url;
@@ -954,7 +947,6 @@ class ControllerPayrollPayrollRelease extends Controller
 		$this->load->model('common/payroll');
 		$this->load->model('payroll/payroll_release');
 
-		// if (isset($this->request->get['presence_period_id']) && isset($this->request->get['code']) && $this->validateAction()) {
 		if (isset($this->request->get['presence_period_id']) && isset($this->request->get['payroll_method_id']) && $this->validateAction()) {
 			if (isset($this->request->get['payroll_method_id']) && $this->request->get['payroll_method_id'] == 0) {
 				$code = 'draft';
@@ -1204,6 +1196,7 @@ class ControllerPayrollPayrollRelease extends Controller
 
 			$payroll_method_info = $this->model_localisation_payroll_method->getPayrollMethod($this->request->get['payroll_method_id']);
 			$filename = date('Ym', strtotime($period_info['period'])) . '_Payroll_' . $period . '_' . $payroll_method_info['name'];
+			// echo '<pre>' . print_r($output, 1); 
 
 			$this->response->addheader('Pragma: public');
 			$this->response->addheader('Expires: 0');
@@ -1212,7 +1205,6 @@ class ControllerPayrollPayrollRelease extends Controller
 			$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
 			$this->response->addheader('Content-Transfer-Encoding: binary');
 			$this->response->setOutput($output);
-			// echo '<pre>' . print_r($output, 1); 
 		} else {
 
 			$this->info();
@@ -1301,7 +1293,7 @@ class ControllerPayrollPayrollRelease extends Controller
 				$customer_total++;
 
 				$value = '';
-				$value .= '(\')' . $result['acc_no'] . '|' . $result['lastname'] . '||||' . $currency_code . '|' . $grandtotal . '|' . 'Payroll_' . $customer_period . '||IBU|||||||Y|' . $result['email'] . '|||||||||||||||||||||OUR|1|E|||(\')';
+				$value .= $result['acc_no'] . ',' . $result['lastname'] . ',,,,' . $currency_code . ',' . $grandtotal . ',' . 'Payroll_' . $customer_period . ',,IBU,,,,,,,Y,' . $result['email'] . ',,,,,,,,,,,,,,,,,,,,,OUR,1,E,,,';
 
 				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
 				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
@@ -1310,8 +1302,6 @@ class ControllerPayrollPayrollRelease extends Controller
 				$value = str_replace('\\\n', '\n',	$value);
 				$value = str_replace('\\\r', '\r',	$value);
 				$value = str_replace('\\\t', '\t',	$value);
-				$value = str_replace('|', "\t",	$value);
-				$value = str_replace("(\')", "'", $value);
 
 				$sub_output .= "\n" . $value;
 			}
@@ -1319,7 +1309,7 @@ class ControllerPayrollPayrollRelease extends Controller
 			$this->load->model('release/fund_account');
 			$fund_account_info = $this->model_release_fund_account->getFundAccount($period_info['fund_account_id']);
 
-			$output .= 'P' . '|' . $date_release . '|' . '(\')' . $fund_account_info['acc_no'] . '|' . $customer_total . '|' . $sum_grandtotal;
+			$output .= 'P' . ',' . $date_release . ',' . $fund_account_info['acc_no'] . ',' . $customer_total . ',' . $sum_grandtotal;
 
 			$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
 			$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
@@ -1328,24 +1318,23 @@ class ControllerPayrollPayrollRelease extends Controller
 			$output = str_replace('\\\n', '\n',	$output);
 			$output = str_replace('\\\r', '\r',	$output);
 			$output = str_replace('\\\t', '\t',	$output);
-			$output = str_replace('|', "\t", $output);
-			$output = str_replace('|', "\t", $output);
-			$output = str_replace("(\')", "'", $output);
 
 			$output .= $sub_output;
 
 			$payroll_method_info = $this->model_localisation_payroll_method->getPayrollMethod($this->request->get['payroll_method_id']);
 			$filename = date('Ym', strtotime($period_info['period'])) . '_Payroll_' . $period . '_' . $payroll_method_info['name'];
-
+			// echo '<pre>' . print_r($output, 1); 
+			// die(' ---breakpoint--- ');
+			
 			$this->response->addheader('Pragma: public');
 			$this->response->addheader('Expires: 0');
 			$this->response->addheader('Content-Description: File Transfer');
 			$this->response->addheader('Content-Type: application/octet-stream');
-			$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.xls');
+			$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
 			$this->response->addheader('Content-Transfer-Encoding: binary');
 			$this->response->setOutput($output);
 		} else {
-
+			
 			$this->info();
 		}
 	}

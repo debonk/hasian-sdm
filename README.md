@@ -8,7 +8,7 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
-4.0.2
+4.0.2	22/08/2024
 <!-- Release > Form: Set multiple fund source -->
 Payroll Method: Add Bank Mandiri
 Release: Release untuk multiple bank.

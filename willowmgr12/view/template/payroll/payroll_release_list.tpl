@@ -9,34 +9,27 @@
           class="btn btn-warning"><i class="fa fa-check"></i>
           <?= $button_payroll_complete; ?>
         </button>
-        <button type="button" class="btn btn-danger"
-          onclick="confirm('<?= $text_confirm_release; ?>') ? $('#form-payroll-release-list').attr('action', '<?= $export_cimb; ?>').submit() : false;"><i
-            class="fa fa-upload"></i>
-          <?= $button_export_cimb; ?>
-        </button>
         <span class="dropdown">
           <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown"><i
-              class="fa fa-tasks"></i>
+              class="fa fa-upload"></i>
             <?= $button_export; ?>
           </button>
           <ul class="dropdown-menu pull-right" id="menu-payroll-method">
             <?php foreach ($exports as $export) { ?>
             <?php $href = $export['href'] ?>
             <li><a href="#"
-                onclick="confirm('<?= $text_confirm; ?>') ? $('#form-payroll-release-list').attr('action', '<?= $href; ?>').submit() : false;">
+                onclick="confirm('<?= $text_confirm_release; ?>') ? $('#form-payroll-release-list').attr('action', '<?= $href; ?>').submit() : false;">
                 <?= $export['text']; ?>
               </a></li>
             <?php } ?>
           </ul>
         </span>
-
-
         <?php } else { ?>
         <button type="button" class="btn btn-warning disabled"><i class="fa fa-check"></i>
           <?= $button_payroll_complete; ?>
         </button>
         <button type="button" class="btn btn-danger disabled"><i class="fa fa-upload"></i>
-          <?= $button_export_cimb; ?>
+          <?= $button_export; ?>
         </button>
         <?php } ?>
         <span class="dropdown">
