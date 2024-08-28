@@ -1923,6 +1923,10 @@ class ControllerPresenceSchedule extends Controller
 			# Presence Summary
 			$presence_summary = $this->model_presence_schedule->calculatePresenceSummary($presence_period_id, $customer_id, $schedules_data);
 
+			if (!isset($presence_summary['additional'])) {
+				$presence_summary['additional'] = [];
+			}
+
 			$data['presence_summary']['hke'] = $presence_summary['total']['hke'];
 			$data['presence_summary'] = array_merge($data['presence_summary'], $presence_summary['primary'], $presence_summary['additional']);
 

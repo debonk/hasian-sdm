@@ -8,6 +8,10 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
+4.0.3	28/08/2024
+Bug Fixed: Schedule: NS tidak terhitung dengan benar jika di data kehadiran sudah ada status ns.
+Bug Fixed: Schedule: Ringkasan kehadiran tidak tampil jika tidak punya $presence_summary['additional]
+
 4.0.2	22/08/2024
 <!-- Release > Form: Set multiple fund source -->
 Payroll Method: Add Bank Mandiri
@@ -18,8 +22,14 @@ MODIFY TABLE
 ALTER TABLE oc_payroll_method ADD code varchar(16) NOT NULL AFTER payroll_method_id;
 ALTER TABLE oc_payroll ADD release_payroll_method_id int(11) NULL AFTER status_released;
 ALTER TABLE oc_payroll ADD release_acc_no TINYTEXT NULL AFTER release_payroll_method_id;
+UPDATE oc_payroll p, oc_customer c SET p.release_acc_no = c.acc_no, p.release_payroll_method_id = c.payroll_method_id WHERE p.customer_id = c.customer_id AND p.date_released IS NOT NULL;
 
-UPDATE oc_payroll p, oc_customer c SET p.release_acc_no = c.acc_no, p.release_payroll_method_id = c.payroll_method_id WHERE p.customer_id = c.customer_id AND p.date_released IS NOT NULL
+====================
+HSDM SOFTWARE 4.0.2 UPDATE
+
++ PAYROLL METHOD: Menambah Bank Mandiri untuk release gaji
++ RELEASE: Multiple Bank
+====================
 
 4.0.1	03/08/2024
 APP > Account: New Notification

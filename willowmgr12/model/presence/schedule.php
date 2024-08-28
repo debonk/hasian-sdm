@@ -542,6 +542,7 @@ class ModelPresenceSchedule extends Model
 
 			if (strtotime($customer_info['date_start']) > strtotime($period_info['date_start']) || (isset($customer_info['date_end']) && strtotime($customer_info['date_end']) <= strtotime($period_info['date_end']))) {
 				$default_hke = $this->config->get('payroll_setting_default_hke');
+                $presence_summary_data['primary']['ns'] = 0;
 
 				$presence_summary_data['primary']['ns'] = max($default_hke - array_sum($presence_summary_data['primary']), 0);
 			}
