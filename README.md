@@ -8,7 +8,7 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
-4.0.3	28/08/2024
+4.0.3b	28/08/2024
 Bug Fixed: Schedule: NS tidak terhitung dengan benar jika di data kehadiran sudah ada status ns.
 Bug Fixed: Schedule: Ringkasan kehadiran tidak tampil jika tidak punya $presence_summary['additional]
 

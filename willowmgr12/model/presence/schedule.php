@@ -535,6 +535,8 @@ class ModelPresenceSchedule extends Model
 			}
 		}
 
+		$presence_summary_data['primary']['h'] += $presence_summary_data['secondary']['t1'] + $presence_summary_data['secondary']['t2'] + $presence_summary_data['secondary']['t3'];
+
 		if ($presence_summary) {
 			$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 
@@ -547,8 +549,6 @@ class ModelPresenceSchedule extends Model
 				$presence_summary_data['primary']['ns'] = max($default_hke - array_sum($presence_summary_data['primary']), 0);
 			}
 		}
-
-		$presence_summary_data['primary']['h'] += $presence_summary_data['secondary']['t1'] + $presence_summary_data['secondary']['t2'] + $presence_summary_data['secondary']['t3'];
 
 		$presence_summary_data['total']['hke'] = array_sum($presence_summary_data['primary']) + array_sum($presence_summary_data['additional']);
 		$presence_summary_data['total']['t'] = array_sum($presence_summary_data['secondary']);

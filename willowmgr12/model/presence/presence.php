@@ -466,7 +466,8 @@ class ModelPresencePresence extends Model
 			if (in_array($this->db->escape($data['filter_presence_code']), $presence_code_data)) {
 				$implode[] = "pt.total_" . $this->db->escape($data['filter_presence_code']) . " > 0";
 			} else {
-				$implode[] = "pt.additional LIKE ('%\"" . $this->db->escape($data['filter_presence_code']) . "\"%')";
+				$implode[] = "(pt.additional LIKE ('%\"" . $this->db->escape($data['filter_presence_code']) . "\"%') AND pt.additional NOT LIKE ('%\"" . $this->db->escape($data['filter_presence_code']) . "\":0%'))";
+				// $implode[] = "pt.additional LIKE ('%\"" . $this->db->escape($data['filter_presence_code']) . "\"%')";
 			}
 		}
 
@@ -564,7 +565,8 @@ class ModelPresencePresence extends Model
 			if (in_array($this->db->escape($data['filter_presence_code']), $presence_code_data)) {
 				$implode[] = "pt.total_" . $this->db->escape($data['filter_presence_code']) . " > 0";
 			} else {
-				$implode[] = "pt.additional LIKE ('%" . $this->db->escape($data['filter_presence_code']) . "%')";
+				$implode[] = "(pt.additional LIKE ('%\"" . $this->db->escape($data['filter_presence_code']) . "\"%') AND pt.additional NOT LIKE ('%\"" . $this->db->escape($data['filter_presence_code']) . "\":0%'))";
+				// $implode[] = "pt.additional LIKE ('%" . $this->db->escape($data['filter_presence_code']) . "%')";
 			}
 		}
 
@@ -678,7 +680,8 @@ class ModelPresencePresence extends Model
 			if (in_array($this->db->escape($data['filter_presence_code']), $presence_code_data)) {
 				$implode[] = "pt.total_" . $this->db->escape($data['filter_presence_code']) . " > 0";
 			} else {
-				$implode[] = "pt.additional LIKE ('%" . $this->db->escape($data['filter_presence_code']) . "%')";
+				$implode[] = "(pt.additional LIKE ('%\"" . $this->db->escape($data['filter_presence_code']) . "\"%') AND pt.additional NOT LIKE ('%\"" . $this->db->escape($data['filter_presence_code']) . "\":0%'))";
+				// $implode[] = "pt.additional LIKE ('%" . $this->db->escape($data['filter_presence_code']) . "%')";
 			}
 		}
 
@@ -778,7 +781,8 @@ class ModelPresencePresence extends Model
 			if (in_array($this->db->escape($data['filter_presence_code']), $presence_code_data)) {
 				$implode[] = "pt.total_" . $this->db->escape($data['filter_presence_code']) . " > 0";
 			} else {
-				$implode[] = "pt.additional LIKE ('%" . $this->db->escape($data['filter_presence_code']) . "%')";
+				$implode[] = "(pt.additional LIKE ('%\"" . $this->db->escape($data['filter_presence_code']) . "\"%') AND pt.additional NOT LIKE ('%\"" . $this->db->escape($data['filter_presence_code']) . "\":0%'))";
+				// $implode[] = "pt.additional LIKE ('%" . $this->db->escape($data['filter_presence_code']) . "%')";
 			}
 		}
 
