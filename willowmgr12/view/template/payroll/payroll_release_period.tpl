@@ -17,7 +17,7 @@
 	</div>
 	<div class="container-fluid">
     <?php if ($information) { ?>
-			<div class="alert alert-info"><i class="fa fa-info-circle"></i> <?php echo $information; ?>
+			<div class="alert alert-warning"><i class="fa fa-info-circle"></i> <?php echo $information; ?>
 				<button type="button" class="close" data-dismiss="alert">&times;</button>
 			</div>
 			<?php } ?>

@@ -54,7 +54,8 @@
 	color: #FFFFFF;
 	line-height: 48px;
 	text-align: center;
-	height: 80px;
+	/* height: 80px; */
+	min-height: 80px;
 }
 .tile .tile-body img{
 	font-size: 16px;

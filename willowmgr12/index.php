@@ -1,6 +1,6 @@
 <?php
 // Version
-define('VERSION', '4.0.3b');
+define('VERSION', '4.0.4');
 define('FRAMEWORK_VERSION', '2.2.0.0');
 
 // Configuration

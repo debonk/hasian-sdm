@@ -292,14 +292,14 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label" for="input-completed-after"><span
-										data-toggle="tooltip" title="<?= $help_completed_after; ?>">
-										<?= $entry_completed_after; ?>
+								<label class="col-sm-2 control-label" for="input-max-past-unarchive"><span
+										data-toggle="tooltip" title="<?= $help_max_unarchive; ?>">
+										<?= $entry_max_unarchive; ?>
 									</span></label>
 								<div class="col-sm-10">
-									<input type="text" name="payroll_setting_completed_after"
-										value="<?= $payroll_setting_completed_after; ?>" class="form-control"
-										id="input-completed_after" />
+									<input type="text" name="payroll_setting_max_unarchive"
+										value="<?= $payroll_setting_max_unarchive; ?>" class="form-control"
+										id="input-max-past-unarchive" />
 								</div>
 							</div>
 						</div>

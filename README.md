@@ -8,9 +8,17 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
+4.0.4	25/11/2024
+Payroll type utk DSP sales 
+Release > Export CSV: Exclude data jika THP <= 0.
+Free Transfer: Proteksi penamaan file dan value csv saat export.
+Release: Perbaikan metode 'proteksi complete' dengan membatasi jumlah periode yg aktif.
+Release: Data cuti tidak akan diarsipkan saat Archiving data (set complete)
+Schedule: Save uploaded file to upload folder when import schedule
+
 4.0.3b	28/08/2024
 Bug Fixed: Schedule: NS tidak terhitung dengan benar jika di data kehadiran sudah ada status ns.
-Bug Fixed: Schedule: Ringkasan kehadiran tidak tampil jika tidak punya $presence_summary['additional]
+Bug Fixed: Schedule: Ringkasan kehadiran tidak tampil jika tidak punya $presence_summary['additional']
 
 4.0.2	22/08/2024
 <!-- Release > Form: Set multiple fund source -->

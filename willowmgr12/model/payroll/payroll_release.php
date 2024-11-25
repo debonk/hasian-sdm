@@ -481,6 +481,8 @@ class ModelPayrollPayrollRelease extends Model
 	{
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 
+		$excluded_presence_status_id = $this->config->get('payroll_setting_id_c');
+
 		$this->db->query("INSERT INTO " . DB_ARCH_DATABASE . "." . DB_PREFIX . "absence SELECT * FROM " . DB_PREFIX . "absence WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
 		$this->db->query("INSERT INTO " . DB_ARCH_DATABASE . "." . DB_PREFIX . "exchange SELECT * FROM " . DB_PREFIX . "exchange WHERE (date_from >= '" . $this->db->escape($period_info['date_start']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "') OR (date_to >= '" . $this->db->escape($period_info['date_start']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "')");
 		$this->db->query("INSERT INTO " . DB_ARCH_DATABASE . "." . DB_PREFIX . "overtime SELECT * FROM " . DB_PREFIX . "overtime WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
@@ -488,7 +490,7 @@ class ModelPayrollPayrollRelease extends Model
 		$this->db->query("INSERT INTO " . DB_ARCH_DATABASE . "." . DB_PREFIX . "presence_log SELECT * FROM " . DB_PREFIX . "presence_log WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
 		$this->db->query("INSERT INTO " . DB_ARCH_DATABASE . "." . DB_PREFIX . "schedule SELECT * FROM " . DB_PREFIX . "schedule WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
 
-		$this->db->query("DELETE FROM " . DB_PREFIX . "absence WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "absence WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "' AND presence_status_id <> '" . (int)$excluded_presence_status_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "exchange WHERE (date_from >= '" . $this->db->escape($period_info['date_start']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "') OR (date_to >= '" . $this->db->escape($period_info['date_start']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "')");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "overtime WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "presence WHERE date_presence >= '" . $this->db->escape($period_info['date_start']) . "' AND date_presence <= '" . $this->db->escape($period_info['date_end']) . "'");
@@ -499,6 +501,8 @@ class ModelPayrollPayrollRelease extends Model
 	public function unarchivePeriodData($presence_period_id)
 	{
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
+
+		$this->db->query("DELETE FROM " . DB_PREFIX . "absence WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
 
 		$this->db->query("INSERT INTO " . DB_PREFIX . "absence SELECT * FROM " . DB_ARCH_DATABASE . "." . DB_PREFIX . "absence WHERE date >= '" . $this->db->escape($period_info['date_start']) . "' AND date <= '" . $this->db->escape($period_info['date_end']) . "'");
 		$this->db->query("INSERT INTO " . DB_PREFIX . "exchange SELECT * FROM " . DB_ARCH_DATABASE . "." . DB_PREFIX . "exchange WHERE (date_from >= '" . $this->db->escape($period_info['date_start']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "') OR (date_to >= '" . $this->db->escape($period_info['date_start']) . "' AND date_to <= '" . $this->db->escape($period_info['date_end']) . "' AND date_from <= '" . $this->db->escape($period_info['date_end']) . "')");

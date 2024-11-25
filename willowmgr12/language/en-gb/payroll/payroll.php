@@ -21,7 +21,7 @@ $_['text_success_generated']     = 'Success: %d of %d payrolls generated!';
 $_['text_success']          	 = 'Success: You have modified payrolls!';
 $_['text_total_addition'] 	     = 'Total Pendapatan';
 $_['text_total_deduction'] 	     = 'Total Potongan';
-$_['text_all_division']				= 'Semua Divisi';
+$_['text_all_division']			 = 'Semua Divisi';
 
 $_['text_insurance']       		 = 'BPJS';
 $_['text_loan']    		   		 = 'Pinjaman';

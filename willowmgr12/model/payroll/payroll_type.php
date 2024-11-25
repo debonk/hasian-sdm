@@ -14,8 +14,11 @@ class ModelPayrollPayrollType extends Model
 			'pot_pph',
 			'pot_gp_tj_5',
 			'pot_gp_tj',
+			'pot_gp_tj_r',
 			'pot_gp',
+			'pot_gp_r',
 			'pot_tj',
+			'pot_tj_r',
 			'pot_th_20',
 			'pot_th_100',
 			'pot_prop_all'

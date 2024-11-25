@@ -482,7 +482,8 @@ class ControllerCustomerDocument extends Controller
 						'png'
 					);
 
-					$extension = strtolower(substr(strrchr($file['name'], '.'), 1));
+					// $extension = strtolower(substr(strrchr($file['name'], '.'), 1));
+					$extension = pathinfo($file['name'], PATHINFO_EXTENSION);
 
 					if (!in_array($extension, $allowed)) {
 						$json['error'] = $this->language->get('error_filetype');

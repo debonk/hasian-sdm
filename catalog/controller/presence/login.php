@@ -100,6 +100,7 @@ class ControllerPresenceLogin extends Controller
 
 			$data['presence_card'] = $this->config->get('payroll_setting_presence_card');
 			// $data['presence_card'] = 'image';
+			// $data['presence_card'] = 'lastname';
 
 			if ($data['presence_card'] == 'lastname') {
 				$sort = 'lastname';

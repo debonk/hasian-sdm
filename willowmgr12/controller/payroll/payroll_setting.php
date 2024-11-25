@@ -53,7 +53,7 @@ class ControllerPayrollPayrollSetting extends Controller {
 			'entry_use_fingerprint',
 			'entry_presence_card',
 			'entry_schedule_check',
-			'entry_completed_after',
+			'entry_max_unarchive',
 			'entry_presence_statuses',
 			'button_save',
 			'button_cancel',
@@ -64,7 +64,7 @@ class ControllerPayrollPayrollSetting extends Controller {
 			'help_approved_status',
 			'help_released_status',
 			'help_completed_status',
-			'help_completed_after',
+			'help_max_unarchive',
 			'help_presence_lock',
 			'help_default_hke',
 			'help_vacation_limit',
@@ -315,12 +315,12 @@ class ControllerPayrollPayrollSetting extends Controller {
 			$data['payroll_setting_late_tolerance'] = 0;
 		}
 
-		if (isset($this->request->post['payroll_setting_completed_after'])) {
-			$data['payroll_setting_completed_after'] = $this->request->post['payroll_setting_completed_after'];
-		} elseif ($this->config->get('payroll_setting_completed_after')) {
-			$data['payroll_setting_completed_after'] = $this->config->get('payroll_setting_completed_after');
+		if (isset($this->request->post['payroll_setting_max_unarchive'])) {
+			$data['payroll_setting_max_unarchive'] = $this->request->post['payroll_setting_max_unarchive'];
+		} elseif ($this->config->get('payroll_setting_max_unarchive')) {
+			$data['payroll_setting_max_unarchive'] = $this->config->get('payroll_setting_max_unarchive');
 		} else {
-			$data['payroll_setting_completed_after'] = 3;
+			$data['payroll_setting_max_unarchive'] = 12;
 		}
 
 		if (isset($this->request->post['payroll_setting_use_fingerprint'])) {

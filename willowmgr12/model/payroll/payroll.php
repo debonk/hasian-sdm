@@ -302,7 +302,13 @@ class ModelPayrollPayroll extends Model
 
 							case 'pot_gp_tj':
 								$value = floor((($payroll_basic_info['gaji_pokok'] + $payroll_basic_info['tunj_jabatan']) / $presence_data['total']['hke'] * $var) / 5000) * 5000;
-								$subtitle = $var . '/' . $presence_data['total']['hke'] . ' x {gp}';
+								$subtitle = $var . '/' . $presence_data['total']['hke'] . ' x {gp_tj}';
+
+								break;
+
+							case 'pot_gp_tj_r':
+								$value = ($payroll_basic_info['gaji_pokok'] + $payroll_basic_info['tunj_jabatan']) / $presence_data['total']['hke'] * $var;
+								$subtitle = $var . '/' . $presence_data['total']['hke'] . ' x {gp_tj}';
 
 								break;
 
@@ -312,9 +318,21 @@ class ModelPayrollPayroll extends Model
 
 								break;
 
+							case 'pot_gp_r':
+								$value = $payroll_basic_info['gaji_pokok'] / $presence_data['total']['hke'] * $var;
+								$subtitle = $var . '/' . $presence_data['total']['hke'] . ' x {gp}';
+
+								break;
+
 							case 'pot_tj':
 								$value = floor(($payroll_basic_info['tunj_jabatan'] / $presence_data['total']['hke'] * $var) / 5000) * 5000;
-								$subtitle = $var . '/' . $presence_data['total']['hke'] . ' x {gp}';
+								$subtitle = $var . '/' . $presence_data['total']['hke'] . ' x {tj}';
+
+								break;
+
+							case 'pot_tj_r':
+								$value = $payroll_basic_info['tunj_jabatan'] / $presence_data['total']['hke'] * $var;
+								$subtitle = $var . '/' . $presence_data['total']['hke'] . ' x {tj}';
 
 								break;
 
@@ -447,6 +465,7 @@ class ModelPayrollPayroll extends Model
 				'{hke}',
 				'{gp_tj}',
 				'{gp}',
+				'{tj}',
 				'{th}',
 				'{um}',
 				'{thp}',
@@ -458,6 +477,7 @@ class ModelPayrollPayroll extends Model
 				$presence_summary_info['total']['hke'],
 				$this->currency->format($payroll_info['payroll_basic']['gaji_pokok'] + $payroll_info['payroll_basic']['tunj_jabatan'], $this->config->get('config_currency')),
 				$this->currency->format($payroll_info['payroll_basic']['gaji_pokok'], $this->config->get('config_currency')),
+				$this->currency->format($payroll_info['payroll_basic']['tunj_jabatan'], $this->config->get('config_currency')),
 				$this->currency->format($payroll_info['payroll_basic']['tunj_hadir'], $this->config->get('config_currency')),
 				$this->currency->format($payroll_info['payroll_basic']['uang_makan'], $this->config->get('config_currency')),
 				$this->currency->format($payroll_info['main_component']['total']['addition'], $this->config->get('config_currency')),

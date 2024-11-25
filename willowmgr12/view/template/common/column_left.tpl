@@ -1,1 +1,1 @@
-<nav id="column-left"><?php echo $profile; ?><?php echo $menu; ?></nav>
+<nav id="column-left" class="hidden-print"><?php echo $profile; ?><?php echo $menu; ?></nav>

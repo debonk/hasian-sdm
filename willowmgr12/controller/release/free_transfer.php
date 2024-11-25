@@ -534,6 +534,8 @@ class ControllerReleaseFreeTransfer extends Controller
 
 		$free_transfer_info = $this->model_release_free_transfer->getFreeTransfer($free_transfer_id);
 
+		$free_transfer_info['description'] = str_replace(', ', '_', $free_transfer_info['description']);
+
 		if (!empty($free_transfer_info) && $this->validateExport()) {
 			$this->load->model('release/fund_account');
 			$fund_account_info = $this->model_release_fund_account->getFundAccount($free_transfer_info['fund_account_id']);
@@ -559,7 +561,7 @@ class ControllerReleaseFreeTransfer extends Controller
 
 			foreach ($results as $result) {
 				$value = '';
-				$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $result['amount'] . ',' . $free_transfer_info['description'] . (!empty($result['note']) ? ': ' . $result['note'] : '') . ',' . $result['email'] . ',,';
+				$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $result['amount'] . ',' . $free_transfer_info['description'] . (!empty($result['note']) ? ': ' . str_replace(',', '_', $result['note']) : '') . ',' . $result['email'] . ',,';
 
 				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
 				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
@@ -572,7 +574,7 @@ class ControllerReleaseFreeTransfer extends Controller
 				$output .= "\n" . $value;
 			}
 
-			$filename = $date_process . '_' . str_replace(' ', '_', $free_transfer_info['description']);
+			$filename = $date_process . '_' . preg_replace('/[^a-zA-Z0-9_-]/s', '_', $free_transfer_info['description']);
 
 			$this->response->addheader('Pragma: public');
 			$this->response->addheader('Expires: 0');

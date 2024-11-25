@@ -1478,7 +1478,8 @@ class ControllerPresenceSchedule extends Controller
 					break;
 				}
 
-				$extension = strtolower(substr(strrchr($file['name'], '.'), 1));
+				// $extension = strtolower(substr(strrchr($file['name'], '.'), 1));
+				$extension = pathinfo($filename, PATHINFO_EXTENSION);
 
 				if ($extension != 'xlsx') {
 					$this->error = $this->language->get('error_filetype');
@@ -1498,6 +1499,17 @@ class ControllerPresenceSchedule extends Controller
 
 					break;
 				}
+
+				# Save uploaded file Start
+				$uploaded_file = $file['name'] . '.' . token(32);
+
+				move_uploaded_file($this->request->files['file']['tmp_name'], DIR_UPLOAD . $uploaded_file);
+	
+				# Hide the uploaded file name so people can not link to it directly.
+				$this->load->model('tool/upload');
+	
+				$this->model_tool_upload->addUpload($file['name'], $uploaded_file);
+				# Save uploaded file End
 
 				$spreadsheet_option = [
 					'data_only'		=> false,

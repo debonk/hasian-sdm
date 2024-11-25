@@ -185,24 +185,14 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		$results = $this->model_payroll_payroll_release->getPayrollPeriods($filter_data);
 
-		$data['information'] = '';
-
 		foreach ($results as $result) {
-			//Period Status Check
+			# Period Status Check
 			$release_status_check = $this->model_common_payroll->checkPeriodStatus($result['presence_period_id'], 'approved, released');
 			$view_status_check = $this->model_common_payroll->checkPeriodStatus($result['presence_period_id'], 'released, completed');
 			$complete_status_check = $this->model_common_payroll->checkPeriodStatus($result['presence_period_id'], 'completed');
 
 			if ($result['date_release']) {
 				$date_release = date($this->language->get('date_format_jMY'), strtotime($result['date_release']));
-
-				if (!$data['information']) {
-					$completed_after = $this->config->get('payroll_setting_completed_after');
-
-					if (strtotime('+ ' . $completed_after . 'months', strtotime($result['date_release'])) < strtotime('today')) {
-						$data['information'] = sprintf($this->language->get('text_information'), $completed_after);
-					}
-				}
 			} else {
 				$date_release = '';
 			}
@@ -242,6 +232,16 @@ class ControllerPayrollPayrollRelease extends Controller
 		$data['pagination'] = $pagination->render();
 
 		$data['results'] = sprintf($this->language->get('text_pagination'), ($payroll_period_total) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($payroll_period_total - $this->config->get('config_limit_admin'))) ? $payroll_period_total : ((($page - 1) * $this->config->get('config_limit_admin')) + $this->config->get('config_limit_admin')), $payroll_period_total, ceil($payroll_period_total / $this->config->get('config_limit_admin')));
+
+		$data['information'] = '';
+
+		$max_unarchive = $this->config->get('payroll_setting_max_unarchive');
+
+		$released_period_total = $this->model_payroll_payroll_release->getTotalPayrollPeriods(['filter_payroll_status'	=> $this->config->get('payroll_setting_released_status_id')]);
+		
+		if ($released_period_total > $max_unarchive) {
+			$data['information'] = sprintf($this->language->get('error_complete'), $max_unarchive);
+		}
 
 		$data['filter_payroll_status'] = $filter_payroll_status;
 		$data['filter_period'] = $filter_period;
@@ -1156,7 +1156,7 @@ class ControllerPayrollPayrollRelease extends Controller
 
 				$grandtotal = $result['net_salary'] + $result['component'];
 
-				if (!$grandtotal) {
+				if ($grandtotal <= 0) {
 					continue;
 				}
 
@@ -1283,7 +1283,7 @@ class ControllerPayrollPayrollRelease extends Controller
 
 				$grandtotal = $result['net_salary'] + $result['component'];
 
-				if (!$grandtotal) {
+				if ($grandtotal <= 0) {
 					continue;
 				}
 
@@ -1325,7 +1325,7 @@ class ControllerPayrollPayrollRelease extends Controller
 			$filename = date('Ym', strtotime($period_info['period'])) . '_Payroll_' . $period . '_' . $payroll_method_info['name'];
 			// echo '<pre>' . print_r($output, 1); 
 			// die(' ---breakpoint--- ');
-			
+
 			$this->response->addheader('Pragma: public');
 			$this->response->addheader('Expires: 0');
 			$this->response->addheader('Content-Description: File Transfer');
@@ -1334,7 +1334,7 @@ class ControllerPayrollPayrollRelease extends Controller
 			$this->response->addheader('Content-Transfer-Encoding: binary');
 			$this->response->setOutput($output);
 		} else {
-			
+
 			$this->info();
 		}
 	}
@@ -1408,7 +1408,7 @@ class ControllerPayrollPayrollRelease extends Controller
 
 				$grandtotal = $result['net_salary'] + $result['component'];
 
-				if (!$grandtotal) {
+				if ($grandtotal <= 0) {
 					continue;
 				}
 
@@ -1479,12 +1479,12 @@ class ControllerPayrollPayrollRelease extends Controller
 			$this->error['date_release'] = $this->language->get('error_date_release');
 		}
 
-		$completed_after = $this->config->get('payroll_setting_completed_after') + 3;
+		$max_unarchive = $this->config->get('payroll_setting_max_unarchive');
 
 		$released_period_total = $this->model_payroll_payroll_release->getTotalPayrollPeriods(['filter_payroll_status'	=> $this->config->get('payroll_setting_released_status_id')]);
-
-		if ($released_period_total > $completed_after) {
-			$this->error['warning'] = sprintf($this->language->get('error_complete'), $completed_after);
+		
+		if ($released_period_total > $max_unarchive) {
+			$this->error['warning'] = sprintf($this->language->get('error_complete'), $max_unarchive);
 		}
 
 		if ($this->error && !isset($this->error['warning'])) {
