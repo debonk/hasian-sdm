@@ -100,43 +100,41 @@
 				<?php foreach ($customers as $customer) { ?>
 				<div class="<?= $presence_card == 'image' ? 'col-md-2 col-sm-3 col-xs-4' : 'col-md-4 col-sm-6 col-xs-12'; ?>"
 					id="customer<?= $customer['customer_id']; ?>">
-					<div>
-						<div class="tile tile-<?= $customer['log_class']; ?>">
-							<?php if ($customer['image']) { ?>
-							<div>
-								<a href="#" id="scan_index<?= $customer['scan_active'][0]['index']; ?>"
-									value="<?= $customer['scan_active'][0]['index']; ?>">
-									<div class="tile-body" title="<?= $customer['scan_active'][0]['text']; ?>">
-										<img src="<?= $customer['image']; ?>" alt="<?= $customer['name']; ?>"
-											title="<?= $customer['scan_active'][0]['text']; ?>" class="img-thumbnail" />
-										<h4 class="text-center">
-											<?= $customer['name']; ?>
-										</h4>
-									</div>
-								</a>
-							</div>
-							<?php } else { ?>
-							<span class="tile-main">
-								<a href="#" id="scan_index<?= $customer['scan_active'][0]['index']; ?>"
-									value="<?= $customer['scan_active'][0]['index']; ?>">
-									<div class="tile-body" title="<?= $customer['scan_active'][0]['text']; ?>">
-										<h3>
-											<?= $customer['name']; ?>
-										</h3>
-									</div>
-								</a>
-							</span>
-							<span class="tile-alt">
-								<a href="##" id="scan_index<?=$customer['scan_active'][1]['index']; ?>"
-									value="<?= $customer['scan_active'][1]['index']; ?>">
-									<div class="tile-body" title="<?= $customer['scan_active'][1]['text']; ?>">
-										<h5><i class="fa fa-external-link"></i> Alt
-										</h5>
-									</div>
-								</a>
-							</span>
-							<?php } ?>
+					<div class="tile tile-<?= $customer['log_class']; ?>">
+						<?php if ($customer['image']) { ?>
+						<div>
+							<a href="#" id="scan_index<?= $customer['scan_active'][0]['index']; ?>"
+								value="<?= $customer['scan_active'][0]['index']; ?>">
+								<div class="tile-body" title="<?= $customer['scan_active'][0]['text']; ?>">
+									<img src="<?= $customer['image']; ?>" alt="<?= $customer['name']; ?>"
+										title="<?= $customer['scan_active'][0]['text']; ?>" class="img-thumbnail" />
+									<h4 class="text-center">
+										<?= $customer['name']; ?>
+									</h4>
+								</div>
+							</a>
 						</div>
+						<?php } else { ?>
+						<span class="tile-main">
+							<a href="#" id="scan_index<?= $customer['scan_active'][0]['index']; ?>"
+								value="<?= $customer['scan_active'][0]['index']; ?>">
+								<div class="tile-body" title="<?= $customer['scan_active'][0]['text']; ?>">
+									<h3>
+										<?= $customer['name']; ?>
+									</h3>
+								</div>
+							</a>
+						</span>
+						<span class="tile-alt">
+							<a href="##" id="scan_index<?=$customer['scan_active'][1]['index']; ?>"
+								value="<?= $customer['scan_active'][1]['index']; ?>">
+								<div class="tile-body" title="<?= $customer['scan_active'][1]['text']; ?>">
+									<h5><i class="fa fa-external-link"></i> Alt
+									</h5>
+								</div>
+							</a>
+						</span>
+						<?php } ?>
 					</div>
 				</div>
 				<?php } ?>

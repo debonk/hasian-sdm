@@ -8,8 +8,11 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
+4.0.4b	26/11/2024
+APP > Login: Presence Layout bug fixed.
+
 4.0.4	25/11/2024
-Payroll type utk DSP sales 
+Payroll type utk DSP sales.
 Release > Export CSV: Exclude data jika THP <= 0.
 Free Transfer: Proteksi penamaan file dan value csv saat export.
 Release: Perbaikan metode 'proteksi complete' dengan membatasi jumlah periode yg aktif.
