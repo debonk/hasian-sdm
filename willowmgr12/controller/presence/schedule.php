@@ -1479,7 +1479,7 @@ class ControllerPresenceSchedule extends Controller
 				}
 
 				// $extension = strtolower(substr(strrchr($file['name'], '.'), 1));
-				$extension = pathinfo($filename, PATHINFO_EXTENSION);
+				$extension = pathinfo($file['name'], PATHINFO_EXTENSION);
 
 				if ($extension != 'xlsx') {
 					$this->error = $this->language->get('error_filetype');
@@ -1500,17 +1500,6 @@ class ControllerPresenceSchedule extends Controller
 					break;
 				}
 
-				# Save uploaded file Start
-				$uploaded_file = $file['name'] . '.' . token(32);
-
-				move_uploaded_file($this->request->files['file']['tmp_name'], DIR_UPLOAD . $uploaded_file);
-	
-				# Hide the uploaded file name so people can not link to it directly.
-				$this->load->model('tool/upload');
-	
-				$this->model_tool_upload->addUpload($file['name'], $uploaded_file);
-				# Save uploaded file End
-
 				$spreadsheet_option = [
 					'data_only'		=> false,
 					'sheet_names'	=> ['Setting', 'Tipe Jadwal', 'Jadwal']
@@ -1518,6 +1507,17 @@ class ControllerPresenceSchedule extends Controller
 
 				$php_spreadsheet = new Spreadsheet('Xlsx', $spreadsheet_option);
 				$spreadsheet = $php_spreadsheet->loadSpreadsheet($file['tmp_name']);
+
+				# Save uploaded file Start
+				$uploaded_file = $file['name'] . '.' . token(32);
+
+				move_uploaded_file($this->request->files['file']['tmp_name'], DIR_UPLOAD . $uploaded_file);
+
+				# Hide the uploaded file name so people can not link to it directly.
+				$this->load->model('tool/upload');
+
+				$this->model_tool_upload->addUpload($file['name'], $uploaded_file);
+				# Save uploaded file End
 
 				if ($spreadsheet->getSheetNames() != $spreadsheet_option['sheet_names']) {
 					$this->error = $this->language->get('error_sheet');

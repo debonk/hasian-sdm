@@ -8,6 +8,9 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
+4.0.4c	03/12/2024
+Bug Fixed: Schedule > Import: Importing not working.
+
 4.0.4b	26/11/2024
 APP > Login: Presence Layout bug fixed.
 
