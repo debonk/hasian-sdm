@@ -8,6 +8,9 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
+4.0.5	17/01/2025
+Framework Updated
+
 4.0.4c	03/12/2024
 Bug Fixed: Schedule > Import: Importing not working.
 
