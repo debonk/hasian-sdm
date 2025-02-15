@@ -1,6 +1,152 @@
 <?php
 class ModelPresencePresence extends Model
 {
+	public function getCustomersNew($data = array())
+	{
+		$sql = "SELECT customer_id, nip, c.name, date_start, date_added, customer_department_id, customer_department, customer_group_id, customer_group, location_id, location, pm.name AS payroll_method FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE (c.language_id = '" . (int)$this->config->get('config_language_id') . "' OR c.language_id IS NULL) AND status = 1";
+
+		$implode = array();
+
+		if (!empty($data['filter']['name'])) {
+			$implode[] = "c.name LIKE '%" . $this->db->escape($data['filter']['name']) . "%'";
+		}
+
+		if (!empty($data['filter']['customer_department_id'])) {
+			$implode[] = "customer_department_id = '" . (int)$data['filter']['customer_department_id'] . "'";
+		}
+
+		if (!empty($data['filter']['customer_group_id'])) {
+			$implode[] = "customer_group_id = '" . (int)$data['filter']['customer_group_id'] . "'";
+		}
+
+		if (!empty($data['filter']['location_id'])) {
+			$implode[] = "location_id = '" . (int)$data['filter']['location_id'] . "'";
+		}
+
+		if (isset($data['filter']['payroll_include'])) {
+			$implode[] = "payroll_include = '" . (int)$data['filter']['payroll_include'] . "'";
+		}
+
+		if (isset($data['presence_period_id'])) {
+			$this->load->model('common/payroll');
+			$period_info = $this->model_common_payroll->getPeriod($data['presence_period_id']);
+
+			$implode[] = "date_start <= '" . $this->db->escape($period_info['date_end']) . "'";
+
+			$date_start = $period_info['date_start'];
+
+			if (isset($data['availability']) && $data['availability']) {
+				$availability = (int)$this->config->get('config_customer_last');
+
+				if ($availability) {
+					$period_info_availability = $this->model_common_payroll->getPeriodByDate(date('Y-m-d', strtotime('-' . $availability . ' months')));
+
+					if ($period_info_availability) {
+						$date_start = $period_info_availability['date_start'];
+					}
+				}
+			}
+
+			$implode[] = "(date_end IS NULL OR date_end >= '" . $this->db->escape($date_start) . "')";
+		} elseif (isset($data['filter']['status']) && !is_null($data['filter']['status'])) {
+			if (!empty($data['filter']['status'])) {
+				$implode[] = "date_end <= CURDATE()";
+			}
+		} else {
+			$implode[] = "(date_end IS NULL OR date_end >= CURDATE())";
+		}
+
+		if ($implode) {
+			$sql .= " AND " . implode(" AND ", $implode);
+		}
+
+		$sort_data = array(
+			'nip',
+			'name',
+			'customer_group',
+			'customer_department',
+			'location',
+			'date_added'
+		);
+
+		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+			$sql .= " ORDER BY " . $data['sort'];
+		} else {
+			$sql .= " ORDER BY name";
+		}
+
+		if (isset($data['order']) && ($data['order'] == 'DESC')) {
+			$sql .= " DESC";
+		} else {
+			$sql .= " ASC";
+		}
+
+		if (isset($data['start']) || isset($data['limit'])) {
+			if ($data['start'] < 0) {
+				$data['start'] = 0;
+			}
+
+			if ($data['limit'] < 1) {
+				$data['limit'] = 40;
+			}
+
+			$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
+		}
+
+		$query = $this->db->query($sql);
+
+		return $query->rows;
+	}
+
+	public function getCustomersCount($data = array())
+	{ //Used by: dashboard/customer, report payroll insurance, payroll basic, schedule
+		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "v_customer WHERE (language_id = '" . (int)$this->config->get('config_language_id') . "' OR language_id IS NULL) AND status = '1'";
+
+		$implode = array();
+
+		if (!empty($data['filter']['name'])) {
+			$implode[] = "name LIKE '%" . $this->db->escape($data['filter']['name']) . "%'";
+		}
+
+		if (!empty($data['filter']['customer_department_id'])) {
+			$implode[] = "customer_department_id = '" . (int)$data['filter']['customer_department_id'] . "'";
+		}
+
+		if (!empty($data['filter']['customer_group_id'])) {
+			$implode[] = "customer_group_id = '" . (int)$data['filter']['customer_group_id'] . "'";
+		}
+
+		if (!empty($data['filter']['location_id'])) {
+			$implode[] = "location_id = '" . (int)$data['filter']['location_id'] . "'";
+		}
+
+		if (isset($data['filter']['payroll_include'])) {
+			$implode[] = "payroll_include = '" . (int)$data['filter']['payroll_include'] . "'";
+		}
+
+		if (isset($data['presence_period_id'])) {
+			$this->load->model('common/payroll');
+			$period_info = $this->model_common_payroll->getPeriod($data['presence_period_id']);
+
+			$implode[] = "date_start <= '" . $this->db->escape($period_info['date_end']) . "'";
+			$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end >= '" . $this->db->escape($period_info['date_start']) . "')";
+		} elseif (isset($data['filter']['status']) && !is_null($data['filter']['status'])) {
+			if (!empty($data['filter']['status'])) {
+				$implode[] = "(date_end <> '0000-00-00' AND date_end <= CURDATE())";
+			}
+		} else {
+			$implode[] = "(date_end IS NULL OR date_end = '0000-00-00' OR date_end >= CURDATE())";
+		}
+
+		if ($implode) {
+			$sql .= " AND " . implode(" AND ", $implode);
+		}
+
+		$query = $this->db->query($sql);
+
+		return $query->row['total'];
+	}
+
 	public function getCustomers($data = array())
 	{
 		$sql = "SELECT customer_id, nip, c.name, date_start, date_added, customer_department_id, customer_department, customer_group_id, customer_group, location_id, location, pm.name AS payroll_method FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE (c.language_id = '" . (int)$this->config->get('config_language_id') . "' OR c.language_id IS NULL) AND status = 1";
@@ -268,12 +414,13 @@ class ModelPresencePresence extends Model
 		}
 
 		$absences_info = $this->model_presence_absence->getAbsencesByCustomerDate($customer_id, $range_date);
-
+		
 		foreach ($absences_info as $absence_info) {
 			if ($absence_info['approved']) {
 				$presence_status_id = $absence_info['presence_status_id'];
 				$presence_status = $absence_info['presence_status'];
 			} else {
+				$presence_status_id = $this->config->get('payroll_setting_id_ia');
 				$presence_status = $presence_status_data[$this->config->get('payroll_setting_id_ia')]['name'];
 			}
 

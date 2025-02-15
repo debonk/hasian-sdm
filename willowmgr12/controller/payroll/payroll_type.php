@@ -55,7 +55,6 @@ class ControllerPayrollPayrollType extends Controller
 				$this->model_payroll_payroll_type->addPayrollType($this->request->post);
 			});
 
-
 			$this->session->data['success'] = $this->language->get('text_success');
 
 			$url = $this->urlFilter();
@@ -78,7 +77,6 @@ class ControllerPayrollPayrollType extends Controller
 			$this->db->transaction(function () {
 				$this->model_payroll_payroll_type->editPayrollType($this->request->get['payroll_type_id'], $this->request->post);
 			});
-
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
@@ -134,6 +132,7 @@ class ControllerPayrollPayrollType extends Controller
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
 		}
+
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
@@ -169,9 +168,8 @@ class ControllerPayrollPayrollType extends Controller
 		$data['add'] = $this->url->link('payroll/payroll_type/add', 'token=' . $this->session->data['token'] . $url, true);
 		$data['delete'] = $this->url->link('payroll/payroll_type/delete', 'token=' . $this->session->data['token'] . $url, true);
 
-		$limit = $this->config->get('config_limit_admin');
-
 		$data['payroll_types'] = array();
+		$limit = $this->config->get('config_limit_admin');
 
 		$filter_data = array(
 			'sort'  	=> $sort,
@@ -195,8 +193,6 @@ class ControllerPayrollPayrollType extends Controller
 
 		$payroll_type_count = $this->model_payroll_payroll_type->getPayrollTypesCount($filter_data);
 
-
-		$data['token'] = $this->session->data['token'];
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -246,6 +242,8 @@ class ControllerPayrollPayrollType extends Controller
 		$data['sort'] = $sort;
 		$data['order'] = $order;
 
+		$data['token'] = $this->session->data['token'];
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -276,8 +274,6 @@ class ControllerPayrollPayrollType extends Controller
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
 		}
-
-		$data['token'] = $this->session->data['token'];
 
 		$errors = array(
 			'warning',
@@ -381,6 +377,8 @@ class ControllerPayrollPayrollType extends Controller
 		$data['note'] = sprintf($this->language->get('text_note'), implode(', ', $note));
 
 		$data['component_row'] = json_encode($component_row);
+
+		$data['token'] = $this->session->data['token'];
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');

@@ -13,9 +13,11 @@ $_['column_name']      = 'Nama';
 $_['column_action']    = 'Action';
 
 // Entry
-$_['entry_name']       = 'Nama Metode Pembayaran';
+$_['entry_code']		= 'Kode';
+$_['entry_name']		= 'Nama Metode Pembayaran';
 
 // Error
 $_['error_permission'] = 'Warning: You do not have permission to modify payroll methods!';
 $_['error_name']       = 'Name must be between 3 and 32 characters!';
+$_['error_code']       = 'Code must be between 3 and 32 characters!';
 $_['error_customer_total'] = 'Warning: This payroll methods cannot be deleted as it is currently assigned to %s customers!';

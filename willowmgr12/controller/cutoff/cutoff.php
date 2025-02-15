@@ -443,7 +443,7 @@ class ControllerCutoffCutoff extends Controller
 			$this->error['amount'] = $this->language->get('error_amount');
 		}
 
-		if ((utf8_strlen($this->request->post['description']) < 1) || (utf8_strlen(trim($this->request->post['description'])) > 32)) {
+		if ((utf8_strlen($this->request->post['description']) < 1) || (utf8_strlen(trim($this->request->post['description'])) > 256)) {
 			$this->error['description'] = $this->language->get('error_description');
 		}
 

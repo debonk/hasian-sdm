@@ -10,12 +10,14 @@ $_['text_edit']         = 'Edit User Group';
 
 // Column
 $_['column_name']       = 'User Group Name';
+$_['column_users']      = 'Active Users';
 $_['column_action']     = 'Action';
 
 // Entry
 $_['entry_name']        = 'User Group Name';
 $_['entry_access']      = 'Access Permission';
 $_['entry_modify']      = 'Modify Permission';
+$_['entry_approve']     = 'Approve Permission';
 $_['entry_bypass']      = 'By Pass Permission';
 
 // Error

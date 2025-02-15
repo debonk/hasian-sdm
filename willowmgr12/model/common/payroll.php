@@ -118,7 +118,7 @@ class ModelCommonPayroll extends Model
 
 	public function getCustomer($customer_id)
 	{
-		$query = $this->db->query("SELECT DISTINCT c.customer_id, store_id, firstname, lastname, c.name, nip, nik, date_start, c.image, payroll_include, payroll_type_id, health_insurance, life_insurance, employment_insurance, pension_insurance, cad.registered_wage, email, c.telephone, acc_no, date_end, status, c.customer_department_id, c.customer_group_id, c.location_id, c.address_id, customer_department, customer_group, location, pm.name AS payroll_method FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON (cad.customer_id = c.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE c.customer_id = '" . (int)$customer_id . "'");
+		$query = $this->db->query("SELECT DISTINCT c.customer_id, store_id, firstname, lastname, c.name, nip, nik, date_start, c.image, payroll_include, payroll_type_id, payroll_basic_id, health_insurance, life_insurance, employment_insurance, pension_insurance, cad.registered_wage, email, c.telephone, acc_no, date_end, status, c.customer_department_id, c.customer_group_id, c.location_id, c.address_id, customer_department, customer_group, location, pm.name AS payroll_method FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON (cad.customer_id = c.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE c.customer_id = '" . (int)$customer_id . "'");
 
 		return $query->row;
 	}

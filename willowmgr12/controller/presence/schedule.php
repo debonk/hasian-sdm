@@ -3,6 +3,41 @@ class ControllerPresenceSchedule extends Controller
 {
 	private $error = array();
 
+	private $filter_items = array(
+		'name',
+		'customer_group_id',
+		'customer_department_id',
+		'location_id',
+		// 'schedule_start'
+	);
+
+	private function urlFilter($excluded_item = null)
+	{
+		$url_filter = '';
+
+		foreach ($this->filter_items as $filter_item) {
+			if (isset($this->request->get['filter_' . $filter_item])) {
+				$url_filter .= '&filter_' . $filter_item . '=' . $this->request->get['filter_' . $filter_item];
+			}
+		}
+
+		if ($excluded_item != 'sort') {
+			if (isset($this->request->get['sort'])) {
+				$url_filter .= '&sort=' . $this->request->get['sort'];
+			}
+
+			if (isset($this->request->get['order'])) {
+				$url_filter .= '&order=' . $this->request->get['order'];
+			}
+		}
+
+		if (isset($this->request->get['page']) && $excluded_item != 'page') {
+			$url_filter .= '&page=' . $this->request->get['page'];
+		}
+
+		return $url_filter;
+	}
+
 	public function index()
 	{
 		$this->load->language('presence/schedule');
@@ -38,39 +73,13 @@ class ControllerPresenceSchedule extends Controller
 
 		if (!empty($period_info) && !empty($customer_info)) {
 			if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-				$this->model_presence_schedule->editSchedule($this->request->get['presence_period_id'], $this->request->get['customer_id'], $this->request->post);
+				$this->db->transaction(function () {
+					$this->model_presence_schedule->editSchedule($this->request->get['presence_period_id'], $this->request->get['customer_id'], $this->request->post);
+				});
 
 				$this->session->data['success'] = $this->language->get('text_success');
 
-				$url = '';
-
-				if (isset($this->request->get['filter_name'])) {
-					$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-				}
-
-				if (isset($this->request->get['filter_customer_group_id'])) {
-					$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-				}
-
-				if (isset($this->request->get['filter_customer_department_id'])) {
-					$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-				}
-
-				if (isset($this->request->get['filter_location_id'])) {
-					$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-				}
-
-				if (isset($this->request->get['sort'])) {
-					$url .= '&sort=' . $this->request->get['sort'];
-				}
-
-				if (isset($this->request->get['order'])) {
-					$url .= '&order=' . $this->request->get['order'];
-				}
-
-				if (isset($this->request->get['page'])) {
-					$url .= '&page=' . $this->request->get['page'];
-				}
+				$url = $this->urlFilter();
 
 				if (isset($this->request->get['schedule_start'])) {
 					$url .= '&schedule_start=' . $this->request->get['schedule_start'];
@@ -95,42 +104,16 @@ class ControllerPresenceSchedule extends Controller
 		$this->load->model('presence/schedule');
 
 		if (isset($this->request->get['presence_period_id']) && $this->validateDelete()) {
-			foreach ($this->request->post['selected'] as $customer_id) {
-				$this->model_presence_schedule->deleteSchedules($this->request->get['presence_period_id'], $customer_id);
-			}
+			$this->db->transaction(function () {
+				foreach ($this->request->post['selected'] as $customer_id) {
+					$this->model_presence_schedule->deleteSchedules($this->request->get['presence_period_id'], $customer_id);
+				}
+			});
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$url = '';
+			$url = $this->urlFilter();
 			$url .= '&presence_period_id=' . $this->request->get['presence_period_id'];
-
-			if (isset($this->request->get['filter_name'])) {
-				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-			}
-
-			if (isset($this->request->get['filter_customer_group_id'])) {
-				$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-			}
-
-			if (isset($this->request->get['filter_customer_department_id'])) {
-				$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-			}
-
-			if (isset($this->request->get['filter_location_id'])) {
-				$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-			}
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
-			}
 
 			if (isset($this->request->get['schedule_start'])) {
 				$url .= '&schedule_start=' . $this->request->get['schedule_start'];
@@ -153,40 +136,20 @@ class ControllerPresenceSchedule extends Controller
 		$this->load->model('presence/presence');
 
 		if (isset($this->request->get['presence_period_id']) && $this->validateRecap()) {
-			if (!$this->request->post['selected']) {
-				if (isset($this->request->get['filter_name'])) {
-					$filter_name = $this->request->get['filter_name'];
-				} else {
-					$filter_name = '';
-				}
+			if (empty($this->request->post['selected'])) {
+				$filter = [];
 
-				if (isset($this->request->get['filter_customer_group_id'])) {
-					$filter_customer_group_id = $this->request->get['filter_customer_group_id'];
-				} else {
-					$filter_customer_group_id = '';
+				foreach ($this->filter_items as $filter_item) {
+					$filter[$filter_item] = isset($this->request->get['filter_' . $filter_item]) ? $this->request->get['filter_' . $filter_item] : null;
 				}
-
-				if (isset($this->request->get['filter_customer_department_id'])) {
-					$filter_customer_department_id = $this->request->get['filter_customer_department_id'];
-				} else {
-					$filter_customer_department_id = '';
-				}
-
-				if (isset($this->request->get['filter_location_id'])) {
-					$filter_location_id = $this->request->get['filter_location_id'];
-				} else {
-					$filter_location_id = '';
-				}
-
+		
 				$filter_data = array(
-					'presence_period_id'   			=> $this->request->get['presence_period_id'],
-					'filter_name'	   	   			=> $filter_name,
-					'filter_customer_group_id'		=> $filter_customer_group_id,
-					'filter_customer_department_id'	=> $filter_customer_department_id,
-					'filter_location_id'   			=> $filter_location_id,
+					'presence_period_id'   	=> $this->request->get['presence_period_id'],
+					'filter'				=> $filter,
 				);
 
-				$customers = $this->model_presence_presence->getCustomers($filter_data);
+				$customers = $this->model_presence_presence->getCustomersNew($filter_data);
+
 				$customer_ids = array_column($customers, 'customer_id');
 			} else {
 				$customer_ids = $this->request->post['selected'];
@@ -198,36 +161,8 @@ class ControllerPresenceSchedule extends Controller
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$url = '';
+			$url = $this->urlFilter();
 			$url .= '&presence_period_id=' . $this->request->get['presence_period_id'];
-
-			if (isset($this->request->get['filter_name'])) {
-				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-			}
-
-			if (isset($this->request->get['filter_customer_group_id'])) {
-				$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-			}
-
-			if (isset($this->request->get['filter_customer_department_id'])) {
-				$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-			}
-
-			if (isset($this->request->get['filter_location_id'])) {
-				$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-			}
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
-			}
 
 			if (isset($this->request->get['schedule_start'])) {
 				$url .= '&schedule_start=' . $this->request->get['schedule_start'];
@@ -241,118 +176,15 @@ class ControllerPresenceSchedule extends Controller
 
 	protected function getList()
 	{
-		if (isset($this->request->get['presence_period_id'])) {
-			$presence_period_id = $this->request->get['presence_period_id'];
-		} else {
-			$presence_period_id = 0;
-		}
-
-		$period_info = $this->model_common_payroll->getPeriod($presence_period_id); //get current presence_period_id
-		$presence_period_id = $period_info['presence_period_id'];
-
-		if (isset($this->request->get['filter_name'])) {
-			$filter_name = $this->request->get['filter_name'];
-		} else {
-			$filter_name = '';
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$filter_customer_group_id = $this->request->get['filter_customer_group_id'];
-		} else {
-			$filter_customer_group_id = '';
-		}
-
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$filter_customer_department_id = $this->request->get['filter_customer_department_id'];
-		} else {
-			$filter_customer_department_id = '';
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$filter_location_id = $this->request->get['filter_location_id'];
-		} else {
-			$filter_location_id = '';
-		}
-
-		$url = '';
-		$url .= '&presence_period_id=' . $presence_period_id;
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
-
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
-
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
-
-		if (isset($this->request->get['schedule_start'])) {
-			$url .= '&schedule_start=' . $this->request->get['schedule_start'];
-		}
-
-		$data['breadcrumbs'] = array();
-
-		$data['breadcrumbs'][] = array(
-			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], true)
-		);
-
-		$data['breadcrumbs'][] = array(
-			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('presence/schedule', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $presence_period_id, true)
-		);
-
-		//Period Status Check
-		$period_pending_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'pending');
-		$period_processing_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'processing');
-
-		$data['information'] = '';
-		if ($period_pending_check || $period_processing_check) {
-			$empty_schedule_count = $this->model_presence_schedule->getEmptySchedulesCount($presence_period_id);
-
-			if ($empty_schedule_count) {
-				$data['information'] = sprintf($this->language->get('info_no_data'), $empty_schedule_count);
-			}
-		}
-
-		if ($period_pending_check) {
-			$data['action'] = $this->url->link('presence/schedule/delete', 'token=' . $this->session->data['token'] . $url, true);
-		} else {
-			$data['action'] = $this->url->link('presence/schedule/recap', 'token=' . $this->session->data['token'] . $url, true);
-		}
-
-		$data['import'] = $this->url->link('presence/schedule/import', 'token=' . $this->session->data['token'] . $url, true);
-		$data['print'] = $this->url->link('presence/schedule/print', 'token=' . $this->session->data['token'] . $url, true);
-		$data['back'] = $this->url->link('presence/presence_period', 'token=' . $this->session->data['token'], true);
-		$data['presence'] = $this->url->link('presence/presence', 'token=' . $this->session->data['token'] . $url, true);
-
 		$language_items = array(
 			'heading_title',
 			'text_list',
 			'text_confirm',
 			'text_loading',
-			'text_all_customer_group',
-			'text_all_customer_department',
-			'text_all_location',
+			'text_all',
+			// 'text_all_customer_group',
+			// 'text_all_customer_department',
+			// 'text_all_location',
 			'text_confirm_recap',
 			'entry_name',
 			'entry_customer_group',
@@ -360,6 +192,7 @@ class ControllerPresenceSchedule extends Controller
 			'entry_location',
 			'entry_presence_period',
 			'button_filter',
+			'button_unfilter',
 			'button_print',
 			'button_delete',
 			'button_back',
@@ -371,8 +204,6 @@ class ControllerPresenceSchedule extends Controller
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
 		}
-
-		$data['token'] = $this->session->data['token'];
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -387,6 +218,75 @@ class ControllerPresenceSchedule extends Controller
 		} else {
 			$data['success'] = '';
 		}
+
+		if (isset($this->request->get['presence_period_id'])) {
+			$presence_period_id = $this->request->get['presence_period_id'];
+		} else {
+			$presence_period_id = 0;
+		}
+
+		$period_info = $this->model_common_payroll->getPeriod($presence_period_id); //get current presence_period_id
+		$presence_period_id = $period_info['presence_period_id'];
+
+		$filter = [];
+
+		foreach ($this->filter_items as $filter_item) {
+			$filter[$filter_item] = isset($this->request->get['filter_' . $filter_item]) ? $this->request->get['filter_' . $filter_item] : null;
+		}
+
+		$url = $this->urlFilter();
+		$url .= '&presence_period_id=' . $presence_period_id;
+		$data['url'] = $url;
+
+		if (isset($this->request->get['schedule_start'])) {
+			$url .= '&schedule_start=' . $this->request->get['schedule_start'];
+		}
+
+		$data['breadcrumbs'] = array();
+
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('text_home'),
+			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], true)
+		);
+
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('heading_title'),
+			'href' => $this->url->link('presence/schedule', 'token=' . $this->session->data['token'], true)
+		);
+
+		//Period Status Check
+		$period_pending_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'pending');
+		$period_processing_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'processing');
+
+		$data['schedule_lock'] = true;
+
+		$data['information'] = '';
+		if ($period_pending_check || $period_processing_check) {
+			$empty_schedule_count = $this->model_presence_schedule->getEmptySchedulesCount($presence_period_id);
+
+			if ($empty_schedule_count) {
+				$data['information'] = sprintf($this->language->get('info_no_data'), $empty_schedule_count);
+			}
+
+			if ($period_processing_check) {
+				$data['schedule_lock'] = $this->config->get('payroll_setting_schedule_lock');
+			} else {
+				$data['schedule_lock'] = false;
+			}
+		}
+
+		if ($period_pending_check) {
+			$data['action'] = $this->url->link('presence/schedule/delete', 'token=' . $this->session->data['token'] . $url, true);
+		} else {
+			$data['action'] = $this->url->link('presence/schedule/recap', 'token=' . $this->session->data['token'] . $url, true);
+		}
+
+		$data['unfilter'] = $this->url->link('presence/schedule', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $presence_period_id, true);
+		$data['delete'] = $this->url->link('presence/schedule/delete', 'token=' . $this->session->data['token'] . $url, true);
+		$data['import'] = $this->url->link('presence/schedule/import', 'token=' . $this->session->data['token'] . $url, true);
+		$data['print'] = $this->url->link('presence/schedule/print', 'token=' . $this->session->data['token'] . $url, true);
+		$data['back'] = $this->url->link('presence/presence_period', 'token=' . $this->session->data['token'], true);
+		$data['presence'] = $this->url->link('presence/presence', 'token=' . $this->session->data['token'] . $url, true);
 
 		$this->load->model('presence/presence_period');
 		$data['presence_periods'] = $this->model_presence_presence_period->getPresencePeriods();
@@ -404,12 +304,12 @@ class ControllerPresenceSchedule extends Controller
 		$data['period_processing_check'] = $period_processing_check; //for button check
 
 		$data['presence_period_id'] = $presence_period_id;
-		$data['filter_name'] = $filter_name;
-		$data['filter_customer_group_id'] = $filter_customer_group_id;
-		$data['filter_customer_department_id'] = $filter_customer_department_id;
-		$data['filter_location_id'] = $filter_location_id;
 
-		$data['url'] = $url;
+		$data['token'] = $this->session->data['token'];
+		$data['filter_items'] = json_encode($this->filter_items);
+		$data['filter'] = $filter;
+		// $data['sort'] = $sort;
+		// $data['order'] = $order;
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -454,28 +354,10 @@ class ControllerPresenceSchedule extends Controller
 		// return new Action('error/not_found');
 		// }
 
-		if (isset($this->request->get['filter_name'])) {
-			$filter_name = $this->request->get['filter_name'];
-		} else {
-			$filter_name = '';
-		}
+		$filter = [];
 
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$filter_customer_group_id = $this->request->get['filter_customer_group_id'];
-		} else {
-			$filter_customer_group_id = '';
-		}
-
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$filter_customer_department_id = $this->request->get['filter_customer_department_id'];
-		} else {
-			$filter_customer_department_id = '';
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$filter_location_id = $this->request->get['filter_location_id'];
-		} else {
-			$filter_location_id = '';
+		foreach ($this->filter_items as $filter_item) {
+			$filter[$filter_item] = isset($this->request->get['filter_' . $filter_item]) ? $this->request->get['filter_' . $filter_item] : null;
 		}
 
 		$sort = 'customer_group DESC, name';
@@ -501,20 +383,16 @@ class ControllerPresenceSchedule extends Controller
 		$data['schedule_groups'] = array(); // Rekap berdasarkan schedule_types
 		$data['customer_groups'] = array(); // Memisahkan customer_groups yang jumlahnya >= 15
 
-		$filter_customer_department_id = $this->user->getCustomerDepartmentId();
+		$filter['customer_department_id'] = $this->user->getCustomerDepartmentId();
 
 		$filter_data = array(
-			'filter_customer_department_id'	=> $filter_customer_department_id,
-			'filter_name'	   	   			=> $filter_name,
-			'filter_customer_group_id' 		=> $filter_customer_group_id,
-			'filter_customer_department_id' => $filter_customer_department_id,
-			'filter_location_id'   			=> $filter_location_id,
-			'sort'                 			=> $sort,
-			'order'                			=> $order
+			'filter'	=> $filter,
+			'sort'      => $sort,
+			'order'     => $order
 		);
 
-		$data['location'] = !empty($filter_location_id) ? $this->model_common_payroll->getLocation($filter_location_id) : $this->language->get('text_all_location');
-		$data['text_division'] = sprintf($this->language->get('text_department'), !empty($filter_customer_department_id) ? $this->model_common_payroll->getCustomerDepartment($filter_customer_department_id) : $this->language->get('text_all_customer_department'));
+		$data['location'] = !empty($filter['location_id']) ? $this->model_common_payroll->getLocation($filter['location_id']) : $this->language->get('text_all_location');
+		$data['text_division'] = sprintf($this->language->get('text_department'), !empty($filter['customer_department_id']) ? $this->model_common_payroll->getCustomerDepartment($filter['customer_department_id']) : $this->language->get('text_all_customer_department'));
 		$data['text_period'] = sprintf($this->language->get('text_period'), date($this->language->get('date_format_jMY'), strtotime($period_info['date_start'])), date($this->language->get('date_format_jMY'), strtotime($period_info['date_end'])));
 		$data['text_user'] = sprintf($this->language->get('text_user'), $this->user->getUserName());
 
@@ -651,28 +529,10 @@ class ControllerPresenceSchedule extends Controller
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 		$presence_period_id = $period_info['presence_period_id'];
 
-		if (isset($this->request->get['filter_name'])) {
-			$filter_name = $this->request->get['filter_name'];
-		} else {
-			$filter_name = '';
-		}
+		$filter = [];
 
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$filter_customer_group_id = $this->request->get['filter_customer_group_id'];
-		} else {
-			$filter_customer_group_id = '';
-		}
-
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$filter_customer_department_id = $this->request->get['filter_customer_department_id'];
-		} else {
-			$filter_customer_department_id = '';
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$filter_location_id = $this->request->get['filter_location_id'];
-		} else {
-			$filter_location_id = '';
+		foreach ($this->filter_items as $filter_item) {
+			$filter[$filter_item] = isset($this->request->get['filter_' . $filter_item]) ? $this->request->get['filter_' . $filter_item] : null;
 		}
 
 		if (isset($this->request->get['sort'])) {
@@ -705,55 +565,25 @@ class ControllerPresenceSchedule extends Controller
 			}
 		}
 
-		$url = '';
+		$url = $this->urlFilter();
 		$url .= '&presence_period_id=' . $presence_period_id;
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
-
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
-
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
 
 		if (isset($this->request->get['schedule_start'])) {
 			$url .= '&schedule_start=' . $this->request->get['schedule_start'];
 		}
 
 		$data['customers'] = array();
+		$limit = $this->config->get('config_limit_admin');
 
 		$filter_data = array(
-			'presence_period_id'   			=> $presence_period_id,
-			'filter_name'	   	   			=> $filter_name,
-			'filter_customer_group_id'		=> $filter_customer_group_id,
-			'filter_customer_department_id'	=> $filter_customer_department_id,
-			'filter_location_id'   			=> $filter_location_id,
-			'sort'                 			=> $sort,
-			'order'                			=> $order,
-			'start'                			=> ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit'                			=> $this->config->get('config_limit_admin')
+			'presence_period_id'   	=> $this->request->get['presence_period_id'],
+			'filter'				=> $filter,
+			'sort'					=> $sort,
+			'order'					=> $order,
+			'start'					=> ($page - 1) * $limit,
+			'limit'					=> $limit
 		);
-
+		
 		$range_date = array(
 			'start'	=> $schedule_start,
 			'end' 	=> date('Y-m-d', strtotime('+6 days', strtotime($schedule_start)))
@@ -764,11 +594,12 @@ class ControllerPresenceSchedule extends Controller
 		$period_status_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'pending, processing');
 
 		if ($period_status_check) {
-			$results = $this->model_presence_presence->getCustomers($filter_data);
-			$customer_total = $this->model_presence_presence->getTotalCustomers($filter_data);
+			$results = $this->model_presence_presence->getCustomersNew($filter_data);
+
+			$customer_count = $this->model_presence_presence->getCustomersCount($filter_data);
 		} else {
 			$results = $this->model_presence_schedule->getScheduleCustomers($presence_period_id, $filter_data);
-			$customer_total = $this->model_presence_schedule->getScheduleCustomersCount($presence_period_id, $filter_data);
+			$customer_count = $this->model_presence_schedule->getScheduleCustomersCount($presence_period_id, $filter_data);
 		}
 
 		$this->load->model('presence/absence');
@@ -803,41 +634,19 @@ class ControllerPresenceSchedule extends Controller
 			);
 		}
 
-		$data['token'] = $this->session->data['token'];
-
 		if (isset($this->request->post['selected'])) {
 			$data['selected'] = (array)$this->request->post['selected'];
 		} else {
 			$data['selected'] = array();
 		}
 
-		$url = '';
+		$url = $this->urlFilter('sort');
 		$url .= '&presence_period_id=' . $presence_period_id;
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
-
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
 
 		if ($order == 'ASC') {
 			$url .= '&order=DESC';
 		} else {
 			$url .= '&order=ASC';
-		}
-
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
 		}
 
 		if (isset($this->request->get['schedule_start'])) {
@@ -850,83 +659,33 @@ class ControllerPresenceSchedule extends Controller
 		$data['sort_customer_department'] = $this->url->link('presence/schedule/report', 'token=' . $this->session->data['token'] . '&sort=customer_department' . $url, true);
 		$data['sort_location'] = $this->url->link('presence/schedule/report', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
 
-		$url = '';
+		$url = $this->urlFilter('page');
 		$url .= '&presence_period_id=' . $presence_period_id;
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
-
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
 
 		if (isset($this->request->get['schedule_start'])) {
 			$url .= '&schedule_start=' . $this->request->get['schedule_start'];
 		}
 
 		$pagination = new Pagination();
-		$pagination->total = $customer_total;
+		$pagination->total = $customer_count;
 		$pagination->page = $page;
-		$pagination->limit = $this->config->get('config_limit_admin');
-		$pagination->url = $this->url->link('presence/schedule/report', 'token=' . $this->session->data['token'] . $url . '&page={page}', true);
+		$pagination->limit = $limit;
+		$pagination->url = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . $url . '&page={page}', true);
 
 		$data['pagination'] = $pagination->render();
 
-		$data['results'] = sprintf($this->language->get('text_pagination'), ($customer_total) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($customer_total - $this->config->get('config_limit_admin'))) ? $customer_total : ((($page - 1) * $this->config->get('config_limit_admin')) + $this->config->get('config_limit_admin')), $customer_total, ceil($customer_total / $this->config->get('config_limit_admin')));
+		$data['results'] = sprintf($this->language->get('text_pagination'), ($customer_count) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($customer_count - $limit)) ? $customer_count : ((($page - 1) * $limit) + $limit), $customer_count, ceil($customer_count / $limit));
 
-		$url = '';
+		$url = $this->urlFilter();
 		$url .= '&presence_period_id=' . $presence_period_id;
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
-
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
-
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
 
 		$schedule_next = date('Y-m-d', min(strtotime('+7 day', strtotime($schedule_start)), strtotime('-6 day', strtotime($period_info['date_end']))));
 		$schedule_prev = date('Y-m-d', max(strtotime('-7 day', strtotime($schedule_start)), strtotime('-2 day', strtotime($period_info['date_start']))));
 
 		$data['schedule_next'] = $this->url->link('presence/schedule/report', 'token=' . $this->session->data['token'] . '&schedule_start=' . $schedule_next . $url, true);
 		$data['schedule_prev'] = $this->url->link('presence/schedule/report', 'token=' . $this->session->data['token'] . '&schedule_start=' . $schedule_prev . $url, true);
+
+		$data['token'] = $this->session->data['token'];
 
 		$data['sort'] = $sort;
 		$data['order'] = $order;
@@ -978,36 +737,8 @@ class ControllerPresenceSchedule extends Controller
 			$data['success'] = '';
 		}
 
-		$url = '';
+		$url = $this->urlFilter();
 		$url .= '&presence_period_id=' . $presence_period_id;
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
-
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
-
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
 
 		if (isset($this->request->get['schedule_start'])) {
 			$url .= '&schedule_start=' . $this->request->get['schedule_start'];
@@ -1081,19 +812,31 @@ class ControllerPresenceSchedule extends Controller
 
 		$presence_period_id = isset($this->request->get['presence_period_id']) ? (int)$this->request->get['presence_period_id'] : 0;
 
-		if ($this->user->getCustomerDepartmentId()) {
-			$filter_customer_department_id = $this->user->getCustomerDepartmentId();
-		} else {
-			$filter_customer_department_id = isset($this->request->get['filter_customer_department_id']) ? (int)$this->request->get['filter_customer_department_id'] : 0;
+		$filter = [];
+
+		foreach ($this->filter_items as $filter_item) {
+			$filter[$filter_item] = isset($this->request->get['filter_' . $filter_item]) ? $this->request->get['filter_' . $filter_item] : null;
 		}
 
-		$filter = [
-			'name'						=> isset($this->request->get['filter_name']) ? $this->request->get['filter_name'] : '',
-			'customer_group_id'			=> isset($this->request->get['filter_customer_group_id']) ? (int)$this->request->get['filter_customer_group_id'] : 0,
-			'customer_department_id'	=> $filter_customer_department_id,
-			'location_id'				=> isset($this->request->get['filter_location_id']) ? (int)$this->request->get['filter_location_id'] : 0,
-			'status'					=> 1
-		];
+		$filter['status'] = 1;
+
+		if ($this->user->getCustomerDepartmentId()) {
+			$filter['customer_department_id'] = $this->user->getCustomerDepartmentId();
+		}
+
+		// if ($this->user->getCustomerDepartmentId()) {
+		// 	$filter_customer_department_id = $this->user->getCustomerDepartmentId();
+		// } else {
+		// 	$filter_customer_department_id = isset($this->request->get['filter_customer_department_id']) ? (int)$this->request->get['filter_customer_department_id'] : 0;
+		// }
+
+		// $filter = [
+		// 	'name'						=> isset($this->request->get['filter_name']) ? $this->request->get['filter_name'] : '',
+		// 	'customer_group_id'			=> isset($this->request->get['filter_customer_group_id']) ? (int)$this->request->get['filter_customer_group_id'] : 0,
+		// 	'customer_department_id'	=> $filter_customer_department_id,
+		// 	'location_id'				=> isset($this->request->get['filter_location_id']) ? (int)$this->request->get['filter_location_id'] : 0,
+		// 	'status'					=> 1
+		// ];
 
 		$title_color = 'FF76933c';
 		$table_head_format = [
@@ -1130,7 +873,7 @@ class ControllerPresenceSchedule extends Controller
 					break;
 				}
 
-				if (strtolower($period_info['payroll_status']) != 'pending') {
+				if (strtolower($period_info['payroll_status']) != 'pending' && (strtolower($period_info['payroll_status']) != 'processing' || $this->config->get('payroll_setting_schedule_lock'))) {
 					$this->error = $this->language->get('error_status');
 
 					break;
@@ -1198,16 +941,16 @@ class ControllerPresenceSchedule extends Controller
 				$filter_data = [
 					'presence_period_id'   			=> $presence_period_id,
 					'filter'	   	   				=> $filter,
-					'filter_name'	   	   			=> $filter['name'],
-					'filter_customer_group_id'		=> $filter['customer_group_id'],
-					'filter_customer_department_id'	=> $filter['customer_department_id'],
-					'filter_location_id'   			=> $filter['location_id'],
-					'filter_status'   				=> 1
+					// 'filter_name'	   	   			=> $filter['name'],
+					// 'filter_customer_group_id'		=> $filter['customer_group_id'],
+					// 'filter_customer_department_id'	=> $filter['customer_department_id'],
+					// 'filter_location_id'   			=> $filter['location_id'],
+					// 'filter_status'   				=> 1
 				];
 
-				$customer_count = $this->model_presence_presence->getTotalCustomers($filter_data);
-				$customers = $this->model_presence_presence->getCustomers($filter_data);
-
+				$customer_count = $this->model_presence_presence->getCustomersCount($filter_data);
+				$customers = $this->model_presence_presence->getCustomersNew($filter_data);
+				
 				// $customer_count = $this->model_customer_customer->getTotalCustomers($filter_data);
 				// $customers = $this->model_customer_customer->getCustomers($filter_data);
 
@@ -1399,36 +1142,8 @@ class ControllerPresenceSchedule extends Controller
 		if ($this->error) {
 			$this->session->data['error'] = $this->error;
 
-			$url = '';
+			$url = $this->urlFilter();
 			$url .= '&presence_period_id=' . $presence_period_id;
-
-			if (isset($this->request->get['filter_name'])) {
-				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-			}
-
-			if (isset($this->request->get['filter_customer_group_id'])) {
-				$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-			}
-
-			if (isset($this->request->get['filter_customer_department_id'])) {
-				$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-			}
-
-			if (isset($this->request->get['filter_location_id'])) {
-				$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-			}
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
-			}
 
 			if (isset($this->request->get['schedule_start'])) {
 				$url .= '&schedule_start=' . $this->request->get['schedule_start'];
@@ -1464,7 +1179,7 @@ class ControllerPresenceSchedule extends Controller
 					break;
 				}
 
-				if (strtolower($period_info['payroll_status']) != 'pending') {
+				if (strtolower($period_info['payroll_status']) != 'pending' && (strtolower($period_info['payroll_status']) != 'processing' || $this->config->get('payroll_setting_schedule_lock'))) {
 					$this->error = $this->language->get('error_status');
 
 					break;
@@ -1637,7 +1352,7 @@ class ControllerPresenceSchedule extends Controller
 					}
 
 					$range_date = array(
-						'start'	=> $period_info['date_start'],
+						'start'	=> min(max($period_info['date_start'], date('Y-m-d', strtotime('tomorrow'))), $period_info['date_end']),
 						'end'	=> $period_info['date_end']
 					);
 
@@ -1660,7 +1375,7 @@ class ControllerPresenceSchedule extends Controller
 
 						$schedule_date = date('Y-m-d', \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($date));
 
-						if ($schedule_date >= date('Y-m-d')) {
+						if ($schedule_date > date('Y-m-d')) {
 							$post_data['schedule' . $schedule_date] = $schedule_type[$value];
 						}
 					}
@@ -1994,14 +1709,14 @@ class ControllerPresenceSchedule extends Controller
 			}
 		}
 
-		if (!$this->model_common_payroll->checkPeriodStatus($this->request->get['presence_period_id'], 'pending')) {
+		if (!$this->model_common_payroll->checkPeriodStatus($this->request->get['presence_period_id'], 'pending') && (!$this->model_common_payroll->checkPeriodStatus($this->request->get['presence_period_id'], 'processing') || $this->config->get('payroll_setting_schedule_lock'))) {
 			$this->error['warning'] = $this->language->get('error_status');
 		}
 
-		$period_info = $this->model_common_payroll->getPeriod($this->request->get['presence_period_id']);
-		if (strtotime($period_info['date_start']) <= strtotime('today')) {
-			$this->error['warning'] = $this->language->get('error_date_start');
-		}
+		// $period_info = $this->model_common_payroll->getPeriod($this->request->get['presence_period_id']);
+		// if (strtotime($period_info['date_start']) <= strtotime('today')) {
+		// 	$this->error['warning'] = $this->language->get('error_date_start');
+		// }
 
 		if (!isset($this->request->post['selected'])) {
 			$this->error['warning'] = $this->language->get('error_not_selected');
@@ -2040,9 +1755,10 @@ class ControllerPresenceSchedule extends Controller
 	public function autocomplete()
 	{
 		$json = array();
+		$filter = [];
 
 		if (isset($this->request->get['filter_name'])) {
-			$filter_name = $this->request->get['filter_name'];
+			$filter['name'] = $this->request->get['filter_name'];
 
 			$presence_period_id = isset($this->request->get['presence_period_id']) ? $this->request->get['presence_period_id'] : 0;
 
@@ -2050,12 +1766,12 @@ class ControllerPresenceSchedule extends Controller
 
 			$filter_data = array(
 				'presence_period_id'	=> $presence_period_id,
-				'filter_name'			=> $filter_name,
+				'filter'				=> $filter,
 				'start'      			=> 0,
 				'limit'      			=> 15
 			);
 
-			$results = $this->model_presence_presence->getCustomers($filter_data);
+			$results = $this->model_presence_presence->getCustomersNew($filter_data);
 
 			foreach ($results as $result) {
 				$json[] = array(

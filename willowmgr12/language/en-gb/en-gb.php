@@ -57,6 +57,7 @@ $_['button_close']                  = 'Close';
 $_['button_enable']                 = 'Enable';
 $_['button_disable']                = 'Disable';
 $_['button_filter']                 = 'Filter';
+$_['button_unfilter']               = 'Clear Filter';
 $_['button_send']                   = 'Send';
 $_['button_edit']                   = 'Edit';
 $_['button_copy']                   = 'Copy';

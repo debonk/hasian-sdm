@@ -8,7 +8,7 @@ class ModelPresenceSchedule extends Model
 
 	public function deleteSchedules($presence_period_id, $customer_id)
 	{
-		$this->db->query("DELETE FROM " . DB_PREFIX . "schedule WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "schedule WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "' AND date > CURDATE()");
 	}
 
 	public function editSchedule($presence_period_id, $customer_id, $data = array())
@@ -57,20 +57,20 @@ class ModelPresenceSchedule extends Model
 
 		$implode = array();
 
-		if (!empty($data['filter_name'])) {
-			$implode[] = "c.name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		if (!empty($data['filter']['name'])) {
+			$implode[] = "c.name LIKE '%" . $this->db->escape($data['filter']['name']) . "%'";
 		}
 
-		if (!empty($data['filter_customer_group_id'])) {
-			$implode[] = "c.customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+		if (!empty($data['filter']['customer_group_id'])) {
+			$implode[] = "c.customer_group_id = '" . (int)$data['filter']['customer_group_id'] . "'";
 		}
 
-		if (!empty($data['filter_location_id'])) {
-			$implode[] = "c.location_id = '" . (int)$data['filter_location_id'] . "'";
+		if (!empty($data['filter']['location_id'])) {
+			$implode[] = "c.location_id = '" . (int)$data['filter']['location_id'] . "'";
 		}
 
-		if (!empty($data['filter_customer_department_id'])) {
-			$implode[] = "c.customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
+		if (!empty($data['filter']['customer_department_id'])) {
+			$implode[] = "c.customer_department_id = '" . (int)$data['filter']['customer_department_id'] . "'";
 		}
 
 		if ($implode) {
@@ -121,20 +121,20 @@ class ModelPresenceSchedule extends Model
 
 		$implode = array();
 
-		if (!empty($data['filter_name'])) {
-			$implode[] = "c.name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		if (!empty($data['filter']['name'])) {
+			$implode[] = "c.name LIKE '%" . $this->db->escape($data['filter']['name']) . "%'";
 		}
 
-		if (!empty($data['filter_customer_group_id'])) {
-			$implode[] = "c.customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+		if (!empty($data['filter']['customer_group_id'])) {
+			$implode[] = "c.customer_group_id = '" . (int)$data['filter']['customer_group_id'] . "'";
 		}
 
-		if (!empty($data['filter_location_id'])) {
-			$implode[] = "c.location_id = '" . (int)$data['filter_location_id'] . "'";
+		if (!empty($data['filter']['location_id'])) {
+			$implode[] = "c.location_id = '" . (int)$data['filter']['location_id'] . "'";
 		}
 
-		if (!empty($data['filter_customer_department_id'])) {
-			$implode[] = "c.customer_department_id = '" . (int)$data['filter_customer_department_id'] . "'";
+		if (!empty($data['filter']['customer_department_id'])) {
+			$implode[] = "c.customer_department_id = '" . (int)$data['filter']['customer_department_id'] . "'";
 		}
 
 		if ($implode) {

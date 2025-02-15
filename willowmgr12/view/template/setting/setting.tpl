@@ -4,10 +4,11 @@
 	<div class="page-header">
 		<div class="container-fluid">
 			<div class="pull-right">
-				<button type="submit" id="button-save" form="form-setting" data-toggle="tooltip" title="<?= $button_save; ?>"
-					disabled="disabled" class="btn btn-primary"><i class="fa fa-save"></i></button>
-				<a href="<?= $cancel; ?>" data-toggle="tooltip" title="<?= $button_cancel; ?>" class="btn btn-default"><i
-						class="fa fa-reply"></i></a>
+				<button type="submit" id="button-save" form="form-setting" data-toggle="tooltip"
+					title="<?= $button_save; ?>" disabled="disabled" class="btn btn-primary"><i
+						class="fa fa-save"></i></button>
+				<a href="<?= $cancel; ?>" data-toggle="tooltip" title="<?= $button_cancel; ?>"
+					class="btn btn-default"><i class="fa fa-reply"></i></a>
 			</div>
 			<h1>
 				<?= $heading_title; ?>
@@ -77,7 +78,8 @@
 								</label>
 								<div class="col-sm-9">
 									<input type="text" name="config_meta_title" value="<?= $config_meta_title; ?>"
-										placeholder="<?= $entry_meta_title; ?>" id="input-meta-title" class="form-control" />
+										placeholder="<?= $entry_meta_title; ?>" id="input-meta-title"
+										class="form-control" />
 									<?php if ($error_meta_title) { ?>
 									<div class="text-danger">
 										<?= $error_meta_title; ?>
@@ -90,8 +92,9 @@
 									<?= $entry_meta_description; ?>
 								</label>
 								<div class="col-sm-9">
-									<textarea name="config_meta_description" rows="5" placeholder="<?= $entry_meta_description; ?>"
-										id="input-meta-description" class="form-control"><?= $config_meta_description; ?></textarea>
+									<textarea name="config_meta_description" rows="5"
+										placeholder="<?= $entry_meta_description; ?>" id="input-meta-description"
+										class="form-control"><?= $config_meta_description; ?></textarea>
 								</div>
 							</div>
 							<div class="form-group">
@@ -99,8 +102,9 @@
 									<?= $entry_meta_keyword; ?>
 								</label>
 								<div class="col-sm-9">
-									<textarea name="config_meta_keyword" rows="5" placeholder="<?= $entry_meta_keyword; ?>"
-										id="input-meta-keyword" class="form-control"><?= $config_meta_keyword; ?></textarea>
+									<textarea name="config_meta_keyword" rows="5"
+										placeholder="<?= $entry_meta_keyword; ?>" id="input-meta-keyword"
+										class="form-control"><?= $config_meta_keyword; ?></textarea>
 								</div>
 							</div>
 							<div class="form-group">
@@ -152,8 +156,8 @@
 									<?= $entry_name; ?>
 								</label>
 								<div class="col-sm-9">
-									<input type="text" name="config_name" value="<?= $config_name; ?>" placeholder="<?= $entry_name; ?>"
-										id="input-name" class="form-control" />
+									<input type="text" name="config_name" value="<?= $config_name; ?>"
+										placeholder="<?= $entry_name; ?>" id="input-name" class="form-control" />
 									<?php if ($error_name) { ?>
 									<div class="text-danger">
 										<?= $error_name; ?>
@@ -180,8 +184,8 @@
 									<?= $entry_address; ?>
 								</label>
 								<div class="col-sm-9">
-									<textarea name="config_address" placeholder="<?= $entry_address; ?>" rows="5" id="input-address"
-										class="form-control"><?= $config_address; ?></textarea>
+									<textarea name="config_address" placeholder="<?= $entry_address; ?>" rows="5"
+										id="input-address" class="form-control"><?= $config_address; ?></textarea>
 									<?php if ($error_address) { ?>
 									<div class="text-danger">
 										<?= $error_address; ?>
@@ -219,7 +223,8 @@
 								</label>
 								<div class="col-sm-9">
 									<input type="text" name="config_telephone" value="<?= $config_telephone; ?>"
-										placeholder="<?= $entry_telephone; ?>" id="input-telephone" class="form-control" />
+										placeholder="<?= $entry_telephone; ?>" id="input-telephone"
+										class="form-control" />
 									<?php if ($error_telephone) { ?>
 									<div class="text-danger">
 										<?= $error_telephone; ?>
@@ -232,8 +237,8 @@
 									<?= $entry_fax; ?>
 								</label>
 								<div class="col-sm-9">
-									<input type="text" name="config_fax" value="<?= $config_fax; ?>" placeholder="<?= $entry_fax; ?>"
-										id="input-fax" class="form-control" />
+									<input type="text" name="config_fax" value="<?= $config_fax; ?>"
+										placeholder="<?= $entry_fax; ?>" id="input-fax" class="form-control" />
 								</div>
 							</div>
 							<!-- Bonk: Additional Contact -->
@@ -242,8 +247,8 @@
 									<?= $entry_wa; ?>
 								</label>
 								<div class="col-sm-9">
-									<input type="text" name="config_wa" value="<?= $config_wa; ?>" placeholder="<?= $entry_wa; ?>"
-										id="input-wa" class="form-control" />
+									<input type="text" name="config_wa" value="<?= $config_wa; ?>"
+										placeholder="<?= $entry_wa; ?>" id="input-wa" class="form-control" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -251,8 +256,8 @@
 									<?= $entry_bbm; ?>
 								</label>
 								<div class="col-sm-9">
-									<input type="text" name="config_bbm" value="<?= $config_bbm; ?>" placeholder="<?= $entry_bbm; ?>"
-										id="input-bbm" class="form-control" />
+									<input type="text" name="config_bbm" value="<?= $config_bbm; ?>"
+										placeholder="<?= $entry_bbm; ?>" id="input-bbm" class="form-control" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -260,8 +265,8 @@
 									<?= $entry_line; ?>
 								</label>
 								<div class="col-sm-9">
-									<input type="text" name="config_line" value="<?= $config_line; ?>" placeholder="<?= $entry_line; ?>"
-										id="input-line" class="form-control" />
+									<input type="text" name="config_line" value="<?= $config_line; ?>"
+										placeholder="<?= $entry_line; ?>" id="input-line" class="form-control" />
 								</div>
 							</div>
 
@@ -269,9 +274,11 @@
 								<label class="col-sm-3 control-label" for="input-image">
 									<?= $entry_image; ?>
 								</label>
-								<div class="col-sm-9"><a href="" id="thumb-image" data-toggle="image" class="img-thumbnail"><img
-											src="<?= $thumb; ?>" alt="" title="" data-placeholder="<?= $placeholder; ?>" /></a>
-									<input type="hidden" name="config_image" value="<?= $config_image; ?>" id="input-image" />
+								<div class="col-sm-9"><a href="" id="thumb-image" data-toggle="image"
+										class="img-thumbnail"><img src="<?= $thumb; ?>" alt="" title=""
+											data-placeholder="<?= $placeholder; ?>" /></a>
+									<input type="hidden" name="config_image" value="<?= $config_image; ?>"
+										id="input-image" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -280,8 +287,8 @@
 										<?= $entry_open; ?>
 									</span></label>
 								<div class="col-sm-9">
-									<textarea name="config_open" rows="5" placeholder="<?= $entry_open; ?>" id="input-open"
-										class="form-control"><?= $config_open; ?></textarea>
+									<textarea name="config_open" rows="5" placeholder="<?= $entry_open; ?>"
+										id="input-open" class="form-control"><?= $config_open; ?></textarea>
 								</div>
 							</div>
 							<div class="form-group">
@@ -290,14 +297,14 @@
 										<?= $entry_comment; ?>
 									</span></label>
 								<div class="col-sm-9">
-									<textarea name="config_comment" rows="5" placeholder="<?= $entry_comment; ?>" id="input-comment"
-										class="form-control"><?= $config_comment; ?></textarea>
+									<textarea name="config_comment" rows="5" placeholder="<?= $entry_comment; ?>"
+										id="input-comment" class="form-control"><?= $config_comment; ?></textarea>
 								</div>
 							</div>
 							<?php if ($locations) { ?>
 							<div class="form-group">
-								<label class="col-sm-3 control-label"><span data-toggle="tooltip" data-container="#tab-general"
-										title="<?= $help_location; ?>">
+								<label class="col-sm-3 control-label"><span data-toggle="tooltip"
+										data-container="#tab-general" title="<?= $help_location; ?>">
 										<?= $entry_location; ?>
 									</span></label>
 								<div class="col-sm-9">
@@ -305,11 +312,12 @@
 									<div class="checkbox">
 										<label>
 											<?php if (in_array($location['location_id'], $config_location)) { ?>
-											<input type="checkbox" name="config_location[]" value="<?= $location['location_id']; ?>"
-												checked="checked" />
+											<input type="checkbox" name="config_location[]"
+												value="<?= $location['location_id']; ?>" checked="checked" />
 											<?= $location['name']; ?>
 											<?php } else { ?>
-											<input type="checkbox" name="config_location[]" value="<?= $location['location_id']; ?>" />
+											<input type="checkbox" name="config_location[]"
+												value="<?= $location['location_id']; ?>" />
 											<?= $location['name']; ?>
 											<?php } ?>
 										</label>
@@ -411,7 +419,8 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?= $help_currency_auto; ?>">
+								<label class="col-sm-3 control-label"><span data-toggle="tooltip"
+										title="<?= $help_currency_auto; ?>">
 										<?= $entry_currency_auto; ?>
 									</span></label>
 								<div class="col-sm-9">
@@ -442,23 +451,26 @@
 									<?= $text_customer; ?>
 								</legend>
 								<div class="form-group">
-									<label class="col-sm-3 control-label" for="input-nip-prefix"><span data-toggle="tooltip"
-											title="<?= $help_nip_prefix; ?>">
+									<label class="col-sm-3 control-label" for="input-nip-prefix"><span
+											data-toggle="tooltip" title="<?= $help_nip_prefix; ?>">
 											<?= $entry_nip_prefix; ?>
 										</span></label>
 									<div class="col-sm-9">
 										<input type="text" name="config_nip_prefix" value="<?= $config_nip_prefix; ?>"
-											placeholder="<?= $entry_nip_prefix; ?>" id="input-nip-prefix" class="form-control" />
+											placeholder="<?= $entry_nip_prefix; ?>" id="input-nip-prefix"
+											class="form-control" />
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-3 control-label" for="input-customer-last"><span data-toggle="tooltip"
-											title="<?= $help_customer_last; ?>">
+									<label class="col-sm-3 control-label" for="input-customer-last"><span
+											data-toggle="tooltip" title="<?= $help_customer_last; ?>">
 											<?= $entry_customer_last; ?>
 										</span></label>
 									<div class="col-sm-9">
-										<input type="text" name="config_customer_last" value="<?= $config_customer_last; ?>"
-											placeholder="<?= $entry_customer_last; ?>" id="input-customer-last" class="form-control" />
+										<input type="text" name="config_customer_last"
+											value="<?= $config_customer_last; ?>"
+											placeholder="<?= $entry_customer_last; ?>" id="input-customer-last"
+											class="form-control" />
 									</div>
 								</div>
 							</fieldset>
@@ -467,13 +479,15 @@
 									<?= $text_contract; ?>
 								</legend>
 								<div class="form-group">
-									<label class="col-sm-3 control-label" for="input-contract-end-notif"><span data-toggle="tooltip"
-											title="<?= $help_contract_end_notif; ?>">
+									<label class="col-sm-3 control-label" for="input-contract-end-notif"><span
+											data-toggle="tooltip" title="<?= $help_contract_end_notif; ?>">
 											<?= $entry_contract_end_notif; ?>
 										</span></label>
 									<div class="col-sm-9">
-										<input type="text" name="config_contract_end_notif" value="<?= $config_contract_end_notif; ?>"
-											placeholder="<?= $entry_contract_end_notif; ?>" id="input-contract-end-notif" class="form-control" />
+										<input type="text" name="config_contract_end_notif"
+											value="<?= $config_contract_end_notif; ?>"
+											placeholder="<?= $entry_contract_end_notif; ?>"
+											id="input-contract-end-notif" class="form-control" />
 									</div>
 								</div>
 							</fieldset>
@@ -482,7 +496,8 @@
 									<?= $text_allowance; ?>
 								</legend>
 								<div class="form-group">
-									<label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?= $help_components; ?>">
+									<label class="col-sm-3 control-label"><span data-toggle="tooltip"
+											title="<?= $help_components; ?>">
 											<?= $entry_components; ?>
 										</span>
 									</label>
@@ -492,11 +507,12 @@
 											<div class="checkbox">
 												<label>
 													<?php if (in_array($component['value'], $config_components)) { ?>
-													<input type="checkbox" name="config_components[]" value="<?= $component['value']; ?>"
-														checked="checked" />
+													<input type="checkbox" name="config_components[]"
+														value="<?= $component['value']; ?>" checked="checked" />
 													<?= $component['text']; ?>
 													<?php } else { ?>
-													<input type="checkbox" name="config_components[]" value="<?= $component['value']; ?>" />
+													<input type="checkbox" name="config_components[]"
+														value="<?= $component['value']; ?>" />
 													<?= $component['text']; ?>
 													<?php } ?>
 												</label>
@@ -508,16 +524,44 @@
 							</fieldset>
 							<fieldset>
 								<legend>
+									<?= $text_payroll_basic; ?>
+								</legend>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">
+										<?= $entry_payroll_basic_auto_approve; ?>
+									</label>
+									<div class="col-sm-9">
+										<label class="radio-inline">
+											<input type="radio" name="config_payroll_basic_auto_approve" value="never"
+											<?= ($config_payroll_basic_auto_approve == 'never') ? 'checked' : ''; ?> />
+											<?= $text_payroll_basic_never; ?>
+										</label>
+										<label class="radio-inline">
+											<input type="radio" name="config_payroll_basic_auto_approve" value="first"
+											<?= ($config_payroll_basic_auto_approve == 'first') ? 'checked' : ''; ?> />
+											<?= $text_payroll_basic_first; ?>
+										</label>
+										<label class="radio-inline">
+											<input type="radio" name="config_payroll_basic_auto_approve" value="always"
+											<?= ($config_payroll_basic_auto_approve == 'always') ? 'checked' : ''; ?> />
+											<?= $text_payroll_basic_always; ?>
+										</label>
+									</div>
+								</div>
+							</fieldset>
+							<fieldset>
+								<legend>
 									<?= $text_item; ?>
 								</legend>
 								<div class="form-group required">
-									<label class="col-sm-3 control-label" for="input-admin-limit"><span data-toggle="tooltip"
-											title="<?= $help_limit_admin; ?>">
+									<label class="col-sm-3 control-label" for="input-admin-limit"><span
+											data-toggle="tooltip" title="<?= $help_limit_admin; ?>">
 											<?= $entry_limit_admin; ?>
 										</span></label>
 									<div class="col-sm-9">
 										<input type="text" name="config_limit_admin" value="<?= $config_limit_admin; ?>"
-											placeholder="<?= $entry_limit_admin; ?>" id="input-admin-limit" class="form-control" />
+											placeholder="<?= $entry_limit_admin; ?>" id="input-admin-limit"
+											class="form-control" />
 										<?php if ($error_limit_admin) { ?>
 										<div class="text-danger">
 											<?= $error_limit_admin; ?>
@@ -538,7 +582,8 @@
 									<div class="col-sm-9">
 										<label class="radio-inline">
 											<?php if ($config_customer_online) { ?>
-											<input type="radio" name="config_customer_online" value="1" checked="checked" />
+											<input type="radio" name="config_customer_online" value="1"
+												checked="checked" />
 											<?= $text_yes; ?>
 											<?php } else { ?>
 											<input type="radio" name="config_customer_online" value="1" />
@@ -547,7 +592,8 @@
 										</label>
 										<label class="radio-inline">
 											<?php if (!$config_customer_online) { ?>
-											<input type="radio" name="config_customer_online" value="0" checked="checked" />
+											<input type="radio" name="config_customer_online" value="0"
+												checked="checked" />
 											<?= $text_no; ?>
 											<?php } else { ?>
 											<input type="radio" name="config_customer_online" value="0" />
@@ -557,13 +603,15 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-3 control-label" for="input-login-attempts"><span data-toggle="tooltip"
-											title="<?= $help_login_attempts; ?>">
+									<label class="col-sm-3 control-label" for="input-login-attempts"><span
+											data-toggle="tooltip" title="<?= $help_login_attempts; ?>">
 											<?= $entry_login_attempts; ?>
 										</span></label>
 									<div class="col-sm-9">
-										<input type="text" name="config_login_attempts" value="<?= $config_login_attempts; ?>"
-											placeholder="<?= $entry_login_attempts; ?>" id="input-login-attempts" class="form-control" />
+										<input type="text" name="config_login_attempts"
+											value="<?= $config_login_attempts; ?>"
+											placeholder="<?= $entry_login_attempts; ?>" id="input-login-attempts"
+											class="form-control" />
 										<?php if ($error_login_attempts) { ?>
 										<div class="text-danger">
 											<?= $error_login_attempts; ?>
@@ -572,8 +620,8 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-3 control-label" for="input-account"><span data-toggle="tooltip"
-											title="<?= $help_account; ?>">
+									<label class="col-sm-3 control-label" for="input-account"><span
+											data-toggle="tooltip" title="<?= $help_account; ?>">
 											<?= $entry_account; ?>
 										</span></label>
 									<div class="col-sm-9">
@@ -596,13 +644,15 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?= $help_account_mail; ?>">
+									<label class="col-sm-3 control-label"><span data-toggle="tooltip"
+											title="<?= $help_account_mail; ?>">
 											<?= $entry_account_mail; ?>
 										</span></label>
 									<div class="col-sm-9">
 										<label class="radio-inline">
 											<?php if ($config_account_mail) { ?>
-											<input type="radio" name="config_account_mail" value="1" checked="checked" />
+											<input type="radio" name="config_account_mail" value="1"
+												checked="checked" />
 											<?= $text_yes; ?>
 											<?php } else { ?>
 											<input type="radio" name="config_account_mail" value="1" />
@@ -611,7 +661,8 @@
 										</label>
 										<label class="radio-inline">
 											<?php if (!$config_account_mail) { ?>
-											<input type="radio" name="config_account_mail" value="0" checked="checked" />
+											<input type="radio" name="config_account_mail" value="0"
+												checked="checked" />
 											<?= $text_no; ?>
 											<?php } else { ?>
 											<input type="radio" name="config_account_mail" value="0" />
@@ -650,7 +701,8 @@
 									<?= $text_captcha; ?>
 								</legend>
 								<div class="form-group">
-									<label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?= $help_captcha; ?>">
+									<label class="col-sm-3 control-label"><span data-toggle="tooltip"
+											title="<?= $help_captcha; ?>">
 											<?= $entry_captcha; ?>
 										</span></label>
 									<div class="col-sm-9">
@@ -682,11 +734,12 @@
 											<div class="checkbox">
 												<label>
 													<?php if (in_array($captcha_page['value'], $config_captcha_page)) { ?>
-													<input type="checkbox" name="config_captcha_page[]" value="<?= $captcha_page['value']; ?>"
-														checked="checked" />
+													<input type="checkbox" name="config_captcha_page[]"
+														value="<?= $captcha_page['value']; ?>" checked="checked" />
 													<?= $captcha_page['text']; ?>
 													<?php } else { ?>
-													<input type="checkbox" name="config_captcha_page[]" value="<?= $captcha_page['value']; ?>" />
+													<input type="checkbox" name="config_captcha_page[]"
+														value="<?= $captcha_page['value']; ?>" />
 													<?= $captcha_page['text']; ?>
 													<?php } ?>
 												</label>
@@ -702,9 +755,11 @@
 								<label class="col-sm-3 control-label" for="input-logo">
 									<?= $entry_logo; ?>
 								</label>
-								<div class="col-sm-9"><a href="" id="thumb-logo" data-toggle="image" class="img-thumbnail"><img
-											src="<?= $logo; ?>" alt="" title="" data-placeholder="<?= $placeholder; ?>" /></a>
-									<input type="hidden" name="config_logo" value="<?= $config_logo; ?>" id="input-logo" />
+								<div class="col-sm-9"><a href="" id="thumb-logo" data-toggle="image"
+										class="img-thumbnail"><img src="<?= $logo; ?>" alt="" title=""
+											data-placeholder="<?= $placeholder; ?>" /></a>
+									<input type="hidden" name="config_logo" value="<?= $config_logo; ?>"
+										id="input-logo" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -712,9 +767,11 @@
 										title="<?= $help_icon; ?>">
 										<?= $entry_icon; ?>
 									</span></label>
-								<div class="col-sm-9"><a href="" id="thumb-icon" data-toggle="image" class="img-thumbnail"><img
-											src="<?= $icon; ?>" alt="" title="" data-placeholder="<?= $placeholder; ?>" /></a>
-									<input type="hidden" name="config_icon" value="<?= $config_icon; ?>" id="input-icon" />
+								<div class="col-sm-9"><a href="" id="thumb-icon" data-toggle="image"
+										class="img-thumbnail"><img src="<?= $icon; ?>" alt="" title=""
+											data-placeholder="<?= $placeholder; ?>" /></a>
+									<input type="hidden" name="config_icon" value="<?= $config_icon; ?>"
+										id="input-icon" />
 								</div>
 							</div>
 						</div>
@@ -725,7 +782,8 @@
 								</label>
 								<div class="col-sm-9">
 									<input type="text" name="config_ftp_hostname" value="<?= $config_ftp_hostname; ?>"
-										placeholder="<?= $entry_ftp_hostname; ?>" id="input-ftp-host" class="form-control" />
+										placeholder="<?= $entry_ftp_hostname; ?>" id="input-ftp-host"
+										class="form-control" />
 									<?php if ($error_ftp_hostname) { ?>
 									<div class="text-danger">
 										<?= $error_ftp_hostname; ?>
@@ -739,7 +797,8 @@
 								</label>
 								<div class="col-sm-9">
 									<input type="text" name="config_ftp_port" value="<?= $config_ftp_port; ?>"
-										placeholder="<?= $entry_ftp_port; ?>" id="input-ftp-port" class="form-control" />
+										placeholder="<?= $entry_ftp_port; ?>" id="input-ftp-port"
+										class="form-control" />
 									<?php if ($error_ftp_port) { ?>
 									<div class="text-danger">
 										<?= $error_ftp_port; ?>
@@ -753,7 +812,8 @@
 								</label>
 								<div class="col-sm-9">
 									<input type="text" name="config_ftp_username" value="<?= $config_ftp_username; ?>"
-										placeholder="<?= $entry_ftp_username; ?>" id="input-ftp-username" class="form-control" />
+										placeholder="<?= $entry_ftp_username; ?>" id="input-ftp-username"
+										class="form-control" />
 									<?php if ($error_ftp_username) { ?>
 									<div class="text-danger">
 										<?= $error_ftp_username; ?>
@@ -767,7 +827,8 @@
 								</label>
 								<div class="col-sm-9">
 									<input type="text" name="config_ftp_password" value="<?= $config_ftp_password; ?>"
-										placeholder="<?= $entry_ftp_password; ?>" id="input-ftp-password" class="form-control" />
+										placeholder="<?= $entry_ftp_password; ?>" id="input-ftp-password"
+										class="form-control" />
 									<?php if ($error_ftp_password) { ?>
 									<div class="text-danger">
 										<?= $error_ftp_password; ?>
@@ -776,13 +837,14 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label" for="input-ftp-root"><span data-toggle="tooltip" data-html="true"
-										title="<?= htmlspecialchars($help_ftp_root); ?>">
+								<label class="col-sm-3 control-label" for="input-ftp-root"><span data-toggle="tooltip"
+										data-html="true" title="<?= htmlspecialchars($help_ftp_root); ?>">
 										<?= $entry_ftp_root; ?>
 									</span></label>
 								<div class="col-sm-9">
 									<input type="text" name="config_ftp_root" value="<?= $config_ftp_root; ?>"
-										placeholder="<?= $entry_ftp_root; ?>" id="input-ftp-root" class="form-control" />
+										placeholder="<?= $entry_ftp_root; ?>" id="input-ftp-root"
+										class="form-control" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -813,8 +875,8 @@
 						</div>
 						<div class="tab-pane" id="tab-mail">
 							<div class="form-group">
-								<label class="col-sm-3 control-label" for="input-mail-protocol"><span data-toggle="tooltip"
-										title="<?= $help_mail_protocol; ?>">
+								<label class="col-sm-3 control-label" for="input-mail-protocol"><span
+										data-toggle="tooltip" title="<?= $help_mail_protocol; ?>">
 										<?= $entry_mail_protocol; ?>
 									</span></label>
 								<div class="col-sm-9">
@@ -834,22 +896,25 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label" for="input-mail-parameter"><span data-toggle="tooltip"
-										title="<?= $help_mail_parameter; ?>">
+								<label class="col-sm-3 control-label" for="input-mail-parameter"><span
+										data-toggle="tooltip" title="<?= $help_mail_parameter; ?>">
 										<?= $entry_mail_parameter; ?>
 									</span></label>
 								<div class="col-sm-9">
-									<input type="text" name="config_mail_parameter" value="<?= $config_mail_parameter; ?>"
-										placeholder="<?= $entry_mail_parameter; ?>" id="input-mail-parameter" class="form-control" />
+									<input type="text" name="config_mail_parameter"
+										value="<?= $config_mail_parameter; ?>"
+										placeholder="<?= $entry_mail_parameter; ?>" id="input-mail-parameter"
+										class="form-control" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label" for="input-mail-smtp-hostname"><span data-toggle="tooltip"
-										title="<?= $help_mail_smtp_hostname; ?>">
+								<label class="col-sm-3 control-label" for="input-mail-smtp-hostname"><span
+										data-toggle="tooltip" title="<?= $help_mail_smtp_hostname; ?>">
 										<?= $entry_mail_smtp_hostname; ?>
 									</span></label>
 								<div class="col-sm-9">
-									<input type="text" name="config_mail_smtp_hostname" value="<?= $config_mail_smtp_hostname; ?>"
+									<input type="text" name="config_mail_smtp_hostname"
+										value="<?= $config_mail_smtp_hostname; ?>"
 										placeholder="<?= $entry_mail_smtp_hostname; ?>" id="input-mail-smtp-hostname"
 										class="form-control" />
 								</div>
@@ -859,18 +924,20 @@
 									<?= $entry_mail_smtp_username; ?>
 								</label>
 								<div class="col-sm-9">
-									<input type="text" name="config_mail_smtp_username" value="<?= $config_mail_smtp_username; ?>"
+									<input type="text" name="config_mail_smtp_username"
+										value="<?= $config_mail_smtp_username; ?>"
 										placeholder="<?= $entry_mail_smtp_username; ?>" id="input-mail-smtp-username"
 										class="form-control" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label" for="input-mail-smtp-password"><span data-toggle="tooltip"
-										title="<?= $help_mail_smtp_password; ?>">
+								<label class="col-sm-3 control-label" for="input-mail-smtp-password"><span
+										data-toggle="tooltip" title="<?= $help_mail_smtp_password; ?>">
 										<?= $entry_mail_smtp_password; ?>
 									</span></label>
 								<div class="col-sm-9">
-									<input type="text" name="config_mail_smtp_password" value="<?= $config_mail_smtp_password; ?>"
+									<input type="text" name="config_mail_smtp_password"
+										value="<?= $config_mail_smtp_password; ?>"
 										placeholder="<?= $entry_mail_smtp_password; ?>" id="input-mail-smtp-password"
 										class="form-control" />
 								</div>
@@ -880,8 +947,10 @@
 									<?= $entry_mail_smtp_port; ?>
 								</label>
 								<div class="col-sm-9">
-									<input type="text" name="config_mail_smtp_port" value="<?= $config_mail_smtp_port; ?>"
-										placeholder="<?= $entry_mail_smtp_port; ?>" id="input-mail-smtp-port" class="form-control" />
+									<input type="text" name="config_mail_smtp_port"
+										value="<?= $config_mail_smtp_port; ?>"
+										placeholder="<?= $entry_mail_smtp_port; ?>" id="input-mail-smtp-port"
+										class="form-control" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -889,18 +958,21 @@
 									<?= $entry_mail_smtp_timeout; ?>
 								</label>
 								<div class="col-sm-9">
-									<input type="text" name="config_mail_smtp_timeout" value="<?= $config_mail_smtp_timeout; ?>"
-										placeholder="<?= $entry_mail_smtp_timeout; ?>" id="input-mail-smtp-timeout" class="form-control" />
+									<input type="text" name="config_mail_smtp_timeout"
+										value="<?= $config_mail_smtp_timeout; ?>"
+										placeholder="<?= $entry_mail_smtp_timeout; ?>" id="input-mail-smtp-timeout"
+										class="form-control" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label" for="input-alert-email"><span data-toggle="tooltip"
-										title="<?= $help_mail_alert; ?>">
+								<label class="col-sm-3 control-label" for="input-alert-email"><span
+										data-toggle="tooltip" title="<?= $help_mail_alert; ?>">
 										<?= $entry_mail_alert; ?>
 									</span></label>
 								<div class="col-sm-9">
 									<textarea name="config_mail_alert" rows="5" placeholder="<?= $entry_mail_alert; ?>"
-										id="input-alert-email" class="form-control"><?= $config_mail_alert; ?></textarea>
+										id="input-alert-email"
+										class="form-control"><?= $config_mail_alert; ?></textarea>
 								</div>
 							</div>
 						</div>
@@ -910,13 +982,15 @@
 									<?= $text_general; ?>
 								</legend>
 								<div class="form-group">
-									<label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?= $help_admin_maintenance; ?>">
+									<label class="col-sm-3 control-label"><span data-toggle="tooltip"
+											title="<?= $help_admin_maintenance; ?>">
 											<?= $entry_admin_maintenance; ?>
 										</span></label>
 									<div class="col-sm-9">
 										<label class="radio-inline">
 											<?php if ($config_admin_maintenance) { ?>
-											<input type="radio" name="config_admin_maintenance" value="1" checked="checked" />
+											<input type="radio" name="config_admin_maintenance" value="1"
+												checked="checked" />
 											<?= $text_yes; ?>
 											<?php } else { ?>
 											<input type="radio" name="config_admin_maintenance" value="1" />
@@ -925,7 +999,8 @@
 										</label>
 										<label class="radio-inline">
 											<?php if (!$config_admin_maintenance) { ?>
-											<input type="radio" name="config_admin_maintenance" value="0" checked="checked" />
+											<input type="radio" name="config_admin_maintenance" value="0"
+												checked="checked" />
 											<?= $text_no; ?>
 											<?php } else { ?>
 											<input type="radio" name="config_admin_maintenance" value="0" />
@@ -935,7 +1010,8 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?= $help_maintenance; ?>">
+									<label class="col-sm-3 control-label"><span data-toggle="tooltip"
+											title="<?= $help_maintenance; ?>">
 											<?= $entry_maintenance; ?>
 										</span></label>
 									<div class="col-sm-9">
@@ -960,7 +1036,8 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?= $help_seo_url; ?>">
+									<label class="col-sm-3 control-label"><span data-toggle="tooltip"
+											title="<?= $help_seo_url; ?>">
 											<?= $entry_seo_url; ?>
 										</span></label>
 									<div class="col-sm-9">
@@ -990,18 +1067,19 @@
 											<?= $entry_robots; ?>
 										</span></label>
 									<div class="col-sm-9">
-										<textarea name="config_robots" rows="5" placeholder="<?= $entry_robots; ?>" id="input-robots"
-											class="form-control"><?= $config_robots; ?></textarea>
+										<textarea name="config_robots" rows="5" placeholder="<?= $entry_robots; ?>"
+											id="input-robots" class="form-control"><?= $config_robots; ?></textarea>
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-3 control-label" for="input-compression"><span data-toggle="tooltip"
-											title="<?= $help_compression; ?>">
+									<label class="col-sm-3 control-label" for="input-compression"><span
+											data-toggle="tooltip" title="<?= $help_compression; ?>">
 											<?= $entry_compression; ?>
 										</span></label>
 									<div class="col-sm-9">
 										<input type="text" name="config_compression" value="<?= $config_compression; ?>"
-											placeholder="<?= $entry_compression; ?>" id="input-compression" class="form-control" />
+											placeholder="<?= $entry_compression; ?>" id="input-compression"
+											class="form-control" />
 									</div>
 								</div>
 							</fieldset>
@@ -1010,7 +1088,8 @@
 									<?= $text_security; ?>
 								</legend>
 								<div class="form-group">
-									<label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?= $help_secure; ?>">
+									<label class="col-sm-3 control-label"><span data-toggle="tooltip"
+											title="<?= $help_secure; ?>">
 											<?= $entry_secure; ?>
 										</span></label>
 									<div class="col-sm-9">
@@ -1035,7 +1114,8 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?= $help_password; ?>">
+									<label class="col-sm-3 control-label"><span data-toggle="tooltip"
+											title="<?= $help_password; ?>">
 											<?= $entry_password; ?>
 										</span></label>
 									<div class="col-sm-9">
@@ -1060,7 +1140,8 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?= $help_shared; ?>">
+									<label class="col-sm-3 control-label"><span data-toggle="tooltip"
+											title="<?= $help_shared; ?>">
 											<?= $entry_shared; ?>
 										</span></label>
 									<div class="col-sm-9">
@@ -1085,13 +1166,14 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-3 control-label" for="input-encryption"><span data-toggle="tooltip"
-											title="<?= $help_encryption; ?>">
+									<label class="col-sm-3 control-label" for="input-encryption"><span
+											data-toggle="tooltip" title="<?= $help_encryption; ?>">
 											<?= $entry_encryption; ?>
 										</span></label>
 									<div class="col-sm-9">
-										<textarea name="config_encryption" rows="5" placeholder="<?= $entry_encryption; ?>"
-											id="input-encryption" class="form-control"><?= $config_encryption; ?></textarea>
+										<textarea name="config_encryption" rows="5"
+											placeholder="<?= $entry_encryption; ?>" id="input-encryption"
+											class="form-control"><?= $config_encryption; ?></textarea>
 										<?php if ($error_encryption) { ?>
 										<div class="text-danger">
 											<?= $error_encryption; ?>
@@ -1105,33 +1187,37 @@
 									<?= $text_upload; ?>
 								</legend>
 								<div class="form-group">
-									<label class="col-sm-3 control-label" for="input-file-max-size"><span data-toggle="tooltip"
-											title="<?= $help_file_max_size; ?>">
+									<label class="col-sm-3 control-label" for="input-file-max-size"><span
+											data-toggle="tooltip" title="<?= $help_file_max_size; ?>">
 											<?= $entry_file_max_size; ?>
 										</span></label>
 									<div class="col-sm-9">
-										<input type="text" name="config_file_max_size" value="<?= $config_file_max_size; ?>"
-											placeholder="<?= $entry_file_max_size; ?>" id="input-file-max-size" class="form-control" />
+										<input type="text" name="config_file_max_size"
+											value="<?= $config_file_max_size; ?>"
+											placeholder="<?= $entry_file_max_size; ?>" id="input-file-max-size"
+											class="form-control" />
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-3 control-label" for="input-file-ext-allowed"><span data-toggle="tooltip"
-											title="<?= $help_file_ext_allowed; ?>">
+									<label class="col-sm-3 control-label" for="input-file-ext-allowed"><span
+											data-toggle="tooltip" title="<?= $help_file_ext_allowed; ?>">
 											<?= $entry_file_ext_allowed; ?>
 										</span></label>
 									<div class="col-sm-9">
-										<textarea name="config_file_ext_allowed" rows="5" placeholder="<?= $entry_file_ext_allowed; ?>"
-											id="input-file-ext-allowed" class="form-control"><?= $config_file_ext_allowed; ?></textarea>
+										<textarea name="config_file_ext_allowed" rows="5"
+											placeholder="<?= $entry_file_ext_allowed; ?>" id="input-file-ext-allowed"
+											class="form-control"><?= $config_file_ext_allowed; ?></textarea>
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-3 control-label" for="input-file-mime-allowed"><span data-toggle="tooltip"
-											title="<?= $help_file_mime_allowed; ?>">
+									<label class="col-sm-3 control-label" for="input-file-mime-allowed"><span
+											data-toggle="tooltip" title="<?= $help_file_mime_allowed; ?>">
 											<?= $entry_file_mime_allowed; ?>
 										</span></label>
 									<div class="col-sm-9">
-										<textarea name="config_file_mime_allowed" rows="5" placeholder="<?= $entry_file_mime_allowed; ?>"
-											id="input-file-mime-allowed" class="form-control"><?= $config_file_mime_allowed; ?></textarea>
+										<textarea name="config_file_mime_allowed" rows="5"
+											placeholder="<?= $entry_file_mime_allowed; ?>" id="input-file-mime-allowed"
+											class="form-control"><?= $config_file_mime_allowed; ?></textarea>
 									</div>
 								</div>
 							</fieldset>
@@ -1146,7 +1232,8 @@
 									<div class="col-sm-9">
 										<label class="radio-inline">
 											<?php if ($config_error_display) { ?>
-											<input type="radio" name="config_error_display" value="1" checked="checked" />
+											<input type="radio" name="config_error_display" value="1"
+												checked="checked" />
 											<?= $text_yes; ?>
 											<?php } else { ?>
 											<input type="radio" name="config_error_display" value="1" />
@@ -1155,7 +1242,8 @@
 										</label>
 										<label class="radio-inline">
 											<?php if (!$config_error_display) { ?>
-											<input type="radio" name="config_error_display" value="0" checked="checked" />
+											<input type="radio" name="config_error_display" value="0"
+												checked="checked" />
 											<?= $text_no; ?>
 											<?php } else { ?>
 											<input type="radio" name="config_error_display" value="0" />
@@ -1194,8 +1282,10 @@
 										<?= $entry_error_filename; ?>
 									</label>
 									<div class="col-sm-9">
-										<input type="text" name="config_error_filename" value="<?= $config_error_filename; ?>"
-											placeholder="<?= $entry_error_filename; ?>" id="input-error-filename" class="form-control" />
+										<input type="text" name="config_error_filename"
+											value="<?= $config_error_filename; ?>"
+											placeholder="<?= $entry_error_filename; ?>" id="input-error-filename"
+											class="form-control" />
 										<?php if ($error_error_filename) { ?>
 										<div class="text-danger">
 											<?= $error_error_filename; ?>

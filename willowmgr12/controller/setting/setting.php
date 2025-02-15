@@ -42,6 +42,10 @@ class ControllerSettingSetting extends Controller {
 			'text_mail',
 			'text_no',
 			'text_none',
+			'text_payroll_basic',
+			'text_payroll_basic_always',
+			'text_payroll_basic_first',
+			'text_payroll_basic_never',
 			'text_phpmailer',
 			'text_register',
 			'text_return',
@@ -110,6 +114,7 @@ class ControllerSettingSetting extends Controller {
 			'entry_nip_prefix',
 			'entry_open',
 			'entry_owner',
+			'entry_payroll_basic_auto_approve',
 			'entry_password',
 			'entry_robots',
 			'entry_secure',
@@ -530,6 +535,12 @@ class ControllerSettingSetting extends Controller {
 			$data['config_contract_end_notif'] = $this->request->post['config_contract_end_notif'];
 		} else {
 			$data['config_contract_end_notif'] = $this->config->get('config_contract_end_notif');
+		}
+
+		if (isset($this->request->post['config_payroll_basic_auto_approve'])) {
+			$data['config_payroll_basic_auto_approve'] = $this->request->post['config_payroll_basic_auto_approve'];
+		} else {
+			$data['config_payroll_basic_auto_approve'] = $this->config->get('config_payroll_basic_auto_approve');
 		}
 
 		$components = [

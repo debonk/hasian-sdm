@@ -1,8 +1,38 @@
 <?php
-class ControllerLocalisationPayrollMethod extends Controller {
+class ControllerLocalisationPayrollMethod extends Controller
+{
 	private $error = array();
+	private $filter_items = array();
 
-	public function index() {
+	private function urlFilter($excluded_item = null)
+	{
+		$url_filter = '';
+
+		foreach ($this->filter_items as $filter_item) {
+			if (isset($this->request->get['filter_' . $filter_item])) {
+				$url_filter .= '&filter_' . $filter_item . '=' . urlencode(html_entity_decode($this->request->get['filter_' . $filter_item], ENT_QUOTES, 'UTF-8'));
+			}
+		}
+
+		if ($excluded_item != 'sort') {
+			if (isset($this->request->get['sort'])) {
+				$url_filter .= '&sort=' . $this->request->get['sort'];
+			}
+
+			if (isset($this->request->get['order'])) {
+				$url_filter .= '&order=' . $this->request->get['order'];
+			}
+		}
+
+		if (isset($this->request->get['page']) && $excluded_item != 'page') {
+			$url_filter .= '&page=' . $this->request->get['page'];
+		}
+
+		return $url_filter;
+	}
+
+	public function index()
+	{
 		$this->load->language('localisation/payroll_method');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -12,7 +42,8 @@ class ControllerLocalisationPayrollMethod extends Controller {
 		$this->getList();
 	}
 
-	public function add() {
+	public function add()
+	{
 		$this->load->language('localisation/payroll_method');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -20,23 +51,13 @@ class ControllerLocalisationPayrollMethod extends Controller {
 		$this->load->model('localisation/payroll_method');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$this->model_localisation_payroll_method->addPayrollMethod($this->request->post);
+			$this->db->transaction(function () {
+				$this->model_localisation_payroll_method->addPayrollMethod($this->request->post);
+			});
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$url = '';
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
-			}
+			$url = $this->urlFilter();
 
 			$this->response->redirect($this->url->link('localisation/payroll_method', 'token=' . $this->session->data['token'] . $url, true));
 		}
@@ -44,7 +65,8 @@ class ControllerLocalisationPayrollMethod extends Controller {
 		$this->getForm();
 	}
 
-	public function edit() {
+	public function edit()
+	{
 		$this->load->language('localisation/payroll_method');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -52,23 +74,13 @@ class ControllerLocalisationPayrollMethod extends Controller {
 		$this->load->model('localisation/payroll_method');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$this->model_localisation_payroll_method->editPayrollMethod($this->request->get['payroll_method_id'], $this->request->post);
+			$this->db->transaction(function () {
+				$this->model_localisation_payroll_method->editPayrollMethod($this->request->get['payroll_method_id'], $this->request->post);
+			});
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$url = '';
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
-			}
+			$url = $this->urlFilter();
 
 			$this->response->redirect($this->url->link('localisation/payroll_method', 'token=' . $this->session->data['token'] . $url, true));
 		}
@@ -76,7 +88,8 @@ class ControllerLocalisationPayrollMethod extends Controller {
 		$this->getForm();
 	}
 
-	public function delete() {
+	public function delete()
+	{
 		$this->load->language('localisation/payroll_method');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -84,25 +97,15 @@ class ControllerLocalisationPayrollMethod extends Controller {
 		$this->load->model('localisation/payroll_method');
 
 		if (isset($this->request->post['selected']) && $this->validateDelete()) {
-			foreach ($this->request->post['selected'] as $payroll_method_id) {
-				$this->model_localisation_payroll_method->deletePayrollMethod($payroll_method_id);
-			}
+			$this->db->transaction(function () {
+				foreach ($this->request->post['selected'] as $payroll_method_id) {
+					$this->model_localisation_payroll_method->deletePayrollMethod($payroll_method_id);
+				}
+			});
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$url = '';
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
-			}
+			$url = $this->urlFilter();
 
 			$this->response->redirect($this->url->link('localisation/payroll_method', 'token=' . $this->session->data['token'] . $url, true));
 		}
@@ -110,7 +113,24 @@ class ControllerLocalisationPayrollMethod extends Controller {
 		$this->getList();
 	}
 
-	protected function getList() {
+	protected function getList()
+	{
+		$language_items = array(
+			'heading_title',
+			'text_list',
+			'text_no_results',
+			'text_confirm',
+			// 'column_code',
+			'column_name',
+			'column_action',
+			'button_add',
+			'button_edit',
+			'button_delete'
+		);
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
+
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
@@ -129,19 +149,7 @@ class ControllerLocalisationPayrollMethod extends Controller {
 			$page = 1;
 		}
 
-		$url = '';
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
-
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
+		$url = $this->urlFilter();
 
 		$data['breadcrumbs'] = array();
 
@@ -159,38 +167,26 @@ class ControllerLocalisationPayrollMethod extends Controller {
 		$data['delete'] = $this->url->link('localisation/payroll_method/delete', 'token=' . $this->session->data['token'] . $url, true);
 
 		$data['payroll_methods'] = array();
+		$limit = $this->config->get('config_limit_admin');
 
 		$filter_data = array(
-			'sort'  => $sort,
-			'order' => $order,
-			'start' => ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit' => $this->config->get('config_limit_admin')
+			'sort'  	=> $sort,
+			'order' 	=> $order,
+			'start' 	=> ($page - 1) * $limit,
+			'limit' 	=> $limit
 		);
-
-		$payroll_method_total = $this->model_localisation_payroll_method->getTotalPayrollMethods();
 
 		$results = $this->model_localisation_payroll_method->getPayrollMethods($filter_data);
 
 		foreach ($results as $result) {
 			$data['payroll_methods'][] = array(
-				'payroll_method_id' => $result['payroll_method_id'],
-				'name'            => $result['name'],
-				'edit'            => $this->url->link('localisation/payroll_method/edit', 'token=' . $this->session->data['token'] . '&payroll_method_id=' . $result['payroll_method_id'] . $url, true)
+				'payroll_method_id'	=> $result['payroll_method_id'],
+				'name'				=> $result['name'],
+				// 'code'				=> $result['code'],
+				'edit'				=> $this->url->link('localisation/payroll_method/edit', 'token=' . $this->session->data['token'] . '&payroll_method_id=' . $result['payroll_method_id'] . $url, true)
 			);
 		}
-
-		$data['heading_title'] = $this->language->get('heading_title');
-
-		$data['text_list'] = $this->language->get('text_list');
-		$data['text_no_results'] = $this->language->get('text_no_results');
-		$data['text_confirm'] = $this->language->get('text_confirm');
-
-		$data['column_name'] = $this->language->get('column_name');
-		$data['column_action'] = $this->language->get('column_action');
-
-		$data['button_add'] = $this->language->get('button_add');
-		$data['button_edit'] = $this->language->get('button_edit');
-		$data['button_delete'] = $this->language->get('button_delete');
+		$payroll_method_count = $this->model_localisation_payroll_method->getTotalPayrollMethods();
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -212,7 +208,7 @@ class ControllerLocalisationPayrollMethod extends Controller {
 			$data['selected'] = array();
 		}
 
-		$url = '';
+		$url = $this->urlFilter('sort');
 
 		if ($order == 'ASC') {
 			$url .= '&order=DESC';
@@ -220,31 +216,19 @@ class ControllerLocalisationPayrollMethod extends Controller {
 			$url .= '&order=ASC';
 		}
 
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
-
 		$data['sort_name'] = $this->url->link('localisation/payroll_method', 'token=' . $this->session->data['token'] . '&sort=name' . $url, true);
 
-		$url = '';
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
+		$url = $this->urlFilter('page');
 
 		$pagination = new Pagination();
-		$pagination->total = $payroll_method_total;
+		$pagination->total = $payroll_method_count;
 		$pagination->page = $page;
-		$pagination->limit = $this->config->get('config_limit_admin');
+		$pagination->limit = $limit;
 		$pagination->url = $this->url->link('localisation/payroll_method', 'token=' . $this->session->data['token'] . $url . '&page={page}', true);
 
 		$data['pagination'] = $pagination->render();
 
-		$data['results'] = sprintf($this->language->get('text_pagination'), ($payroll_method_total) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($payroll_method_total - $this->config->get('config_limit_admin'))) ? $payroll_method_total : ((($page - 1) * $this->config->get('config_limit_admin')) + $this->config->get('config_limit_admin')), $payroll_method_total, ceil($payroll_method_total / $this->config->get('config_limit_admin')));
+		$data['results'] = sprintf($this->language->get('text_pagination'), ($payroll_method_count) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($payroll_method_count - $limit)) ? $payroll_method_count : ((($page - 1) * $limit) + $limit), $payroll_method_count, ceil($payroll_method_count / $limit));
 
 		$data['sort'] = $sort;
 		$data['order'] = $order;
@@ -256,42 +240,36 @@ class ControllerLocalisationPayrollMethod extends Controller {
 		$this->response->setOutput($this->load->view('localisation/payroll_method_list', $data));
 	}
 
-	protected function getForm() {
-		$data['heading_title'] = $this->language->get('heading_title');
-
+	protected function getForm()
+	{
 		$data['text_form'] = !isset($this->request->get['payroll_method_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
 
-		$data['entry_name'] = $this->language->get('entry_name');
-		$data['entry_sort_order'] = $this->language->get('entry_sort_order');
-
-		$data['button_save'] = $this->language->get('button_save');
-		$data['button_cancel'] = $this->language->get('button_cancel');
-
-		if (isset($this->error['warning'])) {
-			$data['error_warning'] = $this->error['warning'];
-		} else {
-			$data['error_warning'] = '';
+		$language_items = array(
+			'heading_title',
+			'entry_name',
+			'entry_code',
+			'entry_sort_order',
+			'button_save',
+			'button_cancel'
+		);
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
 		}
 
-		if (isset($this->error['name'])) {
-			$data['error_name'] = $this->error['name'];
-		} else {
-			$data['error_name'] = array();
+		$errors = array(
+			'warning',
+			'name',
+			'code'
+		);
+		foreach ($errors as $error) {
+			if (isset($this->error[$error])) {
+				$data['error_' . $error] = $this->error[$error];
+			} else {
+				$data['error_' . $error] = '';
+			}
 		}
 
-		$url = '';
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
-
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
+		$url = $this->urlFilter();
 
 		$data['breadcrumbs'] = array();
 
@@ -305,16 +283,26 @@ class ControllerLocalisationPayrollMethod extends Controller {
 			'href' => $this->url->link('localisation/payroll_method', 'token=' . $this->session->data['token'] . $url, true)
 		);
 
-		if (!isset($this->request->get['payroll_method_id'])) {
+		$payroll_method_id = isset($this->request->get['payroll_method_id']) ? $this->request->get['payroll_method_id'] : 0;
+
+		if (!$payroll_method_id) {
 			$data['action'] = $this->url->link('localisation/payroll_method/add', 'token=' . $this->session->data['token'] . $url, true);
 		} else {
 			$data['action'] = $this->url->link('localisation/payroll_method/edit', 'token=' . $this->session->data['token'] . '&payroll_method_id=' . $this->request->get['payroll_method_id'] . $url, true);
 		}
 
+		$data['breadcrumbs'][] = array(
+			'text' => $data['text_form'],
+			'href' => $data['action']
+		);
+
 		$data['cancel'] = $this->url->link('localisation/payroll_method', 'token=' . $this->session->data['token'] . $url, true);
 
-		$this->load->model('localisation/language');
+		if ($payroll_method_id) {
+			$payroll_method_info = $this->model_localisation_payroll_method->getPayrollMethod($payroll_method_id);
+		}
 
+		$this->load->model('localisation/language');
 		$data['languages'] = $this->model_localisation_language->getLanguages();
 
 		if (isset($this->request->post['payroll_method'])) {
@@ -325,6 +313,14 @@ class ControllerLocalisationPayrollMethod extends Controller {
 			$data['payroll_method'] = array();
 		}
 
+		if (isset($this->request->post['code'])) {
+			$data['code'] = $this->request->post['code'];
+		} elseif (!empty($payroll_method_info)) {
+			$data['code'] = $payroll_method_info['code'];
+		} else {
+			$data['code'] = null;
+		}
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -332,7 +328,8 @@ class ControllerLocalisationPayrollMethod extends Controller {
 		$this->response->setOutput($this->load->view('localisation/payroll_method_form', $data));
 	}
 
-	protected function validateForm() {
+	protected function validateForm()
+	{
 		if (!$this->user->hasPermission('modify', 'localisation/payroll_method')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
@@ -343,10 +340,15 @@ class ControllerLocalisationPayrollMethod extends Controller {
 			}
 		}
 
+		if ((utf8_strlen($this->request->post['code']) < 3) || (utf8_strlen(trim($this->request->post['code'])) > 32)) {
+			$this->error['code'] = $this->language->get('error_code');
+		}
+
 		return !$this->error;
 	}
 
-	protected function validateDelete() {
+	protected function validateDelete()
+	{
 		if (!$this->user->hasPermission('modify', 'localisation/payroll_method')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}

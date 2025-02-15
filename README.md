@@ -4,9 +4,32 @@
 MODUL: APP > Account: Login by location (Trial & Progress)
 MODUL: Customer > Presence Method
 
+
+User Group: ganti form ke list, trus ada kolom untuk centang access, modify, approval, print, bypass
+
+
+
 MODIFY CONFIG
 
 MODIFY TABLE
+
+4.1.0	15/02/2025
+Payroll Basic: Menambah sistem approval jika ada perubahan gaji
+Schedule > Delete: Schedule yang belum berjalan bisa didelete jika jadwal tidak dikunci.
+Schedule > Import: Schedule yang belum berjalan bisa diimport jika jadwal tidak dikunci.
+Schedule: Restructure
+User Group: Add Approval Permission
+User Group > List: Add users column
+Setting: Add payroll basic auto approve
+Payroll Method > Form: Menambah field code
+
+MODIFY CONFIG
+Payroll Basic Auto Approve: set to always
+
+MODIFY TABLE
+ALTER TABLE oc_payroll_basic ADD date_approved DATETIME NULL;
+ALTER TABLE oc_payroll_basic ADD approval_user_id INT(11) NULL;
+UPDATE oc_payroll_basic SET date_approved=date_added, approval_user_id=user_id WHERE 1;
 
 4.0.5	17/01/2025
 Framework Updated

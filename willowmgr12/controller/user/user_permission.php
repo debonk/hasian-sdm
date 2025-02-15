@@ -170,11 +170,16 @@ class ControllerUserUserPermission extends Controller {
 		$user_group_total = $this->model_user_user_group->getTotalUserGroups();
 
 		$results = $this->model_user_user_group->getUserGroups($filter_data);
+		
+		$this->load->model('user/user');
 
 		foreach ($results as $result) {
+			$users =  $this->model_user_user->getUsersByGroupId($result['user_group_id']);
+
 			$data['user_groups'][] = array(
 				'user_group_id' => $result['user_group_id'],
 				'name'          => $result['name'],
+				'users'         => $users ? implode(', ', array_column($users, 'username')) : '-',
 				'edit'          => $this->url->link('user/user_permission/edit', 'token=' . $this->session->data['token'] . '&user_group_id=' . $result['user_group_id'] . $url, true)
 			);
 		}
@@ -186,6 +191,7 @@ class ControllerUserUserPermission extends Controller {
 		$data['text_confirm'] = $this->language->get('text_confirm');
 
 		$data['column_name'] = $this->language->get('column_name');
+		$data['column_users'] = $this->language->get('column_users');
 		$data['column_action'] = $this->language->get('column_action');
 
 		$data['button_add'] = $this->language->get('button_add');
@@ -266,6 +272,7 @@ class ControllerUserUserPermission extends Controller {
 		$data['entry_name'] = $this->language->get('entry_name');
 		$data['entry_access'] = $this->language->get('entry_access');
 		$data['entry_modify'] = $this->language->get('entry_modify');
+		$data['entry_approve'] = $this->language->get('entry_approve');
 		$data['entry_bypass'] = $this->language->get('entry_bypass');
 
 		$data['button_save'] = $this->language->get('button_save');
@@ -400,6 +407,14 @@ class ControllerUserUserPermission extends Controller {
 			$data['modify'] = $user_group_info['permission']['modify'];
 		} else {
 			$data['modify'] = array();
+		}
+
+		if (isset($this->request->post['permission']['approve'])) {
+			$data['approve'] = $this->request->post['permission']['approve'];
+		} elseif (isset($user_group_info['permission']['approve'])) {
+			$data['approve'] = $user_group_info['permission']['approve'];
+		} else {
+			$data['approve'] = array();
 		}
 
 		if (isset($this->request->post['permission']['bypass'])) {
