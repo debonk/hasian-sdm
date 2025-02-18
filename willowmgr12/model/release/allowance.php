@@ -87,7 +87,7 @@ class ModelReleaseAllowance extends Model
 
 	public function getAllowances($data = array())
 	{
-		$sql = "SELECT a.*, fa.bank_name, fa.acc_no, fa.acc_name, COUNT(ac.amount) as count, SUM(ac.amount) as total, u.username FROM " . DB_PREFIX . "allowance a LEFT JOIN " . DB_PREFIX . "fund_account fa ON (fa.fund_account_id = a.fund_account_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = a.user_id) LEFT JOIN " . DB_PREFIX . "allowance_customer ac ON (ac.allowance_id = a.allowance_id AND ac.amount > 0) GROUP BY ac.allowance_id";
+		$sql = "SELECT a.*, fa.bank_name, fa.acc_no, fa.acc_name, COUNT(ac.amount) as count, SUM(ac.amount) as total, u.username FROM " . DB_PREFIX . "allowance a LEFT JOIN " . DB_PREFIX . "v_fund_account fa ON (fa.fund_account_id = a.fund_account_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = a.user_id) LEFT JOIN " . DB_PREFIX . "allowance_customer ac ON (ac.allowance_id = a.allowance_id AND ac.amount > 0) GROUP BY ac.allowance_id";
 
 		$sort_data = array(
 			'a.allowance_period',

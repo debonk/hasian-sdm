@@ -50,4 +50,13 @@ class ModelReportAttention extends Model
 
 		return $query->rows;
 	}
+
+	public function getUnapprovedPayrollBasicsCount()
+	{
+		$sql = "SELECT count(payroll_basic_id) AS total FROM " . DB_PREFIX . "payroll_basic WHERE date_approved IS NULL";
+
+		$query = $this->db->query($sql);
+
+		return $query->row['total'];
+	}
 }

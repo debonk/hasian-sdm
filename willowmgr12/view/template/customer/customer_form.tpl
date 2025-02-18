@@ -417,6 +417,9 @@
 										<div class="col-sm-9">
 											<select name="payroll_method_id" id="input-payroll-method"
 												class="form-control">
+												<option value="">
+													<?= $text_select; ?>
+												</option>
 												<?php foreach ($payroll_methods as $payroll_method) { ?>
 												<option value="<?= $payroll_method['payroll_method_id']; ?>"
 													<?= $payroll_method['payroll_method_id'] == $payroll_method_id ? 'selected' : ''; ?>>
@@ -424,7 +427,12 @@
 												</option>
 												<?php } ?>
 											</select>
-										</div>
+											<?php if ($error_payroll_method) { ?>
+												<div class="text-danger">
+													<?= $error_payroll_method; ?>
+												</div>
+											<?php } ?>
+											</div>
 									</div>
 									<div class="form-group">
 										<label class="col-sm-3 control-label" for="input-acc-no">
@@ -1324,6 +1332,7 @@
 		html += '    <label class="col-sm-3 control-label" for="input-country' + address_row + '"><?= $entry_country; ?></label>';
 		html += '    <div class="col-sm-9"><select name="address[' + address_row + '][country_id]" id="input-country' + address_row + '" onchange="country(this, \'' + address_row + '\', \'0\');" class="form-control">';
 		html += '         <option value=""><?= $text_select; ?></option>';
+
     <?php foreach($countries as $country) { ?>
 			html += '         <option value="<?= $country['country_id']; ?>"><?= addslashes($country['name']); ?></option>';
     <?php } ?>

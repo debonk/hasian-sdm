@@ -111,6 +111,7 @@ $_['error_customer_group']		   = 'Tentukan Jabatan karyawan!';
 $_['error_date_start']			   = 'Tanggal Mulai Bekerja harus diisi!';
 $_['error_acc_no']				   = 'No Rekening harus diisi!';
 $_['error_email']				   = 'E-Mail Address does not appear to be valid!';
+$_['error_payroll_method']		   = 'Tentukan Metode Penggajian!';
 $_['error_health_insurance_id']	   = 'No. BPJS Kesehatan harus terdiri dari 13 angka!';
 $_['error_employment_insurance_id']= 'No. BPJS Ketenagakerjaan harus terdiri dari 11 angka!';
 $_['error_telephone']			   = 'Telephone must be between 3 and 32 characters!';

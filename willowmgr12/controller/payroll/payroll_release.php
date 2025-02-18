@@ -645,7 +645,7 @@ class ControllerPayrollPayrollRelease extends Controller
 		foreach ($fund_accounts as $fund_account) {
 			$data['fund_accounts'][] = array(
 				'fund_account_id'	=> $fund_account['fund_account_id'],
-				'fund_account_text'	=> $fund_account['acc_name'] . '; ' . $fund_account['bank_name'] . ' - ' .  $fund_account['acc_no']
+				'fund_account_text'	=> $fund_account['bank_name'] . ' - ' .  $fund_account['acc_no'] . '; ' . $fund_account['acc_name']
 			);
 		}
 

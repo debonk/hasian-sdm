@@ -58,7 +58,7 @@ class ControllerPresenceSchedule extends Controller
 	{
 		$this->load->language('presence/schedule');
 
-		$this->document->setTitle($this->language->get('heading_title'));
+		$this->document->setTitle($this->language->get('text_edit'));
 
 		$this->load->model('common/payroll');
 		$this->load->model('presence/schedule');
@@ -142,7 +142,7 @@ class ControllerPresenceSchedule extends Controller
 				foreach ($this->filter_items as $filter_item) {
 					$filter[$filter_item] = isset($this->request->get['filter_' . $filter_item]) ? $this->request->get['filter_' . $filter_item] : null;
 				}
-		
+
 				$filter_data = array(
 					'presence_period_id'   	=> $this->request->get['presence_period_id'],
 					'filter'				=> $filter,
@@ -196,6 +196,7 @@ class ControllerPresenceSchedule extends Controller
 			'button_print',
 			'button_delete',
 			'button_back',
+			'button_export',
 			'button_import',
 			'button_apply_schedule',
 			'button_recap',
@@ -207,6 +208,14 @@ class ControllerPresenceSchedule extends Controller
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
+		} else {
+			$data['error_warning'] = '';
+		}
+
+		if (isset($this->session->data['warning'])) {
+			$data['error_warning'] = $this->session->data['warning'];
+
+			unset($this->session->data['warning']);
 		} else {
 			$data['error_warning'] = '';
 		}
@@ -283,6 +292,7 @@ class ControllerPresenceSchedule extends Controller
 
 		$data['unfilter'] = $this->url->link('presence/schedule', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $presence_period_id, true);
 		$data['delete'] = $this->url->link('presence/schedule/delete', 'token=' . $this->session->data['token'] . $url, true);
+		$data['export'] = $this->url->link('presence/schedule/export', 'token=' . $this->session->data['token'] . $url, true);
 		$data['import'] = $this->url->link('presence/schedule/import', 'token=' . $this->session->data['token'] . $url, true);
 		$data['print'] = $this->url->link('presence/schedule/print', 'token=' . $this->session->data['token'] . $url, true);
 		$data['back'] = $this->url->link('presence/presence_period', 'token=' . $this->session->data['token'], true);
@@ -583,7 +593,7 @@ class ControllerPresenceSchedule extends Controller
 			'start'					=> ($page - 1) * $limit,
 			'limit'					=> $limit
 		);
-		
+
 		$range_date = array(
 			'start'	=> $schedule_start,
 			'end' 	=> date('Y-m-d', strtotime('+6 days', strtotime($schedule_start)))
@@ -806,6 +816,227 @@ class ControllerPresenceSchedule extends Controller
 		$this->response->setOutput($this->load->view('presence/schedule_import', $data));
 	}
 
+	public function export()
+	{
+		$this->load->language('presence/schedule');
+
+		$presence_period_id = isset($this->request->get['presence_period_id']) ? (int)$this->request->get['presence_period_id'] : 0;
+
+		$filter = [];
+
+		foreach ($this->filter_items as $filter_item) {
+			$filter[$filter_item] = isset($this->request->get['filter_' . $filter_item]) ? $this->request->get['filter_' . $filter_item] : null;
+		}
+
+		$filter['status'] = 1;
+
+		if ($this->user->getCustomerDepartmentId()) {
+			$filter['customer_department_id'] = $this->user->getCustomerDepartmentId();
+		}
+
+		$title_color = 'FF76933c';
+		$table_head_format = [
+			'fill' => [
+				'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+				'startColor' => [
+					'argb' => 'FF9bbb59',
+				],
+			],
+			'font' => [
+				'color' => [
+					'argb' => 'FFFFFFFF',
+				],
+			],
+		];
+
+		switch ($this->error) {
+			case false:
+				if (!$this->user->hasPermission('modify', 'presence/schedule')) {
+					$this->error = $this->language->get('error_permission');
+
+					break;
+				}
+
+				$this->load->model('common/payroll');
+
+				$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
+
+				if (!$period_info) {
+					$this->error = $this->language->get('error_period');
+
+					break;
+				}
+
+				if (strtolower($period_info['payroll_status']) == 'pending') {
+					$this->error = $this->language->get('error_status');
+
+					break;
+				}
+
+				$php_spreadsheet = new Spreadsheet('Xlsx');
+
+				$spreadsheet = $php_spreadsheet->loadSpreadsheet(DIR_FILE . 'Schedule Log.xlsx');
+
+				# Sheet: Setting
+				# Set Cell Format because PhpSpreadsheet Bug losing color data from template
+				$spreadsheet->getSheetByName('Setting')->getStyle('A1')->getFont()->getColor()->setARGB($title_color);
+
+				$setting = [
+					'store'				=> $this->config->get('config_name'),
+					'date_start'		=> $period_info['date_start'],
+					'date_end'			=> $period_info['date_end'],
+					'user_id'			=> $this->user->getId(),
+					'division'			=> $this->user->getCustomerDepartmentId(),
+					'security_token'	=> '69cbd7188b'
+				];
+
+				if ($this->user->getCustomerDepartmentId()) {
+					$this->load->model('customer/customer_department');
+
+					$division_info = $this->model_customer_customer_department->getCustomerDepartment($this->user->getCustomerDepartmentId());
+
+					$division = $division_info['name'];
+				} else {
+					$division = $this->language->get('text_all_division');
+				}
+
+				$setting_data = [
+					md5(implode('', $setting)),
+					null,
+					htmlspecialchars_decode($this->config->get('config_name')),
+					\PhpOffice\PhpSpreadsheet\Shared\Date::stringToExcel($period_info['period']),
+					\PhpOffice\PhpSpreadsheet\Shared\Date::stringToExcel($period_info['date_start']),
+					\PhpOffice\PhpSpreadsheet\Shared\Date::stringToExcel($period_info['date_end']),
+					null,
+					$this->user->getUsername(),
+					$division
+				];
+
+				$setting_data = array_chunk($setting_data, 1);
+
+				$spreadsheet->getActiveSheet()->fromArray($setting_data, NULL, 'B2');
+
+				$this->load->model('presence/presence');
+
+				$filter_data = [
+					'presence_period_id'   			=> $presence_period_id,
+					'filter'	   	   				=> $filter
+				];
+
+				$customer_count = $this->model_presence_presence->getCustomersCount($filter_data);
+
+				if ($customer_count > 250) {
+					$this->error = $this->language->get('error_data_max');
+
+					break;
+				}
+
+				$customers = $this->model_presence_presence->getCustomersNew($filter_data);
+
+				# Sheet: Jadwal
+				# Set Cell Format because PhpSpreadsheet Bug losing color data from template
+				$spreadsheet->getSheetByName('Log')->getStyle('A1')->getFont()->getColor()->setARGB($title_color);
+				$spreadsheet->getActiveSheet()->getStyle('A2:M2')->applyFromArray($table_head_format);
+
+				$log_data = [];
+				$no = 0;
+
+				$range_date = array(
+					'start'	=> $period_info['date_start'],
+					'end'	=> $period_info['date_end']
+				);
+
+				$this->load->model('presence/schedule');
+				$this->load->model('presence/absence');
+				$this->load->model('presence/exchange');
+				$this->load->model('overtime/overtime');
+
+				foreach ($customers as $customer) {
+					$schedules_data = $this->model_presence_schedule->getFinalSchedules($presence_period_id, $customer['customer_id'], $range_date);
+
+					foreach ($schedules_data as $date => $schedule_data) {
+						if ($schedule_data['time_login'] != '0000-00-00 00:00:00' && $schedule_data['time_logout'] != '0000-00-00 00:00:00') {
+							$diff = date_diff(date_create($schedule_data['time_login']), date_create($schedule_data['time_logout']));
+							$duration = $diff->format($this->language->get('info_duration'));
+						} else {
+							$duration = '-';
+						}
+
+						$log_data[] = [
+							$no += 1,
+							$customer['customer_id'],
+							$customer['nip'],
+							trim($customer['lastname']),
+							$customer['customer_group'],
+							$customer['customer_department'],
+							$customer['location'],
+							\PhpOffice\PhpSpreadsheet\Shared\Date::stringToExcel($date),
+							$schedule_data['schedule_type'] . ($schedule_data['time_in'] != '0000-00-00 00:00:00' ? ' (' . date('H:i', strtotime($schedule_data['time_in'])) . '-' . date('H:i', strtotime($schedule_data['time_out'])) . ')' : $this->language->get('text_off')),
+							($schedule_data['time_login'] != '0000-00-00 00:00:00') ? \PhpOffice\PhpSpreadsheet\Shared\Date::stringToExcel($schedule_data['time_login']) : '-',
+							($schedule_data['time_logout'] != '0000-00-00 00:00:00') ? \PhpOffice\PhpSpreadsheet\Shared\Date::stringToExcel($schedule_data['time_logout']) : '-',
+							$duration,
+							$schedule_data['presence_status']
+						];
+					}
+				}
+
+				$spreadsheet->getSheetByName('Log')
+					->fromArray($log_data, NULL, 'A3');
+
+				# Force to download
+				$new_file = DIR_DOWNLOAD . 'Schedule Log Final.xlsx';
+
+				$writer = $php_spreadsheet->writer('Xlsx');
+				$writer->setPreCalculateFormulas(false);
+
+				$writer->save($new_file);
+
+				$spreadsheet->disconnectWorksheets();
+				unset($spreadsheet);
+
+				if (!headers_sent()) {
+					if (is_file($new_file)) {
+						header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+						header('Content-Disposition: attachment; filename=' . basename($new_file));
+						header('Expires: 0');
+						header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+						header('Pragma: public');
+						header('Content-Length: ' . filesize($new_file));
+
+						if (ob_get_level()) {
+							ob_end_clean();
+						}
+
+						readfile($new_file, 'rb');
+
+						exit();
+					} else {
+						exit('Error: Could not find file ' . $new_file . '!');
+					}
+				} else {
+					exit('Error: Headers already sent out!');
+				}
+
+				break;
+
+			default:
+				break;
+		}
+
+		if ($this->error) {
+			$this->session->data['warning'] = $this->error;
+			
+			$url = $this->urlFilter();
+			$url .= '&presence_period_id=' . $presence_period_id;
+
+			if (isset($this->request->get['schedule_start'])) {
+				$url .= '&schedule_start=' . $this->request->get['schedule_start'];
+			}
+
+			$this->response->redirect($this->url->link('presence/schedule', 'token=' . $this->session->data['token'] . $url, true));
+		}
+	}
+
 	public function download()
 	{
 		$this->load->language('presence/schedule');
@@ -950,7 +1181,7 @@ class ControllerPresenceSchedule extends Controller
 
 				$customer_count = $this->model_presence_presence->getCustomersCount($filter_data);
 				$customers = $this->model_presence_presence->getCustomersNew($filter_data);
-				
+
 				// $customer_count = $this->model_customer_customer->getTotalCustomers($filter_data);
 				// $customers = $this->model_customer_customer->getCustomers($filter_data);
 
@@ -1483,36 +1714,8 @@ class ControllerPresenceSchedule extends Controller
 			$data['error_warning'] = '';
 		}
 
-		$url = '';
+		$url = $this->urlFilter();
 		$url .= '&presence_period_id=' . $presence_period_id;
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
-
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
-
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
 
 		if (isset($this->request->get['schedule_start'])) {
 			$url .= '&schedule_start=' . $this->request->get['schedule_start'];

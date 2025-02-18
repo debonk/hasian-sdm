@@ -13,7 +13,7 @@ class ModelPayrollPayrollRelease extends Model
 
 	public function getPayrollPeriods($data = array())
 	{ //Used by: payroll_release
-		$sql = "SELECT pp.*, ps.name AS payroll_status, fa.* FROM " . DB_PREFIX . "presence_period pp LEFT JOIN " . DB_PREFIX . "payroll_status ps ON (ps.payroll_status_id = pp.payroll_status_id) LEFT JOIN " . DB_PREFIX . "fund_account fa ON (fa.fund_account_id = pp.fund_account_id)";
+		$sql = "SELECT pp.*, ps.name AS payroll_status, fa.* FROM " . DB_PREFIX . "presence_period pp LEFT JOIN " . DB_PREFIX . "payroll_status ps ON (ps.payroll_status_id = pp.payroll_status_id) LEFT JOIN " . DB_PREFIX . "v_fund_account fa ON (fa.fund_account_id = pp.fund_account_id)";
 
 		if (isset($data['filter_payroll_status'])) {
 			$implode = array();

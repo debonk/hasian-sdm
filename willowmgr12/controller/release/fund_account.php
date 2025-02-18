@@ -202,7 +202,8 @@ class ControllerReleaseFundAccount extends Controller {
 
 		$language_items = array(
 			'heading_title',
-			'entry_bank_name',
+			'text_select',
+			'entry_payroll_method',
 			'entry_acc_no',
 			'entry_acc_name',
 			'entry_email',
@@ -213,42 +214,23 @@ class ControllerReleaseFundAccount extends Controller {
 			$data[$language_item] = $this->language->get($language_item);
 		}
 
+		$error_items = [
+			'warning',
+			'payroll_method',
+			'acc_no',
+			'acc_name',
+			'email',
+		];
+		foreach ($error_items as $error_item) {
+			$data['error_' . $error_item] = isset($this->error[$error_item]) ? $this->error[$error_item] : '';
+		}
+
 		$data['token'] = $this->session->data['token'];
 
 		if (isset($this->request->get['fund_account_id'])) {
 			$fund_account_id = $this->request->get['fund_account_id'];
 		} else {
 			$fund_account_id = null;
-		}
-
-		if (isset($this->error['warning'])) {
-			$data['error_warning'] = $this->error['warning'];
-		} else {
-			$data['error_warning'] = '';
-		}
-
-		if (isset($this->error['bank_name'])) {
-			$data['error_bank_name'] = $this->error['bank_name'];
-		} else {
-			$data['error_bank_name'] = '';
-		}
-
-		if (isset($this->error['acc_no'])) {
-			$data['error_acc_no'] = $this->error['acc_no'];
-		} else {
-			$data['error_acc_no'] = '';
-		}
-
-		if (isset($this->error['acc_name'])) {
-			$data['error_acc_name'] = $this->error['acc_name'];
-		} else {
-			$data['error_acc_name'] = '';
-		}
-
-		if (isset($this->error['email'])) {
-			$data['error_email'] = $this->error['email'];
-		} else {
-			$data['error_email'] = '';
 		}
 
 /* 		if (isset($this->session->data['success'])) {
@@ -295,7 +277,7 @@ class ControllerReleaseFundAccount extends Controller {
 		}
 
 		$fund_account_items = array(
-			'bank_name',
+			'payroll_method_id',
 			'acc_no',
 			'acc_name',
 			'email'
@@ -320,6 +302,9 @@ class ControllerReleaseFundAccount extends Controller {
 		
 		$data['text_modified'] = sprintf($this->language->get('text_modified'), $username, $date_modified);
 	
+		$this->load->model('localisation/payroll_method');
+		$data['payroll_methods'] = $this->model_localisation_payroll_method->getPayrollMethods();
+
 		$data['fund_account_id'] = $fund_account_id;
 		
 		$data['header'] = $this->load->controller('common/header');
@@ -334,8 +319,8 @@ class ControllerReleaseFundAccount extends Controller {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
-		if ((utf8_strlen($this->request->post['bank_name']) < 1) || (utf8_strlen(trim($this->request->post['bank_name'])) > 32)) {
-			$this->error['bank_name'] = $this->language->get('error_bank_name');
+		if (empty($this->request->post['payroll_method_id'])) {
+			$this->error['payroll_method'] = $this->language->get('error_payroll_method');
 		}
 
 		if ((utf8_strlen($this->request->post['acc_no']) < 1) || (utf8_strlen(trim($this->request->post['acc_no'])) > 32)) {
@@ -350,9 +335,9 @@ class ControllerReleaseFundAccount extends Controller {
 			$this->error['email'] = $this->language->get('error_email');
 		}
 
-		if (isset($this->request->get['fund_account_id']) && $this->model_release_fund_account->checkFundAccountHistory($this->request->get['fund_account_id'])) {
-			$this->error['warning'] = $this->language->get('error_history');
-		}
+		// if (isset($this->request->get['fund_account_id']) && $this->model_release_fund_account->checkFundAccountHistory($this->request->get['fund_account_id'])) {
+		// 	$this->error['warning'] = $this->language->get('error_history');
+		// }
 
 		if ($this->error && !isset($this->error['warning'])) {
 			$this->error['warning'] = $this->language->get('error_warning');

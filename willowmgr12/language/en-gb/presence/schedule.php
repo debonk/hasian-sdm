@@ -6,7 +6,7 @@ $_['heading_title']				 = 'Jadwal Karyawan';
 $_['text_list']						= 'Ringkasan Jadwal Karyawan';
 $_['text_all_division']				= 'Semua Divisi';
 $_['text_browse']					= 'Browse';
-$_['text_edit']						= 'Ubah Data Jadwal Karyawan';
+$_['text_edit']						= 'Rincian Jadwal Karyawan';
 $_['text_import']					= 'Import Data Jadwal Karyawan';
 $_['text_schedule_detail']			= 'Jadwal Harian';
 $_['text_legend']					= 'Keterangan';
@@ -98,6 +98,7 @@ $_['error_customer']    		= '%s Import Failed: Data karyawan tidak sesuai.';
 $_['error_customer_division']   = '%s Import Failed: Divisi karyawan di luar divisi admin.';
 $_['error_schedule_type_none']  = '%s Import Failed: Tipe Jadwal tidak ditemukan.';
 $_['error_schedule_exist']   	= '%s Import Failed: Jadwal telah ada.';
+$_['error_data_max']   			= 'Log Data melebihi data maksimum. Gunakan filter untuk mengurangi data yang diekspor.';
 
 //Information
 $_['info_duration']				 = '%h jam %i menit';

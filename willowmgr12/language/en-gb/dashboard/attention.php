@@ -3,6 +3,9 @@
 $_['text_uncomplete']			= 'Perhatian: %s orang karyawan belum lengkap <a href="%s">Dokumen Wajib</a>. Karyawan terkait bisa terhalang proses penggajian!';
 
 // Customer
+$_['text_payroll_basic']		= 'Perhatian: <a href="%s">Persetujuan</a> atas perubahan gaji %d karyawan agar segera ditindaklanjuti!';
+
+// Customer
 $_['text_customer_summary']		= 'Perhatian: %d karyawan belum lengkap data <a href="%s">%s</a>!';
 $_['text_customer_location_id']	= 'Lokasi Kerja';
 $_['text_customer_image']		= 'Foto Profil';

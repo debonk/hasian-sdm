@@ -531,6 +531,7 @@ class ControllerCustomerCustomer extends Controller
 			'email',
 			'telephone',
 			'npwp_address',
+			'payroll_method',
 			'health_insurance_id',
 			'employment_insurance_id',
 			'password',
@@ -833,6 +834,10 @@ class ControllerCustomerCustomer extends Controller
 			if ((utf8_strlen($this->request->post['npwp_address']) < 3) || (utf8_strlen(trim($this->request->post['npwp_address'])) > 255)) {
 				$this->error['npwp_address'] = $this->language->get('error_npwp_address');
 			}
+		}
+
+		if (empty($this->request->post['payroll_method_id'])) {
+			$this->error['payroll_method'] = $this->language->get('error_payroll_method');
 		}
 
 		if ($this->request->post['health_insurance_id'] && ((utf8_strlen($this->request->post['health_insurance_id']) != 13) || !preg_match('/^\d*$/', $this->request->post['health_insurance_id']))) {

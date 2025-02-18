@@ -15,6 +15,21 @@ class ControllerDashboardAttention extends Controller
 
 		$this->load->model('report/attention');
 
+		# Payroll Basic
+		if ($this->user->hasPermission('approve', 'payroll/payroll_basic')) {
+			$result = $this->model_report_attention->getUnapprovedPayrollBasicsCount();
+
+			if ($result) {
+				$href = $this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'], true);
+
+				$data['attentions'][] = [
+					'text'			=> sprintf($this->language->get('text_payroll_basic'), $href, $result),
+					'icon'			=> 'fa-exclamation-circle',
+					'alert_class'	=> 'alert-danger'
+				];
+			}
+		}
+
 		# Customer
 		$item_data = [
 			'customer_department_id'	=> 0,

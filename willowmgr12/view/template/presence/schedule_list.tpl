@@ -31,6 +31,15 @@
 				<a href="<?= $print; ?>" target="_blank" rel="noopener noreferrer" data-toggle="tooltip"
 					title="<?= $button_print; ?>" class="btn btn-info"><i class="fa fa-print"></i></a>
 
+				<?php if (!$period_pending_check) { ?>
+				<a href="<?= $export; ?>" type="button" class="btn btn-info" data-toggle="tooltip"
+					title="<?= $button_export; ?>"><i class="fa fa-upload"></i>
+				</a>
+				<?php } else { ?>
+				<button type="button" class="btn btn-info disabled" data-toggle="tooltip"
+					title="<?= $button_export; ?>"><i class="fa fa-download"></i>
+				</button>
+				<?php } ?>
 				<?php if (!$schedule_lock) { ?>
 				<a href="<?= $import; ?>" type="button" class="btn btn-warning" data-toggle="tooltip"
 					title="<?= $button_import; ?>"><i class="fa fa-download"></i>

@@ -13,7 +13,8 @@ class ControllerStartupDbView extends Controller
 		'v_loan',
 		'v_customer_finger',
 		'v_payroll',
-		'v_release'
+		'v_fund_account',
+		// 'v_release'
 	];
 
 	private function viewSql($view_name)
@@ -85,6 +86,11 @@ class ControllerStartupDbView extends Controller
 
 			case 'v_payroll':
 				$view_sql = "SELECT p.*, (p.addition_0 + p.addition_1 + p.addition_2 + p.addition_3 + p.addition_4 - p.deduction_0 - p.deduction_1 - p.deduction_2 - p.deduction_3 - p.deduction_4) as net_salary, SUM(pcv.value) as component, c.nip, c.email, c.firstname, c.lastname, c.name, c.date_start, c.date_end, c.acc_no, c.customer_group_id, c.customer_group, c.customer_department_id, c.customer_department, c.location_id, c.location, c.language_id, c.payroll_method_id, pm.name AS payroll_method, pp.period FROM " . DB_PREFIX . "payroll p LEFT JOIN " . DB_PREFIX . "payroll_component_value pcv ON (pcv.customer_id = p.customer_id AND pcv.presence_period_id = p.presence_period_id) LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = p.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = IF(p.date_released IS NULL, c.payroll_method_id, p.release_payroll_method_id)) LEFT JOIN " . DB_PREFIX . "presence_period pp ON (pp.presence_period_id = p.presence_period_id) GROUP BY p.customer_id, p.presence_period_id;";
+
+				break;
+
+			case 'v_fund_account':
+				$view_sql = "SELECT fa.*, pm.name AS bank_name, pm.code, u.username FROM " . DB_PREFIX . "fund_account fa LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = fa.payroll_method_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = fa.user_id)";
 
 				break;
 

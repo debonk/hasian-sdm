@@ -38,7 +38,7 @@ class ModelReleaseFreeTransfer extends Model {
 	}
 
 	public function getFreeTransfers($data = array()) {
-		$sql = "SELECT ft.*, fa.bank_name, fa.acc_no, fa.acc_name, COUNT(ftc.amount) as count, SUM(ftc.amount) as total, u.username FROM " . DB_PREFIX . "free_transfer ft LEFT JOIN " . DB_PREFIX . "fund_account fa ON (fa.fund_account_id = ft.fund_account_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = ft.user_id) LEFT JOIN " . DB_PREFIX . "free_transfer_customer ftc ON (ftc.free_transfer_id = ft.free_transfer_id) GROUP BY ftc.free_transfer_id";
+		$sql = "SELECT ft.*, fa.bank_name, fa.acc_no, fa.acc_name, COUNT(ftc.amount) as count, SUM(ftc.amount) as total, u.username FROM " . DB_PREFIX . "free_transfer ft LEFT JOIN " . DB_PREFIX . "v_fund_account fa ON (fa.fund_account_id = ft.fund_account_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = ft.user_id) LEFT JOIN " . DB_PREFIX . "free_transfer_customer ftc ON (ftc.free_transfer_id = ft.free_transfer_id) GROUP BY ftc.free_transfer_id";
 
 		$sort_data = array(
 			'ft.date_process',
