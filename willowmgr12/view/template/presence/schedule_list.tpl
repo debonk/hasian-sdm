@@ -238,7 +238,7 @@
 
 	$('#period-info').load('index.php?route=common/period_info&token=<?= $token; ?>&presence_period_id=<?= $presence_period_id; ?>');
 
-	$('#schedule-report').load('index.php?route=presence/schedule/report&token=<?= $token; ?>' + '<?= $url; ?>');
+	$('#schedule-report').load('index.php?route=presence/schedule/report&token=<?= $token; ?>' + encodeURI('<?= $url; ?>'));
 
 	$('#schedule-report').on('click', '.pagination a, thead a', function (e) {
 		e.preventDefault();

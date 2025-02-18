@@ -527,7 +527,7 @@
 									<?= $text_payroll_basic; ?>
 								</legend>
 								<div class="form-group">
-									<label class="col-sm-3 control-label">
+									<label class="col-sm-3 control-label required">
 										<?= $entry_payroll_basic_auto_approve; ?>
 									</label>
 									<div class="col-sm-9">

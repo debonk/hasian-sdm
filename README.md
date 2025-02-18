@@ -13,12 +13,12 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
-4.1.1
-
+4.1.0b	18/02/2025
+Bug Fixed: Schedule: Filter name not work properly
 
 4.1.0	18/02/2025
 Fund Account: Seleksi bank berdasarkan Payroll Method
-Schedule: Menambah fitur import data log kehadiran.
+Schedule: Menambah fitur ekspor data log kehadiran.
 Payroll Basic: Menambah sistem approval jika ada perubahan gaji
 Schedule > Delete: Schedule yang belum lewat untuk periode berjalan (Status Processing) bisa didelete jika jadwal tidak dikunci.
 Schedule > Import: Schedule yang belum lewat untuk periode berjalan (Status Processing) bisa diimport jika jadwal tidak dikunci.
@@ -43,6 +43,23 @@ ALTER TABLE oc_payroll_basic ADD approval_user_id INT(11) NULL;
 UPDATE oc_payroll_basic SET date_approved=date_added, approval_user_id=user_id WHERE 1;
 ALTER TABLE oc_fund_account ADD payroll_method_id int(11) NOT NULL AFTER fund_account_id;
 ALTER TABLE oc_fund_account DROP COLUMN bank_name;
+
+====================
+HSDM SOFTWARE 4.1.0 UPDATE
+
++ User Group: Tambahan role "APPROVAL". Saat ini sistem approval masih hanya diterapkan pada modul Payroll Basic.
++ Payroll Basic: Sistem Approval komponen gaji.
+  Cakupan diatur pada menu Setting > Option > Payroll Basic:
+	Auto Approve atas input gaji.
+		- Never: Tidak ada auto approve.
+		- First Time Only: Auto approve pada pengaturan gaji karyawan pertama kali.
+		- Always: Selalu auto approve, manual approve tidak dibutuhkan.
++ Schedule > Delete: Schedule untuk tanggal yang belum lewat pada periode berjalan (Status Processing) bisa didelete jika jadwal tidak dikunci.
++ Schedule > Import: Schedule untuk tanggal yang belum lewat pada periode berjalan (Status Processing) bisa diimport jika jadwal tidak dikunci.
++ Schedule: Tambahan fitur ekspor Data Log Kehadiran.
+
+====================
+
 
 4.0.5	17/01/2025
 Framework Updated
