@@ -680,7 +680,7 @@ class ControllerPresenceSchedule extends Controller
 		$pagination->total = $customer_count;
 		$pagination->page = $page;
 		$pagination->limit = $limit;
-		$pagination->url = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . $url . '&page={page}', true);
+		$pagination->url = $this->url->link('presence/schedule/report', 'token=' . $this->session->data['token'] . $url . '&page={page}', true);
 
 		$data['pagination'] = $pagination->render();
 

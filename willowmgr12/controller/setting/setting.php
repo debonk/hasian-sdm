@@ -539,8 +539,10 @@ class ControllerSettingSetting extends Controller {
 
 		if (isset($this->request->post['config_payroll_basic_auto_approve'])) {
 			$data['config_payroll_basic_auto_approve'] = $this->request->post['config_payroll_basic_auto_approve'];
-		} else {
+		} elseif ($this->config->has('config_payroll_basic_auto_approve')) {
 			$data['config_payroll_basic_auto_approve'] = $this->config->get('config_payroll_basic_auto_approve');
+		} else {
+			$data['config_payroll_basic_auto_approve'] = 'always';
 		}
 
 		$components = [

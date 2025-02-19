@@ -13,6 +13,9 @@ MODIFY CONFIG
 
 MODIFY TABLE
 
+4.1.0c	19/02/2025
+Bug Fixed: Schedule: Pagination link not work properly
+
 4.1.0b	18/02/2025
 Bug Fixed: Schedule: Filter name not work properly
 
