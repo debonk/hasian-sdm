@@ -11,7 +11,16 @@ User Group: ganti form ke list, trus ada kolom untuk centang access, modify, app
 
 MODIFY CONFIG
 
-MODIFY TABLE
+=== TABLE ===
+
+4.1.1	12/04/2025
+Report > Payroll Tax: Restructure
+Absence: Employee Selection Availability (month) aktif pada pemilihan karyawan
+Bug Fixed: City: Add/Edit error.
+Bug Fixed: Schedule: Filter name with quote (') not work properly
+
+=== TABLE ===
+ALTER TABLE oc_city MODIFY COLUMN city int(11) auto_increment NOT NULL;
 
 4.1.0c	19/02/2025
 Bug Fixed: Schedule: Pagination link not work properly

@@ -1,7 +1,7 @@
 <?php
 class ModelReportCustomer extends Model {
 	public function getCustomer($customer_id) {
-		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON (cad.customer_id = c.customer_id) WHERE c.customer_id = '" . (int)$customer_id . "'");
+		$query = $this->db->query("SELECT DISTINCT c.*, cad.*, g.code AS gender_code, ms.code AS marriage_status_code FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON (cad.customer_id = c.customer_id) LEFT JOIN " . DB_PREFIX . "gender g ON (g.gender_id = cad.gender_id) LEFT JOIN " . DB_PREFIX . "marriage_status ms ON (ms.marriage_status_id = cad.marriage_status_id) WHERE c.customer_id = '" . (int)$customer_id . "'");
 
 		return $query->row;
 	}

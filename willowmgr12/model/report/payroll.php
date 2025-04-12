@@ -52,6 +52,7 @@ class ModelReportPayroll extends Model
 	public function getPayrolls($presence_period_id, $data = array())
 	{
 		$sql = "SELECT customer_id, net_salary, component, nip, `name`, customer_group, customer_department, `location` FROM " . DB_PREFIX . "v_payroll WHERE presence_period_id = '" . (int)$presence_period_id . "'";
+		// $sql = "SELECT p.customer_id, lastname AS customer, net_salary, component, nip, p.name, customer_group, customer_department, `location`, id_card_address_id, ca.children, ca.npwp, ca.npwp_address, g.code AS gender_code, ms.code AS marriage_status_code FROM " . DB_PREFIX . "v_payroll p LEFT JOIN " . DB_PREFIX . "customer_add_data ca ON p.customer_id = ca.customer_id LEFT JOIN " . DB_PREFIX . "gender g ON ca.gender_id = g.gender_id LEFT JOIN " . DB_PREFIX . "marriage_status ms ON ca.marriage_status_id = ms.marriage_status_id WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
 		// $implode = array();
 
@@ -416,8 +417,10 @@ class ModelReportPayroll extends Model
 		$this->load->model('report/customer');
 
 		foreach ($results as $result) {
-			if ($result['id_card_address_id']) {
-				$address_info = $this->model_report_customer->getAddress($result['id_card_address_id']);
+			$customer_info = $this->model_report_customer->getCustomer($result['customer_id']);
+
+			if ($customer_info['id_card_address_id']) {
+				$address_info = $this->model_report_customer->getAddress($customer_info['id_card_address_id']);
 
 				$id_card_address = $address_info['address_1'];
 
@@ -434,14 +437,14 @@ class ModelReportPayroll extends Model
 				$id_card_address = '';
 			}
 
-
-			if ($result['gender_code'] == 'L') {
-				$marriage_status = $result['marriage_status_code'] . '/' . $result['children'];
+			if ($customer_info['gender_code'] == 'L') {
+				$marriage_status = $customer_info['marriage_status_code'] . '/' . $customer_info['children'];
 			} else {
 				$marriage_status = 'TK/0';
 			}
 
-			$salary = $result['gaji_pokok'] + $result['tunj_jabatan'] + $result['tunj_hadir'] + $result['tunj_pph'] + $result['total_uang_makan'] - $result['pot_sakit'] - $result['pot_bolos'] - $result['pot_tunj_hadir'] - $result['pot_gaji_pokok'] - $result['pot_terlambat'];
+			// $salary = $result['gaji_pokok'] + $result['tunj_jabatan'] + $result['tunj_hadir'] + $result['tunj_pph'] + $result['total_uang_makan'] - $result['pot_sakit'] - $result['pot_bolos'] - $result['pot_tunj_hadir'] - $result['pot_gaji_pokok'] - $result['pot_terlambat'];
+			$salary = $result['net_salary'];
 
 			$component_data = array(
 				'1'	=> 0,
@@ -461,18 +464,17 @@ class ModelReportPayroll extends Model
 					$component_data[$value['type']] =  $value['total'];
 				}
 			}
-
 			$gross_salary = $salary + $component_data[1];
 			$net_salary = $gross_salary - min(500000, 0.05 * $gross_salary) + $component_data[0];
 
 			$non_taxed_income = 4500000;
-			if ($result['gender_code'] == 'L') {
-				if ($result['marriage_status_code'] == 'K') {
+			if ($customer_info['gender_code'] == 'L') {
+				if ($customer_info['marriage_status_code'] == 'K') {
 					$non_taxed_income += 375000;
 				}
 
-				if ($result['children']) {
-					$non_taxed_income += min(3, $result['children']) * 375000;
+				if ($customer_info['children']) {
+					$non_taxed_income += min(3, $customer_info['children']) * 375000;
 				}
 			}
 
@@ -500,14 +502,15 @@ class ModelReportPayroll extends Model
 
 			$taxes_data[] = array(
 				'customer_id'		=> $result['customer_id'],
-				'customer'			=> $result['customer'],
-				'nik'				=> $result['nik'],
+				'customer'			=> $customer_info['lastname'],
+				// 'customer'			=> $result['name'],
+				'nik'				=> $customer_info['nik'],
 				'id_card_address'	=> $id_card_address,
-				'gender_code'		=> $result['gender_code'],
+				'gender_code'		=> $customer_info['gender_code'],
 				'marriage_status'	=> $marriage_status,
 				'customer_group'	=> $result['customer_group'],
-				'npwp'				=> $result['npwp'],
-				'npwp_address'		=> $result['npwp_address'],
+				'npwp'				=> $customer_info['npwp'],
+				'npwp_address'		=> $customer_info['npwp_address'],
 				'location'			=> $result['location'],
 				'salary'			=> $salary + $component_data[1] + $component_data[0],
 				'tax_value'			=> $tax_value

@@ -727,6 +727,7 @@ class ControllerPresenceAbsence extends Controller
 			$filter_data = array(
 				'presence_period_id'	=> $presence_period_id,
 				'filter_name'			=> $filter_name,
+				'availability'  		=> true,
 				'start'      			=> 0,
 				'limit'      			=> 15
 			);

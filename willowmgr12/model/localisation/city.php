@@ -5,7 +5,7 @@
 
 class ModelLocalisationCity extends Model {
 	public function addCity($data) {
-		$this->db->query("INSERT INTO " . DB_PREFIX . "city SET status = '" . (int)$data['status'] . "', name = '" . $this->db->escape($data['name']) . "', code = '" . $this->db->escape($data['code']) . "', zone_id = '" . (int)$data['zone_id'] . "'");
+		$this->db->query("INSERT INTO " . DB_PREFIX . "city SET status = '" . (int)$data['status'] . "', name = '" . $this->db->escape($data['name']) . "', zone_id = '" . (int)$data['zone_id'] . "'");
 			
 		$this->cache->delete('city');
 		
@@ -13,7 +13,7 @@ class ModelLocalisationCity extends Model {
 	}
 
 	public function editCity($city, $data) {
-		$this->db->query("UPDATE " . DB_PREFIX . "city SET status = '" . (int)$data['status'] . "', name = '" . $this->db->escape($data['name']) . "', code = '" . $this->db->escape($data['code']) . "', zone_id = '" . (int)$data['zone_id'] . "' WHERE city = '" . (int)$city . "'");
+		$this->db->query("UPDATE " . DB_PREFIX . "city SET status = '" . (int)$data['status'] . "', name = '" . $this->db->escape($data['name']) . "', zone_id = '" . (int)$data['zone_id'] . "' WHERE city = '" . (int)$city . "'");
 
 		$this->cache->delete('city');
 	}

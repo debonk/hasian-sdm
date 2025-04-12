@@ -17,7 +17,7 @@ class ControllerPresenceSchedule extends Controller
 
 		foreach ($this->filter_items as $filter_item) {
 			if (isset($this->request->get['filter_' . $filter_item])) {
-				$url_filter .= '&filter_' . $filter_item . '=' . $this->request->get['filter_' . $filter_item];
+				$url_filter .= '&filter_' . $filter_item . '=' . urlencode(html_entity_decode($this->request->get['filter_' . $filter_item], ENT_QUOTES, 'UTF-8'));
 			}
 		}
 
@@ -1025,7 +1025,7 @@ class ControllerPresenceSchedule extends Controller
 
 		if ($this->error) {
 			$this->session->data['warning'] = $this->error;
-			
+
 			$url = $this->urlFilter();
 			$url .= '&presence_period_id=' . $presence_period_id;
 
