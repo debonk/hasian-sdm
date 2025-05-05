@@ -39,6 +39,7 @@ $_['entry_note']     			= 'Catatan Tambahan';
 
 // Button
 $_['button_add_note']			 = 'Tambah Catatan';
+$_['button_approve_all']		 = 'Approve Selected';
 $_['button_ask_approval']		 = 'Minta Persetujuan';
 
 // Error

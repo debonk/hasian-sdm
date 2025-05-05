@@ -134,7 +134,7 @@ class ControllerPresenceSchedule extends Controller
 		$this->load->model('common/payroll');
 		$this->load->model('presence/schedule');
 		$this->load->model('presence/presence');
-
+		
 		if (isset($this->request->get['presence_period_id']) && $this->validateRecap()) {
 			if (empty($this->request->post['selected'])) {
 				$filter = [];
@@ -200,22 +200,20 @@ class ControllerPresenceSchedule extends Controller
 			'button_import',
 			'button_apply_schedule',
 			'button_recap',
-			'button_presence'
+			'button_presence',
+			'error_hke'
 		);
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
 		}
 
-		if (isset($this->error['warning'])) {
-			$data['error_warning'] = $this->error['warning'];
-		} else {
-			$data['error_warning'] = '';
-		}
 
 		if (isset($this->session->data['warning'])) {
 			$data['error_warning'] = $this->session->data['warning'];
 
 			unset($this->session->data['warning']);
+		} elseif (isset($this->error['warning'])) {
+			$data['error_warning'] = $this->error['warning'];
 		} else {
 			$data['error_warning'] = '';
 		}
@@ -297,6 +295,8 @@ class ControllerPresenceSchedule extends Controller
 		$data['print'] = $this->url->link('presence/schedule/print', 'token=' . $this->session->data['token'] . $url, true);
 		$data['back'] = $this->url->link('presence/presence_period', 'token=' . $this->session->data['token'], true);
 		$data['presence'] = $this->url->link('presence/presence', 'token=' . $this->session->data['token'] . $url, true);
+
+		$data['default_hke'] = $this->config->get('payroll_setting_default_hke');
 
 		$this->load->model('presence/presence_period');
 		$data['presence_periods'] = $this->model_presence_presence_period->getPresencePeriods();
@@ -1942,6 +1942,14 @@ class ControllerPresenceSchedule extends Controller
 			$this->error['warning'] = $this->language->get('error_not_found');
 		}
 
+		$this->request->post['hke'] = (int)($this->request->post['hke']);
+
+		if ($this->request->post['hke'] < 1) {
+			$this->error['warning'] = $this->language->get('error_hke');
+		}
+		// var_dump($this->error);
+		// die(' ---breakpoint--- ');
+		
 		# Validasi jika periode belum berakhir
 		// $period_info = $this->model_common_payroll->getPeriod($this->request->get['presence_period_id']);
 		// if (strtotime('today') < strtotime($period_info['date_end'])) {

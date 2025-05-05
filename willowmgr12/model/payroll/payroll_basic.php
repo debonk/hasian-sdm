@@ -5,6 +5,9 @@ class ModelPayrollPayrollBasic extends Model
 	{
 		$data = preg_replace('/(?!-)[^0-9.]/', '', $data);
 
+		# Delete unapproved payroll_basic
+		$this->db->query("DELETE FROM " . DB_PREFIX . "payroll_basic WHERE customer_id = '" . (int)$customer_id . "' AND date_approved IS NULL");
+
 		$this->db->query("INSERT INTO " . DB_PREFIX . "payroll_basic SET customer_id = '" . (int)$customer_id . "', gaji_pokok = '" . (int)$data['gaji_pokok'] . "', tunj_jabatan = '" . (int)$data['tunj_jabatan'] . "', tunj_hadir = '" . (int)$data['tunj_hadir'] . "', tunj_pph = '" . (int)$data['tunj_pph'] . "', uang_makan = '" . (int)$data['uang_makan'] . "', date_added = NOW(), user_id = '" . (int)$this->user->getId() . "'");
 
 		$payroll_basic_id = $this->db->getLastId();
@@ -128,7 +131,8 @@ class ModelPayrollPayrollBasic extends Model
 
 	public function getUnapprovedPayrollBasics()
 	{
-		$hke_default = $this->config->has('payroll_setting_default_hke') ? $this->config->get('payroll_setting_default_hke') : 25;
+		// $hke_default = $this->config->has('payroll_setting_default_hke') ? $this->config->get('payroll_setting_default_hke') : 25;
+		$hke_default = 25;
 
 		$sql = "SELECT pb.*, (pb.gaji_pokok + pb.tunj_jabatan + pb.tunj_hadir + pb.tunj_pph + (" . (int)$hke_default . " * pb.uang_makan)) AS gaji_dasar, u.username FROM " . DB_PREFIX . "payroll_basic pb LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = pb.user_id) WHERE date_approved IS NULL ORDER BY date_added ASC";
 
@@ -154,7 +158,8 @@ class ModelPayrollPayrollBasic extends Model
 
 	public function getCustomerPayrollBasics($data = array())
 	{
-		$hke_default = $this->config->has('payroll_setting_default_hke') ? $this->config->get('payroll_setting_default_hke') : 25;
+		// $hke_default = $this->config->has('payroll_setting_default_hke') ? $this->config->get('payroll_setting_default_hke') : 25;
+		$hke_default = 25;
 
 		$sql = "SELECT pb.*, c.customer_id, c.nip, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, c.customer_department_id, cdd.name AS customer_department, c.customer_group_id, cgd.name AS customer_group, c.location_id, l.name AS location, (pb.gaji_pokok + pb.tunj_jabatan + pb.tunj_hadir + pb.tunj_pph + (" . (int)$hke_default . " * pb.uang_makan)) AS gaji_dasar, u.username FROM " . DB_PREFIX . "customer c LEFT JOIN (" . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "customer_department_description cdd ON (cdd.customer_department_id = c.customer_department_id) LEFT JOIN " . DB_PREFIX . "payroll_basic pb ON (pb.payroll_basic_id = c.payroll_basic_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = pb.user_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND c.payroll_include = 1";
 

@@ -150,6 +150,7 @@ class ControllerPresenceAbsence extends Controller
 			'column_approved',
 			'column_username',
 			'column_action',
+			'button_approve_all',
 			'button_filter',
 			'button_add',
 			'button_view',
@@ -205,6 +206,7 @@ class ControllerPresenceAbsence extends Controller
 
 		$data['add'] = $this->url->link('presence/absence/add', 'token=' . $this->session->data['token'] . $url, true);
 		$data['delete'] = $this->url->link('presence/absence/delete', 'token=' . $this->session->data['token'] . $url, true);
+		$data['mass_approve'] = $this->url->link('presence/absence/massApprove', 'token=' . $this->session->data['token'] . $url, true);
 
 		$limit = $this->config->get('config_limit_admin');
 
@@ -560,12 +562,14 @@ class ControllerPresenceAbsence extends Controller
 					break;
 				}
 
-				$date_last_notif = date($this->language->get('date_format_jMY'), strtotime('-' . $absence_info['last_notif'] . ' days'));
+				if (!empty($absence_info['last_notif'])) {
+					$date_last_notif = date($this->language->get('date_format_jMY'), strtotime('-' . $absence_info['last_notif'] . ' days'));
 
-				if (strtotime($absence_info['date']) < strtotime($date_last_notif)) {
-					$this->error['warning'] = $this->language->get('error_absence_status');
+					if (strtotime($absence_info['date']) < strtotime($date_last_notif)) {
+						$this->error['warning'] = $this->language->get('error_absence_status');
 
-					break;
+						break;
+					}
 				}
 			}
 		}
@@ -633,7 +637,7 @@ class ControllerPresenceAbsence extends Controller
 
 		$json = array();
 
-		if (!$this->user->hasPermission('modify', 'common/absence_info')) { //Common_Absence_info user yg bisa approve
+		if (!$this->user->hasPermission('approve', 'presence/absence')) {
 			$json['error'] = $this->language->get('error_permission');
 		} else {
 			$this->load->model('presence/absence');
@@ -674,9 +678,9 @@ class ControllerPresenceAbsence extends Controller
 					//Edit presence dan presence summary
 					if ($presence_summary_info) {
 						$this->model_presence_presence->editPresence($absence_info['customer_id'], $absence_info['date'], $presence_status_ia);
-						
+
 						$presence_summary_data['primary']['ia'] = $presence_summary_info['primary']['ia'] + 1;
-						
+
 						if (in_array($absence_info['presence_code'], array_keys($presence_status_groups))) {
 							$presence_summary_data[$presence_status_groups[$absence_info['presence_code']]][$absence_info['presence_code']] = $presence_summary_info[$presence_status_groups[$absence_info['presence_code']]][$absence_info['presence_code']] - 1;
 						} else if (in_array($absence_info['presence_code'], array_keys($presence_summary_info['additional']))) {
@@ -702,6 +706,86 @@ class ControllerPresenceAbsence extends Controller
 				}
 
 				$this->model_presence_presence->editPresenceSummary($period_info['presence_period_id'], $absence_info['customer_id'], $presence_summary_data);
+			});
+
+			$json['success'] = $this->language->get('text_success');
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
+	public function massApproval()
+	{
+		$this->load->language('presence/absence');
+
+		$json = array();
+
+		if (!$this->user->hasPermission('approve', 'presence/absence')) {
+			$json['error'] = $this->language->get('error_permission');
+		} else {
+			$this->load->model('presence/absence');
+			$this->load->model('common/payroll');
+			$this->load->model('presence/presence');
+
+			$this->load->model('localisation/presence_status');
+
+			$json['approved_ids'] = $this->db->transaction(function () {
+				$presence_status_groups = $this->model_localisation_presence_status->getPresenceStatusesGroup();
+
+				$approved_ids = [];
+
+				foreach ($this->request->post['selected'] as $absence_id) {
+					$absence_info = $this->model_presence_absence->getAbsence($absence_id);
+
+					if (!$absence_info) {
+						continue;
+					}
+
+					$period_info = $this->model_common_payroll->getPeriodByDate($absence_info['date']);
+					$period_status_check = $this->model_common_payroll->checkPeriodStatus($period_info['presence_period_id'], 'approved, released, completed');
+
+					if ($period_status_check) { //Check period status
+						continue;
+					}
+
+					if ($absence_info['presence_status_id'] == $this->config->get('payroll_setting_id_c') && !$this->model_presence_absence->checkVacationLimit($absence_info['customer_id'], $absence_info['date'])) { //Check batas cuti
+						continue;
+					}
+
+					if ($absence_info['approved']) {
+						continue;
+					}
+
+					$presence_summary_data = [
+						'primary'	=> [],
+						'secondary'	=> []
+					];
+
+					$presence_summary_info = $this->model_presence_presence->getPresenceSummary($period_info['presence_period_id'], $absence_info['customer_id']);
+
+					$this->model_presence_absence->approveAbsence($absence_id);
+
+					if ($presence_summary_info) {
+						$this->model_presence_presence->editPresence($absence_info['customer_id'], $absence_info['date'], $absence_info['presence_status_id']);
+
+						$presence_summary_data['primary']['ia'] = $presence_summary_info['primary']['ia'] - 1;
+
+						if (in_array($absence_info['presence_code'], array_keys($presence_status_groups))) {
+							$presence_summary_data[$presence_status_groups[$absence_info['presence_code']]][$absence_info['presence_code']] = $presence_summary_info[$presence_status_groups[$absence_info['presence_code']]][$absence_info['presence_code']] + 1;
+						} elseif (in_array($absence_info['presence_code'], array_keys($presence_summary_info['additional']))) {
+							$presence_summary_data['additional'][$absence_info['presence_code']] = $presence_summary_info['additional'][$absence_info['presence_code']] + 1;
+						} else {
+							$presence_summary_data['additional'][$absence_info['presence_code']] = 1;
+						}
+					}
+
+					$this->model_presence_presence->editPresenceSummary($period_info['presence_period_id'], $absence_info['customer_id'], $presence_summary_data);
+
+					$approved_ids[] = $absence_id;
+				}
+
+				return $approved_ids;
 			});
 
 			$json['success'] = $this->language->get('text_success');

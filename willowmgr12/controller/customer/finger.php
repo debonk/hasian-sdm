@@ -581,7 +581,10 @@ class ControllerCustomerFinger extends Controller
 					'2'	=> 0
 				];
 			} else {
-				$data['active_fingers'] = [];
+				$data['active_fingers'] = [
+					'1'	=> 0,
+					'2'	=> 0
+				];
 			}
 		}
 
@@ -672,7 +675,7 @@ class ControllerCustomerFinger extends Controller
 
 		if ($finger_info) {
 			$this->session->data['success'] = $this->language->get('text_success_register');
-			
+
 			$json['reg_status'] = 1;
 		}
 
@@ -741,7 +744,7 @@ class ControllerCustomerFinger extends Controller
 
 		$this->load->model('customer/finger');
 		$finger_count = $this->model_customer_finger->getFingersCount($customer_id, $finger_index);
-		
+
 		if (!$finger_count) {
 			$this->error['warning'] = $this->language->get('error_not_found');
 		}
@@ -764,7 +767,7 @@ class ControllerCustomerFinger extends Controller
 				$this->error['warning'] = $this->language->get('error_permission');
 			}
 		}
-		
+
 		return !$this->error;
 	}
 

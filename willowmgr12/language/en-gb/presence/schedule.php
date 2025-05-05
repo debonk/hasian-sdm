@@ -18,7 +18,7 @@ $_['text_success_process']			= 'Success: Jadwal Karyawan telah berlaku!';
 $_['text_success_recap']			= 'Success: Data Absensi Karyawan telah dihitung!';
 $_['text_schedule_info']			= 'Ringkasan Jadwal';
 $_['text_schedule_type']			= '%s (%s - %s)';
-$_['text_confirm_recap']			= 'Data karyawan sebelumnya akan dihapus dan dihitung ulang.\n\nHilangkan centang untuk menghitung kehadiran seluruh karyawan sesuai filter yang diterapkan.\n\nLanjutkan?';
+$_['text_confirm_recap']			= 'Data karyawan sebelumnya akan dihapus dan dihitung ulang.\n\nHilangkan centang untuk menghitung kehadiran seluruh karyawan sesuai filter yang diterapkan.\n\nMasukkan nilai HKE default sebagai dasar perhitungan NS untuk karyawan yang tidak penuh periode ini?';
 $_['text_presence_summary']     	= 'Ringkasan Kehadiran';
 $_['text_log']						= 'Data Log';
 $_['text_off']						= 'Off';
@@ -99,6 +99,7 @@ $_['error_customer_division']   = '%s Import Failed: Divisi karyawan di luar div
 $_['error_schedule_type_none']  = '%s Import Failed: Tipe Jadwal tidak ditemukan.';
 $_['error_schedule_exist']   	= '%s Import Failed: Jadwal telah ada.';
 $_['error_data_max']   			= 'Log Data melebihi data maksimum. Gunakan filter untuk mengurangi data yang diekspor.';
+$_['error_hke']				 	= 'Warning: HKE harus diisi dan lebih besar dari 0!';
 
 //Information
 $_['info_duration']				 = '%h jam %i menit';

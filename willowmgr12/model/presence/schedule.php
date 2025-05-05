@@ -543,14 +543,14 @@ class ModelPresenceSchedule extends Model
 			$customer_info = $this->model_common_payroll->getCustomer($customer_id);
 
 			if (strtotime($customer_info['date_start']) > strtotime($period_info['date_start']) || (isset($customer_info['date_end']) && strtotime($customer_info['date_end']) <= strtotime($period_info['date_end']))) {
-				$default_hke = $this->config->get('payroll_setting_default_hke');
+				$default_hke = isset($this->request->post['hke']) ? $this->request->post['hke'] : $this->config->get('payroll_setting_default_hke');
                 $presence_summary_data['primary']['ns'] = 0;
 
 				$presence_summary_data['primary']['ns'] = max($default_hke - array_sum($presence_summary_data['primary']), 0);
 			}
 		}
 
-		$presence_summary_data['total']['hke'] = array_sum($presence_summary_data['primary']) + array_sum($presence_summary_data['additional']);
+		$presence_summary_data['total']['hke'] = array_sum($presence_summary_data['primary']) + (isset($presence_summary_data['additional']) ? array_sum($presence_summary_data['additional']) : 0);
 		$presence_summary_data['total']['t'] = array_sum($presence_summary_data['secondary']);
 
 		# Perhitungan Jumlah Lembur Harian (Lembur Penuh)

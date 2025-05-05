@@ -77,7 +77,7 @@ class ControllerAccountEdit extends Controller
 
 		switch ($contract_info['contract_status']) {
 			case 'expired':
-				$contract_status = $customer_info['end_reason'];
+				$contract_status = $contract_info['end_reason'];
 
 				break;
 

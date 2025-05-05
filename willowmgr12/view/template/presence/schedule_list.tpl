@@ -16,9 +16,7 @@
 				</a>
 				<?php if ($period_processing_check) { ?>
 				<button type="button" id="button-recap-presence" data-toggle="tooltip" title="<?= $button_recap; ?>"
-					class="btn btn-warning"
-					onclick="confirm('<?= $text_confirm_recap; ?>') ? $('#form-schedule').submit() : false;"><i
-						class="fa fa-share-square-o"></i>
+					class="btn btn-warning"><i class="fa fa-share-square-o"></i>
 					<?= $button_recap; ?>
 				</button>
 				<?php } else { ?>
@@ -223,6 +221,7 @@
 					</div>
 				</div>
 				<form method="post" action="<?= $action; ?>" enctype="multipart/form-data" id="form-schedule">
+					<input type="hidden" name="hke" value="<?= $default_hke; ?>" id="input-hke" />
 					<div id="schedule-report"></div>
 				</form>
 			</div>
@@ -245,6 +244,12 @@
 		e.preventDefault();
 
 		$('#schedule-report').load(this.href);
+		console.log(this.href);
+		// let url = this.href.replace(/&amp;/g, '&').replace(/&/g, '&amp;');
+
+		if (history.replaceState) {
+			history.replaceState({}, 'Data List', this.href.replace('/report', ''));
+		}
 	});
 
 	$('#schedule-report').on('click', 'tbody a', function () {
@@ -267,7 +272,7 @@
 		}
 
 		let presence_period_id = $('select[name=\'presence_period_id\']').val();
-		
+
 		if (presence_period_id) {
 			url += '&presence_period_id=' + encodeURIComponent(presence_period_id);
 		}
@@ -306,6 +311,14 @@
 					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
 				}
 			});
+		}
+	});
+
+	$('#button-recap-presence').on('click', function (e) {
+		let hke;
+		if (hke = prompt('<?= $text_confirm_recap; ?>', '<?= $default_hke; ?>')) {
+			$('#input-hke').val(hke);
+			$('#form-schedule').submit();
 		}
 	});
 </script>

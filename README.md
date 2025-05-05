@@ -13,6 +13,12 @@ MODIFY CONFIG
 
 === TABLE ===
 
+4.1.2	05/05/2025
+Schedule > List: Summarize harus input HKE dulu sebagai acuan perhitungan NS 
+Absence > List: Mass Approve Feature
+Payroll Basic: Unapproved Payroll Basic hanya boleh 1. New entry otomatis menghapus yang sebelumnya.
+Bug Fixed: From Error Log
+
 4.1.1	12/04/2025
 Report > Payroll Tax: Restructure
 Absence: Employee Selection Availability (month) aktif pada pemilihan karyawan

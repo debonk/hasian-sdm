@@ -4,6 +4,14 @@
   <div class="page-header">
     <div class="container-fluid">
       <div class="pull-right">
+        <button type="button" id="button-mass-approve" data-toggle="tooltip" title="<?= $button_approve_all; ?>"
+          data-loading-text="<?= $text_loading; ?>" class="btn btn-warning"><i class="fa fa-check"></i>
+          <?= $button_approve_all; ?>
+        </button>
+        <!-- <button type="button" id="button-mass-approve" data-toggle="tooltip" title="<?= $button_approve_all; ?>"
+          data-loading-text="<?= $text_loading; ?>" class="btn btn-warning" onclick="confirm('<?= $text_confirm; ?>') ? $('#form-absence').attr('action', '<?= $mass_approve; ?>').submit() : false;"><i class="fa fa-check"></i>
+          <?= $button_approve_all; ?>
+        </button> -->
         <a href="<?= $add; ?>" data-toggle="tooltip" title="<?= $button_add; ?>" class="btn btn-primary"><i
             class="fa fa-plus"></i></a>
         <button type="button" data-toggle="tooltip" title="<?= $button_delete; ?>" class="btn btn-danger"
@@ -383,7 +391,7 @@
     url = 'index.php?route=presence/absence&token=<?= $token; ?>';
 
     let filter = [];
-    
+
     let filter_items = JSON.parse('<?= $filter_items; ?>');
 
     for (let i = 0; i < filter_items.length; i++) {
@@ -395,6 +403,49 @@
     }
 
     location = url;
+  });
+
+  $('#button-mass-approve').on('click', function (e) {
+    if (confirm('<?= $text_confirm; ?>')) {
+      let node = this;
+      let data = $('input[name^=\'selected\']:checked')
+
+      $.ajax({
+        url: 'index.php?route=presence/absence/massApproval&token=<?= $token; ?>',
+        type: 'post',
+        dataType: 'json',
+        data: data,
+        crossDomain: false,
+        beforeSend: function () {
+          $(node).button('loading');
+        },
+        complete: function () {
+          $(node).button('reset');
+        },
+        success: function (json) {
+          $('.alert').remove();
+
+          if (json['error']) {
+            $('#content > .container-fluid').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+          }
+
+          if (json['success']) {
+            $('#content > .container-fluid').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+            if (json['approved_ids']) {
+              json['approved_ids'].map(function (absence_id) {
+                $('#button-approve' + absence_id).replaceWith('<i class="fa fa-check"></i>');
+              });
+            }
+
+            $('input[name^=\'selected\']').prop('checked', false);
+          }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+      });
+    }
   });
 
   $('button[id^=\'button-approve\']').on('click', function (e) {
