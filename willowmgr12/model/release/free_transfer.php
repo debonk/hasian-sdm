@@ -7,7 +7,7 @@ class ModelReleaseFreeTransfer extends Model {
 
 		if (isset($data['free_transfer_customer'])) {
 			foreach ($data['free_transfer_customer'] as $value) {
-				$this->db->query("INSERT INTO " . DB_PREFIX . "free_transfer_customer SET free_transfer_id = '" . (int)$free_transfer_id . "', customer_id = '" . (int)$value['customer_id'] . "', note = '" . $this->db->escape($value['note']) . "', amount = '" . (int)$value['amount'] . "'");
+				$this->db->query("INSERT INTO " . DB_PREFIX . "free_transfer_customer SET free_transfer_id = '" . (int)$free_transfer_id . "', customer_id = '" . (int)$value['customer_id'] . "', note = '" . $this->db->escape($value['note']) . "', amount = '" . (int)getNumber($value['amount']) . "'");
 			}
 		}
 	}
@@ -19,7 +19,7 @@ class ModelReleaseFreeTransfer extends Model {
 
 		if (isset($data['free_transfer_customer'])) {
 			foreach ($data['free_transfer_customer'] as $value) {
-				$this->db->query("INSERT INTO " . DB_PREFIX . "free_transfer_customer SET free_transfer_id = '" . (int)$free_transfer_id . "', customer_id = '" . (int)$value['customer_id'] . "', note = '" . $this->db->escape($value['note']) . "', amount = '" . (int)$value['amount'] . "'");
+				$this->db->query("INSERT INTO " . DB_PREFIX . "free_transfer_customer SET free_transfer_id = '" . (int)$free_transfer_id . "', customer_id = '" . (int)$value['customer_id'] . "', note = '" . $this->db->escape($value['note']) . "', amount = '" . (int)getNumber($value['amount']) . "'");
 			}
 		}
 	}
@@ -94,7 +94,7 @@ class ModelReleaseFreeTransfer extends Model {
 		$sql = "SELECT DISTINCT ftc.*, c.lastname, c.email, c.acc_no, pm.name AS payroll_method FROM " . DB_PREFIX . "free_transfer_customer ftc LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ftc.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE pm.language_id = '" . (int)$this->config->get('config_language_id') . "' AND ftc.free_transfer_id = '" . (int)$free_transfer_id . "'";
 
 		if ($method) {
-			$sql .= " AND pm.name = '" . $this->db->escape($method) . "' AND c.acc_no <> ''";
+			$sql .= " AND pm.code = '" . $this->db->escape($method) . "' AND c.acc_no <> ''";
 		}
 
 		$sql .= " ORDER BY c.lastname ASC";
@@ -108,7 +108,7 @@ class ModelReleaseFreeTransfer extends Model {
 		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "free_transfer_customer ftc";
 
 		if ($method) {
-			$sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ftc.customer_id) INNER JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id AND pm.name = '" . $this->db->escape($method) . "' AND c.acc_no <> '')";
+			$sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ftc.customer_id) INNER JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id AND pm.code = '" . $this->db->escape($method) . "' AND c.acc_no <> '')";
 		}
 
 		$sql .= " WHERE ftc.free_transfer_id = '" . (int)$free_transfer_id . "'";
@@ -122,7 +122,7 @@ class ModelReleaseFreeTransfer extends Model {
 		$sql = "SELECT SUM(ftc.amount) AS total FROM " . DB_PREFIX . "free_transfer_customer ftc";
 
 		if ($method) {
-			$sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ftc.customer_id) INNER JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id AND pm.name = '" . $this->db->escape($method) . "' AND c.acc_no <> '')";
+			$sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ftc.customer_id) INNER JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id AND pm.code = '" . $this->db->escape($method) . "' AND c.acc_no <> '')";
 		}
 
 		$sql .= " WHERE ftc.free_transfer_id = '" . (int)$free_transfer_id . "'";

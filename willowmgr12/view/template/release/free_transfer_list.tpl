@@ -71,7 +71,7 @@
                   <td class="text-left"><?php echo $free_transfer['date_modified']; ?></td>
                   <td class="text-left"><?php echo $free_transfer['username']; ?></td>
                   <td class="text-right nowrap">
-				    <a href="<?php echo $free_transfer['export']; ?>" data-toggle="tooltip" title="<?php echo $button_export_csv; ?>" class="btn btn-info"><i class="fa fa-upload"></i></a>
+				    <a href="<?php echo $free_transfer['export']; ?>" data-toggle="tooltip" title="<?php echo $free_transfer['button_export_csv']; ?>" class="btn btn-info"><i class="fa fa-upload"></i></a>
 				    <a href="<?php echo $free_transfer['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
 				  </td>
                 </tr>

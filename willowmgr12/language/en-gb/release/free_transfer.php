@@ -32,13 +32,14 @@ $_['entry_amount']				= 'Jumlah';
 $_['entry_input_customer']		= 'Input Nama Karyawan';
 
 //Button
-$_['button_export_csv']			= 'Export CIMB CSV';
+$_['button_export_csv']			= 'Export %s CSV';
 
 // Error
 $_['error_warning']				 = 'Warning: Please check the form carefully for errors!';
 $_['error_permission']			 = 'Warning: You do not have permission to modify free transfers!';
 $_['error_description']			 = 'Warning: Deskripsi harus diisi (max 255 karakter)!';
 $_['error_date_process']		 = 'Warning: Tanggal proses harus diisi dan belum berlalu!';
+$_['error_date_process']		 = 'Warning: Export tidak diijinkan karena tanggal proses telah berlalu!';
 $_['error_fund_account']		 = 'Warning: Pilih akun sumber dana!';
 $_['error_customer']			 = 'Warning: Pilih karyawan penerima transfer!';
 $_['error_amount']				 = 'Warning: Jumlah Dana harus diisi dengan nilai positif!';

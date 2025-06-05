@@ -240,7 +240,7 @@ class ModelPayrollPayroll extends Model
 
 			$presence_value_data = [];
 
-			foreach ($presence_data as $components) {
+			foreach ($presence_data as $components) { # Next, tambah komponen payroll basic (gp, tj, th, um, pph) dalam perhitungan fungsi eval.
 				foreach ($components as $key => $value) {
 					$presence_value_data['{' . $key . '}'] = $value;
 				}
@@ -262,6 +262,10 @@ class ModelPayrollPayroll extends Model
 						}
 
 						switch ($component['code']) {
+							case 'var':
+								$value = $var;
+								break;
+
 							case 'gp':
 								$value = $var * $payroll_basic_info['gaji_pokok'];
 								break;

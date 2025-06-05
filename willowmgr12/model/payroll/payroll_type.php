@@ -3,6 +3,7 @@ class ModelPayrollPayrollType extends Model
 {
 	private $main_components = [
 		'addition'			=> [
+			'var',
 			'gp',
 			'tj',
 			'th',
@@ -10,6 +11,7 @@ class ModelPayrollPayrollType extends Model
 			'total_um'
 		],
 		'deduction'	=> [
+			'var',
 			'pot_um',
 			'pot_pph',
 			'pot_gp_tj_5',

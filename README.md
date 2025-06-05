@@ -13,6 +13,12 @@ MODIFY CONFIG
 
 === TABLE ===
 
+
+4.1.3	05/06/2025
+Free Transfer: Add Export Mandiri CSV
+Payroll Type: Add [var] (constant) in calculation
+Config: Define constant DIR_MODULE
+
 4.1.2	05/05/2025
 Schedule > List: Summarize harus input HKE dulu sebagai acuan perhitungan NS 
 Absence > List: Mass Approve Feature

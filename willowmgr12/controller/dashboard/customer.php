@@ -1,6 +1,12 @@
 <?php
 class ControllerDashboardCustomer extends Controller {
 	public function index() {
+		$this->load->model('presence/presence');
+
+		if (!$this->model_presence_presence->viewExist('v_customer')) {
+			return;
+		};
+
 		$this->load->language('dashboard/customer');
 
 		$data['heading_title'] = $this->language->get('heading_title');

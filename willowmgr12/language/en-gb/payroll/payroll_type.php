@@ -12,6 +12,7 @@ $_['text_success']				= 'Success: You have modified payroll types!';
 $_['text_note']					= 'Variabel yang diijinkan: %s.';
 $_['text_note_deduction']		= '<br>Jika Potongan Pro Rata memenuhi, maka akan menghapus potongan lainnya.';
 
+$_['text_var']					= '[var] (konstanta)';
 $_['text_gp']					= '[var] x Gaji Pokok.';
 $_['text_tj']					= '[var] x Tunjangan Jabatan.';
 $_['text_th']					= '[var] x Tunjangan Hadir.';

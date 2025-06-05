@@ -976,4 +976,11 @@ class ModelPresencePresence extends Model
 
 		return $query->row['total'];
 	}
+
+	public function viewExist($view_name)
+	{
+		$query = $this->db->query("SHOW TABLES LIKE '" . DB_PREFIX . $this->db->escape($view_name) . "'");
+
+		return $query->num_rows > 0 ? true : false;
+	}
 }

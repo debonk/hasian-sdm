@@ -150,7 +150,7 @@
                     placeholder="<?= $entry_note; ?>" /></td>
                 <td class="text-right"><input type="text"
                     name="free_transfer_customer[<?= $free_transfer_customer['customer_id']; ?>][amount]"
-                    class="form-control" value="<?= $free_transfer_customer['amount']; ?>"
+                    class="form-control currency" value="<?= $free_transfer_customer['amount']; ?>"
                     placeholder="<?= $entry_amount; ?>" /></td>
                 <td class="text-right"><button type="button"
                     onclick="$(`#free-transfer-customer-row<?= $free_transfer_customer['customer_id']; ?>`).remove();"
