@@ -1,12 +1,24 @@
 <?php
-class ControllerReportPayrollTax extends Controller {
-	public function index() {
+class ControllerReportPayrollTax extends Controller
+{
+	public function index()
+	{
 		$this->load->language('report/payroll_tax');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('common/payroll');
 		$this->load->model('presence/presence_period');
+
+		$language_items = array(
+			'heading_title',
+			'text_list',
+			'button_filter',
+			'button_export'
+		);
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
 
 		$presence_periods = $this->model_presence_presence_period->getPresencePeriods();
 
@@ -15,7 +27,7 @@ class ControllerReportPayrollTax extends Controller {
 		} else {
 			$presence_period_id = $presence_periods[0]['presence_period_id'];
 		}
-	
+
 		$url = '';
 		$url .= '&presence_period_id=' . $presence_period_id;
 
@@ -36,16 +48,6 @@ class ControllerReportPayrollTax extends Controller {
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 		$data['period_info'] = date($this->language->get('date_format_m_y'), strtotime($period_info['period']));
 
-		$language_items = array(
-			'heading_title',
-			'text_list',
-			'button_filter',
-			'button_export'
-		);
-		foreach ($language_items as $language_item) {
-			$data[$language_item] = $this->language->get($language_item);
-		}
-
 		$data['token'] = $this->session->data['token'];
 
 		$data['presence_periods'] = $presence_periods;
@@ -58,18 +60,44 @@ class ControllerReportPayrollTax extends Controller {
 		$this->response->setOutput($this->load->view('report/payroll_tax', $data));
 	}
 
-	public function report() {
+	public function report()
+	{
 		$this->load->language('report/payroll_tax');
 
 		$this->load->model('report/payroll');
 
-		if (isset($this->request->get['presence_period_id'])) {
-			$presence_period_id = $this->request->get['presence_period_id'];
-		} else {
-			$presence_period_id = 0;
+		$language_list = array(
+			'text_no_results',
+			'column_customer',
+			'column_npwp',
+			'column_npwp_address',
+			'column_customer_group',
+			'column_location',
+			'column_gender',
+			'column_non_taxed_category',
+			'column_ter_category',
+			'column_basic_salary',
+			'column_allowance',
+			'column_holiday_allowance',
+			'column_gross_salary',
+			'column_ter_tariff',
+			'column_tax',
+			'column_functional_expense',
+			'column_insurance_employment',
+			'column_insurance_health',
+		);
+		foreach ($language_list as $item) {
+			$data[$item] = $this->language->get($item);
 		}
-		
- 		if (isset($this->request->get['sort'])) {
+
+		$presence_period_id = $this->request->get['presence_period_id'] ?? 0;
+		// if (isset($this->request->get['presence_period_id'])) {
+		// 	$presence_period_id = $this->request->get['presence_period_id'];
+		// } else {
+		// 	$presence_period_id = 0;
+		// }
+
+		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
 			$sort = 'customer';
@@ -89,53 +117,55 @@ class ControllerReportPayrollTax extends Controller {
 
 		$data['taxes'] = array();
 		$result_count = 0;
-		
+
 		$this->load->model('common/payroll');
-		
+
 		$period_status = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'approved, released, completed');
 
 		if ($period_status) {
+			$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
+
 			$filter_data = array(
-				'code'		=> 'insurance, overtime, incentive, dayoff, cutoff', //component yang ikut dalam perhitungan PPh21
+				// 'code'		=> 'insurance, overtime, incentive, dayoff, cutoff', //component yang ikut dalam perhitungan PPh21
 				'sort'      => $sort,
 				'order'     => $order,
 				'start'     => ($page - 1) * $this->config->get('config_limit_admin'),
 				'limit'     => $this->config->get('config_limit_admin')
 				// 'grouped'	=> 1
 			);
-			
-			$results = $this->model_report_payroll->getTaxes($presence_period_id, $filter_data);
-			
+
+			if (date('n', strtotime($period_info['period'])) != 12) {
+				$results = $this->model_report_payroll->getTaxes($presence_period_id, $filter_data);
+			} else {
+				$results = $this->model_report_payroll->getFinalTaxes($presence_period_id, $filter_data);
+			}
+
 			foreach ($results as $result) {
 				$data['taxes'][] = array(
 					// 'customer_id' 		=> $result['customer_id'],
-					'customer'			=> $result['customer'],
-					'gender' 			=> $result['gender_code'],
-					'marriage_status'	=> $result['marriage_status'],
-					'customer_group'	=> $result['customer_group'],
-					'location'			=> $result['location'],
-					'npwp'				=> $result['npwp'],
-					'npwp_address'		=> strlen($result['npwp_address']) > 30 ? substr($result['npwp_address'], 0, 28) . '..' : $result['npwp_address'],
-					'tax_value'			=> $this->currency->format($result['tax_value'], $this->config->get('config_currency'))
+					'customer'				=> $result['customer'],
+					// 'nik'					=> $result['nik'],
+					// 'id_card_address'		=> $result['id_card_address'],
+					'npwp'					=> $result['npwp'],
+					'npwp_address'			=> strlen($result['npwp_address']) > 30 ? substr($result['npwp_address'], 0, 28) . '..' : $result['npwp_address'],
+					'customer_group'		=> $result['customer_group'],
+					'gender' 				=> $result['gender_code'],
+					'non_taxed_category'	=> $result['non_taxed_category'],
+					'ter_category'			=> $result['ter_category'],
+					'basic_salary'			=> $this->currency->format($result['basic_salary'], $this->config->get('config_currency')),
+					'allowance'				=> $this->currency->format($result['allowance'], $this->config->get('config_currency')),
+					'holiday_allowance'		=> $this->currency->format($result['holiday_allowance'], $this->config->get('config_currency')),
+					'gross_salary'			=> $this->currency->format($result['gross_salary'], $this->config->get('config_currency')),
+					'ter_tariff'			=> $result['ter_tariff'] . '%',
+					'tax'					=> $this->currency->format($result['tax'], $this->config->get('config_currency')),
+					'functional_expense'	=> $this->currency->format($result['functional_expense'], $this->config->get('config_currency')),
+					'insurance_employment'	=> $this->currency->format($result['insurance_employment'], $this->config->get('config_currency')),
+					'insurance_health'		=> $this->currency->format($result['insurance_health'], $this->config->get('config_currency')),
+					'location'				=> $result['location'],
 				);
 			}
-			
+
 			$result_count = $this->model_report_payroll->getPayrollsCount($presence_period_id);
-		}
-	
-		$language_list = array(
-			'text_no_results',
-			'column_customer',
-			'column_gender',
-			'column_marriage_status',
-			'column_customer_group',
-			'column_location',
-			'column_npwp',
-			'column_npwp_address',
-			'column_tax_value'
-		);
-		foreach ($language_list as $item) {
-			$data[$item] = $this->language->get($item);
 		}
 
 		$data['token'] = $this->session->data['token'];
@@ -183,19 +213,41 @@ class ControllerReportPayrollTax extends Controller {
 
 		$this->response->setOutput($this->load->view('report/payroll_tax_report', $data));
 	}
-	
-	public function export() {
+
+	public function export()
+	{
 		$this->load->language('report/payroll_tax');
 
 		$this->load->model('report/payroll');
 
-		if (isset($this->request->get['presence_period_id'])) {
-			$presence_period_id = $this->request->get['presence_period_id'];
-		} else {
-			$presence_period_id = 0;
+		$language_list = array(
+			'heading_title',
+			'text_no_results',
+			'column_customer',
+			'column_npwp',
+			'column_npwp_address',
+			'column_customer_group',
+			'column_location',
+			'column_gender',
+			'column_non_taxed_category',
+			'column_ter_category',
+			'column_basic_salary',
+			'column_allowance',
+			'column_holiday_allowance',
+			'column_gross_salary',
+			'column_ter_tariff',
+			'column_tax',
+			'column_functional_expense',
+			'column_insurance_employment',
+			'column_insurance_health',
+		);
+		foreach ($language_list as $item) {
+			$data[$item] = $this->language->get($item);
 		}
-		
- 		if (isset($this->request->get['sort'])) {
+
+		$presence_period_id = $this->request->get['presence_period_id'] ?? 0;
+
+		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
 			$sort = 'customer';
@@ -208,124 +260,134 @@ class ControllerReportPayrollTax extends Controller {
 		}
 
 		$this->load->model('common/payroll');
-		
+
 		$period_status = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'approved, released, completed');
 
-		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
-		
-		if ($period_status && $this->user->hasPermission('modify', 'report/payroll_tax')) {
-			$language_items = array(
-				'heading_title',
-				'column_no',
-				'column_customer',
-				'column_nik',
-				'column_id_card_address',
-				'column_gender',
-				'column_marriage_status',
-				'column_customer_group',
-				'column_npwp',
-				'column_npwp_address',
-				'column_location',
-				'column_net_salary',
-				'column_company',
-				'column_tax_value'
-			);
-			foreach ($language_items as $language_item) {
-				$data[$language_item] = $this->language->get($language_item);
-			}
+		$error = '';
 
-			$period = date('M_Y', strtotime($period_info['period']));
+		switch (1) {
+			case true:
+				if (!$this->user->hasPermission('modify', 'report/payroll_tax')) {
+					$error = $this->language->get('error_permission');
 
-			$output = '';
-
-			$this->load->model('component/insurance');
-			$titles = $this->model_component_insurance->getTitles();
-
-			$output = $data['heading_title'] . ' - ' . $period . '|||||||||' . implode('||', $titles) . "\n";
-			$output .= $data['column_no'] . '|' . $data['column_customer'] . '|' . $data['column_nik'] . '|' . $data['column_id_card_address'] . '|' . $data['column_gender'] . '|' . $data['column_marriage_status'] . '|' . $data['column_customer_group'] . '|' . $data['column_npwp'] . '|' . $data['column_npwp_address'] . '|' . $data['column_location'] . '|' . $data['column_net_salary'];
-			foreach ($titles as $title) {
-				$output .= '|' . $data['column_company'] . '|' . $data['column_customer'];
-			}
-			
-			$output .= '|' . $data['column_tax_value'];
-			
-			$output = str_replace('|', "\t", $output);
-			
-			$filter_data = array(
-				'code'		=> 'insurance, overtime, incentive, dayoff, cutoff', //component yang ikut dalam perhitungan PPh21
-				'sort'      => $sort,
-				'order'     => $order
-			);
-
-			$results = $this->model_report_payroll->getTaxes($presence_period_id, $filter_data);
-
-			$no = 1;
-			
-			foreach ($results as $result) {
-				$component_value = array();
-				$component_data = array();
-				
-				$value = '';
-				$value .= $no . '|' . $result['customer'] . '|\'' . $result['nik'] . '|' . $result['id_card_address'] . '|' . $result['gender_code'] . '|' . $result['marriage_status'] . '|' . $result['customer_group'] . '|' . $result['npwp'] . '|' . $result['npwp_address'] . '|' . $result['location'] . '|';
-				
-				$components_info = $this->model_report_payroll->getComponents($presence_period_id, $result['customer_id'], 'insurance');//Karena hanya insurance yg dirinci.
-				
-				foreach ($components_info as $component_info) {
-					$component_value[$component_info['title']][$component_info['type']] = $component_info['value'];
+					break;
 				}
 
-				$sub_value = '';
-				$salary = $result['salary'];
+				if (!$period_status) {
+					$error = $this->language->get('error_status');
 
-				foreach ($titles as $title) {
-					if (!empty($component_value[$title][1])) {
-						$component_data[$title][1] = $component_value[$title][1];
-					} else {
-						$component_data[$title][1] = 0;
-					}
-					
-					if (!empty($component_value[$title][0])) {
-						$component_data[$title][0] = -($component_value[$title][1] + $component_value[$title][0]);
-					} else {
-						$component_data[$title][0] = 0;
-					}
-					
-					$sub_value .= '|' . $component_data[$title][1] . '|' . $component_data[$title][0];
-
-					$salary += $component_data[$title][0];
+					break;
 				}
-				
-				$value .= $salary . $sub_value . '|' . $result['tax_value'];
-				
-				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
-				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
-				$value = str_replace('\\', '\\\\',	$value);
-				$value = str_replace('\'', '\\\'',	$value);
-				$value = str_replace('\\\n', '\n',	$value);
-				$value = str_replace('\\\r', '\r',	$value);
-				$value = str_replace('\\\t', '\t',	$value);
-				$value = str_replace('|', "\t",	$value);
-				$value = stripslashes($value);
-				
-				$output .= "\n" . $value;
-				// $output .= "<br>" . $value;
-				
-				$no++;
-			}
-			
-			$filename = date('Ym', strtotime($period_info['period'])) . '_Payroll_Tax_' . $period;
-			
-			$this->response->addheader('Pragma: public');
-			$this->response->addheader('Expires: 0');
-			$this->response->addheader('Content-Description: File Transfer');
-			$this->response->addheader('Content-Type: application/octet-stream');
-			$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.xls');
-			$this->response->addheader('Content-Transfer-Encoding: binary');
-			$this->response->setOutput($output);
-			// echo $output;
-		} else {
-		
+				if (!is_file(DIR_FILE . 'Tax21 Template.xlsx')) {
+					$error = $this->language->get('error_template');
+
+					break;
+				}
+
+				break;
+
+			default:
+				break;
+		}
+
+		if ($error) {
+			$this->session->data['warning'] = $error;
+
 			$this->response->redirect($this->url->link('report/payroll_tax', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $presence_period_id, true));
 		}
-	}	
+
+		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
+
+		$taxes_data = [];
+		$no = 1;
+
+		$filter_data = array(
+			'sort'      => $sort,
+			'order'     => $order
+		);
+
+		if (date('n', strtotime($period_info['period'])) != 12) {
+			$results = $this->model_report_payroll->getTaxes($presence_period_id, $filter_data);
+		} else {
+			$results = $this->model_report_payroll->getFinalTaxes($presence_period_id, $filter_data);
+			$data['heading_title'] .= ' ' . $this->language->get('text_final');
+		}
+
+		foreach ($results as $result) {
+			$taxes_data[] = array(
+				'no' 					=> $no,
+				'customer'				=> $result['customer'],
+				'nik'					=> "'" . $result['nik'],
+				'npwp'					=> $result['npwp'],
+				'npwp_address'			=> $result['npwp_address'],
+				'customer_group'		=> $result['customer_group'],
+				'gender' 				=> $result['gender_code'],
+				'non_taxed_category'	=> $result['non_taxed_category'],
+				'ter_category'			=> $result['ter_category'],
+				'basic_salary'			=> $result['basic_salary'],
+				'allowance'				=> $result['allowance'],
+				'holiday_allowance'		=> $result['holiday_allowance'],
+				'gross_salary'			=> $result['gross_salary'],
+				'ter_tariff'			=> $result['ter_tariff'] / 100,
+				'tax'					=> $result['tax'],
+				'functional_expense'	=> $result['functional_expense'],
+				'insurance_employment'	=> $result['insurance_employment'],
+				'insurance_health'		=> $result['insurance_health'],
+				'thp'					=> $result['gross_salary'],
+			);
+
+			$no++;
+		}
+
+		$store_name = htmlspecialchars_decode($this->config->get('config_name'));
+		$period = \PhpOffice\PhpSpreadsheet\Shared\Date::stringToExcel($period_info['period']);
+
+		$php_spreadsheet = new Spreadsheet('Xlsx');
+
+		$spreadsheet = $php_spreadsheet->loadSpreadsheet(DIR_FILE . 'Tax21 Template.xlsx');
+
+		$sheet = $spreadsheet->getActiveSheet(); 
+
+		$sheet->insertNewRowBefore(5, count($taxes_data) - 2);
+
+		$sheet
+			->setCellValue('A1', utf8_strtoupper($store_name))
+			->setCellValue('A2', $data['heading_title'])
+			->setCellValue('F2', $period)
+			->fromArray(array_values($taxes_data), 'NUMBER', 'A4');
+
+		# Force to download
+		$new_file = DIR_DOWNLOAD . $data['heading_title'] . '_Export.xlsx';
+
+		$writer = $php_spreadsheet->writer('Xlsx');
+		$writer->setPreCalculateFormulas(false);
+
+		$writer->save($new_file);
+
+		$spreadsheet->disconnectWorksheets();
+		unset($spreadsheet);
+
+		if (!headers_sent()) {
+			if (is_file($new_file)) {
+				header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+				header('Content-Disposition: attachment; filename=' . basename($new_file));
+				header('Expires: 0');
+				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+				header('Pragma: public');
+				header('Content-Length: ' . filesize($new_file));
+
+				if (ob_get_level()) {
+					ob_end_clean();
+				}
+
+				readfile($new_file, 'rb');
+
+				exit();
+			} else {
+				exit('Error: Could not find file ' . $new_file . '!');
+			}
+		} else {
+			exit('Error: Headers already sent out!');
+		}
+	}
 }

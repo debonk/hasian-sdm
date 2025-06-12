@@ -1,52 +1,156 @@
 <div class="table-responsive">
-  <table class="table table-bordered">
-	<thead>
-	  <tr>
-	  <td class="text-left"><?php if ($sort == 'customer') { ?>
-		<a href="<?php echo $sort_customer; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_customer; ?></a>
-		<?php } else { ?>
-		<a href="<?php echo $sort_customer; ?>"><?php echo $column_customer; ?></a>
-		<?php } ?></td>
-		<td class="text-left"><?php echo $column_gender; ?></td>
-		<td class="text-left"><?php echo $column_marriage_status; ?></td>
-	  <td class="text-left"><?php if ($sort == 'customer_group') { ?>
-		<a href="<?php echo $sort_customer_group; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_customer_group; ?></a>
-		<?php } else { ?>
-		<a href="<?php echo $sort_customer_group; ?>"><?php echo $column_customer_group; ?></a>
-		<?php } ?></td>
-	  <td class="text-left"><?php echo $column_npwp; ?></td>
-	  <td class="text-left"><?php echo $column_npwp_address; ?></td>
-	  <td class="text-left"><?php if ($sort == 'location') { ?>
-		<a href="<?php echo $sort_location; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_location; ?></a>
-		<?php } else { ?>
-		<a href="<?php echo $sort_location; ?>"><?php echo $column_location; ?></a>
-		<?php } ?></td>
-	  <td class="text-right"><?php echo $column_tax_value; ?></td>
-	  </tr>
-	</thead>
-	<tbody>
-	  <?php if ($taxes) { ?>
-	  <?php foreach ($taxes as $tax) { ?>
-	  <tr>
-		<td class="text-left"><?php echo $tax['customer']; ?></td>
-		<td class="text-left"><?php echo $tax['gender']; ?></td>
-		<td class="text-left"><?php echo $tax['marriage_status']; ?></td>
-		<td class="text-left"><?php echo $tax['customer_group']; ?></td>
-		<td class="text-left"><?php echo $tax['npwp']; ?></td>
-		<td class="text-left"><?php echo $tax['npwp_address']; ?></td>
-		<td class="text-left"><?php echo $tax['location']; ?></td>
-		<td class="text-right"><?php echo $tax['tax_value']; ?></td>
-	  </tr>
-	  <?php } ?>
-	  <?php } else { ?>
-	  <tr>
-		<td class="text-center" colspan="9"><?php echo $text_no_results; ?></td>
-	  </tr>
-	  <?php } ?>
-	</tbody>
-  </table>
+	<table class="table table-bordered text-left">
+		<thead>
+			<tr>
+				<td>
+					<?php if ($sort == 'customer') { ?>
+					<a href="<?= $sort_customer; ?>" class="<?= strtolower($order); ?>">
+						<?= $column_customer; ?>
+					</a>
+					<?php } else { ?>
+					<a href="<?= $sort_customer; ?>">
+						<?= $column_customer; ?>
+					</a>
+					<?php } ?>
+				</td>
+				<td>
+					<?= $column_npwp; ?>
+				</td>
+				<td>
+					<?= $column_npwp_address; ?>
+				</td>
+				<td>
+					<?php if ($sort == 'customer_group') { ?>
+					<a href="<?= $sort_customer_group; ?>" class="<?= strtolower($order); ?>">
+						<?= $column_customer_group; ?>
+					</a>
+					<?php } else { ?>
+					<a href="<?= $sort_customer_group; ?>">
+						<?= $column_customer_group; ?>
+					</a>
+					<?php } ?>
+				</td>
+				<td>
+					<?php if ($sort == 'location') { ?>
+					<a href="<?= $sort_location; ?>" class="<?= strtolower($order); ?>">
+						<?= $column_location; ?>
+					</a>
+					<?php } else { ?>
+					<a href="<?= $sort_location; ?>">
+						<?= $column_location; ?>
+					</a>
+					<?php } ?>
+				</td>
+				<td class="text-center">
+					<?= $column_gender; ?>
+				</td>
+				<td class="text-center">
+					<?= $column_non_taxed_category; ?>
+				</td>
+				<td class="text-center">
+					<?= $column_ter_category; ?>
+				</td>
+				<td class="text-right">
+					<?= $column_basic_salary; ?>
+				</td>
+				<td class="text-right">
+					<?= $column_allowance; ?>
+				</td>
+				<td class="text-right">
+					<?= $column_holiday_allowance; ?>
+				</td>
+				<td class="text-right">
+					<?= $column_gross_salary; ?>
+				</td>
+				<td class="text-center">
+					<?= $column_ter_tariff; ?>
+				</td>
+				<td class="text-right">
+					<?= $column_tax; ?>
+				</td>
+				<td class="text-right">
+					<?= $column_functional_expense; ?>
+				</td>
+				<td class="text-right">
+					<?= $column_insurance_health; ?>
+				</td>
+				<td class="text-right">
+					<?= $column_insurance_employment; ?>
+				</td>
+			</tr>
+		</thead>
+		<tbody>
+			<?php if ($taxes) { ?>
+			<?php foreach ($taxes as $tax) { ?>
+			<tr>
+				<td>
+					<?= $tax['customer']; ?>
+				</td>
+				<td>
+					<?= $tax['npwp']; ?>
+				</td>
+				<td>
+					<?= $tax['npwp_address']; ?>
+				</td>
+				<td>
+					<?= $tax['customer_group']; ?>
+				</td>
+				<td>
+					<?= $tax['location']; ?>
+				</td>
+				<td class="text-center">
+					<?= $tax['gender']; ?>
+				</td>
+				<td class="text-center">
+					<?= $tax['non_taxed_category']; ?>
+				</td>
+				<td class="text-center">
+					<?= $tax['ter_category']; ?>
+				</td>
+				<td class="text-right">
+					<?= $tax['basic_salary']; ?>
+				</td>
+				<td class="text-right">
+					<?= $tax['allowance']; ?>
+				</td>
+				<td class="text-right">
+					<?= $tax['holiday_allowance']; ?>
+				</td>
+				<td class="text-right">
+					<?= $tax['gross_salary']; ?>
+				</td>
+				<td class="text-center">
+					<?= $tax['ter_tariff']; ?>
+				</td>
+				<td class="text-right text-bold">
+					<?= $tax['tax']; ?>
+				</td>
+				<td class="text-right">
+					<?= $tax['functional_expense']; ?>
+				</td>
+				<td class="text-right">
+					<?= $tax['insurance_health']; ?>
+				</td>
+				<td class="text-right">
+					<?= $tax['insurance_employment']; ?>
+				</td>
+			</tr>
+			<?php } ?>
+			<?php } else { ?>
+			<tr>
+				<td class="text-center" colspan="18">
+					<?= $text_no_results; ?>
+				</td>
+			</tr>
+			<?php } ?>
+		</tbody>
+	</table>
 </div>
 <div class="row">
-  <div class="col-sm-6 text-left"><?php echo $pagination; ?></div>
-  <div class="col-sm-6 text-right"><?php echo $results; ?></div>
+	<div class="col-sm-6 text-left">
+		<?= $pagination; ?>
+	</div>
+	<div class="col-sm-6 text-right">
+		<?= $results; ?>
+	</div>
 </div>

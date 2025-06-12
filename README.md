@@ -12,7 +12,8 @@ User Group: ganti form ke list, trus ada kolom untuk centang access, modify, app
 MODIFY CONFIG
 
 === TABLE ===
-
+4.1.4	12/06/2025
+Report > Payroll Tax: View and Export Feature
 
 4.1.3	05/06/2025
 Free Transfer: Add Export Mandiri CSV

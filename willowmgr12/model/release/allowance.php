@@ -180,11 +180,6 @@ class ModelReleaseAllowance extends Model
 		$this->db->query("INSERT INTO " . DB_PREFIX . "allowance_customer SET allowance_id = '" . (int)$allowance_id . "', customer_id = '" . (int)$customer_id . "', amount = '" . (int)$amount . "'");
 	}
 
-	public function addAllowanceCustomerBak($allowance_id, $customer_id, $amount)
-	{
-		$this->db->query("INSERT INTO " . DB_PREFIX . "allowance_customer SET allowance_id = '" . (int)$allowance_id . "', customer_id = '" . (int)$customer_id . "', amount = '" . (int)$amount . "'");
-	}
-
 	public function editAllowanceCustomer($allowance_id, $customer_id, $amount)
 	{
 		$this->db->query("UPDATE " . DB_PREFIX . "allowance_customer SET amount = '" . (int)$amount . "' WHERE allowance_id = '" . (int)$allowance_id . "' AND customer_id = '" . (int)$customer_id . "'");
@@ -293,6 +288,17 @@ class ModelReleaseAllowance extends Model
 
 		$query = $this->db->query($sql);
 		
+		return $query->rows;
+	}
+
+	public function getAllowanceByDate($date)
+	{
+		$date = date('Y-m', strtotime($date));
+
+		$sql = "SELECT * FROM " . DB_PREFIX . "allowance WHERE DATE_FORMAT(allowance_period, '%Y-%m') = '" . $this->db->escape($date) . "'";
+
+		$query = $this->db->query($sql);
+
 		return $query->rows;
 	}
 }
