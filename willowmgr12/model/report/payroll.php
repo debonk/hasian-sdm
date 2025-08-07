@@ -51,7 +51,7 @@ class ModelReportPayroll extends Model
 
 	public function getPayrolls($presence_period_id, $data = array())
 	{
-		$sql = "SELECT customer_id, addition_0, net_salary, component, nip, `name`, customer_group, customer_department, `location` FROM " . DB_PREFIX . "v_payroll WHERE presence_period_id = '" . (int)$presence_period_id . "'";
+		$sql = "SELECT customer_id, addition_0, total_allowance, net_salary, component, nip, `name`, customer_group, customer_department, `location` FROM " . DB_PREFIX . "v_payroll WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 		// $sql = "SELECT p.customer_id, lastname AS customer, net_salary, component, nip, p.name, customer_group, customer_department, `location`, id_card_address_id, ca.children, ca.npwp, ca.npwp_address, g.code AS gender_code, ms.code AS marriage_status_code FROM " . DB_PREFIX . "v_payroll p LEFT JOIN " . DB_PREFIX . "customer_add_data ca ON p.customer_id = ca.customer_id LEFT JOIN " . DB_PREFIX . "gender g ON ca.gender_id = g.gender_id LEFT JOIN " . DB_PREFIX . "marriage_status ms ON ca.marriage_status_id = ms.marriage_status_id WHERE presence_period_id = '" . (int)$presence_period_id . "'";
 
 		// $implode = array();
@@ -83,7 +83,7 @@ class ModelReportPayroll extends Model
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
 			$sql .= " ORDER BY " . $data['sort'];
 		} else {
-			$sql .= " ORDER BY name";
+			$sql .= " ORDER BY lastname";
 		}
 
 		if (isset($data['order']) && ($data['order'] == 'DESC')) {
@@ -415,7 +415,7 @@ class ModelReportPayroll extends Model
 	];
 
 	public function getTaxes($presence_period_id, $data)
-	{ //report_payroll_tax
+	{
 		$results = $this->getPayrolls($presence_period_id, $data);
 
 		$taxes_data = array();
@@ -478,10 +478,9 @@ class ModelReportPayroll extends Model
 				$non_taxed_category = 'TK/0';
 			}
 
-			// $salary = $result['gaji_pokok'] + $result['tunj_jabatan'] + $result['tunj_hadir'] + $result['tunj_pph'] + $result['total_uang_makan'] - $result['pot_sakit'] - $result['pot_bolos'] - $result['pot_tunj_hadir'] - $result['pot_gaji_pokok'] - $result['pot_terlambat'];
 			$salary = $result['net_salary'];
-			// $gross_salary = $result['net_salary'] + $result['component'];
 			$basic_salary = $result['addition_0'];
+			$allowance = $result['total_allowance'];
 
 			$component_data = array(
 				'1'	=> 0,
@@ -494,7 +493,8 @@ class ModelReportPayroll extends Model
 			// 	$code = '';
 			// }
 
-			$code = 'insurance, overtime, incentive, dayoff, cutoff';
+			// $code = 'insurance, overtime, incentive, dayoff, cutoff';
+			$code = 'overtime, incentive, dayoff, cutoff';
 
 			$components_total = $this->getComponentsTotalGroupByType($presence_period_id, $result['customer_id'], $code);
 			// 			$components_total = $this->getComponents($presence_period_id, $result['customer_id'], $code);
@@ -507,7 +507,12 @@ class ModelReportPayroll extends Model
 
 			$gross_salary = $salary + $component_data[1] + $component_data[0];
 
-			$allowance = max(0, $gross_salary - $basic_salary);
+			$deduction = $gross_salary - $basic_salary - $allowance;
+
+			$insurance_employment = $customers_insurance_data['employment'][$result['customer_id']] ?? 0;
+			$insurance_health = $customers_insurance_data['health'][$result['customer_id']] ?? 0;
+
+			$gross_salary += $insurance_employment + $insurance_health;
 
 			$functional_expense = min(500000, 0.05 * $gross_salary);
 
@@ -596,12 +601,15 @@ class ModelReportPayroll extends Model
 				'ter_category'			=> $ter_category,
 				'basic_salary'			=> $basic_salary,
 				'allowance'				=> $allowance,
+				'deduction'				=> $deduction,
 				'holiday_allowance'		=> $holiday_allowance,
 				'gross_salary'			=> $gross_salary,
 				'ter_tariff'			=> $ter_tariff,
 				'functional_expense'	=> $functional_expense,
-				'insurance_employment'	=> $customers_insurance_data['employment'][$result['customer_id']] ?? 0,
-				'insurance_health'		=> $customers_insurance_data['health'][$result['customer_id']] ?? 0,
+				// 'insurance_employment'	=> $customers_insurance_data['employment'][$result['customer_id']] ?? 0,
+				// 'insurance_health'		=> $customers_insurance_data['health'][$result['customer_id']] ?? 0,
+				'insurance_employment'	=> $insurance_employment,
+				'insurance_health'		=> $insurance_health,
 				'tax'					=> $tax,
 				'ter_point'				=> $ter_point,
 			);
@@ -632,6 +640,7 @@ class ModelReportPayroll extends Model
 					$taxes_data[$tax_data['customer_id']]['basic_salary'] += $past_taxes[$tax_data['customer_id']]['basic_salary'];
 					$taxes_data[$tax_data['customer_id']]['gross_salary'] += $past_taxes[$tax_data['customer_id']]['gross_salary'];
 					$taxes_data[$tax_data['customer_id']]['allowance'] += $past_taxes[$tax_data['customer_id']]['allowance'];
+					$taxes_data[$tax_data['customer_id']]['deduction'] += $past_taxes[$tax_data['customer_id']]['deduction'];
 					$taxes_data[$tax_data['customer_id']]['holiday_allowance'] += $past_taxes[$tax_data['customer_id']]['holiday_allowance'];
 					$taxes_data[$tax_data['customer_id']]['functional_expense'] += $past_taxes[$tax_data['customer_id']]['functional_expense'];
 					$taxes_data[$tax_data['customer_id']]['insurance_employment'] += $past_taxes[$tax_data['customer_id']]['insurance_employment'];
@@ -665,7 +674,8 @@ class ModelReportPayroll extends Model
 				}
 			}
 
-			$taxes_data[$customer_id]['tax'] = $final_tax - $result['tax'];
+			$taxes_data[$customer_id]['tax_final'] = $final_tax;
+			$taxes_data[$customer_id]['tax_net'] = $final_tax - $result['tax'];
 		}
 
 		return $taxes_data;

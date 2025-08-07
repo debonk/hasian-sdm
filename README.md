@@ -12,6 +12,9 @@ User Group: ganti form ke list, trus ada kolom untuk centang access, modify, app
 MODIFY CONFIG
 
 === TABLE ===
+4.1.5	07/08/2025
+Report > Payroll Tax: Revisi data laporan. Penambahan kolom PPH Final, PPH terbayar, PPH Net utk bulan Desember
+
 4.1.4	12/06/2025
 Report > Payroll Tax: View and Export Feature
 

@@ -46,6 +46,36 @@
           <div class="flex-container">
             <div class="flex-item">
               <div class="form-group">
+                <label class="control-label" for="input-period">
+                  <?= $entry_period; ?>
+                </label>
+                <div class="input-group month">
+                  <input type="text" name="filter[period]" value="<?= $filter['period']; ?>"
+                    placeholder="<?= $entry_period; ?>" id="input-period" class="form-control"
+                    data-date-format="MMM YYYY" />
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-default"><i class="fa fa-calendar-o"></i></button>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="flex-item">
+              <div class="form-group">
+                <label class="control-label" for="input-date">
+                  <?= $entry_date; ?>
+                </label>
+                <div class="input-group date">
+                  <input type="text" name="filter[date]" value="<?= $filter['date']; ?>"
+                    placeholder="<?= $entry_date; ?>" id="input-date" class="form-control"
+                    data-date-format="D MMM YYYY" />
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="flex-item">
+              <div class="form-group">
                 <label class="control-label" for="input-name">
                   <?= $entry_name; ?>
                 </label>
@@ -106,38 +136,6 @@
                   </option>
                   <?php } ?>
                 </select>
-              </div>
-            </div>
-          </div>
-          <div class="flex-container">
-            <div class="flex-item">
-              <div class="form-group">
-                <label class="control-label" for="input-period">
-                  <?= $entry_period; ?>
-                </label>
-                <div class="input-group month">
-                  <input type="text" name="filter[period]" value="<?= $filter['period']; ?>"
-                    placeholder="<?= $entry_period; ?>" id="input-period" class="form-control"
-                    data-date-format="MMM YYYY" />
-                  <span class="input-group-btn">
-                    <button type="button" class="btn btn-default"><i class="fa fa-calendar-o"></i></button>
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="flex-item">
-              <div class="form-group">
-                <label class="control-label" for="input-date">
-                  <?= $entry_date; ?>
-                </label>
-                <div class="input-group date">
-                  <input type="text" name="filter[date]" value="<?= $filter['date']; ?>"
-                    placeholder="<?= $entry_date; ?>" id="input-date" class="form-control"
-                    data-date-format="D MMM YYYY" />
-                  <span class="input-group-btn">
-                    <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
-                  </span>
-                </div>
               </div>
             </div>
             <div>
@@ -284,7 +282,7 @@
     url = 'index.php?route=presence/exchange&token=<?= $token; ?>';
 
     let filter = [];
-    
+
     let filter_items = JSON.parse('<?= $filter_items; ?>');
 
     for (let i = 0; i < filter_items.length; i++) {

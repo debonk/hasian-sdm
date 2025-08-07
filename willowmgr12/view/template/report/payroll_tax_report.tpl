@@ -47,9 +47,11 @@
 				<td class="text-center">
 					<?= $column_non_taxed_category; ?>
 				</td>
+				<?php if (!$final) { ?>
 				<td class="text-center">
 					<?= $column_ter_category; ?>
 				</td>
+				<?php } ?>
 				<td class="text-right">
 					<?= $column_basic_salary; ?>
 				</td>
@@ -57,25 +59,43 @@
 					<?= $column_allowance; ?>
 				</td>
 				<td class="text-right">
-					<?= $column_holiday_allowance; ?>
-				</td>
-				<td class="text-right">
-					<?= $column_gross_salary; ?>
-				</td>
-				<td class="text-center">
-					<?= $column_ter_tariff; ?>
-				</td>
-				<td class="text-right">
-					<?= $column_tax; ?>
-				</td>
-				<td class="text-right">
-					<?= $column_functional_expense; ?>
+					<?= $column_deduction; ?>
 				</td>
 				<td class="text-right">
 					<?= $column_insurance_health; ?>
 				</td>
 				<td class="text-right">
 					<?= $column_insurance_employment; ?>
+				</td>
+				<td class="text-right">
+					<?= $column_holiday_allowance; ?>
+				</td>
+				<td class="text-right">
+					<?= $column_gross_salary; ?>
+				</td>
+				<?php if (!$final) { ?>
+				<td class="text-center">
+					<?= $column_ter_tariff; ?>
+				</td>
+				<td class="text-right">
+					<?= $column_tax; ?>
+				</td>
+				<?php } else { ?>
+				<td class="text-center">
+					<?= $column_tax_final; ?>
+				</td>
+				<td class="text-center">
+					<?= $column_tax_paid; ?>
+				</td>
+				<td class="text-center">
+					<?= $column_tax_net; ?>
+				</td>
+				<?php } ?>
+				<td class="text-right">
+					<?= $column_functional_expense; ?>
+				</td>
+				<td class="text-right">
+					<?= $column_thp; ?>
 				</td>
 			</tr>
 		</thead>
@@ -104,9 +124,11 @@
 				<td class="text-center">
 					<?= $tax['non_taxed_category']; ?>
 				</td>
+				<?php if (!$final) { ?>
 				<td class="text-center">
 					<?= $tax['ter_category']; ?>
 				</td>
+				<?php } ?>
 				<td class="text-right">
 					<?= $tax['basic_salary']; ?>
 				</td>
@@ -114,19 +136,7 @@
 					<?= $tax['allowance']; ?>
 				</td>
 				<td class="text-right">
-					<?= $tax['holiday_allowance']; ?>
-				</td>
-				<td class="text-right">
-					<?= $tax['gross_salary']; ?>
-				</td>
-				<td class="text-center">
-					<?= $tax['ter_tariff']; ?>
-				</td>
-				<td class="text-right text-bold">
-					<?= $tax['tax']; ?>
-				</td>
-				<td class="text-right">
-					<?= $tax['functional_expense']; ?>
+					<?= $tax['deduction']; ?>
 				</td>
 				<td class="text-right">
 					<?= $tax['insurance_health']; ?>
@@ -134,11 +144,41 @@
 				<td class="text-right">
 					<?= $tax['insurance_employment']; ?>
 				</td>
+				<td class="text-right">
+					<?= $tax['holiday_allowance']; ?>
+				</td>
+				<td class="text-right">
+					<?= $tax['gross_salary']; ?>
+				</td>
+				<?php if (!$final) { ?>
+				<td class="text-center">
+					<?= $tax['ter_tariff']; ?>
+				</td>
+				<td class="text-right text-bold">
+					<?= $tax['tax']; ?>
+				</td>
+				<?php } else { ?>
+				<td class="text-center text-bold">
+					<?= $tax['tax_final']; ?>
+				</td>
+				<td class="text-center">
+					<?= $tax['tax']; ?>
+				</td>
+				<td class="text-right text-bold">
+					<?= $tax['tax_net']; ?>
+				</td>
+				<?php } ?>
+				<td class="text-right">
+					<?= $tax['functional_expense']; ?>
+				</td>
+				<td class="text-right">
+					<?= $tax['thp']; ?>
+				</td>
 			</tr>
 			<?php } ?>
 			<?php } else { ?>
 			<tr>
-				<td class="text-center" colspan="18">
+				<td class="text-center" colspan="20">
 					<?= $text_no_results; ?>
 				</td>
 			</tr>

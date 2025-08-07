@@ -13,6 +13,7 @@ class ControllerReportPayrollTax extends Controller
 		$language_items = array(
 			'heading_title',
 			'text_list',
+			'entry_period',
 			'button_filter',
 			'button_export'
 		);
@@ -48,6 +49,11 @@ class ControllerReportPayrollTax extends Controller
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 		$data['period_info'] = date($this->language->get('date_format_m_y'), strtotime($period_info['period']));
 
+		if (date('n', strtotime($period_info['period'])) == 12) {
+			$data['heading_title'] .= ' ' . $this->language->get('text_final');
+			$data['period_info'] .= ' (' . $this->language->get('text_full_year') . ')';
+		}
+
 		$data['token'] = $this->session->data['token'];
 
 		$data['presence_periods'] = $presence_periods;
@@ -78,13 +84,18 @@ class ControllerReportPayrollTax extends Controller
 			'column_ter_category',
 			'column_basic_salary',
 			'column_allowance',
+			'column_deduction',
 			'column_holiday_allowance',
 			'column_gross_salary',
 			'column_ter_tariff',
 			'column_tax',
+			'column_tax_final',
+			'column_tax_net',
+			'column_tax_paid',
 			'column_functional_expense',
 			'column_insurance_employment',
 			'column_insurance_health',
+			'column_thp',
 		);
 		foreach ($language_list as $item) {
 			$data[$item] = $this->language->get($item);
@@ -122,6 +133,8 @@ class ControllerReportPayrollTax extends Controller
 
 		$period_status = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'approved, released, completed');
 
+		$data['final'] = false;
+
 		if ($period_status) {
 			$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 
@@ -136,11 +149,19 @@ class ControllerReportPayrollTax extends Controller
 
 			if (date('n', strtotime($period_info['period'])) != 12) {
 				$results = $this->model_report_payroll->getTaxes($presence_period_id, $filter_data);
+				// $data['final'] = false;
 			} else {
 				$results = $this->model_report_payroll->getFinalTaxes($presence_period_id, $filter_data);
+				$data['final'] = true;
 			}
 
 			foreach ($results as $result) {
+				if ($data['final']) {
+					$thp = $result['gross_salary'] - $result['tax_final'];
+				} else {
+					$thp = $result['gross_salary'] - $result['tax'];
+				}
+
 				$data['taxes'][] = array(
 					// 'customer_id' 		=> $result['customer_id'],
 					'customer'				=> $result['customer'],
@@ -154,13 +175,17 @@ class ControllerReportPayrollTax extends Controller
 					'ter_category'			=> $result['ter_category'],
 					'basic_salary'			=> $this->currency->format($result['basic_salary'], $this->config->get('config_currency')),
 					'allowance'				=> $this->currency->format($result['allowance'], $this->config->get('config_currency')),
+					'deduction'				=> $this->currency->format($result['deduction'], $this->config->get('config_currency')),
+					'insurance_employment'	=> $this->currency->format($result['insurance_employment'], $this->config->get('config_currency')),
+					'insurance_health'		=> $this->currency->format($result['insurance_health'], $this->config->get('config_currency')),
 					'holiday_allowance'		=> $this->currency->format($result['holiday_allowance'], $this->config->get('config_currency')),
 					'gross_salary'			=> $this->currency->format($result['gross_salary'], $this->config->get('config_currency')),
 					'ter_tariff'			=> $result['ter_tariff'] . '%',
+					'tax_final'				=> $this->currency->format($result['tax_final'] ?? 0, $this->config->get('config_currency')),
 					'tax'					=> $this->currency->format($result['tax'], $this->config->get('config_currency')),
+					'tax_net'				=> $this->currency->format($result['tax_net'] ?? 0, $this->config->get('config_currency')),
 					'functional_expense'	=> $this->currency->format($result['functional_expense'], $this->config->get('config_currency')),
-					'insurance_employment'	=> $this->currency->format($result['insurance_employment'], $this->config->get('config_currency')),
-					'insurance_health'		=> $this->currency->format($result['insurance_health'], $this->config->get('config_currency')),
+					'thp'					=> $this->currency->format($thp, $this->config->get('config_currency')),
 					'location'				=> $result['location'],
 				);
 			}
@@ -222,24 +247,31 @@ class ControllerReportPayrollTax extends Controller
 
 		$language_list = array(
 			'heading_title',
-			'text_no_results',
-			'column_customer',
-			'column_npwp',
-			'column_npwp_address',
-			'column_customer_group',
-			'column_location',
-			'column_gender',
-			'column_non_taxed_category',
-			'column_ter_category',
-			'column_basic_salary',
-			'column_allowance',
-			'column_holiday_allowance',
-			'column_gross_salary',
-			'column_ter_tariff',
-			'column_tax',
-			'column_functional_expense',
-			'column_insurance_employment',
-			'column_insurance_health',
+			// 'text_no_results',
+			// 'column_no',
+			// 'column_customer',
+			// 'column_nik',
+			// 'column_npwp',
+			// 'column_npwp_address',
+			// 'column_customer_group',
+			// 'column_location',
+			// 'column_gender',
+			// 'column_non_taxed_category',
+			// 'column_ter_category',
+			// 'column_basic_salary',
+			// 'column_allowance',
+			// 'column_deduction',
+			// 'column_holiday_allowance',
+			// 'column_gross_salary',
+			// 'column_ter_tariff',
+			// 'column_tax',
+			// 'column_tax_final',
+			// 'column_tax_net',
+			// 'column_tax_paid',
+			// 'column_functional_expense',
+			// 'column_insurance_employment',
+			// 'column_insurance_health',
+			// 'column_thp',
 		);
 		foreach ($language_list as $item) {
 			$data[$item] = $this->language->get($item);
@@ -278,6 +310,7 @@ class ControllerReportPayrollTax extends Controller
 
 					break;
 				}
+
 				if (!is_file(DIR_FILE . 'Tax21 Template.xlsx')) {
 					$error = $this->language->get('error_template');
 
@@ -296,6 +329,33 @@ class ControllerReportPayrollTax extends Controller
 			$this->response->redirect($this->url->link('report/payroll_tax', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $presence_period_id, true));
 		}
 
+		// $table_header_data = [
+		// 	'1' => $data['column_no'],
+		// 	'2' => $data['column_customer'],
+		// 	'3' => $data['column_nik'],
+		// 	'4' => $data['column_npwp'],
+		// 	'5' => $data['column_npwp_address'],
+		// 	'6' => $data['column_customer_group'],
+		// 	'7' => $data['column_gender'],
+		// 	'8' => $data['column_non_taxed_category'],
+		// 	'9' => $data['column_ter_category'],
+		// 	'10' => $data['column_basic_salary'],
+		// 	'11' => $data['column_allowance'],
+		// 	'12' => $data['column_deduction'],
+		// 	'13' => $data['column_insurance_employment'],
+		// 	'14' => $data['column_insurance_health'],
+		// 	'15' => $data['column_holiday_allowance'],
+		// 	'16' => $data['column_gross_salary'],
+		// 	'17' => $data['column_ter_tariff'],
+		// 	'18' => $data['column_tax'],
+		// 	'19' => $data['column_tax_final'],
+		// 	'20' => $data['column_tax_net'],
+		// 	'21' => $data['column_tax_paid'],
+		// 	'22' => $data['column_functional_expense'],
+		// 	'23' => $data['column_thp'],
+		// ];
+
+
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 
 		$taxes_data = [];
@@ -308,35 +368,73 @@ class ControllerReportPayrollTax extends Controller
 
 		if (date('n', strtotime($period_info['period'])) != 12) {
 			$results = $this->model_report_payroll->getTaxes($presence_period_id, $filter_data);
+			$final = false;
+
+			foreach ($results as $result) {
+				$taxes_data[] = array(
+					'no' 					=> $no,
+					'customer'				=> $result['customer'],
+					'nik'					=> "'" . $result['nik'],
+					'npwp'					=> $result['npwp'],
+					'npwp_address'			=> $result['npwp_address'],
+					'customer_group'		=> $result['customer_group'],
+					'gender' 				=> $result['gender_code'],
+					'non_taxed_category'	=> $result['non_taxed_category'],
+					'ter_category'			=> $result['ter_category'],
+					'basic_salary'			=> $result['basic_salary'],
+					'allowance'				=> $result['allowance'],
+					'deduction'				=> $result['deduction'],
+					'insurance_employment'	=> $result['insurance_employment'],
+					'insurance_health'		=> $result['insurance_health'],
+					'holiday_allowance'		=> $result['holiday_allowance'],
+					'gross_salary'			=> $result['gross_salary'],
+					'ter_tariff'			=> $result['ter_tariff'] / 100,
+					'tax'					=> $result['tax'],
+					'functional_expense'	=> $result['functional_expense'],
+					'thp'					=> $result['gross_salary'] - $result['tax'],
+				);
+
+				$no++;
+			}
 		} else {
 			$results = $this->model_report_payroll->getFinalTaxes($presence_period_id, $filter_data);
-			$data['heading_title'] .= ' ' . $this->language->get('text_final');
-		}
+			$final = true;
+			$data['heading_title'] .= ' ' . $this->language->get('text_final') . ' (' . $this->language->get('text_full_year') . ')';
 
-		foreach ($results as $result) {
-			$taxes_data[] = array(
-				'no' 					=> $no,
-				'customer'				=> $result['customer'],
-				'nik'					=> "'" . $result['nik'],
-				'npwp'					=> $result['npwp'],
-				'npwp_address'			=> $result['npwp_address'],
-				'customer_group'		=> $result['customer_group'],
-				'gender' 				=> $result['gender_code'],
-				'non_taxed_category'	=> $result['non_taxed_category'],
-				'ter_category'			=> $result['ter_category'],
-				'basic_salary'			=> $result['basic_salary'],
-				'allowance'				=> $result['allowance'],
-				'holiday_allowance'		=> $result['holiday_allowance'],
-				'gross_salary'			=> $result['gross_salary'],
-				'ter_tariff'			=> $result['ter_tariff'] / 100,
-				'tax'					=> $result['tax'],
-				'functional_expense'	=> $result['functional_expense'],
-				'insurance_employment'	=> $result['insurance_employment'],
-				'insurance_health'		=> $result['insurance_health'],
-				'thp'					=> $result['gross_salary'],
-			);
+			foreach ($results as $result) {
+				// if ($final) {
+				// 	$thp = $result['gross_salary'] - $result['tax_final'];
+				// } else {
+				// 	$thp = $result['gross_salary'] - $result['tax'];
+				// }
 
-			$no++;
+				$taxes_data[] = array(
+					'no' 					=> $no,
+					'customer'				=> $result['customer'],
+					'nik'					=> "'" . $result['nik'],
+					'npwp'					=> $result['npwp'],
+					'npwp_address'			=> $result['npwp_address'],
+					'customer_group'		=> $result['customer_group'],
+					'gender' 				=> $result['gender_code'],
+					'non_taxed_category'	=> $result['non_taxed_category'],
+					// 'ter_category'			=> $result['ter_category'],
+					'basic_salary'			=> $result['basic_salary'],
+					'allowance'				=> $result['allowance'],
+					'deduction'				=> $result['deduction'],
+					'insurance_employment'	=> $result['insurance_employment'],
+					'insurance_health'		=> $result['insurance_health'],
+					'holiday_allowance'		=> $result['holiday_allowance'],
+					'gross_salary'			=> $result['gross_salary'],
+					// 'ter_tariff'			=> $result['ter_tariff'] / 100,
+					'tax_final'				=> $result['tax_final'] ?? 0,
+					'tax'					=> $result['tax'],
+					'tax_net'				=> $result['tax_net'] ?? 0,
+					'functional_expense'	=> $result['functional_expense'],
+					'thp'					=> $result['gross_salary'] - $result['tax_final'],
+				);
+
+				$no++;
+			}
 		}
 
 		$store_name = htmlspecialchars_decode($this->config->get('config_name'));
@@ -346,7 +444,15 @@ class ControllerReportPayrollTax extends Controller
 
 		$spreadsheet = $php_spreadsheet->loadSpreadsheet(DIR_FILE . 'Tax21 Template.xlsx');
 
-		$sheet = $spreadsheet->getActiveSheet(); 
+		$sheet = $spreadsheet->getActiveSheet();
+
+		if (!$final) {
+			$sheet->RemoveColumn('S', 3);
+		} else {
+			$sheet
+				->RemoveColumn('Q', 2)
+				->RemoveColumn('I');
+		}
 
 		$sheet->insertNewRowBefore(5, count($taxes_data) - 2);
 
