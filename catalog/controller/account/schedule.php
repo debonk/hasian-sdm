@@ -87,10 +87,10 @@ class ControllerAccountSchedule extends Controller
 
 						if (!empty($schedules_data[$key_date])) {
 							$schedule_type_id = $schedules_data[$key_date]['schedule_type_id'];
-							$schedule_type_code = $schedules_data[$key_date]['schedule_type'] . ($schedules_data[$key_date]['time_in'] != '0000-00-00 00:00:00' ? '<br>(' . date('H:i', strtotime($schedules_data[$key_date]['time_in'])) . '-' . date('H:i', strtotime($schedules_data[$key_date]['time_out'])) . ')' : $this->language->get('text_off') . '<br><br>');
+							$schedule_type_code = $schedules_data[$key_date]['schedule_type'] . ($schedules_data[$key_date]['time_in'] != null ? '<br>(' . date('H:i', strtotime($schedules_data[$key_date]['time_in'])) . '-' . date('H:i', strtotime($schedules_data[$key_date]['time_out'])) . ')' : $this->language->get('text_off') . '<br><br>');
 							$presence_status = $schedules_data[$key_date]['presence_status'];
-							$time_login = ($schedules_data[$key_date]['time_login'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_data[$key_date]['time_login'])) : '...';
-							$time_logout = ($schedules_data[$key_date]['time_logout'] != '0000-00-00 00:00:00') ? date('H:i', strtotime($schedules_data[$key_date]['time_logout'])) : '...';
+							$time_login = ($schedules_data[$key_date]['time_login'] != null) ? date('H:i', strtotime($schedules_data[$key_date]['time_login'])) : '...';
+							$time_logout = ($schedules_data[$key_date]['time_logout'] != null) ? date('H:i', strtotime($schedules_data[$key_date]['time_logout'])) : '...';
 							$bg_class = !empty($schedules_data[$key_date]['bg_class']) ? $schedules_data[$key_date]['bg_class'] : 'info';
 						} else {
 							$schedule_type_id = 0;

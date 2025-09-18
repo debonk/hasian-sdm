@@ -723,9 +723,9 @@ class ControllerPresencePresence extends Controller
 						$locked = 0;
 					}
 
-					$schedule_type	= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_in'] != '0000-00-00 00:00:00') ? ($schedules_info[$date_text]['schedule_type'] . ' (' . date('H:i', strtotime($schedules_info[$date_text]['time_in'])) . '-' . date('H:i', strtotime($schedules_info[$date_text]['time_out'])) . ')') : $data['text_off'];
-					$time_login		= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_login'] != '0000-00-00 00:00:00') ? date('H:i:s', strtotime($schedules_info[$date_text]['time_login'])) : '...';
-					$time_logout	= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_logout'] != '0000-00-00 00:00:00') ? date('H:i:s', strtotime($schedules_info[$date_text]['time_logout'])) : '...';
+					$schedule_type	= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_in'] != null) ? ($schedules_info[$date_text]['schedule_type'] . ' (' . date('H:i', strtotime($schedules_info[$date_text]['time_in'])) . '-' . date('H:i', strtotime($schedules_info[$date_text]['time_out'])) . ')') : $data['text_off'];
+					$time_login		= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_login'] != null) ? date('H:i:s', strtotime($schedules_info[$date_text]['time_login'])) : '...';
+					$time_logout	= (isset($schedules_info[$date_text]) && $schedules_info[$date_text]['time_logout'] != null) ? date('H:i:s', strtotime($schedules_info[$date_text]['time_logout'])) : '...';
 					$bg_class		= !empty($schedules_info[$date_text]['bg_class']) ? $schedules_info[$date_text]['bg_class'] : 'info';
 					$note			= !empty($schedules_info[$date_text]['note']) ? $schedules_info[$date_text]['note'] : '';
 

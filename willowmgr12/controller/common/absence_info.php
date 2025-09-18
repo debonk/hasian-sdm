@@ -101,7 +101,7 @@ class ControllerCommonAbsenceInfo extends Controller {
 				$presence_status = '-';
 			}
 			
-			if ($presence_info && !is_null($presence_info['time_login']) && $presence_info['time_logout'] != '0000-00-00 00:00:00') {
+			if ($presence_info && !is_null($presence_info['time_login'])) {
 				$duration = round((strtotime($presence_info['time_logout']) - strtotime($presence_info['time_login'])) / 3600, 2);
 			} else {
 				$duration = '-';

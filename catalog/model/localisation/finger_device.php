@@ -15,6 +15,22 @@ class ModelLocalisationFingerDevice extends Model
 		return $query->row;
 	}
 
+	public function getFingerDeviceByToken($token)
+	{
+		$sql = "SELECT DISTINCT finger_device_id, vkey, location_id, token FROM " . DB_PREFIX . "finger_device WHERE token = '" . $this->db->escape($token) . "'";
+
+		$query = $this->db->query($sql);
+
+		return $query->row;
+	}
+
+	// public function getFingerDeviceByVkey($vkey)
+	// {
+	// 	$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "finger_device WHERE vkey = '" . $this->db->escape($vkey) . "'");
+
+	// 	return $query->row;
+	// }
+	
 	public function getFingerDevices()
 	{
 		$sql = "SELECT finger_device_id, device_name, sn, vc, ac FROM " . DB_PREFIX . "finger_device ORDER BY device_name ASC";

@@ -329,33 +329,6 @@ class ControllerReportPayrollTax extends Controller
 			$this->response->redirect($this->url->link('report/payroll_tax', 'token=' . $this->session->data['token'] . '&presence_period_id=' . $presence_period_id, true));
 		}
 
-		// $table_header_data = [
-		// 	'1' => $data['column_no'],
-		// 	'2' => $data['column_customer'],
-		// 	'3' => $data['column_nik'],
-		// 	'4' => $data['column_npwp'],
-		// 	'5' => $data['column_npwp_address'],
-		// 	'6' => $data['column_customer_group'],
-		// 	'7' => $data['column_gender'],
-		// 	'8' => $data['column_non_taxed_category'],
-		// 	'9' => $data['column_ter_category'],
-		// 	'10' => $data['column_basic_salary'],
-		// 	'11' => $data['column_allowance'],
-		// 	'12' => $data['column_deduction'],
-		// 	'13' => $data['column_insurance_employment'],
-		// 	'14' => $data['column_insurance_health'],
-		// 	'15' => $data['column_holiday_allowance'],
-		// 	'16' => $data['column_gross_salary'],
-		// 	'17' => $data['column_ter_tariff'],
-		// 	'18' => $data['column_tax'],
-		// 	'19' => $data['column_tax_final'],
-		// 	'20' => $data['column_tax_net'],
-		// 	'21' => $data['column_tax_paid'],
-		// 	'22' => $data['column_functional_expense'],
-		// 	'23' => $data['column_thp'],
-		// ];
-
-
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 
 		$taxes_data = [];
@@ -402,12 +375,6 @@ class ControllerReportPayrollTax extends Controller
 			$data['heading_title'] .= ' ' . $this->language->get('text_final') . ' (' . $this->language->get('text_full_year') . ')';
 
 			foreach ($results as $result) {
-				// if ($final) {
-				// 	$thp = $result['gross_salary'] - $result['tax_final'];
-				// } else {
-				// 	$thp = $result['gross_salary'] - $result['tax'];
-				// }
-
 				$taxes_data[] = array(
 					'no' 					=> $no,
 					'customer'				=> $result['customer'],
@@ -460,7 +427,7 @@ class ControllerReportPayrollTax extends Controller
 			->setCellValue('A1', utf8_strtoupper($store_name))
 			->setCellValue('A2', $data['heading_title'])
 			->setCellValue('F2', $period)
-			->fromArray(array_values($taxes_data), 'NUMBER', 'A4');
+			->fromArray(array_values($taxes_data), null, 'A4', true);
 
 		# Force to download
 		$new_file = DIR_DOWNLOAD . $data['heading_title'] . '_Export.xlsx';

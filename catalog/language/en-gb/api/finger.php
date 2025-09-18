@@ -1,6 +1,6 @@
 <?php
 // Text
-// $_['text_success']       = 'You have successfully modified fingers';
+$_['text_success_enroll']	= 'Success: You have successfully enrolled finger data!';
 $_['text_ready']			= 'Finger Device Ready!';
 $_['text_success_login']	= 'Success: %s berhasil %s pada %s';
 $_['text_login']			= 'Login';
@@ -8,11 +8,14 @@ $_['text_logout']			= 'Logout';
 
 // Error
 $_['error_token']				= 'Warning: Token Data tidak ditemukan!';
-$_['error_device']				= 'Warning: Finger Device Data tidak ditemukan!';
+$_['error_device']				= 'Warning: Finger Device tidak terdaftar!';
 $_['error_data']				= 'Warning: Finger Data tidak ditemukan!';
 $_['error_session']				= 'Warning: Session Error. Silahkan tutup dan buka kembali app ini!';
-$_['error_absence']				= 'Warning: Tidak ada jadwal Anda hari ini!';
 $_['error_customer_not_found']	= 'Warning: Data karyawan tidak ditemukan!';
+$_['error_finger_exist']		= 'Warning: Data sidik jari sudah ada!';
+$_['error_location']			= 'Warning: Location Data tidak ditemukan!';
+$_['error_absence']				= '%s: Tidak ada jadwal Anda hari ini!';
+$_['error_location_mismatch']	= '%s: Anda wajib absensi di lokasi yang ditentukan!';
 $_['error_login_start']			= '%s: Waktu Login anda hari ini belum diizinkan!';
 $_['error_login_end']			= '%s: Waktu Login anda hari ini telah berakhir!';
 $_['error_logout_start']		= '%s: Waktu Logout anda hari ini belum diizinkan!';

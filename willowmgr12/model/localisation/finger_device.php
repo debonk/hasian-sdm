@@ -7,7 +7,7 @@ class ModelLocalisationFingerDevice extends Model
 		$data['ac'] = str_replace('-', '', $data['ac']);
 		$data['vkey'] = str_replace('-', '', $data['vkey']);
 
-		$this->db->query("INSERT INTO " . DB_PREFIX . "finger_device SET device_name = '" . $this->db->escape($data['device_name']) . "', sn = '" . $this->db->escape($data['sn']) . "', vc = '" . $this->db->escape($data['vc']) . "', ac = '" . $this->db->escape($data['ac']) . "', vkey = '" . $this->db->escape($data['vkey']) . "', location_id = '" . (int)$data['location_id'] . "', status = '" . (int)$data['status'] . "'");
+		$this->db->query("INSERT INTO " . DB_PREFIX . "finger_device SET device_name = '" . $this->db->escape($data['device_name']) . "', sn = '" . $this->db->escape($data['sn']) . "', vc = '" . $this->db->escape($data['vc']) . "', ac = '" . $this->db->escape($data['ac']) . "', vkey = '" . $this->db->escape($data['vkey']) . "', regkey = '" . $this->db->escape($data['regkey']) . "', location_id = '" . (int)$data['location_id'] . "', status = '" . (int)$data['status'] . "'");
 	}
 
 	public function editFingerDevice($finger_device_id, $data)
@@ -16,7 +16,7 @@ class ModelLocalisationFingerDevice extends Model
 		$data['ac'] = str_replace('-', '', $data['ac']);
 		$data['vkey'] = str_replace('-', '', $data['vkey']);
 
-		$this->db->query("UPDATE " . DB_PREFIX . "finger_device SET device_name = '" . $this->db->escape($data['device_name']) . "', sn = '" . $this->db->escape($data['sn']) . "', vc = '" . $this->db->escape($data['vc']) . "', ac = '" . $this->db->escape($data['ac']) . "', vkey = '" . $this->db->escape($data['vkey']) . "', location_id = '" . (int)$data['location_id'] . "', status = '" . (int)$data['status'] . "' WHERE finger_device_id = '" . (int)$finger_device_id . "'");
+		$this->db->query("UPDATE " . DB_PREFIX . "finger_device SET device_name = '" . $this->db->escape($data['device_name']) . "', sn = '" . $this->db->escape($data['sn']) . "', vc = '" . $this->db->escape($data['vc']) . "', ac = '" . $this->db->escape($data['ac']) . "', vkey = '" . $this->db->escape($data['vkey']) . "', regkey = '" . $this->db->escape($data['regkey']) . "', location_id = '" . (int)$data['location_id'] . "', status = '" . (int)$data['status'] . "' WHERE finger_device_id = '" . (int)$finger_device_id . "'");
 	}
 
 	public function deleteFingerDevice($finger_device_id)

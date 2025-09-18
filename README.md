@@ -11,7 +11,18 @@ User Group: ganti form ke list, trus ada kolom untuk centang access, modify, app
 
 MODIFY CONFIG
 
+4.2.0	19/09/2025
+Customer Finger: Apply Digital Persona SDK v3.2
+
 === TABLE ===
+ALTER TABLE oc_finger_device ADD regkey varchar(64) NULL AFTER vkey;
+
+ALTER TABLE oc_customer_finger ADD legacy bool DEFAULT 1 NULL;
+ALTER TABLE oc_customer_finger MODIFY COLUMN legacy tinyint(1) DEFAULT NULL NULL;
+ALTER TABLE `oc_presence_log` CHANGE `time_in` `time_in` DATETIME NULL, CHANGE `time_out` `time_out` DATETIME NULL, CHANGE `time_login` `time_login` DATETIME NULL, CHANGE `time_logout` `time_logout` DATETIME NULL; 
+ALTER TABLE oc_presence_log ADD location_id_login int(11) NULL;
+ALTER TABLE oc_presence_log ADD location_id_logout int(11) NULL;
+
 4.1.5	07/08/2025
 Report > Payroll Tax: Revisi data laporan. Penambahan kolom PPH Final, PPH terbayar, PPH Net utk bulan Desember
 

@@ -25,7 +25,7 @@ class ModelPresencePresence extends Model
 
 	public function getCustomer($customer_id)
 	{
-		$query = $this->db->query("SELECT DISTINCT customer_id, firstname, lastname FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "' AND status = 1 AND date_start <= CURDATE() AND (date_end >= CURDATE() OR date_end IS NULL)");
+		$query = $this->db->query("SELECT DISTINCT customer_id, firstname, lastname, location_id FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "' AND status = 1 AND date_start <= CURDATE() AND (date_end >= CURDATE() OR date_end IS NULL)");
 
 		return $query->row;
 	}
@@ -102,6 +102,11 @@ class ModelPresencePresence extends Model
 		return $query->rows;
 	}
 
+	public function addFinger($customer_id, $data)
+	{
+		$this->db->query("INSERT INTO " . DB_PREFIX . "customer_finger SET customer_id = '" . (int)$customer_id . "', finger_index = '" . (int)$data['finger_index'] . "', finger_data = '" . $this->db->escape($data['finger_data']) . "', user_id = '" . (int)$data['user_id'] . "'");
+	}
+
 	public function getFingers($data = array())
 	{
 		$sql = "SELECT * FROM " . DB_PREFIX . "v_customer_finger WHERE status = 1 AND date_start <= CURDATE() AND (date_end >= CURDATE() OR date_end IS NULL)";
@@ -110,6 +115,16 @@ class ModelPresencePresence extends Model
 
 		if (!empty($data['filter']['location_id'])) {
 			$implode[] = "location_id = '" . (int)$data['filter']['location_id'] . "'";
+		}
+
+		if (isset($data['filter']['legacy'])) {
+			if ($data['filter']['legacy']) {
+				$implode[] = "legacy = '1'";
+			} else {
+				$implode[] = "legacy IS NULL";
+			}
+		} else {
+			$implode[] = "legacy = '1'";
 		}
 
 		// $implode[] = "customer_id <= 10"; // For testing
@@ -130,6 +145,16 @@ class ModelPresencePresence extends Model
 		$query = $this->db->query($sql);
 
 		return $query->row['total'];
+	}
+
+	public function getFingerByCustomerId($customer_id, $finger_index = 0)
+	{
+		// $sql = "SELECT DISTINCT cf.*, CONCAT(c.firstname, ' [', c.lastname, ']') AS name FROM " . DB_PREFIX . "customer_finger cf LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = cf.customer_id) WHERE cf.customer_id = '" . (int)$customer_id . "' AND finger_index = '" . (int)$finger_index . "'";
+		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "v_customer_finger WHERE customer_id = '" . (int)$customer_id . "' AND finger_index = '" . (int)$finger_index . "'";
+
+		$query = $this->db->query($sql);
+
+		return $query->row;
 	}
 
 	public function getOvertimeByDate($customer_id, $date)
@@ -292,10 +317,10 @@ class ModelPresencePresence extends Model
 	{
 		if ($action == 'login') {
 			// $this->db->query("DELETE FROM " . DB_PREFIX . "presence_log WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $this->db->escape($date) . "'");
-			
-			$this->db->query("INSERT INTO " . DB_PREFIX . "presence_log SET customer_id = '" . (int)$customer_id . "', date = '" . $this->db->escape($date) . "', time_in = '" . $this->db->escape($time_in) . "', time_out = '" . $this->db->escape($time_out) . "', time_login = '', time_logout = ''");
+
+			$this->db->query("INSERT INTO " . DB_PREFIX . "presence_log SET customer_id = '" . (int)$customer_id . "', date = '" . $this->db->escape($date) . "'" . ($time_in ? ", time_in = '" . $this->db->escape($time_in) . "'" : "") . ($time_out ? ", time_out = '" . $this->db->escape($time_out) . "'" : ""));
 		} elseif ($action == 'logout') {
-			$this->db->query("UPDATE " . DB_PREFIX . "presence_log SET time_out = '" . $this->db->escape($time_out) . "' WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $this->db->escape($date) . "'");
+			$this->db->query("UPDATE " . DB_PREFIX . "presence_log SET time_out = " . ($time_out ? "'" . $this->db->escape($time_out) . "'" : "NULL") . " WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $this->db->escape($date) . "'");
 		}
 	}
 
@@ -304,7 +329,7 @@ class ModelPresencePresence extends Model
 		$this->db->query("DELETE FROM " . DB_PREFIX . "presence_log WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $this->db->escape($date) . "'");
 	}
 
-	public function addLog($customer_id, $date, $action)
+	public function addLog($customer_id, $date, $action, $location_id = 0)
 	{
 		// if ($this->request->server['HTTPS']) {
 		// 	$server = HTTPS_SERVER;
@@ -327,9 +352,9 @@ class ModelPresencePresence extends Model
 		// }
 
 		if ($action == 'login') {
-			$sql = "UPDATE " . DB_PREFIX . "presence_log SET time_login = NOW() WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $this->db->escape($date) . "'";
+			$sql = "UPDATE " . DB_PREFIX . "presence_log SET time_login = NOW(), location_id_login = " . (int)$location_id . " WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $this->db->escape($date) . "'";
 		} elseif ($action == 'logout') {
-			$sql = "UPDATE " . DB_PREFIX . "presence_log SET time_logout = NOW() WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $this->db->escape($date) . "'";
+			$sql = "UPDATE " . DB_PREFIX . "presence_log SET time_logout = NOW(), location_id_logout = " . (int)$location_id . " WHERE customer_id = '" . (int)$customer_id . "' AND date = '" . $this->db->escape($date) . "'";
 		}
 
 		$this->db->query($sql);

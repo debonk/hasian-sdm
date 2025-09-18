@@ -199,7 +199,7 @@ class ModelPresenceSchedule extends Model
 
 	public function calculatePresence($time_in, $time_login)
 	{
-		if (empty($time_login) || $time_login == '0000-00-00 00:00:00') {
+		if (empty($time_login) || $time_login == null) {
 			$presence_status_id = $this->config->get('payroll_setting_id_a');
 			// $presence_code = 'a';
 
@@ -291,8 +291,8 @@ class ModelPresenceSchedule extends Model
 						'applied'			=> 'exchange',
 						'schedule_type_id'	=> 0,
 						'schedule_type'		=> 'X-',
-						'time_in'			=> '0000-00-00 00:00:00',
-						'time_out'			=> '0000-00-00 00:00:00',
+						'time_in'			=> null,
+						'time_out'			=> null,
 						'note'				=> $exchange_info['description'],
 						'schedule_bg'		=> 0,
 						'bg_class'			=> 'primary'
@@ -305,8 +305,8 @@ class ModelPresenceSchedule extends Model
 
 		foreach ($schedules_info as $schedule_info) {
 			if ($schedule_info['schedule_type_id'] == 0) {
-				$time_in = '0000-00-00 00:00:00';
-				$time_out = '0000-00-00 00:00:00';
+				$time_in = null;
+				$time_out = null;
 				$schedule_info['bg_idx'] = '0';
 			} else {
 				$time_in = $schedule_info['date'] . ' ' . $schedule_info['time_start'];
@@ -370,8 +370,8 @@ class ModelPresenceSchedule extends Model
 		$logs_info = $this->getLogs($customer_id, $range_date);
 
 		foreach ($logs_info as $log_info) {
-			// if (isset($schedules_data[$log_info['date']]) && $schedules_data[$log_info['date']]['time_in'] != '0000-00-00 00:00:00') {
-			if (isset($log_info['date']) && $log_info['time_in'] != '0000-00-00 00:00:00') {
+			// if (isset($schedules_data[$log_info['date']]) && $schedules_data[$log_info['date']]['time_in'] != null) {
+			if (isset($log_info['date']) && $log_info['time_in'] != null) {
 				$logs_data = array(
 					'time_in'		=> $log_info['time_in'],
 					'time_out'		=> $log_info['time_out'],
@@ -391,8 +391,8 @@ class ModelPresenceSchedule extends Model
 					'applied'			=> '-',
 					'schedule_type_id'	=> 0,
 					'schedule_type'		=> '',
-					'time_in'			=> '0000-00-00 00:00:00',
-					'time_out'			=> '0000-00-00 00:00:00',
+					'time_in'			=> null,
+					'time_out'			=> null,
 					'note'				=> '',
 					'schedule_bg'		=> '',
 					'bg_class'			=> ''
@@ -416,15 +416,15 @@ class ModelPresenceSchedule extends Model
 		$customer_info = $this->model_common_payroll->getCustomer($customer_id);
 
 		foreach ($schedules_data as $date => $schedule_data) {
-			if ($schedule_data['time_in'] != '0000-00-00 00:00:00' && strtotime($date) <= strtotime('today')) {
+			if ($schedule_data['time_in'] != null && strtotime($date) <= strtotime('today')) {
 				if (isset($schedule_data['time_login'])) {
 					$time_login = $schedule_data['time_login'];
 					$time_logout = $schedule_data['time_logout'];
 					// $presence_code = $this->calculatePresence($schedule_data['time_in'], $time_login);
 					$presence_status_id = isset($presences_data[$date]) ? $presences_data[$date]['presence_status_id'] : $this->calculatePresence($schedule_data['time_in'], $time_login);
 				} else {
-					$time_login = '0000-00-00 00:00:00';
-					$time_logout = '0000-00-00 00:00:00';
+					$time_login = null;
+					$time_logout = null;
 					// $presence_code = 'a';
 					if (isset($presences_data[$date])) {
 						$presence_status_id = $presences_data[$date]['presence_status_id'];
@@ -439,8 +439,8 @@ class ModelPresenceSchedule extends Model
 					$presence_status_id = isset($presences_data[$date]) ? $presences_data[$date]['presence_status_id'] : $this->config->get('payroll_setting_id_h');
 					// $presence_code = 'h';
 				} else {
-					$time_login = '0000-00-00 00:00:00';
-					$time_logout = '0000-00-00 00:00:00';
+					$time_login = null;
+					$time_logout = null;
 					$presence_status_id = isset($presences_data[$date]) ? $presences_data[$date]['presence_status_id'] : $this->config->get('payroll_setting_id_off');
 					// $presence_code = 'off';
 				}
@@ -501,10 +501,10 @@ class ModelPresenceSchedule extends Model
 					'applied'			=> 'schedule',
 					'schedule_type_id'	=> 0,
 					'schedule_type'		=> '',
-					'time_in'			=> '0000-00-00 00:00:00',
-					'time_out'			=> '0000-00-00 00:00:00',
-					'time_login'		=> '0000-00-00 00:00:00',
-					'time_logout'		=> '0000-00-00 00:00:00',
+					'time_in'			=> null,
+					'time_out'			=> null,
+					'time_login'		=> null,
+					'time_logout'		=> null,
 					'schedule_bg'		=> 0
 				);
 			}

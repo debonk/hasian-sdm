@@ -148,11 +148,16 @@
 									</td>
 									<td class="text-right">
 										<?php if (!$finger['registered']) { ?>
-										<button type="button" value="<?= $finger['index']; ?>"
+										<a type="button" href="<?= $finger['href']; ?>"
+											data-loading-text="<?= $text_loading; ?>" data-toggle="tooltip"
+											title="<?= $button_register; ?>" class="btn btn-primary">
+											<i class="fa fa-barcode"></i>
+										</a>
+										<!-- <button type="button" value="<?= $finger['index']; ?>"
 											id="button-register<?= $finger['index']; ?>"
 											data-loading-text="<?= $text_loading; ?>" data-toggle="tooltip"
 											title="<?= $button_register; ?>" class="btn btn-primary"><i
-												class="fa fa-barcode"></i></button>
+												class="fa fa-barcode"></i></button> -->
 										<?php } else { ?>
 										<button type="button" value="<?= $finger['index']; ?>"
 											id="button-verification<?= $finger['index']; ?>"

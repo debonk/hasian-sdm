@@ -40,6 +40,7 @@
                   <td><?= $column_vc; ?></td>
                   <td><?= $column_ac; ?></td>
                   <td><?= $column_vkey; ?></td>
+                  <td class="text-center"><?= $column_new_sdk; ?></td>
                   <td><?= $column_location; ?></td>
                   <td><?= $column_status; ?></td>
                   <td class="text-right"><?= $column_action; ?></td>
@@ -59,6 +60,7 @@
                   <td><?= $finger_device['vc']; ?></td>
                   <td><?= $finger_device['ac']; ?></td>
                   <td><code><?= $finger_device['vkey']; ?><code></td>
+                  <td class="text-center"><?= $finger_device['new_sdk'] ? '<i class="fa fa-check-square-o"></i>' : '<i class="fa fa-square-o"></i>'; ?></td>
                   <td><?= $finger_device['location']; ?></td>
                   <td><?= $finger_device['status']; ?></td>
                   <td class="text-right"><a href="<?= $finger_device['edit']; ?>" data-toggle="tooltip" title="<?= $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>

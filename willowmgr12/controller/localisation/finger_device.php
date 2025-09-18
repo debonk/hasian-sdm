@@ -133,6 +133,7 @@ class ControllerLocalisationFingerDevice extends Controller {
 				'vc'				=> $result['vc'],
 				'ac'				=> $result['ac'],
 				'vkey'				=> substr($result['vkey'], 0, 5) . '...',
+				'new_sdk'			=> $result['regkey'] ? true : false,
 				'location'			=> $result['location'] ? $result['location'] : $this->language->get('text_all'),
 				'status'			=> $result['status'] ? $this->language->get('text_enabled') : $this->language->get('text_disabled'),
 				'edit'				=> $this->url->link('localisation/finger_device/edit', 'token=' . $this->session->data['token'] . '&finger_device_id=' . $result['finger_device_id'] . $url, true)
@@ -149,6 +150,7 @@ class ControllerLocalisationFingerDevice extends Controller {
 			'column_vc',
 			'column_ac',
 			'column_vkey',
+			'column_new_sdk',
 			'column_location',
 			'column_status',
 			'column_action',
@@ -212,8 +214,10 @@ class ControllerLocalisationFingerDevice extends Controller {
 			'entry_vc',
 			'entry_ac',
 			'entry_vkey',
+			'entry_regkey',
 			'entry_location',
 			'entry_status',
+			'help_regkey',
 			'button_save',
 			'button_cancel'
 		);
@@ -274,6 +278,7 @@ class ControllerLocalisationFingerDevice extends Controller {
 			'vc',
 			'ac',
 			'vkey',
+			'regkey',
 			'location_id',
 			'status'
 		);
@@ -314,9 +319,9 @@ class ControllerLocalisationFingerDevice extends Controller {
 			$this->error['warning'] = $this->language->get('error_required');
 		}
 
-		if ((utf8_strlen($this->request->post['ac']) < 1) || (utf8_strlen(trim($this->request->post['ac'])) > 50)) {
-			$this->error['warning'] = $this->language->get('error_required');
-		}
+		// if ((utf8_strlen($this->request->post['ac']) < 1) || (utf8_strlen(trim($this->request->post['ac'])) > 50)) {
+		// 	$this->error['warning'] = $this->language->get('error_required');
+		// }
 
 		if ((utf8_strlen($this->request->post['vkey']) < 1) || (utf8_strlen(trim($this->request->post['vkey'])) > 50)) {
 			$this->error['warning'] = $this->language->get('error_required');

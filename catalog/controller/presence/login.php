@@ -186,9 +186,9 @@ class ControllerPresenceLogin extends Controller
 				$log_info = $this->model_presence_presence->getLog($result['customer_id'], $schedule_date);
 
 				if ($log_info) {
-					if ($log_info['time_logout'] != '0000-00-00 00:00:00') {
+					if ($log_info['time_logout'] != null) {
 						$log_class = 'logout';
-					} elseif ($log_info['time_login'] != '0000-00-00 00:00:00') {
+					} elseif ($log_info['time_login'] != null) {
 						$log_class = 'login';
 					} else {
 						$log_class = 'active';
@@ -232,14 +232,33 @@ class ControllerPresenceLogin extends Controller
 			$finger_devices = $this->model_localisation_finger_device->getFingerDevicesByLocationId($location_id);
 
 			foreach ($finger_devices as $finger_device) {
-				$data['presence_tools'][] = [
-					'title'	=> $finger_device['device_name'] . ' [' . $finger_device['sn'] . ']',
-					'href'	=> 'hsdmtool:' . base64_encode('referrer=' . utf8_substr(HTTP_SERVER, 7, utf8_strlen(HTTP_SERVER) - 8) . '&sn=' . $finger_device['sn'] . '&location_id=' . $location_id)
-					// 'href'	=> 'hsdmtool:' . base64_encode('referrer=burgerup.go-corp.net&sn=' . $finger_device['sn'] . '&location_id=' . $location_id)
-				];
+				if (strlen($finger_device['ac']) > 12) {
+					$data['presence_tools'][] = [
+						'title'	=> $finger_device['device_name'] . ' [' . $finger_device['sn'] . ']',
+						'href'	=> 'hsdmtool:' . base64_encode('referrer=' . utf8_substr(HTTP_SERVER, 7, utf8_strlen(HTTP_SERVER) - 8) . '&sn=' . $finger_device['sn'] . '&location_id=' . $location_id)
+					];
+				}
+
+				if (!empty($finger_device['regkey'])) {
+					$token = md5($finger_device['vc'] . token(12));
+					$this->model_localisation_finger_device->editToken($finger_device['finger_device_id'], $token);
+
+					$data['presence_tools'][] = [
+						'title'	=> $finger_device['device_name'] . ' [' . $finger_device['sn'] . '] - v2',
+						'href'	=> 'hsdmtool:' . base64_encode('identify ' . utf8_substr(HTTP_SERVER, 7, utf8_strlen(HTTP_SERVER) - 7) . ' ' . $token . ' ' . $finger_device['regkey'] . ' ' . $location_id)
+					];
+				}
 			}
 		}
 
+		// Harus dicek versi SDK yang digunakan dan finger data yang sudah terdaftar
+		// $a = ('identify ' . utf8_substr(HTTP_SERVER, 7, utf8_strlen(HTTP_SERVER) - 7) . ' ' . $finger_device['token'] . ' ' . $finger_device['vkey'] . ' ' . $location_id);
+		// var_dump($a);
+		// $a = 'hsdmtool:' . base64_encode($a);
+		// var_dump($a);
+
+		/* $b = '<?xml version="1.0" encoding="UTF-8"?><Fid><Bytes>Rk1SACAyMAABuAAz/v8AAAH0AiYBFAEUAQAAAFZEQVoAMkteQRoAWVJdgUAAbE9bQSAA2UdbgIgA1nlaQVUAYptVQYAAwj1UgUABLT9RgJcBQ3lPgNsBO4VMQZQBUiRKgN4BEHhKgX8BziJJgP8BBF9FQKcBHn5EgKsBJ39DQL0BlItDgGgAzRdDQHkA6XVDgIABioNCQQEBUJJBQGgBjCVBgLEBoIlBgJ8BG3xAQOUAQlxAgMwBgo9AQXYB2n9AQHkB5zVAgR4AH6c/gHwBZHo/gScB4kc/gHYBEyA+QJcB4ps+gSoB7Eg9gOMB9lo9QIQBDHw9gLMBjCs9QHEBPCI8gOEBtZY7gHQA/YM7QX8BLT06QTcBupQ6gXgBm4k6gHkBoyM6QPUBe5U5QHcBjIU5QWkB2Cs5gGUA0iI4QKQBUH44gJ8BhCc4gPgBupM4QN4BBAI4QG8BLB84QGABVS84QG8ByY84QJwAcWg3QKwBfX03QMUBnpQ3gIQBqyg3QG8A9XU3QIABoSc3QO0BzDw3QKYBr4s2QQQBG2U2gOgBRhs2gGIBgDI2gKIBo4w1gK4BqCw1AAA=</Bytes><Format>1769473</Format><Version>1.0.0</Version></Fid>';
+ */
 		$data['column_left'] = false;
 		$data['column_right'] = false;
 		$data['content_top'] = $this->load->controller('common/content_top');
@@ -296,7 +315,7 @@ class ControllerPresenceLogin extends Controller
 			$action = 'logout';
 		} else {
 			$schedule_date = date('Y-m-d', strtotime($this->config->get('payroll_setting_login_date') . ' hours'));
-		
+
 			$action = 'login';
 		}
 
@@ -323,7 +342,7 @@ class ControllerPresenceLogin extends Controller
 				$use_fingerprint = $this->config->get('payroll_setting_use_fingerprint');
 
 				$finger_count = $this->model_presence_presence->getFingersCount($customer_id, $finger_index);
-				
+
 				if ($use_fingerprint && !$finger_count) { //Cek apakah sudah rekam sidik jari
 					$json['error'] = $this->language->get('error_finger_not_found');
 
@@ -350,26 +369,26 @@ class ControllerPresenceLogin extends Controller
 				} else {
 					$time_in = '';
 					$time_out = '';
-					// $time_in = '0000-00-00 00:00:00';
-					// $time_out = '0000-00-00 00:00:00';
+					// $time_in = null;
+					// $time_out = null;
 				}
 
 				$log_info = $this->model_presence_presence->getLog($customer_id, $schedule_date);
 
 				if ($log_info) {
-					if ($log_info['time_logout'] != '0000-00-00 00:00:00') { //Cek ternyata sudah logout
+					if ($log_info['time_logout'] != null) { //Cek ternyata sudah logout
 						$json['error'] = $this->language->get('error_logout');
 
 						break;
 					}
 
-					if ($action == 'login' && $log_info['time_login'] != '0000-00-00 00:00:00') { //Cek sudah login
+					if ($action == 'login' && $log_info['time_login'] != null) { //Cek sudah login
 						$json['error'] = $this->language->get('error_login');
 
 						break;
 					}
 
-					if ($action == 'logout' && $log_info['time_login'] == '0000-00-00 00:00:00') { //Cek belum login
+					if ($action == 'logout' && $log_info['time_login'] == null) { //Cek belum login
 						$json['error'] = $this->language->get('error_not_login');
 
 						break;
@@ -395,7 +414,7 @@ class ControllerPresenceLogin extends Controller
 					} else {
 						$login_start = $this->config->get('payroll_setting_login_start');
 						$date_login_start = date('Y-m-d H:i:s', strtotime('+' . $login_start . ' minutes'));
-						
+
 						$login_end = $this->config->get('payroll_setting_login_end');
 						$date_login_end = date('Y-m-d H:i:s', strtotime('-' . $login_end . ' minutes'));
 
@@ -451,9 +470,9 @@ class ControllerPresenceLogin extends Controller
 		$log_info = $this->model_presence_presence->getLog($customer_id, $schedule_date);
 
 		if ($log_info) {
-			if ($action == 'login' && $log_info['time_login'] != '0000-00-00 00:00:00') {
+			if ($action == 'login' && $log_info['time_login'] != null) {
 				$json['success'] = sprintf($this->language->get('text_success_login'), date('j M Y H:i:s', strtotime($log_info['time_login'])));
-			} elseif ($action == 'logout' && $log_info['time_logout'] != '0000-00-00 00:00:00') {
+			} elseif ($action == 'logout' && $log_info['time_logout'] != null) {
 				$json['success'] = sprintf($this->language->get('text_success_logout'), date('j M Y H:i:s', strtotime($log_info['time_logout'])));
 			}
 		}
@@ -475,7 +494,7 @@ class ControllerPresenceLogin extends Controller
 			$this->load->model('presence/presence');
 			$log_info = $this->model_presence_presence->getLog($customer_id, $schedule_date);
 
-			if ($log_info && $log_info['time_login'] == '0000-00-00 00:00:00') {
+			if ($log_info && $log_info['time_login'] == null) {
 				$this->model_presence_presence->deleteScheduleTime($customer_id, $schedule_date);
 			}
 		}

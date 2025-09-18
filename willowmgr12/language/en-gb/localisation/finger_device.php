@@ -14,6 +14,7 @@ $_['column_sn']      	= 'Serial No';
 $_['column_vc']      	= 'Verification Code';
 $_['column_ac']      	= 'Activation Code';
 $_['column_vkey']  		= 'VKey';
+$_['column_new_sdk']  	= 'New SDK';
 $_['column_location']  	= 'Device Placement';
 $_['column_status']  	= 'Status';
 $_['column_action']		= 'Action';
@@ -24,8 +25,12 @@ $_['entry_sn']         = 'Serial No';
 $_['entry_vc']         = 'Verification Code';
 $_['entry_ac']         = 'Activation Code';
 $_['entry_vkey']       = 'VKey';
+$_['entry_regkey']     = 'Regkey';
 $_['entry_location']   = 'Device Placement';
 $_['entry_status']     = 'Status';
+
+// Help
+$_['help_regkey']      = 'For Digital Persona SDK v3.2 and above. Get from HSDM Tool application.';
 
 // Error
 $_['error_required']   = 'Warning: Semua field harus diisi (1 - 50 karakter)!';

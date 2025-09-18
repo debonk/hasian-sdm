@@ -6,8 +6,8 @@
       <div class="pull-right">
         <button type="submit" form="form-finger-device" data-toggle="tooltip" title="<?= $button_save; ?>"
           class="btn btn-primary"><i class="fa fa-save"></i></button>
-        <a href="<?= $cancel; ?>" data-toggle="tooltip" title="<?= $button_cancel; ?>"
-          class="btn btn-default"><i class="fa fa-reply"></i></a>
+        <a href="<?= $cancel; ?>" data-toggle="tooltip" title="<?= $button_cancel; ?>" class="btn btn-default"><i
+            class="fa fa-reply"></i></a>
       </div>
       <h1>
         <?= $heading_title; ?>
@@ -51,8 +51,7 @@
               <?= $entry_sn; ?>
             </label>
             <div class="col-sm-9">
-              <input type="text" name="sn" value="<?= $sn; ?>" placeholder="<?= $entry_sn; ?>"
-                class="form-control" />
+              <input type="text" name="sn" value="<?= $sn; ?>" placeholder="<?= $entry_sn; ?>" class="form-control" />
               <?php if ($error_sn) { ?>
               <div class="text-danger">
                 <?= $error_sn; ?>
@@ -65,17 +64,15 @@
               <?= $entry_vc; ?>
             </label>
             <div class="col-sm-9">
-              <input type="text" name="vc" value="<?= $vc; ?>" placeholder="<?= $entry_vc; ?>"
-                class="form-control" />
+              <input type="text" name="vc" value="<?= $vc; ?>" placeholder="<?= $entry_vc; ?>" class="form-control" />
             </div>
           </div>
-          <div class="form-group required">
+          <div class="form-group">
             <label class="col-sm-3 control-label">
               <?= $entry_ac; ?>
             </label>
             <div class="col-sm-9">
-              <input type="text" name="ac" value="<?= $ac; ?>" placeholder="<?= $entry_ac; ?>"
-                class="form-control" />
+              <input type="text" name="ac" value="<?= $ac; ?>" placeholder="<?= $entry_ac; ?>" class="form-control" />
             </div>
           </div>
           <div class="form-group required">
@@ -84,6 +81,16 @@
             </label>
             <div class="col-sm-9">
               <input type="text" name="vkey" value="<?= $vkey; ?>" placeholder="<?= $entry_vkey; ?>"
+                class="form-control" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label"><span data-toggle="tooltip" title="<?= $help_regkey; ?>">
+                <?= $entry_regkey; ?>
+              </span>
+            </label>
+            <div class="col-sm-9">
+              <input type="text" name="regkey" value="<?= $regkey; ?>" placeholder="<?= $entry_regkey; ?>"
                 class="form-control" />
             </div>
           </div>
@@ -111,14 +118,20 @@
             </div>
           </div>
           <div class="form-group">
-              <label class="col-sm-3 control-label" for="input-status"><?= $entry_status; ?></label>
-              <div class="col-sm-9">
-                <select name="status" id="input-status" class="form-control">
-                  <option value="0" <?= !$status ? 'selected' : ''; ?>><?= $text_disabled; ?></option>
-                  <option value="1" <?= $status ? 'selected' : ''; ?>><?= $text_enabled; ?></option>
-                </select>
-              </div>
+            <label class="col-sm-3 control-label" for="input-status">
+              <?= $entry_status; ?>
+            </label>
+            <div class="col-sm-9">
+              <select name="status" id="input-status" class="form-control">
+                <option value="0" <?=!$status ? 'selected' : '' ; ?>>
+                  <?= $text_disabled; ?>
+                </option>
+                <option value="1" <?=$status ? 'selected' : '' ; ?>>
+                  <?= $text_enabled; ?>
+                </option>
+              </select>
             </div>
+          </div>
         </form>
       </div>
     </div>

@@ -548,7 +548,8 @@ class ControllerCustomerFinger extends Controller
 						'text'			=> $text_index,
 						'username'		=> $fingers[$i . $key]['username'],
 						'date_added'	=> date($this->language->get('datetime_format_jMY'), strtotime($fingers[$i . $key]['date_added'])),
-						'registered'	=> true
+						'registered'	=> true,
+						// 'href'			=> 'hsdmverify:' . base64_encode(utf8_substr(HTTP_SERVER, 7, utf8_strlen(HTTP_SERVER) - 19) . ' ' . $this->session->data['token'] . ' ' . $customer_id . 'x' . $i . $key . 'x' . $this->user->getId() . ' 0'),
 					];
 				} else {
 					$data['fingers'][$i][$key] = [
@@ -556,7 +557,8 @@ class ControllerCustomerFinger extends Controller
 						'text'			=> $text_index,
 						'username'		=> '',
 						'date_added'	=> '',
-						'registered'	=> false
+						'registered'	=> false,
+						'href'			=> 'hsdmtool:' . base64_encode('enroll ' . utf8_substr(HTTP_SERVER, 7, utf8_strlen(HTTP_SERVER) - 19) . ' ' . $this->session->data['token'] . ' ' . $customer_id . 'x' . $i . $key . 'x' . $this->user->getId()),
 					];
 				}
 			}
@@ -566,6 +568,12 @@ class ControllerCustomerFinger extends Controller
 			'1'	=> $data['text_left'],
 			'2'	=> $data['text_right']
 		];
+
+		// $a = ('enroll ' . utf8_substr(HTTP_SERVER, 7, utf8_strlen(HTTP_SERVER) - 19) . ' ' . $this->session->data['token'] . ' ' . $customer_id . 'x22x' . $this->user->getId());
+		// var_dump($a);
+		// $a = 'hsdmtool:' . base64_encode($a);
+		// var_dump($a);
+		// var_dump(md5("VERIFICATIONkEY" . $this->session->data['token']));
 
 		$this->load->model('presence/presence');
 		$customer_add_info = $this->model_presence_presence->getCustomerAddData($customer_id);

@@ -625,7 +625,7 @@ class ControllerPresenceSchedule extends Controller
 			foreach ($schedules as $key => $schedule) {
 				$schedules_data[$key] = array(
 					'schedule_type_id' 	=> $schedule['schedule_type_id'],
-					'schedule_type'		=> $schedule['schedule_type'] . ($schedule['time_in'] != '0000-00-00 00:00:00' ? '-' . date('H:i', strtotime($schedule['time_in'])) : $data['text_off']),
+					'schedule_type'		=> $schedule['schedule_type'] . ($schedule['time_in'] != null ? '-' . date('H:i', strtotime($schedule['time_in'])) : $data['text_off']),
 					'presence_status'	=> $schedule['presence_status'],
 					'note'				=> $schedule['note'],
 					'bg_class'			=> $schedule['bg_class']
@@ -955,7 +955,7 @@ class ControllerPresenceSchedule extends Controller
 					$schedules_data = $this->model_presence_schedule->getFinalSchedules($presence_period_id, $customer['customer_id'], $range_date);
 
 					foreach ($schedules_data as $date => $schedule_data) {
-						if ($schedule_data['time_login'] != '0000-00-00 00:00:00' && $schedule_data['time_logout'] != '0000-00-00 00:00:00') {
+						if ($schedule_data['time_login'] != null && $schedule_data['time_logout'] != null) {
 							$diff = date_diff(date_create($schedule_data['time_login']), date_create($schedule_data['time_logout']));
 							$duration = $diff->format($this->language->get('info_duration'));
 						} else {
@@ -971,9 +971,9 @@ class ControllerPresenceSchedule extends Controller
 							$customer['customer_department'],
 							$customer['location'],
 							\PhpOffice\PhpSpreadsheet\Shared\Date::stringToExcel($date),
-							$schedule_data['schedule_type'] . ($schedule_data['time_in'] != '0000-00-00 00:00:00' ? ' (' . date('H:i', strtotime($schedule_data['time_in'])) . '-' . date('H:i', strtotime($schedule_data['time_out'])) . ')' : $this->language->get('text_off')),
-							($schedule_data['time_login'] != '0000-00-00 00:00:00') ? \PhpOffice\PhpSpreadsheet\Shared\Date::stringToExcel($schedule_data['time_login']) : '-',
-							($schedule_data['time_logout'] != '0000-00-00 00:00:00') ? \PhpOffice\PhpSpreadsheet\Shared\Date::stringToExcel($schedule_data['time_logout']) : '-',
+							$schedule_data['schedule_type'] . ($schedule_data['time_in'] != null ? ' (' . date('H:i', strtotime($schedule_data['time_in'])) . '-' . date('H:i', strtotime($schedule_data['time_out'])) . ')' : $this->language->get('text_off')),
+							($schedule_data['time_login'] != null) ? \PhpOffice\PhpSpreadsheet\Shared\Date::stringToExcel($schedule_data['time_login']) : '-',
+							($schedule_data['time_logout'] != null) ? \PhpOffice\PhpSpreadsheet\Shared\Date::stringToExcel($schedule_data['time_logout']) : '-',
 							$duration,
 							$schedule_data['presence_status']
 						];
@@ -1808,14 +1808,14 @@ class ControllerPresenceSchedule extends Controller
 							$note = '';
 						} elseif (!empty($schedules_data[$key_date])) {
 							$schedule_type_id = $schedules_data[$key_date]['schedule_type_id'];
-							$schedule_type_code = $schedules_data[$key_date]['schedule_type'] . ($schedules_data[$key_date]['time_in'] != '0000-00-00 00:00:00' ? ' (' . date('H:i', strtotime($schedules_data[$key_date]['time_in'])) . '-' . date('H:i', strtotime($schedules_data[$key_date]['time_out'])) . ')' : $data['text_off']);
+							$schedule_type_code = $schedules_data[$key_date]['schedule_type'] . ($schedules_data[$key_date]['time_in'] != null ? ' (' . date('H:i', strtotime($schedules_data[$key_date]['time_in'])) . '-' . date('H:i', strtotime($schedules_data[$key_date]['time_out'])) . ')' : $data['text_off']);
 							$presence_status = $schedules_data[$key_date]['presence_status'];
-							$time_login = ($schedules_data[$key_date]['time_login'] != '0000-00-00 00:00:00') ? date('H:i:s', strtotime($schedules_data[$key_date]['time_login'])) : '...';
-							$time_logout = ($schedules_data[$key_date]['time_logout'] != '0000-00-00 00:00:00') ? date('H:i:s', strtotime($schedules_data[$key_date]['time_logout'])) : '...';
+							$time_login = ($schedules_data[$key_date]['time_login'] != null) ? date('H:i:s', strtotime($schedules_data[$key_date]['time_login'])) : '...';
+							$time_logout = ($schedules_data[$key_date]['time_logout'] != null) ? date('H:i:s', strtotime($schedules_data[$key_date]['time_logout'])) : '...';
 							$bg_class = !empty($schedules_data[$key_date]['bg_class']) ? $schedules_data[$key_date]['bg_class'] : 'info';
 							$note = !empty($schedules_data[$key_date]['note']) ? $schedules_data[$key_date]['note'] : '';
 
-							if ($schedules_data[$key_date]['time_login'] != '0000-00-00 00:00:00' && $schedules_data[$key_date]['time_logout'] != '0000-00-00 00:00:00') {
+							if ($schedules_data[$key_date]['time_login'] != null && $schedules_data[$key_date]['time_logout'] != null) {
 								$diff = date_diff(date_create($schedules_data[$key_date]['time_login']), date_create($schedules_data[$key_date]['time_logout']));
 								$duration = $diff->format($this->language->get('info_duration'));
 							}

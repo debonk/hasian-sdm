@@ -119,7 +119,7 @@ class ControllerAccountAccount extends Controller
 		$schedule_date = date('Y-m-d', strtotime('+' . $login_start . ' minutes'));
 		$log_info = $this->model_presence_presence->getLog($this->customer->getId(), $schedule_date);
 
-		if ($log_info && $log_info['time_login'] != '0000-00-00 00:00:00') {
+		if ($log_info && $log_info['time_login'] != null) {
 			$data['action'] = 'logout';
 		} else {
 			$data['action'] = 'login';
@@ -163,7 +163,7 @@ class ControllerAccountAccount extends Controller
 		$schedule_date = date('Y-m-d', strtotime('+' . $login_start . ' minutes'));
 		$log_info = $this->model_presence_presence->getLog($customer_id, $schedule_date);
 
-		if ($log_info && $log_info['time_login'] != '0000-00-00 00:00:00') {
+		if ($log_info && $log_info['time_login'] != null) {
 			$action = 'logout';
 		} else {
 			$action = 'login';
@@ -172,19 +172,19 @@ class ControllerAccountAccount extends Controller
 		switch ($json) {
 			case false:
 				if ($log_info) {
-					if ($log_info['time_logout'] != '0000-00-00 00:00:00') { //Cek ternyata sudah logout
+					if ($log_info['time_logout'] != null) { //Cek ternyata sudah logout
 						$json['error'] = $this->language->get('error_logout');
 
 						break;
 					}
 
-					if ($action == 'login' && $log_info['time_login'] != '0000-00-00 00:00:00') { //Cek sudah login
+					if ($action == 'login' && $log_info['time_login'] != null) { //Cek sudah login
 						$json['error'] = $this->language->get('error_login');
 
 						break;
 					}
 
-					if ($action == 'logout' && $log_info['time_login'] == '0000-00-00 00:00:00') { //Cek belum login
+					if ($action == 'logout' && $log_info['time_login'] == null) { //Cek belum login
 						$json['error'] = $this->language->get('error_not_login');
 
 						break;
@@ -215,8 +215,8 @@ class ControllerAccountAccount extends Controller
 						$time_out = date('Y-m-d H:i:s', strtotime('+1 day', strtotime($time_out)));
 					}
 				} else {
-					$time_in = '0000-00-00 00:00:00';
-					$time_out = '0000-00-00 00:00:00';
+					$time_in = null;
+					$time_out = null;
 				}
 
 				if ($schedule_check) {
@@ -295,7 +295,7 @@ class ControllerAccountAccount extends Controller
 				$schedule_date = date('Y-m-d', strtotime('+' . $login_start . ' minutes'));
 				$log_info = $this->model_presence_presence->getLog($customer_id, $schedule_date);
 
-				if ($log_info && $log_info['time_login'] != '0000-00-00 00:00:00') {
+				if ($log_info && $log_info['time_login'] != null) {
 					$action = 'logout';
 				} else {
 					$action = 'login';
