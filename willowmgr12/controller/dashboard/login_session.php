@@ -1,6 +1,8 @@
 <?php
-class ControllerDashboardLoginSession extends Controller {
-	public function index() {
+class ControllerDashboardLoginSession extends Controller
+{
+	public function index()
+	{
 		if (!$this->user->hasPermission('access', 'dashboard/login_session')) {
 			return;
 		}
@@ -23,11 +25,12 @@ class ControllerDashboardLoginSession extends Controller {
 				'name' 			=> $location['name']
 			];
 		}
-				
+
 		return $this->load->view('dashboard/login_session', $data);
 	}
 
-	public function loginPage() {
+	public function loginPage()
+	{
 		$this->load->language('dashboard/login_session');
 
 		$json = array();
@@ -49,6 +52,13 @@ class ControllerDashboardLoginSession extends Controller {
 			$session_time = $this->config->get('payroll_setting_login_session') * 3600;
 			header('Set-Cookie: login_session=' . $session_token . '; Max-Age=' . $session_time . '; path=/; Domain=' . $this->request->server['HTTP_HOST'] . '; SameSite=Lax');
 
+			$this->load->model('localisation/finger_device');
+			$finger_devices = $this->model_localisation_finger_device->getFingerDevicesByLocationId($location_id);
+
+			array_map(function ($device) use ($session_token) {
+				$this->model_localisation_finger_device->editToken($device['finger_device_id'], $session_token);
+			}, $finger_devices);
+
 			$this->user->logout();
 
 			unset($this->session->data['token']);
@@ -58,12 +68,11 @@ class ControllerDashboardLoginSession extends Controller {
 			} else {
 				$server = HTTP_CATALOG;
 			}
-	
+
 			$json['redirect'] = $server . 'index.php?route=presence/login&action=login&location_id=' . $location_id;
 		}
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
-
 }

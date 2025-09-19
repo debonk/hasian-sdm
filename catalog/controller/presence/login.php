@@ -186,9 +186,9 @@ class ControllerPresenceLogin extends Controller
 				$log_info = $this->model_presence_presence->getLog($result['customer_id'], $schedule_date);
 
 				if ($log_info) {
-					if ($log_info['time_logout'] != null) {
+					if (!is_null($log_info['time_logout'])) {
 						$log_class = 'logout';
-					} elseif ($log_info['time_login'] != null) {
+					} elseif (!is_null($log_info['time_login'])) {
 						$log_class = 'login';
 					} else {
 						$log_class = 'active';
@@ -240,12 +240,9 @@ class ControllerPresenceLogin extends Controller
 				}
 
 				if (!empty($finger_device['regkey'])) {
-					$token = md5($finger_device['vc'] . token(12));
-					$this->model_localisation_finger_device->editToken($finger_device['finger_device_id'], $token);
-
 					$data['presence_tools'][] = [
 						'title'	=> $finger_device['device_name'] . ' [' . $finger_device['sn'] . '] - v2',
-						'href'	=> 'hsdmtool:' . base64_encode('identify ' . utf8_substr(HTTP_SERVER, 7, utf8_strlen(HTTP_SERVER) - 7) . ' ' . $token . ' ' . $finger_device['regkey'] . ' ' . $location_id)
+						'href'	=> 'hsdmtool:' . base64_encode('identify ' . utf8_substr(HTTP_SERVER, 7, utf8_strlen(HTTP_SERVER) - 7) . ' ' . $finger_device['token'] . ' ' . $finger_device['regkey'] . ' ' . $location_id)
 					];
 				}
 			}
@@ -256,7 +253,9 @@ class ControllerPresenceLogin extends Controller
 		// var_dump($a);
 		// $a = 'hsdmtool:' . base64_encode($a);
 		// var_dump($a);
-
+		// $a = 'aWRlbnRpZnkgd3NkbS5nby1jb3JwLm5ldC8gYTkxOTY5MTU5YTdhZjE1NGM1YWU5ZmJhODcxMzBiNTIgezdDMjU5QTAxLTdDQzItOTU0Ri1BNjg2LTU4Qzg3MzdDRTc3RX0gMA==';
+		// var_dump(base64_decode($a));
+		// die(' ---breakpoint--- ');
 		/* $b = '<?xml version="1.0" encoding="UTF-8"?><Fid><Bytes>Rk1SACAyMAABuAAz/v8AAAH0AiYBFAEUAQAAAFZEQVoAMkteQRoAWVJdgUAAbE9bQSAA2UdbgIgA1nlaQVUAYptVQYAAwj1UgUABLT9RgJcBQ3lPgNsBO4VMQZQBUiRKgN4BEHhKgX8BziJJgP8BBF9FQKcBHn5EgKsBJ39DQL0BlItDgGgAzRdDQHkA6XVDgIABioNCQQEBUJJBQGgBjCVBgLEBoIlBgJ8BG3xAQOUAQlxAgMwBgo9AQXYB2n9AQHkB5zVAgR4AH6c/gHwBZHo/gScB4kc/gHYBEyA+QJcB4ps+gSoB7Eg9gOMB9lo9QIQBDHw9gLMBjCs9QHEBPCI8gOEBtZY7gHQA/YM7QX8BLT06QTcBupQ6gXgBm4k6gHkBoyM6QPUBe5U5QHcBjIU5QWkB2Cs5gGUA0iI4QKQBUH44gJ8BhCc4gPgBupM4QN4BBAI4QG8BLB84QGABVS84QG8ByY84QJwAcWg3QKwBfX03QMUBnpQ3gIQBqyg3QG8A9XU3QIABoSc3QO0BzDw3QKYBr4s2QQQBG2U2gOgBRhs2gGIBgDI2gKIBo4w1gK4BqCw1AAA=</Bytes><Format>1769473</Format><Version>1.0.0</Version></Fid>';
  */
 		$data['column_left'] = false;

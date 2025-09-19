@@ -11,7 +11,7 @@ User Group: ganti form ke list, trus ada kolom untuk centang access, modify, app
 
 MODIFY CONFIG
 
-4.2.0	19/09/2025
+4.2.0.a	19/09/2025	=> trial
 Customer Finger: Apply Digital Persona SDK v3.2
 
 === TABLE ===
@@ -22,6 +22,10 @@ ALTER TABLE oc_customer_finger MODIFY COLUMN legacy tinyint(1) DEFAULT NULL NULL
 ALTER TABLE `oc_presence_log` CHANGE `time_in` `time_in` DATETIME NULL, CHANGE `time_out` `time_out` DATETIME NULL, CHANGE `time_login` `time_login` DATETIME NULL, CHANGE `time_logout` `time_logout` DATETIME NULL; 
 ALTER TABLE oc_presence_log ADD location_id_login int(11) NULL;
 ALTER TABLE oc_presence_log ADD location_id_logout int(11) NULL;
+UPDATE oc_presence_log SET time_in = NULL WHERE time_in = '0000-00-00 00:00:00';
+UPDATE oc_presence_log SET time_out = NULL WHERE time_out = '0000-00-00 00:00:00';
+UPDATE oc_presence_log SET time_login = NULL WHERE time_login = '0000-00-00 00:00:00';
+UPDATE oc_presence_log SET time_logout = NULL WHERE time_logout = '0000-00-00 00:00:00';
 
 4.1.5	07/08/2025
 Report > Payroll Tax: Revisi data laporan. Penambahan kolom PPH Final, PPH terbayar, PPH Net utk bulan Desember

@@ -65,4 +65,16 @@ class ModelLocalisationFingerDevice extends Model
 
 		return $query->row;
 	}
+
+	public function getFingerDevicesByLocationId($location_id)
+	{
+		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "finger_device WHERE location_id = '" . (int)$location_id . "' AND status = 1");
+
+		return $query->rows;
+	}
+	
+	public function editToken($finger_device_id, $token)
+	{
+		$this->db->query("UPDATE " . DB_PREFIX . "finger_device SET token = '" . $token . "' WHERE finger_device_id = '" . (int)$finger_device_id . "'");
+	}
 }

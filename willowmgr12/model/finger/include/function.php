@@ -45,7 +45,7 @@
 	function addFinger($conn, $customer_id, $regTemp, $user_id) {
 		list($customer_id, $finger_index) = explode('x', $customer_id);
 
-		$sql 	= "INSERT INTO oc_customer_finger SET customer_id = '" . (int)$customer_id . "', finger_index = '" . (int)$finger_index . "', finger_data = '" . $regTemp . "', user_id = '" . (int)$user_id . "'";
+		$sql 	= "INSERT INTO oc_customer_finger SET customer_id = '" . (int)$customer_id . "', finger_index = '" . (int)$finger_index . "', finger_data = '" . $regTemp . "', legacy = 1, user_id = '" . (int)$user_id . "'";
 		$result = mysqli_query($conn, $sql);
 	
 		return 1;
@@ -54,7 +54,7 @@
 	function getFinger($conn, $customer_id) {
 		list($customer_id, $finger_index) = explode('x', $customer_id);
 
-		$sql 	= "SELECT * FROM oc_customer_finger WHERE customer_id = '" . (int)$customer_id . "' AND finger_index = '" . (int)$finger_index . "'";
+		$sql 	= "SELECT * FROM oc_customer_finger WHERE customer_id = '" . (int)$customer_id . "' AND finger_index = '" . (int)$finger_index . "' AND legacy = 1";
 		$result	= mysqli_query($conn, $sql);
 		$arr 	= array();
 		$i	= 0;
