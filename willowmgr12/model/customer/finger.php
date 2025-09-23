@@ -3,10 +3,13 @@ class ModelCustomerFinger extends Model
 {
 	private $finger_indexes = ['thumbs', 'index', 'middle', 'ring', 'pinkie'];
 
-	public function manageFinger($customer_id, $data) {
-		if (isset($data['active_finger'])) {
-			$this->db->query("UPDATE " . DB_PREFIX . "customer_add_data SET active_finger = '" . json_encode($data['active_finger']) . "' WHERE customer_id = '" . (int)$customer_id . "'");
+	public function manageFinger($customer_id, $data)
+	{
+		if (!isset($data['working_locations'])) {
+			$data['working_locations'] = [];
 		}
+		
+		$this->db->query("UPDATE " . DB_PREFIX . "customer_add_data SET active_finger = '" . json_encode($data['active_finger']) . "', working_locations = '" . json_encode($data['working_locations']) . "' WHERE customer_id = '" . (int)$customer_id . "'");
 	}
 
 	public function deleteFingerByCustomerId($customer_id, $finger_index)
@@ -26,6 +29,7 @@ class ModelCustomerFinger extends Model
 	public function getFingersByCustomerId($customer_id)
 	{
 		$sql = "SELECT DISTINCT cf.*, u.username FROM " . DB_PREFIX . "customer_finger cf LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = cf.user_id) WHERE cf.customer_id = '" . (int)$customer_id . "' ORDER BY finger_index ASC";
+		// $sql = "SELECT * FROM " . DB_PREFIX . "v_customer_finger WHERE customer_id = '" . (int)$customer_id . "' ORDER BY finger_index ASC";
 
 		$query = $this->db->query($sql);
 

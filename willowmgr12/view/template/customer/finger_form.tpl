@@ -45,7 +45,31 @@
 				<form action="<?= $action; ?>" method="post" enctype="multipart/form-data" id="form-finger"
 					class="form-horizontal">
 					<div class="form-group">
-						<label class="col-sm-3 control-label" for="input-active_1">
+						<label class="col-sm-3 control-label" for="input-working-locations">
+								<?= $entry_working_locations; ?>
+							</label>
+						<div class="col-sm-8">
+							<div class="well well-sm" style="height: 150px; overflow: auto;">
+								<?php foreach ($locations as $location) { ?>
+								<div class="checkbox">
+									<label>
+										<?php if (in_array($location['location_id'], $working_locations)) { ?>
+										<input type="checkbox" name="working_locations[]"
+											value="<?= $location['location_id']; ?>" checked="checked" />
+										<?= $location['name']; ?>
+										<?php } else { ?>
+										<input type="checkbox" name="working_locations[]"
+											value="<?= $location['location_id']; ?>" />
+										<?= $location['name']; ?>
+										<?php } ?>
+									</label>
+								</div>
+								<?php } ?>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label" for="input-active-1">
 							<?= $entry_active_1; ?>
 						</label>
 						<div class="col-sm-8">
@@ -63,7 +87,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-3 control-label" for="input-active_2">
+						<label class="col-sm-3 control-label" for="input-active-2">
 							<?= $entry_active_2; ?>
 						</label>
 						<div class="col-sm-8">
@@ -92,6 +116,9 @@
 									<th>
 										<?= $column_finger_index; ?>
 									</th>
+									<th class="text-center text-primary">
+										<?= $column_new_fmd; ?>
+									</th>
 									<th>
 										<?= $column_date_added; ?>
 									</th>
@@ -109,6 +136,7 @@
 									<td>
 										<?= $fingers[0]['text']; ?>
 									</td>
+									<td></td>
 									<td>
 										<?= $fingers[0]['date_added']; ?>
 									</td>
@@ -140,6 +168,9 @@
 									<td>
 										<?= $finger['text']; ?>
 									</td>
+									<td class="text-center text-primary">
+										<?= $finger['new_fmd'] ? '<i class="fa fa-check"></i>' : ''; ?>
+									</td>
 									<td id="date_added<?= $finger['index']; ?>">
 										<?= $finger['date_added']; ?>
 									</td>
@@ -148,16 +179,16 @@
 									</td>
 									<td class="text-right">
 										<?php if (!$finger['registered']) { ?>
-										<a type="button" href="<?= $finger['href']; ?>"
-											data-loading-text="<?= $text_loading; ?>" data-toggle="tooltip"
-											title="<?= $button_register; ?>" class="btn btn-primary">
-											<i class="fa fa-barcode"></i>
-										</a>
-										<!-- <button type="button" value="<?= $finger['index']; ?>"
+										<button type="button" value="<?= $finger['index']; ?>"
 											id="button-register<?= $finger['index']; ?>"
 											data-loading-text="<?= $text_loading; ?>" data-toggle="tooltip"
 											title="<?= $button_register; ?>" class="btn btn-primary"><i
-												class="fa fa-barcode"></i></button> -->
+												class="fa fa-barcode"></i></button>
+										<a type="button" href="<?= $finger['href']; ?>"
+											data-loading-text="<?= $text_loading; ?>" data-toggle="tooltip"
+											title="<?= $button_register_new; ?>" class="btn btn-success">
+											<i class="fa fa-barcode"></i>
+										</a>
 										<?php } else { ?>
 										<button type="button" value="<?= $finger['index']; ?>"
 											id="button-verification<?= $finger['index']; ?>"

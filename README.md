@@ -11,6 +11,15 @@ User Group: ganti form ke list, trus ada kolom untuk centang access, modify, app
 
 MODIFY CONFIG
 
+4.2.1	23/09/2025
+Customer > Finger: Menambah field working locations. Customer hanya bisa absensi di lokasi yang ditentukan.
+Schedule > Data Log: Menambah info lokasi absensi
+Bug fixed: Free Transfer: Mengubah tanda ',' di deskripsi dan nota.
+Deduction: Tambah nama toko dan deskripsi di rincian gaji.
+
+=== TABLE ===
+ALTER TABLE oc_customer_add_data ADD working_locations TEXT NULL;
+
 4.2.0.a	19/09/2025	=> trial
 Customer Finger: Apply Digital Persona SDK v3.2
 

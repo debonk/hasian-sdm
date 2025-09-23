@@ -298,7 +298,7 @@ class ControllerApiFinger extends Controller
 
 		$input = file_get_contents('php://input');
 		// $json = json_decode($input, true);
-		$input2 = '{"SN":"{7C259A01-7CC2-954F-A686-58C8737CE77E}","Idx":"10x24x1","Fmd":"<?xml version=\"1.0\" encoding=\"UTF-8\"?><Fid><Bytes>Rk1SACAyMAABuAAz\/v8AAAH0AiYBFAEUAQAAAFZEgQcATExfQMUAbVJfQTEA0j9ZQNEA80hZgMIBO15WgPIBQUNUgJcBPAVSgO0Ag09SQYAA3JZNgE4BQT9NgI4BAWBLQP8Acp5JgMwAPKdJgI0BUoNJQWcBqIdJgV0Bq4FJgU0Bsn5IgNIBmz9GgScB2IFGgTEB7R5GQEEA\/y1FgLEBG19DgHEBqJVDQDAAsxJCQX0A0ZJCgLsBIlxBgTEB2oFBgD0BEzZAQEsBOS5AQXgBm4FAQG0BIyE\/gJMBx54\/gCsA8Bc\/QJcBdZA\/gFYBt4E\/QUEB2oA\/gK4BuJ0+gRoB0Xs+QUgBznk9gMcANaw8gI4BJ3g8QYcA5ZQ8gXgBeoI8QF4Bkn48QWEBlyg8QXUBzoE8gYQBL4k7gDUA7Y87gD0A9Yg7QEsBeIE7QLYB5UQ7gNEB2kQ6gVUAYD86QLEB4EQ6QYUAz5k5gEkBUC05QXABLTY5QR4BmYY5gE4Bsik5gUYA+D04gWwB1SU4QWYAaJg4QGcBKiA4gRgB7Xw4gX8BRTM3QDgBTTM3QD0BiCU3gEkBDiI3AAA=<\/Bytes><Format>1769473<\/Format><Version>1.0.0<\/Version><\/Fid>"}';
+		$input2 = '{"SN":"{7C259A01-7CC2-954F-A686-58C8737CE77E}","Idx":"10x23x1","Fmd":"<?xml version=\"1.0\" encoding=\"UTF-8\"?><Fid><Bytes>Rk1SACAyMAABuAAz\/v8AAAH0AiYBFAEUAQAAAFZEgMMAiVZcgDAAiRJcgEYBL4NagOgAZU1XgGgBdY1XQFgBeIlXQNYAMlBRgD8Al3VQQPoAH6VPgKwAI6xPQJMBOZBPQUUBKjVNgOsAbE9NQEcBh4dMgEsAWwpLQL4ATqdKQV0AyDxJQWYAoT5IgOUBQzhIQU0BjyRIQJ8Bx7JIQEIBmS5HgRABryJHQVIBL4FGQFgBB4VGgEEA4RtFQM0AK1JEQLUAxVVEgTkBUHxEQOkA7jpDgUUBcYdDQMwB2E9CQZIAfCVCQUUAi5dCgTcAiJRBgXAAoTxBgWkA3jNBQNYA4ENBQKIBEzFBgUEA85Q\/QF0BEyg\/gRsBJzg\/QOkA4JM\/QJwBYpY\/QScBoH0\/QasAeYc9QDgA6CQ9gLYBHpE9gVgBHjg9QREBijM9gTYBqyU9gWQAVDc9QSABGDo8gQEBNpI8QUUBZn88gD8BjyU8QFEBuDI8QB8A2YU8QRMBcX88QTEBeyA8QGUB0Ec8QYcATjE7QUAAHEE7QRgAJk07gXUAPIw7QHcBE4M7gIQAYgA6gLEBXTg6AAA=<\/Bytes><Format>1769473<\/Format><Version>1.0.0<\/Version><\/Fid>"}';
 		$input_data = json_decode($input, true);
 
 		switch ($json) {
@@ -315,7 +315,7 @@ class ControllerApiFinger extends Controller
 				}
 
 				list($customer_id, $finger_index, $user_id) = explode('x', $input_data['Idx']);
-				$vkey = str_replace(['-', '{', '}'], '', $input_data['SN']);
+				// $vkey = str_replace(['-', '{', '}'], '', $input_data['SN']);
 				$fmd = htmlspecialchars($input_data['Fmd']);
 
 				// $this->load->model('localisation/finger_device');
@@ -384,8 +384,9 @@ class ControllerApiFinger extends Controller
 		$json = '';
 
 		$input = file_get_contents('php://input');
-		// $input = '{"LogAction":"login","CustomerId":2,"FingerIndex":21,"LocationId":0}';
+		// $input = '{"LogAction":"login","CustomerId":10,"LocationId":3}';
 		$input_data = json_decode($input, true);
+		// $json = $input_data;
 
 		switch ($json) {
 			case false:
@@ -413,14 +414,11 @@ class ControllerApiFinger extends Controller
 
 					break;
 				}
-				
+
 				$name = $this->config->get('payroll_setting_presence_card') != 'lastname' ? $customer_info['firstname'] : $customer_info['lastname'];
 
-				# Input block untuk validasi karyawan hanya boleh input sidik jari di device finger yang sesuai dengan lokasi kerjanya
-				$customer_info['permitted_locations'] = []; //Untuk testing, anggap all location.
-				// $customer_info['permitted_locations'] = json_decode($customer_info['permitted_locations'], 1);
-
-				if ($customer_info['permitted_locations'] && !in_array($location_id, $customer_info['permitted_locations'])) {
+				# validasi karyawan hanya boleh input sidik jari di device finger yang sesuai dengan lokasi kerjanya
+				if (!is_null($customer_info['working_locations']) && !in_array($location_id, json_decode($customer_info['working_locations'], 1))) {
 					$json = sprintf($this->language->get('error_location_mismatch'), $name);
 
 					break;

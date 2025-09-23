@@ -425,13 +425,16 @@ class ControllerCustomerFinger extends Controller
 			'text_success_register',
 			'entry_active_1',
 			'entry_active_2',
+			'entry_working_locations',
 			'column_left_hand',
 			'column_right_hand',
 			'column_finger_index',
 			'column_date_added',
+			'column_new_fmd',
 			'column_username',
 			'column_action',
 			'button_register',
+			'button_register_new',
 			'button_save',
 			'button_delete',
 			'button_back',
@@ -534,6 +537,7 @@ class ControllerCustomerFinger extends Controller
 				'text'			=> '&nbsp;&nbsp;&nbsp;&nbsp; - ' . $data['text_index_old'],
 				'username'		=> $fingers[0]['username'],
 				'date_added'	=> date($this->language->get('datetime_format_jMY'), strtotime($fingers[0]['date_added'])),
+				'new_fmd'		=> false,
 				'register'		=> 0
 			];
 		}
@@ -549,6 +553,7 @@ class ControllerCustomerFinger extends Controller
 						'username'		=> $fingers[$i . $key]['username'],
 						'date_added'	=> date($this->language->get('datetime_format_jMY'), strtotime($fingers[$i . $key]['date_added'])),
 						'registered'	=> true,
+						'new_fmd'		=> $fingers[$i . $key]['legacy'] ? false : true,
 						// 'href'			=> 'hsdmverify:' . base64_encode(utf8_substr(HTTP_SERVER, 7, utf8_strlen(HTTP_SERVER) - 19) . ' ' . $this->session->data['token'] . ' ' . $customer_id . 'x' . $i . $key . 'x' . $this->user->getId() . ' 0'),
 					];
 				} else {
@@ -558,6 +563,7 @@ class ControllerCustomerFinger extends Controller
 						'username'		=> '',
 						'date_added'	=> '',
 						'registered'	=> false,
+						'new_fmd'		=> false,
 						'href'			=> 'hsdmtool:' . base64_encode('enroll ' . utf8_substr(HTTP_SERVER, 7, utf8_strlen(HTTP_SERVER) - 19) . ' ' . $this->session->data['token'] . ' ' . $customer_id . 'x' . $i . $key . 'x' . $this->user->getId()),
 					];
 				}
@@ -577,6 +583,21 @@ class ControllerCustomerFinger extends Controller
 
 		$this->load->model('presence/presence');
 		$customer_add_info = $this->model_presence_presence->getCustomerAddData($customer_id);
+
+		$data['working_locations'] = [];
+
+		if (isset($customer_add_info['working_locations'])) {
+			if (!empty($customer_add_info['working_locations'])) {
+				$data['working_locations'] = json_decode($customer_add_info['working_locations'], true);
+			} else {
+				$data['working_locations'] = [];
+			}
+		} else {
+			$this->load->model('common/payroll');
+			$customer_info = $this->model_common_payroll->getCustomer($customer_id);
+
+			$data['working_locations'] = [$customer_info['location_id']];
+		}
 
 		if (!empty($customer_add_info['active_finger'])) {
 			$data['active_fingers'] = json_decode($customer_add_info['active_finger'], true);
@@ -613,6 +634,9 @@ class ControllerCustomerFinger extends Controller
 				];
 			}
 		}
+
+		$this->load->model('localisation/location');
+		$data['locations'] = $this->model_localisation_location->getLocations();
 
 		$data['customer_id'] = $customer_id;
 
@@ -762,18 +786,22 @@ class ControllerCustomerFinger extends Controller
 
 	protected function validateForm()
 	{
-		$this->load->model('presence/presence');
-		$customer_add_info = $this->model_presence_presence->getCustomerAddData($this->request->get['customer_id']);
+		if (!$this->user->hasPermission('modify', 'customer/finger')) {
+			$this->error['warning'] = $this->language->get('error_permission');
+		}
 
+		$this->load->model('customer/customer');
+		$customer_info = $this->model_customer_customer->getCustomer($this->request->get['customer_id']);
+		
 		# Active_finger: Save pertama diijinkan, tp edit hanya oleh bypass
-		if (!empty($customer_add_info['active_finger'])) {
+		if (!empty($customer_add_info['active_finger']) && json_decode($customer_info['active_finger'], true) != $this->request->post['active_finger']) {
 			if (!$this->user->hasPermission('bypass', 'customer/finger')) {
-				$this->error['warning'] = $this->language->get('error_permission');
+				$this->error['warning'] = $this->language->get('error_permission_1');
 			}
-		} else {
-			if (!$this->user->hasPermission('modify', 'customer/finger')) {
-				$this->error['warning'] = $this->language->get('error_permission');
-			}
+		}
+
+		if (!in_array($customer_info['location_id'], $this->request->post['working_locations'])) {
+				$this->error['warning'] = $this->language->get('error_working_location');
 		}
 
 		return !$this->error;

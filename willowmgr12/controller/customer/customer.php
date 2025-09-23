@@ -604,7 +604,7 @@ class ControllerCustomerCustomer extends Controller
 			'npwp'						=> null,
 			'npwp_address'				=> null,
 			'acc_no'					=> null,
-			'health_insurance'			=> true,
+			'health_insurance'			=> false,
 			'life_insurance'			=> true,
 			'employment_insurance'		=> false,
 			'pension_insurance'			=> false,

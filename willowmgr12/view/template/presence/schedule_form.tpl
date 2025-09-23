@@ -240,10 +240,10 @@
 												<?= $calendar_data['schedule_type_code']; ?>
 											</td>
 											<td class="text-center">
-												<?= $calendar_data['time_login']; ?>
+												<?= $calendar_data['time_login'] . ($calendar_data['location_id_login']); ?>
 											</td>
 											<td class="text-center">
-												<?= $calendar_data['time_logout']; ?>
+												<?= $calendar_data['time_logout'] . ($calendar_data['location_id_logout']); ?>
 											</td>
 											<td class="text-center">
 												<?= $calendar_data['duration']; ?>

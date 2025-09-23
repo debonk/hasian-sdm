@@ -31,10 +31,12 @@ $_['column_date_added']				= 'Tanggal Register';
 $_['column_left_hand']				= 'Tangan Kiri';
 $_['column_right_hand']				= 'Tangan Kanan';
 $_['column_finger_index']			= 'Sidik Jari';
+$_['column_new_fmd']     			= 'New V2 Template';
 
 // Entry
 $_['entry_active_1']			= 'Sidik Jari Aktif 1';
 $_['entry_active_2']			= 'Sidik Jari Aktif 2';
+$_['entry_working_locations']	= 'Lingkup Lokasi Kerja';
 $_['entry_name']      			= 'Nama Karyawan';
 $_['entry_customer_group']      = 'Jabatan';
 $_['entry_customer_department']	= 'Divisi';
@@ -46,8 +48,10 @@ $_['error_customer_department']	 = 'Warning: You do not have permission to modif
 $_['error_template_exist']       = 'Warning: Data sidik jari sudah ada sebelumnya!';
 $_['error_not_found']       	 = 'Warning: Data sidik jari tidak ditemukan!';
 $_['error_register']       	 	 = 'Warning: Proses registrasi gagal!';
+$_['error_working_location']     = 'Warning: Lokasi kerja karyawan harus termasuk dalam lingkup lokasi kerja yang dipilih!';
 
 // Button
 $_['button_manage']      	 	 = 'Manage';
 $_['button_register']      	 	 = 'Register';
+$_['button_register_new']      	 = 'V2 Register';
 $_['button_verification']      	 = 'Test Verifikasi';

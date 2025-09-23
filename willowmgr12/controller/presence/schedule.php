@@ -134,7 +134,7 @@ class ControllerPresenceSchedule extends Controller
 		$this->load->model('common/payroll');
 		$this->load->model('presence/schedule');
 		$this->load->model('presence/presence');
-		
+
 		if (isset($this->request->get['presence_period_id']) && $this->validateRecap()) {
 			if (empty($this->request->post['selected'])) {
 				$filter = [];
@@ -1756,6 +1756,11 @@ class ControllerPresenceSchedule extends Controller
 		} else {
 			$data['inactive'] = false;
 
+			$this->load->model('localisation/location');
+			$locations = $this->model_localisation_location->getLocations();
+
+			$locations = array_combine(array_column($locations, 'location_id'), array_column($locations, 'name'));
+
 			$this->load->model('presence/absence');
 			$this->load->model('presence/exchange');
 			$this->load->model('overtime/overtime');
@@ -1812,6 +1817,8 @@ class ControllerPresenceSchedule extends Controller
 							$presence_status = $schedules_data[$key_date]['presence_status'];
 							$time_login = ($schedules_data[$key_date]['time_login'] != null) ? date('H:i:s', strtotime($schedules_data[$key_date]['time_login'])) : '...';
 							$time_logout = ($schedules_data[$key_date]['time_logout'] != null) ? date('H:i:s', strtotime($schedules_data[$key_date]['time_logout'])) : '...';
+							$location_id_login = !empty($schedules_data[$key_date]['location_id_login']) ? ' @' . $locations[$schedules_data[$key_date]['location_id_login']] : '';
+							$location_id_logout = !empty($schedules_data[$key_date]['location_id_logout']) ? ' @' . $locations[$schedules_data[$key_date]['location_id_logout']] : '';
 							$bg_class = !empty($schedules_data[$key_date]['bg_class']) ? $schedules_data[$key_date]['bg_class'] : 'info';
 							$note = !empty($schedules_data[$key_date]['note']) ? $schedules_data[$key_date]['note'] : '';
 
@@ -1832,17 +1839,19 @@ class ControllerPresenceSchedule extends Controller
 						}
 
 						$data['calendar'][$week . $day] = array(
-							'date'				=> $key_date,
-							'text'				=> date('j M', strtotime($key_date)),
-							'schedule_type_id' 	=> $schedule_type_id,
-							'schedule_type_code' => $schedule_type_code,
-							'presence_status'	=> $presence_status,
-							'time_login'		=> $time_login,
-							'time_logout'		=> $time_logout,
-							'duration'			=> $duration,
-							'bg_class'			=> $bg_class,
-							'note'				=> $note,
-							'locked'			=> $locked
+							'date'					=> $key_date,
+							'text'					=> date('j M', strtotime($key_date)),
+							'schedule_type_id' 		=> $schedule_type_id,
+							'schedule_type_code' 	=> $schedule_type_code,
+							'presence_status'		=> $presence_status,
+							'time_login'			=> $time_login,
+							'time_logout'			=> $time_logout,
+							'location_id_login'		=> $location_id_login,
+							'location_id_logout'	=> $location_id_logout,
+							'duration'				=> $duration,
+							'bg_class'				=> $bg_class,
+							'note'					=> $note,
+							'locked'				=> $locked
 						);
 					}
 
@@ -1949,7 +1958,7 @@ class ControllerPresenceSchedule extends Controller
 		}
 		// var_dump($this->error);
 		// die(' ---breakpoint--- ');
-		
+
 		# Validasi jika periode belum berakhir
 		// $period_info = $this->model_common_payroll->getPeriod($this->request->get['presence_period_id']);
 		// if (strtotime('today') < strtotime($period_info['date_end'])) {

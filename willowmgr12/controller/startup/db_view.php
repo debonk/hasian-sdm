@@ -80,7 +80,8 @@ class ControllerStartupDbView extends Controller
 				break;
 
 			case 'v_customer_finger':
-				$view_sql = "SELECT cf.*, c.firstname, c.lastname, c.location_id, c.date_start, c.date_end, c.status, cad.active_finger FROM " . DB_PREFIX . "customer_finger cf LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = cf.customer_id) LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON (c.customer_id = cad.customer_id)";
+				// $view_sql = "SELECT cf.*, c.firstname, c.lastname, c.location_id, c.date_start, c.date_end, c.status, cad.active_finger FROM " . DB_PREFIX . "customer_finger cf LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = cf.customer_id) LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON (c.customer_id = cad.customer_id)";
+				$view_sql = "SELECT cf.*, c.firstname, c.lastname, c.location_id, c.date_start, c.date_end, c.status, cad.active_finger, cad.working_locations, u.username FROM " . DB_PREFIX . "customer_finger cf LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = cf.customer_id) LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON (c.customer_id = cad.customer_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = cf.user_id)";
 
 				break;
 

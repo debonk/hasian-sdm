@@ -189,59 +189,59 @@
                 <tr>
                   <td style="width: 1px;" class="text-center"><input type="checkbox"
                       onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
-                      <td>
-                        <a href="<?= $sort_date; ?>" <?=($sort=='date' ) ? 'class="' . strtolower($order) . '"' : '' ; ?> >
-                          <?= $column_date; ?>
-                        </a>
-                      </td>
-                      <td>
-                        <a href="<?= $sort_name; ?>" <?=($sort=='name' ) ? 'class="' . strtolower($order) . '"' : '' ; ?> >
-                          <?= $column_name; ?>
-                        </a>
-                      </td>
-                      <td>
-                        <a href="<?= $sort_customer_group; ?>" <?=($sort=='customer_group' ) ? 'class="' .
-                          strtolower($order) . '"' : '' ; ?> >
-                          <?= $column_customer_group; ?>
-                        </a>
-                      </td>
-                      <td>
-                        <a href="<?= $sort_customer_department; ?>" <?=($sort=='customer_department' ) ? 'class="' .
-                          strtolower($order) . '"' : '' ; ?> >
-                          <?= $column_customer_department; ?>
-                        </a>
-                      </td>
-                      <td>
-                        <a href="<?= $sort_location; ?>" <?=($sort=='location' ) ? 'class="' . strtolower($order) . '"' : ''
-                          ; ?> >
-                          <?= $column_location; ?>
-                        </a>
-                      </td>
-                      <td>
-                        <?= $column_description; ?>
-                      </td>
-                      <td>
-                        <a href="<?= $sort_principle; ?>" <?=($sort=='principle' ) ? 'class="' . strtolower($order) . '"' : ''
-                          ; ?> >
-                          <?= $column_principle; ?>
-                        </a>
-                      </td>
-                      <td>
-                        <a href="<?= $sort_business_name; ?>" <?=($sort=='business_name' ) ? 'class="' . strtolower($order) . '"' : ''
-                          ; ?> >
-                          <?= $column_business_name; ?>
-                        </a>
-                      </td>
-                              <td class="text-right">
-                        <?= $column_amount; ?>
-                      </td>
-                      <td class="text-center">
-                        <a href="<?= $sort_period; ?>" <?=($sort=='period' ) ? 'class="' . strtolower($order) . '"' : ''
-                          ; ?> >
-                          <?= $column_period; ?>
-                        </a>
-                      </td>
-                      <td>
+                  <td>
+                    <a href="<?= $sort_date; ?>" <?=($sort=='date' ) ? 'class="' . strtolower($order) . '"' : '' ; ?> >
+                      <?= $column_date; ?>
+                    </a>
+                  </td>
+                  <td>
+                    <a href="<?= $sort_name; ?>" <?=($sort=='name' ) ? 'class="' . strtolower($order) . '"' : '' ; ?> >
+                      <?= $column_name; ?>
+                    </a>
+                  </td>
+                  <td>
+                    <a href="<?= $sort_customer_group; ?>" <?=($sort=='customer_group' ) ? 'class="' .
+                      strtolower($order) . '"' : '' ; ?> >
+                      <?= $column_customer_group; ?>
+                    </a>
+                  </td>
+                  <td>
+                    <a href="<?= $sort_customer_department; ?>" <?=($sort=='customer_department' ) ? 'class="' .
+                      strtolower($order) . '"' : '' ; ?> >
+                      <?= $column_customer_department; ?>
+                    </a>
+                  </td>
+                  <td>
+                    <a href="<?= $sort_location; ?>" <?=($sort=='location' ) ? 'class="' . strtolower($order) . '"' : ''
+                      ; ?> >
+                      <?= $column_location; ?>
+                    </a>
+                  </td>
+                  <td>
+                    <?= $column_description; ?>
+                  </td>
+                  <td>
+                    <a href="<?= $sort_principle; ?>" <?=($sort=='principle' ) ? 'class="' . strtolower($order) . '"'
+                      : '' ; ?> >
+                      <?= $column_principle; ?>
+                    </a>
+                  </td>
+                  <td>
+                    <a href="<?= $sort_business_name; ?>" <?=($sort=='business_name' ) ? 'class="' . strtolower($order)
+                      . '"' : '' ; ?> >
+                      <?= $column_business_name; ?>
+                    </a>
+                  </td>
+                  <td class="text-right">
+                    <?= $column_amount; ?>
+                  </td>
+                  <td class="text-center">
+                    <a href="<?= $sort_period; ?>" <?=($sort=='period' ) ? 'class="' . strtolower($order) . '"' : '' ;
+                      ?> >
+                      <?= $column_period; ?>
+                    </a>
+                  </td>
+                  <td>
                     <?= $column_username; ?>
                   </td>
                   <td class="text-right">
@@ -298,12 +298,11 @@
                     <?= $cutoff['username']; ?>
                   </td>
                   <td class="text-right">
+                    <a href="<?= $cutoff['edit']; ?>" data-toggle="tooltip" title="<?= $button_edit; ?>"
+                      class="btn btn-primary"><i class="fa fa-pencil"></i></a>
                     <?php if ($cutoff['period']) { ?>
                     <a href="<?= $cutoff['view']; ?>" data-toggle="tooltip" title="<?= $button_view; ?>"
                       class="btn btn-info" target="_blank" rel="noopener noreferrer"><i class="fa fa-eye"></i></a>
-                    <?php } else { ?>
-                    <a href="<?= $cutoff['edit']; ?>" data-toggle="tooltip" title="<?= $button_edit; ?>"
-                      class="btn btn-primary"><i class="fa fa-pencil"></i></a>
                     <?php } ?>
                   </td>
                 </tr>
@@ -348,7 +347,7 @@
     url = 'index.php?route=cutoff/cutoff&token=<?= $token; ?>';
 
     let filter = [];
-    
+
     let filter_items = JSON.parse('<?= $filter_items; ?>');
 
     for (let i = 0; i < filter_items.length; i++) {

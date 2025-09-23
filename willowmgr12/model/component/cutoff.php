@@ -12,11 +12,16 @@ class ModelComponentCutoff extends Model {
 			$quote_data = array();
 			
 			foreach ($query->rows as $result) {
-			
+				$description = $result['description'];
+
+				if ($result['principle'] || $result['business_name']) {
+					$description .= '[' . implode(': ', array_filter([$result['principle'], $result['business_name']])) . ']';
+				}
+
 				$quote_data[] = array(
 					'type'		=> 0,
 					'item'		=> $result['cutoff_id'],
-					'title'		=> sprintf($this->language->get('text_description'), $result['description']),
+					'title'		=> sprintf($this->language->get('text_description'), $description),
 					'value'		=> -ceil($result['amount'])
 				);
 			}

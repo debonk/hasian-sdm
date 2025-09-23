@@ -373,15 +373,19 @@ class ModelPresenceSchedule extends Model
 			// if (isset($schedules_data[$log_info['date']]) && $schedules_data[$log_info['date']]['time_in'] != null) {
 			if (isset($log_info['date']) && $log_info['time_in'] != null) {
 				$logs_data = array(
-					'time_in'		=> $log_info['time_in'],
-					'time_out'		=> $log_info['time_out'],
-					'time_login'	=> $log_info['time_login'],
-					'time_logout'	=> $log_info['time_logout']
+					'time_in'				=> $log_info['time_in'],
+					'time_out'				=> $log_info['time_out'],
+					'time_login'			=> $log_info['time_login'],
+					'time_logout'			=> $log_info['time_logout'],
+					'location_id_login'		=> $log_info['location_id_login'],
+					'location_id_logout'	=> $log_info['location_id_logout']
 				);
 			} else {
 				$logs_data = array(
-					'time_login'	=> $log_info['time_login'],
-					'time_logout'	=> $log_info['time_logout']
+					'time_login'			=> $log_info['time_login'],
+					'time_logout'			=> $log_info['time_logout'],
+					'location_id_login'		=> $log_info['location_id_login'],
+					'location_id_logout'	=> $log_info['location_id_logout']
 				);
 			}
 
@@ -451,7 +455,7 @@ class ModelPresenceSchedule extends Model
 			} elseif (strtotime($date) > strtotime('today')) {
 				$presence_status_id = 0;
 			}
-			
+
 			$schedules_data[$date] = array(
 				'applied'				=> $schedule_data['applied'],
 				'schedule_type_id'		=> $schedule_data['schedule_type_id'],
@@ -460,6 +464,8 @@ class ModelPresenceSchedule extends Model
 				'time_out'				=> $schedule_data['time_out'],
 				'time_login'			=> $time_login,
 				'time_logout'			=> $time_logout,
+				'location_id_login'		=> isset($schedule_data['location_id_login']) ? $schedule_data['location_id_login'] : null,
+				'location_id_logout'	=> isset($schedule_data['location_id_logout']) ? $schedule_data['location_id_logout'] : null,
 				'presence_status_id'	=> $presence_status_id,
 				'presence_status'		=> isset($presence_status_data[$presence_status_id]) ? $presence_status_data[$presence_status_id]['name'] : '-',
 				'presence_code'			=> isset($presence_status_data[$presence_status_id]) ? $presence_status_data[$presence_status_id]['code'] : '',
@@ -468,8 +474,6 @@ class ModelPresenceSchedule extends Model
 				'bg_class'				=> $schedule_data['bg_class']
 			);
 		}
-
-		// var_dump($schedules_data);
 
 		//Apply Absences
 		$absences_info = $this->model_presence_absence->getAbsencesByCustomerDate($customer_id, $range_date);
@@ -544,7 +548,7 @@ class ModelPresenceSchedule extends Model
 
 			if (strtotime($customer_info['date_start']) > strtotime($period_info['date_start']) || (isset($customer_info['date_end']) && strtotime($customer_info['date_end']) <= strtotime($period_info['date_end']))) {
 				$default_hke = isset($this->request->post['hke']) ? $this->request->post['hke'] : $this->config->get('payroll_setting_default_hke');
-                $presence_summary_data['primary']['ns'] = 0;
+				$presence_summary_data['primary']['ns'] = 0;
 
 				$presence_summary_data['primary']['ns'] = max($default_hke - array_sum($presence_summary_data['primary']), 0);
 			}
