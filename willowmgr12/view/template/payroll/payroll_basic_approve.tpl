@@ -12,6 +12,9 @@
 				<button type="button" data-toggle="tooltip" title="<?= $button_approve; ?>" class="btn btn-success"
 					onclick="confirm('<?= $text_confirm; ?>') ? $('#form-payroll-basic').submit() : false;"><i
 						class="fa fa-check"></i></button>
+				<button type="button" data-toggle="tooltip" title="<?= $button_reject; ?>" class="btn btn-danger"
+					onclick="confirm('<?= $text_confirm; ?>') ? $('#form-payroll-basic').attr('action', '<?= $reject; ?>').submit() : false;"><i
+						class="fa fa-times"></i></button>
 				<a href="<?= $back; ?>" data-toggle="tooltip" title="<?= $button_back; ?>" class="btn btn-default"><i
 						class="fa fa-reply"></i></a>
 			</div>
@@ -249,6 +252,12 @@
 										</a>
 									</td>
 									<td>
+										<a href="<?= $sort_username; ?>" <?=($sort=='pb.username' ) ? 'class="' .
+											strtolower($order) . '"' : '' ; ?> >
+											<?= $column_username; ?>
+										</a>
+									</td>
+									<td>
 										<?= $column_status; ?>
 									</td>
 								</tr>
@@ -305,6 +314,9 @@
 										<?= $customer['payroll_basics'][1]['date_added']; ?>
 									</td>
 									<td>
+										<?= $customer['payroll_basics'][1]['username']; ?>
+									</td>
+									<td>
 										<?= $customer['payroll_basics'][1]['status']; ?>
 									</td>
 								</tr>
@@ -329,6 +341,9 @@
 									</td>
 									<td>
 										<?= $customer['payroll_basics'][0]['date_added']; ?>
+									</td>
+									<td>
+										<?= $customer['payroll_basics'][0]['username']; ?>
 									</td>
 									<td>
 										<?= $customer['payroll_basics'][0]['status']; ?>

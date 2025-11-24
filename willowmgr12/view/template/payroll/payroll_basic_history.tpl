@@ -9,8 +9,9 @@
         <td><?= $column_uang_makan; ?></td>
         <td><?= $column_tunj_pph; ?></td>
         <td><?= $column_gaji_dasar; ?></td>
-        <td class="text-left"><?= $column_status; ?></td>
         <td class="text-left"><?= $column_username; ?></td>
+        <td class="text-left"><?= $column_status; ?></td>
+        <td class="text-left"><?= $column_date_approved; ?></td>
       </tr>
     </thead>
     <tbody>
@@ -24,8 +25,9 @@
         <td><?= $history['uang_makan']; ?></td>
         <td><?= $history['tunj_pph']; ?></td>
         <td class="text-warning"><?= $history['gaji_dasar']; ?></td>
-        <td class="text-left"><?= $history['status']; ?></td>
         <td class="text-left"><?= $history['username']; ?></td>
+        <td class="text-left"><?= $history['status']; ?></td>
+        <td class="text-left"><?= $history['date_approved']; ?></td>
       </tr>
       <?php } ?>
       <?php } else { ?>

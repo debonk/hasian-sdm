@@ -224,9 +224,9 @@
 									</a>
 								</td>
 								<td>
-									<a href="<?= $sort_date_added; ?>" <?=($sort=='pb.date_added' ) ? 'class="' .
+									<a href="<?= $sort_date_approved; ?>" <?=($sort=='pb.date_approved' ) ? 'class="' .
 										strtolower($order) . '"' : '' ; ?> >
-										<?= $column_date_added; ?>
+										<?= $column_date_approved; ?>
 									</a>
 								</td>
 								<td class="text-right">
@@ -272,7 +272,7 @@
 									<?= $customer['gaji_dasar']; ?>
 								</td>
 								<td>
-									<?= $customer['date_added']; ?>
+									<?= $customer['date_approved']; ?>
 								</td>
 								<td class="text-right"><a href="<?= $customer['edit']; ?>" data-toggle="tooltip"
 										title="<?= $button_edit; ?>" class="btn btn-primary"><i

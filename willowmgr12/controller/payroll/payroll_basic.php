@@ -98,6 +98,31 @@ class ControllerPayrollPayrollBasic extends Controller
 		$this->getApprove();
 	}
 
+	public function reject()
+	{
+		$this->load->language('payroll/payroll_basic');
+
+		$this->document->setTitle($this->language->get('text_list_approve'));
+
+		$this->load->model('payroll/payroll_basic');
+
+		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateApprove()) {
+			$this->db->transaction(function () {
+				foreach ($this->request->post['selected'] as $payroll_basic_id) {
+					$this->model_payroll_payroll_basic->approvePayrollBasic($payroll_basic_id, 0);
+				}
+			});
+
+			$this->session->data['success'] = $this->language->get('text_success_reject');
+			
+			$url = $this->urlFilter();
+
+			$this->response->redirect($this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . $url, true));
+		}
+
+		$this->getApprove();
+	}
+
 	public function approveAll()
 	{
 		$this->load->language('payroll/payroll_basic');
@@ -174,7 +199,7 @@ class ControllerPayrollPayrollBasic extends Controller
 			'column_tunj_pph',
 			'column_uang_makan',
 			'column_gaji_dasar',
-			'column_date_added',
+			'column_date_approved',
 			'column_status',
 			'button_approval',
 			'button_filter',
@@ -281,7 +306,8 @@ class ControllerPayrollPayrollBasic extends Controller
 					'tunj_pph'    			=> $this->currency->format($result['tunj_pph'], $this->config->get('config_currency')),
 					'uang_makan'    		=> $this->currency->format($result['uang_makan'], $this->config->get('config_currency')),
 					'gaji_dasar'    		=> $this->currency->format($result['gaji_dasar'], $this->config->get('config_currency')),
-					'date_added'        	=> date($this->language->get('date_format_jMY'), strtotime($result['date_added'])),
+					// 'date_added'        	=> date($this->language->get('date_format_jMY'), strtotime($result['date_added'])),
+					'date_approved'        	=> date($this->language->get('date_format_jMY'), strtotime($result['date_approved'])),
 					'edit'          		=> $this->url->link('payroll/payroll_basic/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
 				);
 			} else {
@@ -299,7 +325,7 @@ class ControllerPayrollPayrollBasic extends Controller
 					'tunj_pph'         		=> '',
 					'uang_makan'        	=> '',
 					'gaji_dasar'        	=> '',
-					'date_added'        	=> '',
+					'date_approved'        	=> '',
 					'edit'          		=> $this->url->link('payroll/payroll_basic/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
 				);
 			}
@@ -332,7 +358,8 @@ class ControllerPayrollPayrollBasic extends Controller
 		$data['sort_tunj_pph'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=pb.tunj_pph' . $url, true);
 		$data['sort_uang_makan'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=pb.uang_makan' . $url, true);
 		$data['sort_gaji_dasar'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=gaji_dasar' . $url, true);
-		$data['sort_date_added'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=pb.date_added' . $url, true);
+		// $data['sort_date_added'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=pb.date_added' . $url, true);
+		$data['sort_date_approved'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=pb.date_approved' . $url, true);
 
 		$url = $this->urlFilter('page');
 
@@ -402,7 +429,9 @@ class ControllerPayrollPayrollBasic extends Controller
 			'column_gaji_dasar',
 			'column_date_added',
 			'column_status',
+			'column_username',
 			'button_approve',
+			'button_reject',
 			'button_approve_all',
 			'button_back',
 			'button_filter',
@@ -477,6 +506,7 @@ class ControllerPayrollPayrollBasic extends Controller
 
 		$data['approve_all'] = $this->url->link('payroll/payroll_basic/approveAll', 'token=' . $this->session->data['token'] . $url, true);
 		$data['approve'] = $this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . $url, true);
+		$data['reject'] = $this->url->link('payroll/payroll_basic/reject', 'token=' . $this->session->data['token'] . $url, true);
 		$data['back'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . $url, true);
 		$data['unfilter'] = $this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'], true);
 
@@ -581,6 +611,7 @@ class ControllerPayrollPayrollBasic extends Controller
 		$data['sort_uang_makan'] = $this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . '&sort=pb.uang_makan' . $url, true);
 		$data['sort_gaji_dasar'] = $this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . '&sort=gaji_dasar' . $url, true);
 		$data['sort_date_added'] = $this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . '&sort=pb.date_added' . $url, true);
+		$data['sort_username'] = $this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . '&sort=pb.username' . $url, true);
 
 		$url = $this->urlFilter('page');
 
@@ -734,6 +765,7 @@ class ControllerPayrollPayrollBasic extends Controller
 		$language_items = array(
 			'text_no_results',
 			'column_date_added',
+			'column_date_approved',
 			'column_gaji_pokok',
 			'column_tunj_jabatan',
 			'column_tunj_hadir',
@@ -758,15 +790,17 @@ class ControllerPayrollPayrollBasic extends Controller
 		$results = $this->model_payroll_payroll_basic->getPayrollBasicHistories($this->request->get['customer_id'], ($page - 1) * 10, 10);
 
 		$this->load->model('common/payroll');
+		$customer_info = $this->model_common_payroll->getCustomer($this->request->get['customer_id']);
 
 		foreach ($results as $result) {
 			$gaji_dasar = $result['gaji_pokok'] + $result['tunj_jabatan'] + $result['tunj_hadir'] + $result['tunj_pph'] + (25 * $result['uang_makan']);
 
-			$customer_info = $this->model_common_payroll->getCustomer($result['customer_id']);
-
-			if (is_null($result['date_approved'])) {
+			if (is_null($result['approval_status'])) {
 				$status = $this->language->get('text_approve_wait');
 				$bg_class = 'bg-danger';
+			} elseif (!$result['approval_status']) {
+				$status = $this->language->get('text_reject');
+				$bg_class = 'text-danger';
 			} else {
 				$status = $result['payroll_basic_id'] != $customer_info['payroll_basic_id'] ? $this->language->get('text_approve_inactive') : $this->language->get('text_approve_active');
 				$bg_class = '';
@@ -780,6 +814,7 @@ class ControllerPayrollPayrollBasic extends Controller
 				'uang_makan'    => $this->currency->format($result['uang_makan'], $this->config->get('config_currency')),
 				'gaji_dasar' 	=> $this->currency->format($gaji_dasar, $this->config->get('config_currency')),
 				'date_added' 	=> date($this->language->get('date_format_jMY'), strtotime($result['date_added'])),
+				'date_approved'	=> $result['date_approved'] ? date($this->language->get('date_format_jMY'), strtotime($result['date_approved'])) : '-',
 				'status' 		=> $status,
 				'bg_class' 		=> $bg_class,
 				'username' 		=> $result['username']

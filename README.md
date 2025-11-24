@@ -7,9 +7,17 @@ MODUL: Customer > Presence Method
 
 User Group: ganti form ke list, trus ada kolom untuk centang access, modify, approval, print, bypass
 
+=== MODIFY DATABASE
 
+=== MODIFY CONFIG
 
-MODIFY CONFIG
+4.3.0	24/11/2025
+Payroll Basic: Add reject action for payroll basic
+
+=== MODIFY DATABASE
+ALTER TABLE oc_payroll_basic ADD approval_status BOOL DEFAULT 1 NULL AFTER user_id;
+ALTER TABLE oc_payroll_basic MODIFY COLUMN approval_status tinyint(1) NULL;
+
 
 4.2.1	23/09/2025
 Customer > Finger: Menambah field working locations. Customer hanya bisa absensi di lokasi yang ditentukan.
@@ -17,15 +25,12 @@ Schedule > Data Log: Menambah info lokasi absensi
 Bug fixed: Free Transfer: Mengubah tanda ',' di deskripsi dan nota.
 Deduction: Tambah nama toko dan deskripsi di rincian gaji.
 
-=== TABLE ===
-ALTER TABLE oc_customer_add_data ADD working_locations TEXT NULL;
-
 4.2.0.a	19/09/2025	=> trial
 Customer Finger: Apply Digital Persona SDK v3.2
 
 === TABLE ===
 ALTER TABLE oc_finger_device ADD regkey varchar(64) NULL AFTER vkey;
-
+ALTER TABLE oc_customer_add_data ADD working_locations TEXT NULL;
 ALTER TABLE oc_customer_finger ADD legacy bool DEFAULT 1 NULL;
 ALTER TABLE oc_customer_finger MODIFY COLUMN legacy tinyint(1) DEFAULT NULL NULL;
 ALTER TABLE `oc_presence_log` CHANGE `time_in` `time_in` DATETIME NULL, CHANGE `time_out` `time_out` DATETIME NULL, CHANGE `time_login` `time_login` DATETIME NULL, CHANGE `time_logout` `time_logout` DATETIME NULL; 

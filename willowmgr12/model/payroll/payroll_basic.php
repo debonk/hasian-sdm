@@ -27,13 +27,15 @@ class ModelPayrollPayrollBasic extends Model
 		}
 	}
 
-	public function approvePayrollBasic($payroll_basic_id)
+	public function approvePayrollBasic($payroll_basic_id, $approval_status = 1)
 	{
-		$payroll_basic_info = $this->getPayrollBasic($payroll_basic_id);
+		$this->db->query("UPDATE " . DB_PREFIX . "payroll_basic SET approval_status = '" . (int)$approval_status . "', date_approved = NOW(), approval_user_id = '" . (int)$this->user->getId() . "' WHERE payroll_basic_id = '" . (int)$payroll_basic_id . "'");
 
-		$this->db->query("UPDATE " . DB_PREFIX . "payroll_basic SET date_approved = NOW(), approval_user_id = '" . (int)$this->user->getId() . "' WHERE payroll_basic_id = '" . (int)$payroll_basic_id . "'");
-
-		$this->db->query("UPDATE " . DB_PREFIX . "customer SET payroll_basic_id = '" . (int)$payroll_basic_id . "' WHERE customer_id = '" . (int)$payroll_basic_info['customer_id'] . "'");
+		if ($approval_status) {
+			$payroll_basic_info = $this->getPayrollBasic($payroll_basic_id);
+			
+			$this->db->query("UPDATE " . DB_PREFIX . "customer SET payroll_basic_id = '" . (int)$payroll_basic_id . "' WHERE customer_id = '" . (int)$payroll_basic_info['customer_id'] . "'");
+		}
 	}
 
 	public function getPayrollBasic($payroll_basic_id)
@@ -134,7 +136,7 @@ class ModelPayrollPayrollBasic extends Model
 		// $hke_default = $this->config->has('payroll_setting_default_hke') ? $this->config->get('payroll_setting_default_hke') : 25;
 		$hke_default = 25;
 
-		$sql = "SELECT pb.*, (pb.gaji_pokok + pb.tunj_jabatan + pb.tunj_hadir + pb.tunj_pph + (" . (int)$hke_default . " * pb.uang_makan)) AS gaji_dasar, u.username FROM " . DB_PREFIX . "payroll_basic pb LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = pb.user_id) WHERE date_approved IS NULL ORDER BY date_added ASC";
+		$sql = "SELECT pb.*, (pb.gaji_pokok + pb.tunj_jabatan + pb.tunj_hadir + pb.tunj_pph + (" . (int)$hke_default . " * pb.uang_makan)) AS gaji_dasar, u.username FROM " . DB_PREFIX . "payroll_basic pb LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = pb.user_id) WHERE approval_status IS NULL ORDER BY date_added ASC";
 
 		$query = $this->db->query($sql);
 

@@ -1806,6 +1806,8 @@ class ControllerPresenceSchedule extends Controller
 						$time_login = '';
 						$time_logout = '';
 						$duration = '...';
+						$location_id_login = '';
+						$location_id_logout = '';
 
 						if (isset($this->request->post['schedule' . $key_date])) {
 							$schedule_type_id = $this->request->post['schedule' . $key_date];
