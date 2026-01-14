@@ -117,6 +117,10 @@ class ModelPresencePresence extends Model
 			$implode[] = "location_id = '" . (int)$data['filter']['location_id'] . "'";
 		}
 
+		if (!empty($data['filter']['working_location_id'])) {
+			$implode[] = "working_locations LIKE '%\"" . (int)$data['filter']['working_location_id'] . "\"%'";
+		}
+
 		if (isset($data['filter']['legacy'])) {
 			if ($data['filter']['legacy']) {
 				$implode[] = "legacy = '1'";

@@ -179,7 +179,7 @@
 			<?php } else { ?>
 			<tr>
 				<td class="text-center" colspan="20">
-					<?= $text_no_results; ?>
+					<?= isset($on_repair) ? $on_repair : $text_no_results; ?>
 				</td>
 			</tr>
 			<?php } ?>

@@ -211,7 +211,8 @@ class ModelPayrollPayrollBasic extends Model
 			'pb.tunj_pph',
 			'pb.uang_makan',
 			'gaji_dasar',
-			'pb.date_added'
+			'pb.date_added',
+			'pb.date_approved'
 		);
 
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {

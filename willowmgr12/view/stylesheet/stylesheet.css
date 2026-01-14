@@ -251,6 +251,9 @@ span.hidden-xs, span.hidden-sm, span.hidden-md, span.hidden-lg {
 #menu li ul li a.modify {
 	color: #1cc75e;
 }
+#menu li ul li a.approve {
+	color: #c5a559;
+}
 #menu li li.active > a:last-child {
 	color: #FFFFFF;
 }

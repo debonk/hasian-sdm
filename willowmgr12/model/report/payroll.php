@@ -621,7 +621,6 @@ class ModelReportPayroll extends Model
 	public function getFinalTaxes($presence_period_id, $data)
 	{
 		$taxes_data = $this->getTaxes($presence_period_id, $data);
-
 		$period_info = $this->model_common_payroll->getPeriod($presence_period_id);
 
 		for ($i = 1; $i < 12; $i++) {
@@ -635,8 +634,8 @@ class ModelReportPayroll extends Model
 				continue;
 			}
 
-			foreach ($taxes_data as $tax_data) {
-				if (isset($past_taxes[$tax_data['customer_id']])) {
+			foreach ($past_taxes as $tax_data) {
+				if (isset($taxes_data[$tax_data['customer_id']])) {
 					$taxes_data[$tax_data['customer_id']]['basic_salary'] += $past_taxes[$tax_data['customer_id']]['basic_salary'];
 					$taxes_data[$tax_data['customer_id']]['gross_salary'] += $past_taxes[$tax_data['customer_id']]['gross_salary'];
 					$taxes_data[$tax_data['customer_id']]['allowance'] += $past_taxes[$tax_data['customer_id']]['allowance'];
@@ -646,9 +645,13 @@ class ModelReportPayroll extends Model
 					$taxes_data[$tax_data['customer_id']]['insurance_employment'] += $past_taxes[$tax_data['customer_id']]['insurance_employment'];
 					$taxes_data[$tax_data['customer_id']]['insurance_health'] += $past_taxes[$tax_data['customer_id']]['insurance_health'];
 					$taxes_data[$tax_data['customer_id']]['tax'] += $past_taxes[$tax_data['customer_id']]['tax'];
+				} else {
+					$taxes_data[$tax_data['customer_id']] = $tax_data;
 				}
 			}
 		}
+		
+		array_multisort(array_column($taxes_data, 'customer'), SORT_ASC, $taxes_data);
 
 		foreach ($taxes_data as $customer_id => $result) {
 			$non_taxed_income = 54000000 + $result['ter_point'] * 4500000;

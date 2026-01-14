@@ -9,6 +9,7 @@ $_['text_logout']			= 'Logout';
 // Error
 $_['error_token']				= 'Warning: Token Data tidak ditemukan!';
 $_['error_device']				= 'Warning: Finger Device tidak terdaftar!';
+$_['error_device_session']		= 'Warning: Finger Device tidak terdaftar atau session belum ada!';
 $_['error_data']				= 'Warning: Finger Data tidak ditemukan!';
 $_['error_session']				= 'Warning: Session Error. Silahkan tutup dan buka kembali app ini!';
 $_['error_customer_not_found']	= 'Warning: Data karyawan tidak ditemukan!';

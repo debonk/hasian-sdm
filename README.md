@@ -11,13 +11,16 @@ User Group: ganti form ke list, trus ada kolom untuk centang access, modify, app
 
 === MODIFY CONFIG
 
+4.3.1	14/01/2026
+Bug fixed: Presence > Login: Validasi jika session tidak terbentuk dan karyawan belum terdaftar finger v2, karyawan dgn working locations sudah berfungsi.
+Bug fixed: Report > Payroll Tax: Full Year Report. Karyawan yang resign sblm desember sudah masuk dalam laporan des (Full Year).
+
 4.3.0	24/11/2025
 Payroll Basic: Add reject action for payroll basic
 
 === MODIFY DATABASE
 ALTER TABLE oc_payroll_basic ADD approval_status BOOL DEFAULT 1 NULL AFTER user_id;
 ALTER TABLE oc_payroll_basic MODIFY COLUMN approval_status tinyint(1) NULL;
-
 
 4.2.1	23/09/2025
 Customer > Finger: Menambah field working locations. Customer hanya bisa absensi di lokasi yang ditentukan.

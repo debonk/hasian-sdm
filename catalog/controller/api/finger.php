@@ -558,7 +558,7 @@ class ControllerApiFinger extends Controller
 				$device_info = $this->model_localisation_finger_device->getFingerDeviceByToken($this->request->get['token']);
 
 				if (!$device_info) {
-					$status = $this->language->get('error_device');
+					$status = $this->language->get('error_device_session');
 
 					break;
 				}
@@ -570,12 +570,18 @@ class ControllerApiFinger extends Controller
 				}
 
 				$filter = [
-					'location_id'  	=> $this->request->get['location_id'],
-					'legacy'		=> 0
+					'working_location_id'  	=> $this->request->get['location_id'],
+					'legacy'				=> 0
 				];
 
 				$this->load->model('presence/presence');
 				$fingers = $this->model_presence_presence->getFingers(['filter' => $filter]);
+
+				if (empty($fingers)) {
+					$status = $this->language->get('error_customer_not_found');
+
+					break;
+				}
 
 				foreach ($fingers as $finger) {
 					$json['Data'][] = [

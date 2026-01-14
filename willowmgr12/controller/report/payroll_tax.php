@@ -151,7 +151,10 @@ class ControllerReportPayrollTax extends Controller
 				$results = $this->model_report_payroll->getTaxes($presence_period_id, $filter_data);
 				// $data['final'] = false;
 			} else {
-				$results = $this->model_report_payroll->getFinalTaxes($presence_period_id, $filter_data);
+				// $results = $this->model_report_payroll->getFinalTaxes($presence_period_id, $filter_data);
+				$results = [];
+				$data['on_repair'] = 'Preview Laporan PPh21 Final sedang dalam perbaikan. Gunakan fitur Export untuk download laporan.';
+
 				$data['final'] = true;
 			}
 
