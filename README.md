@@ -11,6 +11,10 @@ User Group: ganti form ke list, trus ada kolom untuk centang access, modify, app
 
 === MODIFY CONFIG
 
+4.3.1.a	21/01/2026
+Release, Free Transfer: Need Approval permission for export.
+Framework Update
+
 4.3.1	14/01/2026
 Bug fixed: Presence > Login: Validasi jika session tidak terbentuk dan karyawan belum terdaftar finger v2, karyawan dgn working locations sudah berfungsi.
 Bug fixed: Report > Payroll Tax: Full Year Report. Karyawan yang resign sblm desember sudah masuk dalam laporan des (Full Year).

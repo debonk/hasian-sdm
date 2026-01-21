@@ -947,7 +947,7 @@ class ControllerPayrollPayrollRelease extends Controller
 		$this->load->model('common/payroll');
 		$this->load->model('payroll/payroll_release');
 
-		if (isset($this->request->get['presence_period_id']) && isset($this->request->get['payroll_method_id']) && $this->validateAction()) {
+		if (isset($this->request->get['presence_period_id']) && isset($this->request->get['payroll_method_id']) && $this->validateExport()) {
 			if (isset($this->request->get['payroll_method_id']) && $this->request->get['payroll_method_id'] == 0) {
 				$code = 'draft';
 			} else {
@@ -1656,6 +1656,31 @@ class ControllerPayrollPayrollRelease extends Controller
 			if (!$this->user->hasPermission('bypass', 'payroll/payroll_release')) {
 				$this->error['warning'] = $this->language->get('error_permission');
 			}
+		}
+
+		return !$this->error;
+	}
+
+	protected function validateExport()
+	{
+		if (!$this->user->hasPermission('approve', 'payroll/payroll_release')) {
+			$this->error['warning'] = $this->language->get('error_permission_approve');
+		}
+
+		$released_status_check = $this->model_common_payroll->checkPeriodStatus($this->request->get['presence_period_id'], 'released');
+		$payroll_release_count = $this->model_payroll_payroll_release->getReleasesCount($this->request->get['presence_period_id']);
+		$fund_account_info = $this->model_common_payroll->getPeriod($this->request->get['presence_period_id'])['fund_account_id'];
+
+		if (!$released_status_check) {
+			$this->error['warning'] = $this->language->get('error_status');
+		}
+
+		if (!$fund_account_info) {
+			$this->error['warning'] = $this->language->get('error_fund_account');
+		}
+
+		if (!$payroll_release_count) {
+			$this->error['warning'] = $this->language->get('error_not_found');
 		}
 
 		return !$this->error;

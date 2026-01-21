@@ -671,7 +671,7 @@ class ControllerReleaseFreeTransfer extends Controller
 
 	protected function validateDelete()
 	{
-		if (!$this->user->hasPermission('modify', 'release/free_transfer')) {
+		if (!$this->user->hasPermission('approve', 'release/free_transfer')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
@@ -688,8 +688,8 @@ class ControllerReleaseFreeTransfer extends Controller
 
 	protected function validateExport()
 	{
-		if (!$this->user->hasPermission('modify', 'release/free_transfer')) {
-			$this->error['warning'] = $this->language->get('error_permission');
+		if (!$this->user->hasPermission('approve', 'release/free_transfer')) {
+			$this->error['warning'] = $this->language->get('error_permission_approve');
 		}
 
 		$free_transfer_id = isset($this->request->get['free_transfer_id']) ? $this->request->get['free_transfer_id'] : 0;

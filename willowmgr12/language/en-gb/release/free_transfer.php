@@ -37,6 +37,7 @@ $_['button_export_csv']			= 'Export %s CSV';
 // Error
 $_['error_warning']				 = 'Warning: Please check the form carefully for errors!';
 $_['error_permission']			 = 'Warning: You do not have permission to modify free transfers!';
+$_['error_permission_approve']	 = 'Warning 301: You do not have permission to modify free transfers!';
 $_['error_description']			 = 'Warning: Deskripsi harus diisi (max 255 karakter)!';
 $_['error_date_process']		 = 'Warning: Tanggal proses harus diisi dan belum berlalu!';
 $_['error_date_process']		 = 'Warning: Export tidak diijinkan karena tanggal proses telah berlalu!';

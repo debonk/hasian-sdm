@@ -51,7 +51,7 @@ $_['entry_status']      	 	 = 'Status Karyawan';
 
 // Error
 $_['error_permission']          = 'Warning: You do not have permission to modify payroll basics!';
-$_['error_permission_approve']	= 'Warning: You do not have permission to approve payroll basics!';
+$_['error_permission_approve']	= 'Warning 301: You do not have permission to approve payroll basics!';
 $_['error_gaji_pokok']			= 'Warning: Gaji Pokok tidak boleh kurang dari 0!';
 $_['error_warning']             = 'Warning: Please check the form carefully for errors!';
 

@@ -79,6 +79,7 @@ $_['button_unreleased'] 		= 'Unset Selected Release Status';
 // Error
 $_['error_warning']				= 'Warning: Please check the form carefully for errors!';
 $_['error_permission']          = 'Warning: You do not have permission to modify payroll releases!';
+$_['error_permission_approve']	= 'Warning 301: You do not have permission to modify payroll releases!';
 $_['error_status']              = 'Warning: Wrong Status! Could not complete this action!';
 $_['error_completed_after']		= 'Warning: Completed Status allowed %s months after released!';
 $_['error_db_archive']			= 'Warning: Database archive not defined!';

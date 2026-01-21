@@ -35,7 +35,7 @@
 				</a>
 				<?php } else { ?>
 				<button type="button" class="btn btn-info disabled" data-toggle="tooltip"
-					title="<?= $button_export; ?>"><i class="fa fa-download"></i>
+					title="<?= $button_export; ?>"><i class="fa fa-upload"></i>
 				</button>
 				<?php } ?>
 				<?php if (!$schedule_lock) { ?>

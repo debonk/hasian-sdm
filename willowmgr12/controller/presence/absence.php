@@ -638,7 +638,7 @@ class ControllerPresenceAbsence extends Controller
 		$json = array();
 
 		if (!$this->user->hasPermission('approve', 'presence/absence')) {
-			$json['error'] = $this->language->get('error_permission');
+			$json['error'] = $this->language->get('error_permission_absence');
 		} else {
 			$this->load->model('presence/absence');
 			$absence_info = $this->model_presence_absence->getAbsence($this->request->get['absence_id']);
