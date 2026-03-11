@@ -23,7 +23,9 @@ class ControllerReleaseAllowance extends Controller
 		$this->load->model('release/allowance');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$allowance_id = $this->model_release_allowance->addAllowance($this->request->post);
+			$this->db->transaction(function () {
+				$allowance_id = $this->model_release_allowance->addAllowance($this->request->post);
+			});
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
@@ -57,7 +59,9 @@ class ControllerReleaseAllowance extends Controller
 		$this->load->model('release/allowance');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$this->model_release_allowance->editAllowance($this->request->get['allowance_id'], $this->request->post);
+			$this->db->transaction(function () {
+				$this->model_release_allowance->editAllowance($this->request->get['allowance_id'], $this->request->post);
+			});
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
@@ -91,7 +95,9 @@ class ControllerReleaseAllowance extends Controller
 
 		if (isset($this->request->post['selected']) && $this->validateDelete()) {
 			foreach ($this->request->post['selected'] as $allowance_id) {
-				$this->model_release_allowance->deleteAllowance($allowance_id);
+				$this->db->transaction(function () use ($allowance_id) {
+					$this->model_release_allowance->deleteAllowance($allowance_id);
+				});
 			}
 
 			$this->session->data['success'] = $this->language->get('text_success');
@@ -189,9 +195,11 @@ class ControllerReleaseAllowance extends Controller
 				'date_modified' 	=> date($this->language->get('date_format_jMY'), strtotime($result['date_modified'])),
 				'username'    		=> $result['username'],
 				'edit'          	=> $this->url->link('release/allowance/edit', 'token=' . $this->session->data['token'] . '&allowance_id=' . $result['allowance_id'], true),
-				'export'        	=> $this->url->link('release/allowance/exportcsv', 'token=' . $this->session->data['token'] . '&allowance_id=' . $result['allowance_id'] . $url, true)
+				'export'        	=> $this->url->link('release/allowance/export', 'token=' . $this->session->data['token'] . '&allowance_id=' . $result['allowance_id'] . $url, true),
+				'button_export_csv'	=> sprintf($this->language->get('button_export_csv'), $result['bank_name']),
 			);
 		}
+		// var_dump($results);
 
 		$language_items = array(
 			'heading_title',
@@ -209,7 +217,7 @@ class ControllerReleaseAllowance extends Controller
 			'button_add',
 			'button_edit',
 			'button_delete',
-			'button_export_csv'
+			// 'button_export_csv'
 		);
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
@@ -527,6 +535,242 @@ class ControllerReleaseAllowance extends Controller
 		$this->response->setOutput($this->load->view('release/allowance_form', $data));
 	}
 
+	public function export()
+	{
+		$this->load->language('release/allowance');
+
+		// $this->document->setTitle($this->language->get('heading_title'));
+
+		$this->load->model('release/allowance');
+
+		$allowance_id = isset($this->request->get['allowance_id']) ? $this->request->get['allowance_id'] : 0;
+
+		$allowance_info = $this->model_release_allowance->getAllowance($allowance_id);
+
+		if (!empty($allowance_info) && $this->validateExport()) {
+			$this->load->model('release/fund_account');
+			$fund_account_info = $this->model_release_fund_account->getFundAccount($allowance_info['fund_account_id']);
+
+			$code = !empty($fund_account_info['code']) ? $fund_account_info['code'] : 'draft';
+
+			$this->db->transaction(function () use ($code) {
+				switch ($code) {
+					// case 'draft':
+					// 	$this->exportDraft();
+
+					// 	break;
+
+					case 'cimb':
+						$this->exportCimb();
+
+						break;
+
+					case 'mandiri':
+						$this->exportMandiri();
+
+						break;
+
+					// case 'bri':
+					// 	$this->exportBri();
+
+					// 	break;
+
+					default:
+						$this->exportCimb();
+
+						break;
+				}
+			});
+		} else {
+			$this->index();
+		}
+	}
+
+	public function exportCimb()
+	{
+		$allowance_id = isset($this->request->get['allowance_id']) ? $this->request->get['allowance_id'] : 0;
+
+		$allowance_info = $this->model_release_allowance->getAllowance($allowance_id);
+
+		$allowance_info['description'] = $this->language->get('heading_title') . ' - ' . date($this->language->get('date_format_m_y'), strtotime($allowance_info['allowance_period']));
+
+		$this->load->model('release/fund_account');
+		$fund_account_info = $this->model_release_fund_account->getFundAccount($allowance_info['fund_account_id']);
+
+		$currency_code = $this->config->get('config_currency');
+		$date_process = date('Ymd', strtotime($allowance_info['date_process']));
+
+		$result_count = $this->model_release_allowance->getAllowanceCustomerCountByMethod($allowance_id, 'cimb');
+		$result_total = $this->model_release_allowance->getAllowanceCustomerTotalByMethod($allowance_id, 'cimb');
+
+		$output = '';
+		$output .= $fund_account_info['acc_no'] . ',' . $fund_account_info['acc_name'] . ',' . $currency_code . ',' . $result_total . ',' . $allowance_info['description'] . ',' . $result_count . ',' . $date_process . ',' . $fund_account_info['email'];
+
+		$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
+		$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
+		$output = str_replace('\\', '\\\\', $output);
+		$output = str_replace('\'', '\\\'', $output);
+		$output = str_replace('\\\n', '\n', $output);
+		$output = str_replace('\\\r', '\r', $output);
+		$output = str_replace('\\\t', '\t', $output);
+
+		$results = $this->model_release_allowance->getAllowanceCustomersByMethod($allowance_id, 'cimb');
+
+		foreach ($results as $result) {
+			$value = '';
+			$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $result['amount'] . ',' . $allowance_info['description'] . (!empty($result['note']) ? ': ' . str_replace([',', ' '], '_', $result['note']) : '') . ',' . $result['email'] . ',,';
+
+			$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
+			$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
+			$value = str_replace('\\', '\\\\', $value);
+			$value = str_replace('\'', '\\\'', $value);
+			$value = str_replace('\\\n', '\n', $value);
+			$value = str_replace('\\\r', '\r', $value);
+			$value = str_replace('\\\t', '\t', $value);
+
+			$output .= "\n" . $value;
+		}
+
+		$filename = $date_process . '_' . preg_replace('/[^a-zA-Z0-9_-]/s', '_', $allowance_info['description']);
+
+		$this->response->addheader('Pragma: public');
+		$this->response->addheader('Expires: 0');
+		$this->response->addheader('Content-Description: File Transfer');
+		$this->response->addheader('Content-Type: application/octet-stream');
+		$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
+		$this->response->addheader('Content-Transfer-Encoding: binary');
+		$this->response->setOutput($output);
+		// echo '<pre>' . print_r($output, 1);
+	}
+
+	public function exportMandiri()
+	{
+		$output = '';
+
+		$allowance_id = isset($this->request->get['allowance_id']) ? $this->request->get['allowance_id'] : 0;
+
+		$allowance_info = $this->model_release_allowance->getAllowance($allowance_id);
+
+		$allowance_info['description'] = $this->language->get('heading_title') . ' - ' . date($this->language->get('date_format_m_y'), strtotime($allowance_info['allowance_period']));
+
+		$currency_code = $this->config->get('config_currency');
+		$date_process = date('Ymd', strtotime($allowance_info['date_process']));
+
+		$result_count = $this->model_release_allowance->getAllowanceCustomerCountByMethod($allowance_id, 'mandiri');
+		$result_total = $this->model_release_allowance->getAllowanceCustomerTotalByMethod($allowance_id, 'mandiri');
+
+		$fund_account_info = $this->model_release_fund_account->getFundAccount($allowance_info['fund_account_id']);
+
+		$output .= 'P' . ',' . $date_process . ',' . $fund_account_info['acc_no'] . ',' . $result_count . ',' . $result_total;
+
+		$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
+		$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
+		$output = str_replace('\\', '\\\\',	$output);
+		$output = str_replace('\'', '\\\'',	$output);
+		$output = str_replace('\\\n', '\n',	$output);
+		$output = str_replace('\\\r', '\r',	$output);
+		$output = str_replace('\\\t', '\t',	$output);
+
+		$results = $this->model_release_allowance->getAllowanceCustomersByMethod($allowance_id, 'mandiri');
+
+		foreach ($results as $result) {
+			$value = '';
+			$value .= $result['acc_no'] . ',' . $result['lastname'] . ',,,,' . $currency_code . ',' . $result['amount'] . ',' . $allowance_info['description'] . (!empty($result['note']) ? ': ' . str_replace([',', ' '], '_', $result['note']) : '') . ',,IBU,,,,,,,Y,' . $result['email'] . ',,,,,,,,,,,,,,,,,,,,,OUR,1,E,,,';
+
+			$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
+			$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
+			$value = str_replace('\\', '\\\\', $value);
+			$value = str_replace('\'', '\\\'', $value);
+			$value = str_replace('\\\n', '\n', $value);
+			$value = str_replace('\\\r', '\r', $value);
+			$value = str_replace('\\\t', '\t', $value);
+
+			$output .= "\n" . $value;
+		}
+
+		$filename = $date_process . '_' . preg_replace('/[^a-zA-Z0-9_-]/s', '_', $allowance_info['description']);
+
+		$this->response->addheader('Pragma: public');
+		$this->response->addheader('Expires: 0');
+		$this->response->addheader('Content-Description: File Transfer');
+		$this->response->addheader('Content-Type: application/octet-stream');
+		$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
+		$this->response->addheader('Content-Transfer-Encoding: binary');
+		$this->response->setOutput($output);
+		// echo '<pre>' . print_r($output, 1);
+	}
+
+
+	public function exportCsvDel()
+	{
+		$this->load->language('release/allowance');
+
+		$this->load->model('release/allowance');
+
+		if (isset($this->request->get['allowance_id'])) {
+			$allowance_id = $this->request->get['allowance_id'];
+		} else {
+			$allowance_id = 0;
+		}
+
+		$allowance_info = $this->model_release_allowance->getAllowance($allowance_id);
+
+		if (!empty($allowance_info) && $this->validateExport()) {
+			$this->load->model('release/fund_account');
+			$fund_account_info = $this->model_release_fund_account->getFundAccount($allowance_info['fund_account_id']);
+
+			$currency_code = $this->config->get('config_currency');
+			$date_process = date('Ymd', strtotime($allowance_info['date_process']));
+
+			$description = $this->language->get('heading_title') . ' - ' . date($this->language->get('date_format_m_y'), strtotime($allowance_info['allowance_period']));
+
+			$result_count = $this->model_release_allowance->getAllowanceCustomerCountByMethod($allowance_id, 'CIMB');
+			$result_total = $this->model_release_allowance->getAllowanceCustomerTotalByMethod($allowance_id, 'CIMB');
+
+			$output = '';
+			$output .= $fund_account_info['acc_no'] . ',' . $fund_account_info['acc_name'] . ',' . $currency_code . ',' . $result_total . ',' . $description . ',' . $result_count . ',' . $date_process . ',' . $fund_account_info['email'];
+
+			$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
+			$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
+			$output = str_replace('\\', '\\\\', $output);
+			$output = str_replace('\'', '\\\'', $output);
+			$output = str_replace('\\\n', '\n', $output);
+			$output = str_replace('\\\r', '\r', $output);
+			$output = str_replace('\\\t', '\t', $output);
+
+			$results = $this->model_release_allowance->getAllowanceCustomersByMethod($allowance_id, 'CIMB');
+
+			foreach ($results as $result) {
+				$value = '';
+				$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $result['amount'] . ',' . $description . ',' . $result['email'] . ',,';
+
+				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
+				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
+				$value = str_replace('\\', '\\\\', $value);
+				$value = str_replace('\'', '\\\'', $value);
+				$value = str_replace('\\\n', '\n', $value);
+				$value = str_replace('\\\r', '\r', $value);
+				$value = str_replace('\\\t', '\t', $value);
+
+				$output .= "\n" . $value;
+			}
+
+			$filename = str_replace(' ', '_', $description . '_' . $allowance_info['date_process']);
+
+			$this->response->addheader('Pragma: public');
+			$this->response->addheader('Expires: 0');
+			$this->response->addheader('Content-Description: File Transfer');
+			$this->response->addheader('Content-Type: application/octet-stream');
+			$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
+			$this->response->addheader('Content-Transfer-Encoding: binary');
+			$this->response->setOutput($output);
+			// echo $output;
+		} else {
+
+			$this->index();
+		}
+	}
+
 	protected function validateForm()
 	{
 		if (!$this->user->hasPermission('modify', 'release/allowance')) {
@@ -577,6 +821,23 @@ class ControllerReleaseAllowance extends Controller
 		return !$this->error;
 	}
 
+	protected function validateExport()
+	{
+		if (!$this->user->hasPermission('approve', 'release/allowance')) {
+			$this->error['warning'] = $this->language->get('error_permission_approve');
+		}
+
+		$allowance_id = isset($this->request->get['allowance_id']) ? $this->request->get['allowance_id'] : 0;
+
+		$allowance_info = $this->model_release_allowance->getAllowance($allowance_id);
+
+		if (strtotime($allowance_info['date_process']) < strtotime('today')) {
+			// $this->error['warning'] = $this->language->get('error_date_process');
+		}
+
+		return !$this->error;
+	}
+
 	protected function validateAllowanceCustomer()
 	{
 		if (!$this->user->hasPermission('modify', 'release/allowance')) {
@@ -601,7 +862,7 @@ class ControllerReleaseAllowance extends Controller
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('release/allowance');
-		
+
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateAllowanceCustomer()) {
 			$this->model_release_allowance->addAllowanceCustomer($this->request->get['allowance_id'], $this->request->post['customer_id']);
 
@@ -819,84 +1080,5 @@ class ControllerReleaseAllowance extends Controller
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
-	}
-
-	public function exportCsv()
-	{
-		$this->load->language('release/allowance');
-
-		$this->load->model('release/allowance');
-
-		if (isset($this->request->get['allowance_id'])) {
-			$allowance_id = $this->request->get['allowance_id'];
-		} else {
-			$allowance_id = 0;
-		}
-
-		$allowance_info = $this->model_release_allowance->getAllowance($allowance_id);
-
-		if (!empty($allowance_info) && $this->validateExport()) {
-			$this->load->model('release/fund_account');
-			$fund_account_info = $this->model_release_fund_account->getFundAccount($allowance_info['fund_account_id']);
-
-			$currency_code = $this->config->get('config_currency');
-			$date_process = date('Ymd', strtotime($allowance_info['date_process']));
-
-			$description = $this->language->get('heading_title') . ' - ' . date($this->language->get('date_format_m_y'), strtotime($allowance_info['allowance_period']));
-
-			$result_count = $this->model_release_allowance->getAllowanceCustomerCountByMethod($allowance_id, 'CIMB');
-			$result_total = $this->model_release_allowance->getAllowanceCustomerTotalByMethod($allowance_id, 'CIMB');
-
-			$output = '';
-			$output .= $fund_account_info['acc_no'] . ',' . $fund_account_info['acc_name'] . ',' . $currency_code . ',' . $result_total . ',' . $description . ',' . $result_count . ',' . $date_process . ',' . $fund_account_info['email'];
-
-			$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
-			$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
-			$output = str_replace('\\', '\\\\', $output);
-			$output = str_replace('\'', '\\\'', $output);
-			$output = str_replace('\\\n', '\n', $output);
-			$output = str_replace('\\\r', '\r', $output);
-			$output = str_replace('\\\t', '\t', $output);
-
-			$results = $this->model_release_allowance->getAllowanceCustomersByMethod($allowance_id, 'CIMB');
-
-			foreach ($results as $result) {
-				$value = '';
-				$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $result['amount'] . ',' . $description . ',' . $result['email'] . ',,';
-
-				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
-				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
-				$value = str_replace('\\', '\\\\', $value);
-				$value = str_replace('\'', '\\\'', $value);
-				$value = str_replace('\\\n', '\n', $value);
-				$value = str_replace('\\\r', '\r', $value);
-				$value = str_replace('\\\t', '\t', $value);
-
-				$output .= "\n" . $value;
-			}
-
-			$filename = str_replace(' ', '_', $description . '_' . $allowance_info['date_process']);
-
-			$this->response->addheader('Pragma: public');
-			$this->response->addheader('Expires: 0');
-			$this->response->addheader('Content-Description: File Transfer');
-			$this->response->addheader('Content-Type: application/octet-stream');
-			$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
-			$this->response->addheader('Content-Transfer-Encoding: binary');
-			$this->response->setOutput($output);
-			// echo $output;
-		} else {
-
-			$this->index();
-		}
-	}
-
-	protected function validateExport()
-	{
-		if (!$this->user->hasPermission('modify', 'release/allowance')) {
-			$this->error['warning'] = $this->language->get('error_permission');
-		}
-
-		return !$this->error;
 	}
 }

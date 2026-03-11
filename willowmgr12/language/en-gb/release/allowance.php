@@ -33,7 +33,7 @@ $_['entry_name']				= 'Nama Karyawan';
 //Button
 $_['button_calculate']			= 'Hitung THR Karyawan';
 $_['button_customer_add']		= 'Tambah Karyawan';
-$_['button_export_csv']			= 'Export CIMB CSV';
+$_['button_export_csv']			= 'Export %s CSV';
 
 // Error
 $_['error_allowance_period']	 = 'Periode THR harus diisi';
@@ -46,5 +46,6 @@ $_['error_date_process']		 = 'Tanggal proses harus diisi dan belum berlalu!';
 $_['error_fund_account']		 = 'Pilih akun sumber dana!';
 $_['error_not_found']		   	 = 'Warning: Data THR tidak ditemukan!';
 $_['error_permission']			 = 'Warning: You do not have permission to modify allowances!';
+$_['error_permission_approve']	 = 'Warning 301: You do not have permission to modify allowances!';
 $_['error_processed']			 = 'Warning: Data yang telah diproses tidak bisa diubah/dihapus!';
 $_['error_warning']				 = 'Warning: Please check the form carefully for errors!';

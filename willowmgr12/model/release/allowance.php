@@ -239,7 +239,11 @@ class ModelReleaseAllowance extends Model
 	{
 		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "allowance_customer ac";
 
-		$sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ac.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) AND pm.name = '" . $this->db->escape($method) . "' AND c.acc_no <> ''";
+		if ($method) {
+			$sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ac.customer_id) INNER JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id AND pm.code = '" . $this->db->escape($method) . "' AND c.acc_no <> '')";
+		}
+
+		// $sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ac.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) AND pm.name = '" . $this->db->escape($method) . "' AND c.acc_no <> ''";
 
 		$sql .= " WHERE ac.allowance_id = '" . (int)$allowance_id . "' AND ac.amount > 0";
 
@@ -252,7 +256,11 @@ class ModelReleaseAllowance extends Model
 	{
 		$sql = "SELECT SUM(ac.amount) AS total FROM " . DB_PREFIX . "allowance_customer ac";
 
-		$sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ac.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) AND pm.name = '" . $this->db->escape($method) . "' AND c.acc_no <> ''";
+		if ($method) {
+			$sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ac.customer_id) INNER JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id AND pm.code = '" . $this->db->escape($method) . "' AND c.acc_no <> '')";
+		}
+
+		// $sql .= " LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ac.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) AND pm.name = '" . $this->db->escape($method) . "' AND c.acc_no <> ''";
 
 		$sql .= " WHERE ac.allowance_id = '" . (int)$allowance_id . "'";
 

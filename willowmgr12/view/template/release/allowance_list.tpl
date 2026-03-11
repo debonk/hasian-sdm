@@ -75,7 +75,7 @@
                   <td class="text-left"><?php echo $allowance['date_modified']; ?></td>
                   <td class="text-left"><?php echo $allowance['username']; ?></td>
                   <td class="text-right">
-				    <a href="<?php echo $allowance['export']; ?>" data-toggle="tooltip" title="<?php echo $button_export_csv; ?>" class="btn btn-info"><i class="fa fa-upload"></i></a>
+				    <a href="<?php echo $allowance['export']; ?>" data-toggle="tooltip" title="<?php echo $allowance['button_export_csv']; ?>" class="btn btn-info"><i class="fa fa-upload"></i></a>
 				    <a href="<?php echo $allowance['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
 				  </td>
                 </tr>

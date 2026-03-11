@@ -11,6 +11,10 @@ User Group: ganti form ke list, trus ada kolom untuk centang access, modify, app
 
 === MODIFY CONFIG
 
+4.3.2	11/03/2026
+Allowance: Apply export Mandiri.
+Allowance: Need Approval permission for export.
+
 4.3.1.a	21/01/2026
 Release, Free Transfer: Need Approval permission for export.
 Framework Update
