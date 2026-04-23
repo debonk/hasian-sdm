@@ -3,6 +3,41 @@ class ControllerCustomerFinger extends Controller
 {
 	private $error = array();
 
+	private $filter_items = array(
+		'name',
+		'customer_group_id',
+		'customer_department_id',
+		'location_id',
+		'status',
+	);
+
+	private function urlFilter($excluded_item = null)
+	{
+		$url_filter = '';
+
+		foreach ($this->filter_items as $filter_item) {
+			if (isset($this->request->get['filter_' . $filter_item])) {
+				$url_filter .= '&filter_' . $filter_item . '=' . $this->request->get['filter_' . $filter_item];
+			}
+		}
+
+		if ($excluded_item != 'sort') {
+			if (isset($this->request->get['sort'])) {
+				$url_filter .= '&sort=' . $this->request->get['sort'];
+			}
+
+			if (isset($this->request->get['order'])) {
+				$url_filter .= '&order=' . $this->request->get['order'];
+			}
+		}
+
+		if (isset($this->request->get['page']) && $excluded_item != 'page') {
+			$url_filter .= '&page=' . $this->request->get['page'];
+		}
+
+		return $url_filter;
+	}
+
 	public function index()
 	{
 		$this->load->language('customer/finger');
@@ -82,7 +117,7 @@ class ControllerCustomerFinger extends Controller
 			'text_all',
 			'text_active',
 			'text_inactive',
-			'text_all_status',
+			'text_all',
 			'text_left',
 			'text_right',
 			'text_loading',
@@ -103,8 +138,10 @@ class ControllerCustomerFinger extends Controller
 			'column_customer_group',
 			'column_customer_department',
 			'column_location',
+			'column_new_fmd_status',
 			'column_action',
 			'button_filter',
+			'button_unfilter',
 			'button_view',
 			'button_manage',
 			'button_verification',
@@ -115,87 +152,43 @@ class ControllerCustomerFinger extends Controller
 			$data[$language_item] = $this->language->get($language_item);
 		}
 
-		if (isset($this->request->get['filter_name'])) {
-			$filter_name = $this->request->get['filter_name'];
+		if (isset($this->error['warning'])) {
+			$data['error_warning'] = $this->error['warning'];
 		} else {
-			$filter_name = null;
+			$data['error_warning'] = '';
 		}
 
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$filter_customer_group_id = $this->request->get['filter_customer_group_id'];
+		if (isset($this->session->data['success'])) {
+			$data['success'] = $this->session->data['success'];
+
+			unset($this->session->data['success']);
 		} else {
-			$filter_customer_group_id = null;
+			$data['success'] = '';
 		}
 
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$filter_customer_department_id = $this->request->get['filter_customer_department_id'];
-		} else {
-			$filter_customer_department_id = null;
+		$filter = [];
+
+		foreach ($this->filter_items as $filter_item) {
+			$filter[$filter_item] = isset($this->request->get['filter_' . $filter_item]) ? $this->request->get['filter_' . $filter_item] : null;
 		}
 
-		if (isset($this->request->get['filter_location_id'])) {
-			$filter_location_id = $this->request->get['filter_location_id'];
-		} else {
-			$filter_location_id = '';
+		if (empty($filter['status'])) {
+			$filter['status'] = 1;
 		}
 
-		if (isset($this->request->get['filter_status'])) {
-			$filter_status = $this->request->get['filter_status'];
-		} else {
-			$filter_status = null;
+		$user_coverage = $this->user->getCoverage();
+
+		if (!$user_coverage['full_coverage']) {
+			$filter['customer_department_ids'] = $user_coverage['customer_department_ids'] ?: [0];
+			$filter['location_ids'] = $user_coverage['location_ids'] ?: [0];
 		}
 
-		if (isset($this->request->get['sort'])) {
-			$sort = $this->request->get['sort'];
-		} else {
-			$sort = 'name';
-		}
+		$sort = isset($this->request->get['sort']) ? $this->request->get['sort'] : 'name';
+		$order = isset($this->request->get['order']) ? $this->request->get['order'] : 'ASC';
+		$page = isset($this->request->get['page']) ? $this->request->get['page'] : 1;
 
-		if (isset($this->request->get['order'])) {
-			$order = $this->request->get['order'];
-		} else {
-			$order = 'ASC';
-		}
-
-		if (isset($this->request->get['page'])) {
-			$page = $this->request->get['page'];
-		} else {
-			$page = 1;
-		}
-
-		$url = '';
-
-		if (isset($this->request->get['filter_name'])) {
-			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
-		}
-
-		if (isset($this->request->get['filter_customer_group_id'])) {
-			$url .= '&filter_customer_group_id=' . $this->request->get['filter_customer_group_id'];
-		}
-
-		if (isset($this->request->get['filter_customer_department_id'])) {
-			$url .= '&filter_customer_department_id=' . $this->request->get['filter_customer_department_id'];
-		}
-
-		if (isset($this->request->get['filter_location_id'])) {
-			$url .= '&filter_location_id=' . $this->request->get['filter_location_id'];
-		}
-
-		if (isset($this->request->get['filter_status'])) {
-			$url .= '&filter_status=' . $this->request->get['filter_status'];
-		}
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
-
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
-		}
+		$url = $this->urlFilter();
+		// $data['url'] = $url;
 
 		$data['breadcrumbs'] = array();
 
@@ -209,23 +202,21 @@ class ControllerCustomerFinger extends Controller
 			'href' => $this->url->link('customer/finger', 'token=' . $this->session->data['token'], true)
 		);
 
+		$data['unfilter'] = $this->url->link('customer/finger', 'token=' . $this->session->data['token'], true);
+
+		$limit = $this->config->get('config_limit_admin');
+
 		$filter_data = array(
-			// 'filter_customer_department_id'	=> $this->user->getCustomerDepartmentId(),
-			'filter_name'	   	   				=> $filter_name,
-			'filter_customer_group_id'			=> $filter_customer_group_id,
-			'filter_customer_department_id'		=> $filter_customer_department_id,
-			'filter_location_id'   				=> $filter_location_id,
-			'filter_status' 	   				=> $filter_status,
-			'sort'                 				=> $sort,
-			'order'                				=> $order,
-			'start'                				=> ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit'                				=> $this->config->get('config_limit_admin')
+			'filter'	=> $filter,
+			'sort' 		=> $sort,
+			'order'		=> $order,
+			'start'		=> ($page - 1) * $limit,
+			'limit'		=> $limit
 		);
 
 		$data['customers'] = array();
 
-		$customer_count = $this->model_presence_presence->getTotalCustomers($filter_data);
-		$results = $this->model_presence_presence->getCustomers($filter_data);
+		$results = $this->model_presence_presence->getCustomersNew($filter_data);
 
 		$finger_indexes = $this->model_customer_finger->getFingerIndexes();
 
@@ -271,6 +262,10 @@ class ControllerCustomerFinger extends Controller
 				}
 			}
 
+			$fingers =  $this->model_customer_finger->getFingersByCustomerId($result['customer_id'], 0);
+
+			$new_fmd_status = $fingers ? 1 : 0;
+
 			$data['customers'][] = array(
 				'customer_id' 			=> $result['customer_id'],
 				'nip' 					=> $result['nip'],
@@ -278,6 +273,7 @@ class ControllerCustomerFinger extends Controller
 				'customer_group' 		=> $result['customer_group'],
 				'customer_department' 	=> $result['customer_department'],
 				'location' 				=> $result['location'],
+				'new_fmd_status' 		=> $new_fmd_status,
 				'scan_active' 			=> $scan_active,
 				'view'          		=> $this->url->link('report/customer/view', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'], true),
 				'manage'          		=> $this->url->link('customer/finger/manage', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
@@ -285,21 +281,7 @@ class ControllerCustomerFinger extends Controller
 			);
 		}
 
-		$data['token'] = $this->session->data['token'];
-
-		if (isset($this->error['warning'])) {
-			$data['error_warning'] = $this->error['warning'];
-		} else {
-			$data['error_warning'] = '';
-		}
-
-		if (isset($this->session->data['success'])) {
-			$data['success'] = $this->session->data['success'];
-
-			unset($this->session->data['success']);
-		} else {
-			$data['success'] = '';
-		}
+		$customer_count = $this->model_presence_presence->getCustomersCount($filter_data);
 
 		$url = '';
 
@@ -388,11 +370,10 @@ class ControllerCustomerFinger extends Controller
 		$this->load->model('localisation/location');
 		$data['locations'] = $this->model_localisation_location->getLocations();
 
-		$data['filter_name'] = $filter_name;
-		$data['filter_customer_group_id'] = $filter_customer_group_id;
-		$data['filter_customer_department_id'] = $filter_customer_department_id;
-		$data['filter_status'] = $filter_status;
-		$data['filter_location_id'] = $filter_location_id;
+		$data['token'] = $this->session->data['token'];
+
+		$data['filter_items'] = json_encode($this->filter_items);
+		$data['filter'] = $filter;
 		$data['sort'] = $sort;
 		$data['order'] = $order;
 
@@ -740,12 +721,16 @@ class ControllerCustomerFinger extends Controller
 
 		if (!$this->user->hasPermission('modify', 'customer/finger')) {
 			$this->error['warning'] = $this->language->get('error_permission');
-		} elseif ($this->user->getCustomerDepartmentId()) {
-			$this->load->model('common/payroll');
-			$customer_info = $this->model_common_payroll->getCustomer($customer_id);
+		} else {
+			$user_coverage = $this->user->getCoverage();
 
-			if ($this->user->getCustomerDepartmentId() != $customer_info['customer_department_id']) {
-				$this->error['warning'] = $this->language->get('error_customer_department');
+			if (!$user_coverage['full_coverage']) {
+				$this->load->model('common/payroll');
+				$customer_info = $this->model_common_payroll->getCustomer($customer_id);
+
+				if (!in_array($customer_info['customer_department_id'], $user_coverage['customer_department_ids']) || !in_array($customer_info['location_id'], $user_coverage['location_ids'])) {
+					$this->error['warning'] = $this->language->get('error_coverage');
+				}
 			}
 		}
 
@@ -765,12 +750,16 @@ class ControllerCustomerFinger extends Controller
 
 		if (!$this->user->hasPermission('modify', 'customer/finger')) {
 			$this->error['warning'] = $this->language->get('error_permission');
-		} elseif ($this->user->getCustomerDepartmentId()) {
-			$this->load->model('common/payroll');
-			$customer_info = $this->model_common_payroll->getCustomer($customer_id);
+		} else {
+			$user_coverage = $this->user->getCoverage();
 
-			if ($this->user->getCustomerDepartmentId() != $customer_info['customer_department_id']) {
-				$this->error['warning'] = $this->language->get('error_customer_department');
+			if (!$user_coverage['full_coverage']) {
+				$this->load->model('common/payroll');
+				$customer_info = $this->model_common_payroll->getCustomer($customer_id);
+
+				if (!in_array($customer_info['customer_department_id'], $user_coverage['customer_department_ids']) || !in_array($customer_info['location_id'], $user_coverage['location_ids'])) {
+					$this->error['warning'] = $this->language->get('error_coverage');
+				}
 			}
 		}
 
@@ -792,16 +781,24 @@ class ControllerCustomerFinger extends Controller
 
 		$this->load->model('customer/customer');
 		$customer_info = $this->model_customer_customer->getCustomer($this->request->get['customer_id']);
-		
-		# Active_finger: Save pertama diijinkan, tp edit hanya oleh bypass
+
+		$user_coverage = $this->user->getCoverage();
+
+		if (!$user_coverage['full_coverage']) {
+			if (!in_array($customer_info['customer_department_id'], $user_coverage['customer_department_ids']) || !in_array($customer_info['location_id'], $user_coverage['location_ids'])) {
+				$this->error['warning'] = $this->language->get('error_coverage');
+			}
+		}
+
+		# Active_finger: Save pertama diijinkan, tp edit hanya oleh approve
 		if (!empty($customer_add_info['active_finger']) && json_decode($customer_info['active_finger'], true) != $this->request->post['active_finger']) {
-			if (!$this->user->hasPermission('bypass', 'customer/finger')) {
+			if (!$this->user->hasPermission('approve', 'customer/finger')) {
 				$this->error['warning'] = $this->language->get('error_permission_1');
 			}
 		}
 
 		if (!in_array($customer_info['location_id'], $this->request->post['working_locations'])) {
-				$this->error['warning'] = $this->language->get('error_working_location');
+			$this->error['warning'] = $this->language->get('error_working_location');
 		}
 
 		return !$this->error;
@@ -809,8 +806,21 @@ class ControllerCustomerFinger extends Controller
 
 	protected function validateDelete()
 	{
-		if (!$this->user->hasPermission('bypass', 'customer/finger')) {
+		if (!$this->user->hasPermission('approve', 'customer/finger')) {
 			$this->error['warning'] = $this->language->get('error_permission');
+		} else {
+			$user_coverage = $this->user->getCoverage();
+
+			list($customer_id) = explode('x', $this->request->post['finger_index']);
+
+			if (!$user_coverage['full_coverage']) {
+				$this->load->model('customer/customer');
+				$customer_info = $this->model_customer_customer->getCustomer($customer_id);
+
+				if (!in_array($customer_info['customer_department_id'], $user_coverage['customer_department_ids']) || !in_array($customer_info['location_id'], $user_coverage['location_ids'])) {
+					$this->error['warning'] = $this->language->get('error_coverage');
+				}
+			}
 		}
 
 		return !$this->error;
@@ -838,45 +848,51 @@ class ControllerCustomerFinger extends Controller
 		$this->response->setOutput(json_encode($json));
 	}
 
-	public function autocomplete()
+	public function autocompleteCustomer()
 	{
-		$json = array();
-
-		if (isset($this->request->get['filter_name'])) {
-			if (isset($this->request->get['filter_name'])) {
-				$filter_name = $this->request->get['filter_name'];
-			} else {
-				$filter_name = '';
-			}
-
-			$this->load->model('customer/customer');
-
-			$filter_data = array(
-				'filter_name'	=> $filter_name,
-				'filter_active'	=> '*',
-				'start'       	=> 0,
-				'limit'        	=> 15
-			);
-
-			$results = $this->model_customer_customer->getCustomers($filter_data);
-
-			foreach ($results as $result) {
-				$json[] = array(
-					'customer_id'       => $result['customer_id'],
-					'name'              => strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8'))
-				);
-			}
-		}
-
-		$sort_order = array();
-
-		foreach ($json as $key => $value) {
-			$sort_order[$key] = $value['name'];
-		}
-
-		array_multisort($sort_order, SORT_ASC, $json);
-
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->request->get['filter_status'] = '1';
+		$this->load->controller('customer/customer/autocomplete');
 	}
+
+	// public function autocomplete()
+	// {
+	// 	$json = array();
+
+	// 	if (isset($this->request->get['filter_name'])) {
+	// 		if (isset($this->request->get['filter_name'])) {
+	// 			$filter_name = $this->request->get['filter_name'];
+	// 		} else {
+	// 			$filter_name = '';
+	// 		}
+
+	// 		$this->load->model('customer/customer');
+
+	// 		$filter_data = array(
+	// 			'filter_name'	=> $filter_name,
+	// 			'filter_active'	=> '*',
+	// 			'start'       	=> 0,
+	// 			'limit'        	=> 15
+	// 		);
+
+	// 		$results = $this->model_customer_customer->getCustomers($filter_data);
+
+	// 		foreach ($results as $result) {
+	// 			$json[] = array(
+	// 				'customer_id'       => $result['customer_id'],
+	// 				'name'              => strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8'))
+	// 			);
+	// 		}
+	// 	}
+
+	// 	$sort_order = array();
+
+	// 	foreach ($json as $key => $value) {
+	// 		$sort_order[$key] = $value['name'];
+	// 	}
+
+	// 	array_multisort($sort_order, SORT_ASC, $json);
+
+	// 	$this->response->addHeader('Content-Type: application/json');
+	// 	$this->response->setOutput(json_encode($json));
+	// }
 }

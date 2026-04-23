@@ -11,6 +11,18 @@ User Group: ganti form ke list, trus ada kolom untuk centang access, modify, app
 
 === MODIFY CONFIG
 
+4.3.3	23/04/2026
+User: Penambahan role coverage (full/partial)
+User Group: Perbaikan template.
+Customer > Finger: Enrollment bisa dilakukan walaupun tanggal mulai bekerja msh blm aktif.
+Customer > Finger: Apply user role coverage.
+Customer > Finger: Edit dan Delete hanya utk user approve (sebelumnya bypass)
+
+=== MODIFY DATABASE
+ALTER TABLE oc_user ADD customer_department_ids varchar(255) NULL AFTER image;
+ALTER TABLE oc_user ADD location_ids varchar(255) NULL customer_department_ids;
+ALTER TABLE oc_user ADD `full_coverage` BOOL DEFAULT 1 NOT NULL COMMENT '0=selected, 1=all AFTER image';
+
 4.3.2	11/03/2026
 Allowance: Apply export Mandiri.
 Allowance: Need Approval permission for export.

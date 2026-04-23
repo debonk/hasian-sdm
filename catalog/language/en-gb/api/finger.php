@@ -12,6 +12,7 @@ $_['error_device']				= 'Warning: Finger Device tidak terdaftar!';
 $_['error_device_session']		= 'Warning: Finger Device tidak terdaftar atau session belum ada!';
 $_['error_data']				= 'Warning: Finger Data tidak ditemukan!';
 $_['error_session']				= 'Warning: Session Error. Silahkan tutup dan buka kembali app ini!';
+$_['error_coverage']     		= 'Warning: You do not have permission to modify other division/location!';
 $_['error_customer_not_found']	= 'Warning: Data karyawan tidak ditemukan!';
 $_['error_finger_exist']		= 'Warning: Data sidik jari sudah ada!';
 $_['error_location']			= 'Warning: Location Data tidak ditemukan!';

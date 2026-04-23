@@ -3,10 +3,12 @@
 $_['heading_title']     = 'Users';
 
 // Text
-$_['text_success']      = 'Success: You have modified users!';
-$_['text_list']         = 'User List';
-$_['text_add']          = 'Add User';
-$_['text_edit']         = 'Edit User';
+$_['text_success']      	= 'Success: You have modified users!';
+$_['text_list']         	= 'User List';
+$_['text_add']          	= 'Add User';
+$_['text_edit']         	= 'Edit User';
+$_['text_coverage_full']	= 'All Divisions & Locations';
+$_['text_coverage_partial']	= 'Selected Divisions & Locations';
 
 // Column
 $_['column_user_group'] = 'User Group';
@@ -16,16 +18,18 @@ $_['column_date_added'] = 'Date Added';
 $_['column_action']     = 'Action';
 
 // Entry
-$_['entry_username']   	= 'Username';
-$_['entry_user_group'] 	= 'User Group';
+$_['entry_username']   			= 'Username';
+$_['entry_user_group'] 			= 'User Group';
 $_['entry_customer_department'] = 'Division';
-$_['entry_password']   	= 'Password';
-$_['entry_confirm']    	= 'Confirm';
-$_['entry_firstname']  	= 'First Name';
-$_['entry_lastname']   	= 'Last Name';
-$_['entry_email']      	= 'E-Mail';
-$_['entry_image']      	= 'Image';
-$_['entry_status']     	= 'Status';
+$_['entry_password']   			= 'Password';
+$_['entry_confirm']    			= 'Confirm';
+$_['entry_firstname']  			= 'First Name';
+$_['entry_lastname']   			= 'Last Name';
+$_['entry_location']   			= 'Location';
+$_['entry_email']      			= 'E-Mail';
+$_['entry_image']      			= 'Image';
+$_['entry_coverage']     		= 'Access Coverage';
+$_['entry_status']     			= 'Status';
 
 // Error
 $_['error_permission'] 	= 'Warning: You do not have permission to modify users!';

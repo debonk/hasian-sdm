@@ -15,10 +15,13 @@ $_['column_action']     = 'Action';
 
 // Entry
 $_['entry_name']        = 'User Group Name';
-$_['entry_access']      = 'Access Permission';
-$_['entry_modify']      = 'Modify Permission';
-$_['entry_approve']     = 'Approve Permission';
-$_['entry_bypass']      = 'By Pass Permission';
+$_['entry_permission']	= 'Permissions';
+$_['entry_module']		= 'Modules';
+$_['entry_access']      = 'Access';
+$_['entry_modify']      = 'Modify';
+$_['entry_approve']     = 'Approve';
+$_['entry_bypass']      = 'By Pass';
+$_['entry_users']     	= 'Active Users';
 
 // Error
 $_['error_permission']  = 'Warning: You do not have permission to modify user groups!';

@@ -129,4 +129,5 @@ $_['error_permission_1']			= 'Warning: You do not have permission to modify this
 $_['error_warning']				 	= 'Warning: Please check the form carefully for errors!';
 $_['error_status']				 	= 'Warning: Wrong Period Status! Could not complete this action!';
 $_['error_status_bypass']			= 'Warning: Wrong Period Status!';
+$_['error_coverage']     		 	= 'Warning: You do not have permission to modify other division/location!';
 

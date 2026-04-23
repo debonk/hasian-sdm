@@ -298,7 +298,9 @@ class ControllerApiFinger extends Controller
 
 		$input = file_get_contents('php://input');
 		// $json = json_decode($input, true);
-		$input2 = '{"SN":"{7C259A01-7CC2-954F-A686-58C8737CE77E}","Idx":"10x23x1","Fmd":"<?xml version=\"1.0\" encoding=\"UTF-8\"?><Fid><Bytes>Rk1SACAyMAABuAAz\/v8AAAH0AiYBFAEUAQAAAFZEgMMAiVZcgDAAiRJcgEYBL4NagOgAZU1XgGgBdY1XQFgBeIlXQNYAMlBRgD8Al3VQQPoAH6VPgKwAI6xPQJMBOZBPQUUBKjVNgOsAbE9NQEcBh4dMgEsAWwpLQL4ATqdKQV0AyDxJQWYAoT5IgOUBQzhIQU0BjyRIQJ8Bx7JIQEIBmS5HgRABryJHQVIBL4FGQFgBB4VGgEEA4RtFQM0AK1JEQLUAxVVEgTkBUHxEQOkA7jpDgUUBcYdDQMwB2E9CQZIAfCVCQUUAi5dCgTcAiJRBgXAAoTxBgWkA3jNBQNYA4ENBQKIBEzFBgUEA85Q\/QF0BEyg\/gRsBJzg\/QOkA4JM\/QJwBYpY\/QScBoH0\/QasAeYc9QDgA6CQ9gLYBHpE9gVgBHjg9QREBijM9gTYBqyU9gWQAVDc9QSABGDo8gQEBNpI8QUUBZn88gD8BjyU8QFEBuDI8QB8A2YU8QRMBcX88QTEBeyA8QGUB0Ec8QYcATjE7QUAAHEE7QRgAJk07gXUAPIw7QHcBE4M7gIQAYgA6gLEBXTg6AAA=<\/Bytes><Format>1769473<\/Format><Version>1.0.0<\/Version><\/Fid>"}';
+		/* $input2 = '{"SN":"{7C259A01-7CC2-954F-A686-58C8737CE77E}","Idx":"10x23x1","Fmd":"<?xml version=\"1.0\" encoding=\"UTF-8\"?><Fid><Bytes>Rk1SACAyMAABuAAz\/v8AAAH0AiYBFAEUAQAAAFZEgMMAiVZcgDAAiRJcgEYBL4NagOgAZU1XgGgBdY1XQFgBeIlXQNYAMlBRgD8Al3VQQPoAH6VPgKwAI6xPQJMBOZBPQUUBKjVNgOsAbE9NQEcBh4dMgEsAWwpLQL4ATqdKQV0AyDxJQWYAoT5IgOUBQzhIQU0BjyRIQJ8Bx7JIQEIBmS5HgRABryJHQVIBL4FGQFgBB4VGgEEA4RtFQM0AK1JEQLUAxVVEgTkBUHxEQOkA7jpDgUUBcYdDQMwB2E9CQZIAfCVCQUUAi5dCgTcAiJRBgXAAoTxBgWkA3jNBQNYA4ENBQKIBEzFBgUEA85Q\/QF0BEyg\/gRsBJzg\/QOkA4JM\/QJwBYpY\/QScBoH0\/QasAeYc9QDgA6CQ9gLYBHpE9gVgBHjg9QREBijM9gTYBqyU9gWQAVDc9QSABGDo8gQEBNpI8QUUBZn88gD8BjyU8QFEBuDI8QB8A2YU8QRMBcX88QTEBeyA8QGUB0Ec8QYcATjE7QUAAHEE7QRgAJk07gXUAPIw7QHcBE4M7gIQAYgA6gLEBXTg6AAA=<\/Bytes><Format>1769473<\/Format><Version>1.0.0<\/Version><\/Fid>"}';
+		 */
+
 		$input_data = json_decode($input, true);
 
 		switch ($json) {
@@ -334,12 +336,20 @@ class ControllerApiFinger extends Controller
 				// }
 
 				$this->load->model('presence/presence');
-				$customer_info = $this->model_presence_presence->getCustomer($customer_id);
+				$customer_info = $this->model_presence_presence->getCustomer($customer_id, ['no_date_start' => true]); # Tambahan parameter no_date_start agar karyawan yang belum aktif tetap bisa melakukan registrasi sidik jari.
 
-				if (!$customer_info) { //Cek apakah karyawan msh aktif
+				if (!$customer_info) { # Cek apakah karyawan terdaftar dan belum resign
 					$json = $this->language->get('error_customer_not_found');
 
 					break;
+				} else {
+					$user_coverage = $this->user->getCoverage();
+
+					if (!$user_coverage['full_coverage']) {
+						if (!in_array($customer_info['customer_department_id'], $user_coverage['customer_department_ids']) || !in_array($customer_info['location_id'], $user_coverage['location_ids'])) {
+							$this->error['warning'] = $this->language->get('error_coverage');
+						}
+					}
 				}
 
 				$finger_info = $this->model_presence_presence->getFingerByCustomerId($customer_id, $finger_index);

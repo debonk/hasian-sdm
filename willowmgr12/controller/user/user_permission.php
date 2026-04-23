@@ -1,8 +1,10 @@
 <?php
-class ControllerUserUserPermission extends Controller {
+class ControllerUserUserPermission extends Controller
+{
 	private $error = array();
 
-	public function index() {
+	public function index()
+	{
 		$this->load->language('user/user_group');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -12,7 +14,8 @@ class ControllerUserUserPermission extends Controller {
 		$this->getList();
 	}
 
-	public function add() {
+	public function add()
+	{
 		$this->load->language('user/user_group');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -44,7 +47,8 @@ class ControllerUserUserPermission extends Controller {
 		$this->getForm();
 	}
 
-	public function edit() {
+	public function edit()
+	{
 		$this->load->language('user/user_group');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -76,7 +80,8 @@ class ControllerUserUserPermission extends Controller {
 		$this->getForm();
 	}
 
-	public function delete() {
+	public function delete()
+	{
 		$this->load->language('user/user_group');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -110,7 +115,8 @@ class ControllerUserUserPermission extends Controller {
 		$this->getList();
 	}
 
-	protected function getList() {
+	protected function getList()
+	{
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
@@ -170,7 +176,7 @@ class ControllerUserUserPermission extends Controller {
 		$user_group_total = $this->model_user_user_group->getTotalUserGroups();
 
 		$results = $this->model_user_user_group->getUserGroups($filter_data);
-		
+
 		$this->load->model('user/user');
 
 		foreach ($results as $result) {
@@ -185,7 +191,7 @@ class ControllerUserUserPermission extends Controller {
 		}
 
 		$data['heading_title'] = $this->language->get('heading_title');
-		
+
 		$data['text_list'] = $this->language->get('text_list');
 		$data['text_no_results'] = $this->language->get('text_no_results');
 		$data['text_confirm'] = $this->language->get('text_confirm');
@@ -262,21 +268,28 @@ class ControllerUserUserPermission extends Controller {
 		$this->response->setOutput($this->load->view('user/user_group_list', $data));
 	}
 
-	protected function getForm() {
-		$data['heading_title'] = $this->language->get('heading_title');
-		
+	protected function getForm()
+	{
 		$data['text_form'] = !isset($this->request->get['user_group_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
-		$data['text_select_all'] = $this->language->get('text_select_all');
-		$data['text_unselect_all'] = $this->language->get('text_unselect_all');
 
-		$data['entry_name'] = $this->language->get('entry_name');
-		$data['entry_access'] = $this->language->get('entry_access');
-		$data['entry_modify'] = $this->language->get('entry_modify');
-		$data['entry_approve'] = $this->language->get('entry_approve');
-		$data['entry_bypass'] = $this->language->get('entry_bypass');
-
-		$data['button_save'] = $this->language->get('button_save');
-		$data['button_cancel'] = $this->language->get('button_cancel');
+		$language_items = [
+			'heading_title',
+			'text_select_all',
+			'text_unselect_all',
+			'entry_name',
+			'entry_permission',
+			'entry_module',
+			'entry_access',
+			'entry_modify',
+			'entry_approve',
+			'entry_bypass',
+			'entry_users',
+			'button_save',
+			'button_cancel',
+		];
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -322,6 +335,11 @@ class ControllerUserUserPermission extends Controller {
 			$data['action'] = $this->url->link('user/user_permission/edit', 'token=' . $this->session->data['token'] . '&user_group_id=' . $this->request->get['user_group_id'] . $url, true);
 		}
 
+		$data['breadcrumbs'][] = array(
+			'text' => $data['text_form'],
+			'href' => $data['action']
+		);
+
 		$data['cancel'] = $this->url->link('user/user_permission', 'token=' . $this->session->data['token'] . $url, true);
 
 		if (isset($this->request->get['user_group_id']) && $this->request->server['REQUEST_METHOD'] != 'POST') {
@@ -342,9 +360,12 @@ class ControllerUserUserPermission extends Controller {
 			'common/login',
 			'common/logout',
 			'common/forgotten',
-			'common/reset',			
+			'common/reset',
 			'common/footer',
 			'common/header',
+			'common/menu',
+			'common/column_left',
+			'common/profile',
 			'error/not_found',
 			'error/permission',
 			'dashboard/presence',
@@ -382,13 +403,13 @@ class ControllerUserUserPermission extends Controller {
 
 		// Sort the file array
 		sort($files);
-					
+
 		foreach ($files as $file) {
 			$controller = substr($file, strlen(DIR_APPLICATION . 'controller/'));
 
 			$permission = substr($controller, 0, strrpos($controller, '.'));
 
-			if (!in_array($permission, $ignore)) {
+			if (!in_array ($permission, $ignore)) {
 				$data['permissions'][] = $permission;
 			}
 		}
@@ -425,6 +446,15 @@ class ControllerUserUserPermission extends Controller {
 			$data['bypass'] = array();
 		}
 
+		$data['users'] = '-';
+
+		if (isset($this->request->get['user_group_id'])) {
+			$this->load->model('user/user');
+			$users =  $this->model_user_user->getUsersByGroupId($this->request->get['user_group_id']);
+
+			$data['users'] = $users ? implode(', ', array_column($users, 'username')) : '-';
+		}
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -432,7 +462,8 @@ class ControllerUserUserPermission extends Controller {
 		$this->response->setOutput($this->load->view('user/user_group_form', $data));
 	}
 
-	protected function validateForm() {
+	protected function validateForm()
+	{
 		if (!$this->user->hasPermission('modify', 'user/user_permission')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
@@ -444,7 +475,8 @@ class ControllerUserUserPermission extends Controller {
 		return !$this->error;
 	}
 
-	protected function validateDelete() {
+	protected function validateDelete()
+	{
 		if (!$this->user->hasPermission('modify', 'user/user_permission')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}

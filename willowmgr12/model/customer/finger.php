@@ -8,7 +8,7 @@ class ModelCustomerFinger extends Model
 		if (!isset($data['working_locations'])) {
 			$data['working_locations'] = [];
 		}
-		
+
 		$this->db->query("UPDATE " . DB_PREFIX . "customer_add_data SET active_finger = '" . json_encode($data['active_finger']) . "', working_locations = '" . json_encode($data['working_locations']) . "' WHERE customer_id = '" . (int)$customer_id . "'");
 	}
 
@@ -26,10 +26,19 @@ class ModelCustomerFinger extends Model
 		return $query->row;
 	}
 
-	public function getFingersByCustomerId($customer_id)
+	public function getFingersByCustomerId($customer_id, $legacy = null)
 	{
-		$sql = "SELECT DISTINCT cf.*, u.username FROM " . DB_PREFIX . "customer_finger cf LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = cf.user_id) WHERE cf.customer_id = '" . (int)$customer_id . "' ORDER BY finger_index ASC";
-		// $sql = "SELECT * FROM " . DB_PREFIX . "v_customer_finger WHERE customer_id = '" . (int)$customer_id . "' ORDER BY finger_index ASC";
+		$sql = "SELECT DISTINCT cf.*, u.username FROM " . DB_PREFIX . "customer_finger cf LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = cf.user_id) WHERE cf.customer_id = '" . (int)$customer_id . "'";
+
+		if (isset($legacy)) {
+			if ($legacy) {
+				$sql .= " AND cf.legacy = 1";
+			} else {
+				$sql .= " AND cf.legacy IS NULL";
+			}
+		}
+
+		$sql .= " ORDER BY finger_index ASC";
 
 		$query = $this->db->query($sql);
 

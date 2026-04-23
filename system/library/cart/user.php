@@ -1,12 +1,17 @@
 <?php
+
 namespace Cart;
+
 #[\AllowDynamicProperties]
-class User {
+class User
+{
 	private $user_id;
 	private $username;
 	private $permission = array();
+	private $coverage = array();
 
-	public function __construct($registry) {
+	public function __construct($registry)
+	{
 		$this->db = $registry->get('db');
 		$this->request = $registry->get('request');
 		$this->session = $registry->get('session');
@@ -20,6 +25,13 @@ class User {
 				$this->user_id = $user_query->row['user_id'];
 				$this->username = $user_query->row['username'];
 				$this->user_group_id = $user_query->row['user_group_id'];
+				$this->coverage['full_coverage'] = $user_query->row['full_coverage'];
+
+				if (empty($user_query->row['full_coverage'])) {
+					$this->coverage['customer_department_ids'] = $user_query->row['customer_department_ids'] ? (array)json_decode($user_query->row['customer_department_ids'], true) : [];
+					$this->coverage['location_ids'] = $user_query->row['location_ids'] ? (array)json_decode($user_query->row['location_ids'], true) : [];
+				}
+
 				$this->customer_department_id = $user_query->row['customer_department_id'];
 
 				$this->db->query("UPDATE " . DB_PREFIX . "user SET ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "' WHERE user_id = '" . (int)$this->session->data['user_id'] . "'");
@@ -43,7 +55,8 @@ class User {
 		}
 	}
 
-	public function login($username, $password) {
+	public function login($username, $password)
+	{
 		$user_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "user WHERE username = '" . $this->db->escape($username) . "' AND (password = SHA1(CONCAT(salt, SHA1(CONCAT(salt, SHA1('" . $this->db->escape($password) . "'))))) OR password = '" . $this->db->escape(md5($password)) . "') AND status = '1'");
 
 		if ($user_query->num_rows) {
@@ -53,6 +66,13 @@ class User {
 			$this->user_id = $user_query->row['user_id'];
 			$this->username = $user_query->row['username'];
 			$this->user_group_id = $user_query->row['user_group_id'];
+			$this->coverage['full_coverage'] = $user_query->row['full_coverage'];
+
+			if (empty($user_query->row['full_coverage'])) {
+				$this->coverage['customer_department_ids'] = $user_query->row['customer_department_ids'] ? (array)json_decode($user_query->row['customer_department_ids'], true) : [];
+				$this->coverage['location_ids'] = $user_query->row['location_ids'] ? (array)json_decode($user_query->row['location_ids'], true) : [];
+			}
+
 			$this->customer_department_id = $user_query->row['customer_department_id'];
 
 			$user_group_query = $this->db->query("SELECT permission FROM " . DB_PREFIX . "user_group WHERE user_group_id = '" . (int)$user_query->row['user_group_id'] . "'");
@@ -73,7 +93,8 @@ class User {
 		}
 	}
 
-	public function logout() {
+	public function logout()
+	{
 		unset($this->session->data['user_id']);
 
 		$this->user_id = '';
@@ -84,34 +105,38 @@ class User {
 		$this->deleteCookie();
 	}
 
-	protected function setCookie() {
+	protected function setCookie()
+	{
 		$cookie = md5($this->user_id . $this->session->data['token']);
 
 		setcookie('code', $cookie, time() + 7200, '/', $this->request->server['HTTP_HOST'], true, true);
-		
+
 		$this->db->query("UPDATE " . DB_PREFIX . "user SET cookie = '" . $this->db->escape($cookie) . "' WHERE user_id = '" . (int)$this->user_id . "'");
 	}
 
-	protected function deleteCookie() {
+	protected function deleteCookie()
+	{
 		setcookie('code', '', time() - 172800, '/', $this->request->server['HTTP_HOST']);
-		
+
 		$this->db->query("UPDATE " . DB_PREFIX . "user SET cookie =  '' WHERE user_id = '" . (int)$this->user_id . "'");
 	}
 
-	protected function getCookie() {
+	protected function getCookie()
+	{
 		if (isset($this->request->get['token']) && isset($this->request->cookie['code'])) {
 			$user_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "user WHERE cookie = '" . $this->db->escape($this->request->cookie['code']) . "' AND status = '1'");
 
 			if ($user_query->num_rows && md5($user_query->row['user_id'] . $this->request->get['token']) == $user_query->row['cookie']) {
 				$this->session->data['user_id'] = $user_query->row['user_id'];
 				$this->session->data['token'] = $this->request->get['token'];
-			// } else {
-			// 	$this->logout();
+				// } else {
+				// 	$this->logout();
 			}
 		}
 	}
 
-	public function hasPermission($key, $value) {
+	public function hasPermission($key, $value)
+	{
 		if (isset($this->permission[$key])) {
 			return in_array($value, $this->permission[$key]);
 		} else {
@@ -119,27 +144,38 @@ class User {
 		}
 	}
 
-	public function isLogged() {
+	public function isLogged()
+	{
 		return $this->user_id;
 	}
 
-	public function getId() {
+	public function getId()
+	{
 		return $this->user_id;
 	}
 
-	public function getUserName() {
+	public function getUserName()
+	{
 		return $this->username;
 	}
 
-	public function getPermission() {
+	public function getPermission()
+	{
 		return $this->permission;
 	}
 
-	public function getGroupId() {
+	public function getGroupId()
+	{
 		return $this->user_group_id;
 	}
 
-	public function getCustomerDepartmentId() {
+	public function getCoverage()
+	{
+		return $this->coverage;
+	}
+
+	public function getCustomerDepartmentId()
+	{
 		return $this->customer_department_id;
 	}
 }

@@ -89,7 +89,7 @@ class ControllerPayrollPayrollBasic extends Controller
 			});
 
 			$this->session->data['success'] = $this->language->get('text_success_approve');
-			
+
 			$url = $this->urlFilter();
 
 			$this->response->redirect($this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . $url, true));
@@ -114,7 +114,7 @@ class ControllerPayrollPayrollBasic extends Controller
 			});
 
 			$this->session->data['success'] = $this->language->get('text_success_reject');
-			
+
 			$url = $this->urlFilter();
 
 			$this->response->redirect($this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . $url, true));
@@ -138,31 +138,31 @@ class ControllerPayrollPayrollBasic extends Controller
 				foreach ($this->filter_items as $filter_item) {
 					$filter[$filter_item] = isset($this->request->get['filter_' . $filter_item]) ? $this->request->get['filter_' . $filter_item] : null;
 				}
-		
+
 				if (empty($filter['active'])) {
 					$filter['active'] = 1;
 				}
-		
+
 				$unapproveds = $this->model_payroll_payroll_basic->getUnapprovedPayrollBasics();
 				if (!$unapproveds) {
 					$filter['customer_ids'] = [0];
 				} else {
 					$filter['customer_ids'] = array_keys($unapproveds);
 				}
-		
+
 				$filter_data = array(
 					'filter'	=> $filter,
 				);
-		
+
 				$results = $this->model_payroll_payroll_basic->getCustomerPayrollBasics($filter_data);
-				
+
 				foreach ($results as $result) {
 					$this->model_payroll_payroll_basic->approvePayrollBasic($unapproveds[$result['customer_id']]['payroll_basic_id']);
 				}
 			});
 
 			$this->session->data['success'] = $this->language->get('text_success_approve');
-			
+
 			$url = $this->urlFilter();
 
 			$this->response->redirect($this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . $url, true));
@@ -229,23 +229,9 @@ class ControllerPayrollPayrollBasic extends Controller
 			$filter['active'] = 1;
 		}
 
-		if (isset($this->request->get['sort'])) {
-			$sort = $this->request->get['sort'];
-		} else {
-			$sort = 'name';
-		}
-
-		if (isset($this->request->get['order'])) {
-			$order = $this->request->get['order'];
-		} else {
-			$order = 'ASC';
-		}
-
-		if (isset($this->request->get['page'])) {
-			$page = $this->request->get['page'];
-		} else {
-			$page = 1;
-		}
+		$sort = isset($this->request->get['sort']) ? $this->request->get['sort'] : 'name';
+		$order = isset($this->request->get['order']) ? $this->request->get['order'] : 'ASC';
+		$page = isset($this->request->get['page']) ? $this->request->get['page'] : 1;
 
 		$url = $this->urlFilter();
 		// $data['url'] = $url;

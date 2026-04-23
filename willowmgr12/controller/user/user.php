@@ -1,8 +1,10 @@
 <?php
-class ControllerUserUser extends Controller {
+class ControllerUserUser extends Controller
+{
 	private $error = array();
 
-	public function index() {
+	public function index()
+	{
 		$this->load->language('user/user');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -12,7 +14,8 @@ class ControllerUserUser extends Controller {
 		$this->getList();
 	}
 
-	public function add() {
+	public function add()
+	{
 		$this->load->language('user/user');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -44,7 +47,8 @@ class ControllerUserUser extends Controller {
 		$this->getForm();
 	}
 
-	public function edit() {
+	public function edit()
+	{
 		$this->load->language('user/user');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -76,7 +80,8 @@ class ControllerUserUser extends Controller {
 		$this->getForm();
 	}
 
-	public function delete() {
+	public function delete()
+	{
 		$this->load->language('user/user');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -110,7 +115,8 @@ class ControllerUserUser extends Controller {
 		$this->getList();
 	}
 
-	protected function getList() {
+	protected function getList()
+	{
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
@@ -184,7 +190,7 @@ class ControllerUserUser extends Controller {
 		}
 
 		$data['heading_title'] = $this->language->get('heading_title');
-		
+
 		$data['text_list'] = $this->language->get('text_list');
 		$data['text_no_results'] = $this->language->get('text_no_results');
 		$data['text_confirm'] = $this->language->get('text_confirm');
@@ -265,62 +271,46 @@ class ControllerUserUser extends Controller {
 		$this->response->setOutput($this->load->view('user/user_list', $data));
 	}
 
-	protected function getForm() {
-		$data['heading_title'] = $this->language->get('heading_title');
-		
+	protected function getForm()
+	{
 		$data['text_form'] = !isset($this->request->get['user_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
-		$data['text_enabled'] = $this->language->get('text_enabled');
-		$data['text_disabled'] = $this->language->get('text_disabled');
-		$data['text_all'] = $this->language->get('text_all');
-		
-		$data['entry_username'] = $this->language->get('entry_username');
-		$data['entry_user_group'] = $this->language->get('entry_user_group');
-		$data['entry_customer_department'] = $this->language->get('entry_customer_department');
-		$data['entry_password'] = $this->language->get('entry_password');
-		$data['entry_confirm'] = $this->language->get('entry_confirm');
-		$data['entry_firstname'] = $this->language->get('entry_firstname');
-		$data['entry_lastname'] = $this->language->get('entry_lastname');
-		$data['entry_email'] = $this->language->get('entry_email');
-		$data['entry_image'] = $this->language->get('entry_image');
-		$data['entry_status'] = $this->language->get('entry_status');
 
-		$data['button_save'] = $this->language->get('button_save');
-		$data['button_cancel'] = $this->language->get('button_cancel');
-
-		if (isset($this->error['warning'])) {
-			$data['error_warning'] = $this->error['warning'];
-		} else {
-			$data['error_warning'] = '';
+		$language_items = [
+			'heading_title',
+			'text_enabled',
+			'text_disabled',
+			'text_all',
+			'text_select_all',
+			'text_unselect_all',
+			'entry_username',
+			'entry_user_group',
+			'entry_customer_department',
+			'entry_location',
+			'entry_password',
+			'entry_confirm',
+			'entry_firstname',
+			'entry_lastname',
+			'entry_email',
+			'entry_image',
+			'entry_status',
+			'entry_coverage',
+			'button_save',
+			'button_cancel',
+		];
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
 		}
 
-		if (isset($this->error['username'])) {
-			$data['error_username'] = $this->error['username'];
-		} else {
-			$data['error_username'] = '';
-		}
-
-		if (isset($this->error['password'])) {
-			$data['error_password'] = $this->error['password'];
-		} else {
-			$data['error_password'] = '';
-		}
-
-		if (isset($this->error['confirm'])) {
-			$data['error_confirm'] = $this->error['confirm'];
-		} else {
-			$data['error_confirm'] = '';
-		}
-
-		if (isset($this->error['firstname'])) {
-			$data['error_firstname'] = $this->error['firstname'];
-		} else {
-			$data['error_firstname'] = '';
-		}
-
-		if (isset($this->error['lastname'])) {
-			$data['error_lastname'] = $this->error['lastname'];
-		} else {
-			$data['error_lastname'] = '';
+		$error_items = [
+			'warning',
+			'username',
+			'password',
+			'confirm',
+			'firstname',
+			'lastname',
+		];
+		foreach ($error_items as $error_item) {
+			$data['error_' . $error_item] = isset($this->error[$error_item]) ? $this->error[$error_item] : '';
 		}
 
 		$url = '';
@@ -355,6 +345,11 @@ class ControllerUserUser extends Controller {
 			$data['action'] = $this->url->link('user/user/edit', 'token=' . $this->session->data['token'] . '&user_id=' . $this->request->get['user_id'] . $url, true);
 		}
 
+		$data['breadcrumbs'][] = array(
+			'text' => $data['text_form'],
+			'href' => $data['action']
+		);
+
 		$data['cancel'] = $this->url->link('user/user', 'token=' . $this->session->data['token'] . $url, true);
 
 		if (isset($this->request->get['user_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
@@ -375,14 +370,6 @@ class ControllerUserUser extends Controller {
 			$data['user_group_id'] = $user_info['user_group_id'];
 		} else {
 			$data['user_group_id'] = '';
-		}
-
-		if (isset($this->request->post['customer_department_id'])) {
-			$data['customer_department_id'] = $this->request->post['customer_department_id'];
-		} elseif (!empty($user_info)) {
-			$data['customer_department_id'] = $user_info['customer_department_id'];
-		} else {
-			$data['customer_department_id'] = '';
 		}
 
 		if (isset($this->request->post['password'])) {
@@ -438,8 +425,40 @@ class ControllerUserUser extends Controller {
 		} else {
 			$data['thumb'] = $this->model_tool_image->resize('no_image.png', 100, 100);
 		}
-		
+
 		$data['placeholder'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+
+		if (isset($this->request->post['customer_department_ids'])) {
+			$data['customer_department_ids'] = $this->request->post['customer_department_ids'];
+		} elseif (!empty($user_info)) {
+			$data['customer_department_ids'] = $user_info['customer_department_ids'];
+		} else {
+			$data['customer_department_ids'] = [];
+		}
+
+		if (isset($this->request->post['location_ids'])) {
+			$data['location_ids'] = $this->request->post['location_ids'];
+		} elseif (!empty($user_info)) {
+			$data['location_ids'] = $user_info['location_ids'];
+		} else {
+			$data['location_ids'] = [];
+		}
+
+		if (isset($this->request->post['full_coverage'])) {
+			$data['full_coverage'] = $this->request->post['full_coverage'];
+		} elseif (!empty($user_info)) {
+			$data['full_coverage'] = $user_info['full_coverage'];
+		} else {
+			$data['full_coverage'] = 1;
+		}
+
+		if (isset($this->request->post['customer_department_id'])) {
+			$data['customer_department_id'] = $this->request->post['customer_department_id'];
+		} elseif (!empty($user_info)) {
+			$data['customer_department_id'] = $user_info['customer_department_id'];
+		} else {
+			$data['customer_department_id'] = 0;
+		}
 
 		if (isset($this->request->post['status'])) {
 			$data['status'] = $this->request->post['status'];
@@ -455,6 +474,14 @@ class ControllerUserUser extends Controller {
 		$this->load->model('customer/customer_department');
 		$data['customer_departments'] = $this->model_customer_customer_department->getCustomerDepartments();
 
+		$this->load->model('localisation/location');
+		$data['locations'] = $this->model_localisation_location->getLocations();
+
+		$data['coverages'] = [
+			1	=> $this->language->get('text_coverage_full'),
+			0	=> $this->language->get('text_coverage_partial'),
+		];
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -462,7 +489,8 @@ class ControllerUserUser extends Controller {
 		$this->response->setOutput($this->load->view('user/user_form', $data));
 	}
 
-	protected function validateForm() {
+	protected function validateForm()
+	{
 		if (!$this->user->hasPermission('modify', 'user/user')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
@@ -504,7 +532,8 @@ class ControllerUserUser extends Controller {
 		return !$this->error;
 	}
 
-	protected function validateDelete() {
+	protected function validateDelete()
+	{
 		if (!$this->user->hasPermission('modify', 'user/user')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}

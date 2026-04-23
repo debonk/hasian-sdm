@@ -9,7 +9,7 @@ $_['text_edit']            		= 'Manajemen Sidik Jari';
 $_['text_list_finger']     		= 'Daftar Sidik Jari';
 $_['text_active']				= 'Masih Bekerja';
 $_['text_inactive']				= 'Berhenti Bekerja';
-$_['text_all_status']			= 'Semua Karyawan';
+// $_['text_all_status']			= 'Semua Karyawan';
 $_['text_success_register']		= 'Success: Registrasi Sidik Jari berhasil';
 $_['text_left']					= 'Kiri';
 $_['text_right']				= 'Kanan';
@@ -31,7 +31,8 @@ $_['column_date_added']				= 'Tanggal Register';
 $_['column_left_hand']				= 'Tangan Kiri';
 $_['column_right_hand']				= 'Tangan Kanan';
 $_['column_finger_index']			= 'Sidik Jari';
-$_['column_new_fmd']     			= 'New V2 Template';
+$_['column_new_fmd']     			= 'Sidik Jari V2';
+$_['column_new_fmd_status']     	= 'Status Sidik Jari V2';
 
 // Entry
 $_['entry_active_1']			= 'Sidik Jari Aktif 1';
@@ -44,7 +45,6 @@ $_['entry_location']		 	= 'Lokasi Kerja';
 $_['entry_status']      	 	= 'Status Karyawan';
 
 // Error
-$_['error_customer_department']	 = 'Warning: You do not have permission to modify other division!';
 $_['error_template_exist']       = 'Warning: Data sidik jari sudah ada sebelumnya!';
 $_['error_not_found']       	 = 'Warning: Data sidik jari tidak ditemukan!';
 $_['error_register']       	 	 = 'Warning: Proses registrasi gagal!';
