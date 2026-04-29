@@ -26,7 +26,7 @@ class ModelPresencePresence extends Model
 	public function getCustomer($customer_id, $data = [])
 	{
 		// $query = $this->db->query("SELECT DISTINCT c.customer_id, c.firstname, c.lastname, c.location_id, cad.working_locations FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON cad.customer_id = c.customer_id WHERE c.customer_id = '" . (int)$customer_id . "' AND status = 1 AND date_start <= CURDATE() AND (date_end >= CURDATE() OR date_end IS NULL)");
-		$sql = "SELECT DISTINCT c.customer_id, c.firstname, c.lastname, c.location_id, cad.working_locations FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON cad.customer_id = c.customer_id WHERE c.customer_id = '" . (int)$customer_id . "' AND status = 1 AND (date_end >= CURDATE() OR date_end IS NULL)";
+		$sql = "SELECT DISTINCT c.customer_id, c.firstname, c.lastname, c.customer_department_id, c.location_id, cad.working_locations FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON cad.customer_id = c.customer_id WHERE c.customer_id = '" . (int)$customer_id . "' AND status = 1 AND (date_end >= CURDATE() OR date_end IS NULL)";
 
 		if (empty($data['no_date_start'])) {
 			$sql .= " AND date_start <= CURDATE()";

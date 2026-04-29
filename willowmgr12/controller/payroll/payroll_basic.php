@@ -187,6 +187,7 @@ class ControllerPayrollPayrollBasic extends Controller
 			'entry_location',
 			'entry_status',
 			'column_date',
+			'column_date_start',
 			'column_nip',
 			'column_name',
 			'column_customer_group',
@@ -266,10 +267,6 @@ class ControllerPayrollPayrollBasic extends Controller
 
 		$results = $this->model_payroll_payroll_basic->getCustomerPayrollBasics($filter_data);
 
-		// $filter_data = array(
-		// 	'filter'	=> $filter,
-		// );
-
 		foreach ($results as $result) {
 			if (isset($unapproveds[$result['customer_id']])) {
 				$bg_class = 'bg-danger';
@@ -285,6 +282,7 @@ class ControllerPayrollPayrollBasic extends Controller
 					'customer_group' 		=> $result['customer_group'],
 					'customer_department' 	=> $result['customer_department'],
 					'location' 				=> $result['location'],
+					'date_start'        	=> date($this->language->get('date_format_jMY'), strtotime($result['date_start'])),
 					'bg_class' 				=> $bg_class,
 					'gaji_pokok'    		=> $this->currency->format($result['gaji_pokok'], $this->config->get('config_currency')),
 					'tunj_jabatan'  		=> $this->currency->format($result['tunj_jabatan'], $this->config->get('config_currency')),
@@ -292,7 +290,6 @@ class ControllerPayrollPayrollBasic extends Controller
 					'tunj_pph'    			=> $this->currency->format($result['tunj_pph'], $this->config->get('config_currency')),
 					'uang_makan'    		=> $this->currency->format($result['uang_makan'], $this->config->get('config_currency')),
 					'gaji_dasar'    		=> $this->currency->format($result['gaji_dasar'], $this->config->get('config_currency')),
-					// 'date_added'        	=> date($this->language->get('date_format_jMY'), strtotime($result['date_added'])),
 					'date_approved'        	=> date($this->language->get('date_format_jMY'), strtotime($result['date_approved'])),
 					'edit'          		=> $this->url->link('payroll/payroll_basic/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $result['customer_id'] . $url, true),
 				);
@@ -304,6 +301,7 @@ class ControllerPayrollPayrollBasic extends Controller
 					'customer_group' 		=> $result['customer_group'],
 					'customer_department' 	=> $result['customer_department'],
 					'location' 				=> $result['location'],
+					'date_start'        	=> '',
 					'bg_class' 				=> $bg_class,
 					'gaji_pokok' 			=> '',
 					'tunj_jabatan'      	=> '',
@@ -338,6 +336,7 @@ class ControllerPayrollPayrollBasic extends Controller
 		$data['sort_customer_group'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
 		$data['sort_customer_department'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=customer_department' . $url, true);
 		$data['sort_location'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
+		$data['sort_date_start'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=date_start' . $url, true);
 		$data['sort_gaji_pokok'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=pb.gaji_pokok' . $url, true);
 		$data['sort_tunj_jabatan'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=pb.tunj_jabatan' . $url, true);
 		$data['sort_tunj_hadir'] = $this->url->link('payroll/payroll_basic', 'token=' . $this->session->data['token'] . '&sort=pb.tunj_hadir' . $url, true);
@@ -406,6 +405,7 @@ class ControllerPayrollPayrollBasic extends Controller
 			'column_customer_group',
 			'column_customer_department',
 			'column_location',
+			'column_date_start',
 			'column_action',
 			'column_gaji_pokok',
 			'column_tunj_jabatan',
@@ -565,6 +565,7 @@ class ControllerPayrollPayrollBasic extends Controller
 				'customer_group' 		=> $result['customer_group'],
 				'customer_department' 	=> $result['customer_department'],
 				'location' 				=> $result['location'],
+				'date_start'        	=> date($this->language->get('date_format_jMY'), strtotime($result['date_start'])),
 				'payroll_basics'		=> $payroll_basic_data,
 			);
 		}
@@ -590,6 +591,7 @@ class ControllerPayrollPayrollBasic extends Controller
 		$data['sort_customer_group'] = $this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, true);
 		$data['sort_customer_department'] = $this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . '&sort=customer_department' . $url, true);
 		$data['sort_location'] = $this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . '&sort=location' . $url, true);
+		$data['sort_date_start'] = $this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . '&sort=date_start' . $url, true);
 		$data['sort_gaji_pokok'] = $this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . '&sort=pb.gaji_pokok' . $url, true);
 		$data['sort_tunj_jabatan'] = $this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . '&sort=pb.tunj_jabatan' . $url, true);
 		$data['sort_tunj_hadir'] = $this->url->link('payroll/payroll_basic/approve', 'token=' . $this->session->data['token'] . '&sort=pb.tunj_hadir' . $url, true);

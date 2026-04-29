@@ -343,7 +343,8 @@ class ControllerApiFinger extends Controller
 
 					break;
 				} else {
-					$user_coverage = $this->user->getCoverage();
+					$this->load->model('account/user');
+					$user_coverage = $this->model_account_user->getUser($user_id);
 
 					if (!$user_coverage['full_coverage']) {
 						if (!in_array($customer_info['customer_department_id'], $user_coverage['customer_department_ids']) || !in_array($customer_info['location_id'], $user_coverage['location_ids'])) {

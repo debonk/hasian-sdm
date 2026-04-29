@@ -8,20 +8,29 @@ MODUL: Customer > Presence Method
 User Group: ganti form ke list, trus ada kolom untuk centang access, modify, approval, print, bypass
 
 === MODIFY DATABASE
+oc_user: hapus kolom customer_department_id
+
+=== MODIFY DATABASE
 
 === MODIFY CONFIG
 
-4.3.3	23/04/2026
+DAFTAR RS SUTOMO RONTGEN
+
+4.4.1
+Payroll Basic: Menambah kolom Date Start
+Bug Fixed: Finger Enroll: Enrollment gagal karena tidak bisa akses this->user
+
+4.4.0	23/04/2026
 User: Penambahan role coverage (full/partial)
 User Group: Perbaikan template.
 Customer > Finger: Enrollment bisa dilakukan walaupun tanggal mulai bekerja msh blm aktif.
 Customer > Finger: Apply user role coverage.
 Customer > Finger: Edit dan Delete hanya utk user approve (sebelumnya bypass)
 
-=== MODIFY DATABASE
+=== MODIFY DATABASE > All db applied
 ALTER TABLE oc_user ADD customer_department_ids varchar(255) NULL AFTER image;
-ALTER TABLE oc_user ADD location_ids varchar(255) NULL customer_department_ids;
-ALTER TABLE oc_user ADD `full_coverage` BOOL DEFAULT 1 NOT NULL COMMENT '0=selected, 1=all AFTER image';
+ALTER TABLE oc_user ADD location_ids varchar(255) NULL AFTER customer_department_ids;
+ALTER TABLE oc_user ADD `full_coverage` BOOL DEFAULT 1 NOT NULL COMMENT '0=selected, 1=all' AFTER image
 
 4.3.2	11/03/2026
 Allowance: Apply export Mandiri.

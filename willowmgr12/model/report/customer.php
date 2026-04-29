@@ -312,7 +312,7 @@ class ModelReportCustomer extends Model {
 	//End List
 	//original report/customer; deleted later
 	public function getCustomersOnline($data = array()) {
-		$sql = "SELECT co.ip, co.customer_id, co.url, co.referer, co.date_added FROM " . DB_PREFIX . "customer_online co LEFT JOIN " . DB_PREFIX . "customer c ON (co.customer_id = c.customer_id)";
+		$sql = "SELECT co.ip, co.customer_id, co.url, co.referer, co.date_added, c.name FROM " . DB_PREFIX . "customer_online co LEFT JOIN " . DB_PREFIX . "v_customer c ON (co.customer_id = c.customer_id)";
 
 		$implode = array();
 
@@ -321,7 +321,8 @@ class ModelReportCustomer extends Model {
 		}
 
 		if (!empty($data['filter_customer'])) {
-			$implode[] = "co.customer_id > 0 AND CONCAT(c.firstname, ' ', c.lastname) LIKE '" . $this->db->escape($data['filter_customer']) . "'";
+			// $implode[] = "co.customer_id > 0 AND CONCAT(c.firstname, ' ', c.lastname) LIKE '%" . $this->db->escape($data['filter_customer']) . "%'";
+			$implode[] = "co.customer_id > 0 AND name LIKE '%" . $this->db->escape($data['filter_customer']) . "%'";
 		}
 
 		if ($implode) {
@@ -348,7 +349,7 @@ class ModelReportCustomer extends Model {
 	}
 
 	public function getTotalCustomersOnline($data = array()) {
-		$sql = "SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "customer_online` co LEFT JOIN " . DB_PREFIX . "customer c ON (co.customer_id = c.customer_id)";
+		$sql = "SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "customer_online` co LEFT JOIN " . DB_PREFIX . "v_customer c ON (co.customer_id = c.customer_id)";
 
 		$implode = array();
 
@@ -357,7 +358,8 @@ class ModelReportCustomer extends Model {
 		}
 
 		if (!empty($data['filter_customer'])) {
-			$implode[] = "co.customer_id > 0 AND CONCAT(c.firstname, ' ', c.lastname) LIKE '" . $this->db->escape($data['filter_customer']) . "'";
+			// $implode[] = "co.customer_id > 0 AND CONCAT(c.firstname, ' ', c.lastname) LIKE '" . $this->db->escape($data['filter_customer']) . "'";
+			$implode[] = "co.customer_id > 0 AND name LIKE '%" . $this->db->escape($data['filter_customer']) . "%'";
 		}
 
 		if ($implode) {

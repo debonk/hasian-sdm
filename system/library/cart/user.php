@@ -174,6 +174,11 @@ class User
 		return $this->coverage;
 	}
 
+	public function getCoverage2()
+	{
+		return 'coverage';
+	}
+
 	public function getCustomerDepartmentId()
 	{
 		return $this->customer_department_id;

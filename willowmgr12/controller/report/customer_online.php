@@ -66,17 +66,17 @@ class ControllerReportCustomerOnline extends Controller {
 		$results = $this->model_report_customer->getCustomersOnline($filter_data);
 
 		foreach ($results as $result) {
-			$customer_info = $this->model_customer_customer->getCustomer($result['customer_id']);
+			// $customer_info = $this->model_customer_customer->getCustomer($result['customer_id']);
 
-			if ($customer_info) {
-				$customer = $customer_info['firstname'] . ' ' . $customer_info['lastname'];
+			if ($result['name']) {
+				$customer = $result['name'];
 			} else {
 				$customer = $this->language->get('text_guest');
 			}
 
 			$data['customers'][] = array(
 				'customer_id' => $result['customer_id'],
-				'ip'          => $result['ip'],
+				'ip'          => str_replace('-' . $result['customer_id'], '', $result['ip']),
 				'customer'    => $customer,
 				'url'         => $result['url'],
 				'referer'     => $result['referer'],

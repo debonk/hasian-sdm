@@ -187,6 +187,12 @@
 										<?= $column_location; ?>
 									</a>
 								</td>
+								<td>
+									<a href="<?= $sort_date_start; ?>" <?=($sort=='date_start' ) ? 'class="' .
+										strtolower($order) . '"' : '' ; ?> >
+										<?= $column_date_start; ?>
+									</a>
+								</td>
 								<td class="text-right">
 									<a href="<?= $sort_gaji_pokok; ?>" <?=($sort=='pb.gaji_pokok' ) ? 'class="' .
 										strtolower($order) . '"' : '' ; ?> >
@@ -252,6 +258,9 @@
 								</td>
 								<td>
 									<?= $customer['location']; ?>
+								</td>
+								<td>
+									<?= $customer['date_start']; ?>
 								</td>
 								<td class="text-right">
 									<?= $customer['gaji_pokok']; ?>

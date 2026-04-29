@@ -31,8 +31,9 @@ $_['column_tunj_jabatan']		 = 'Tunjangan Jabatan';
 $_['column_tunj_hadir']			 = 'Tunjangan Hadir';
 $_['column_tunj_pph']			 = 'Tunjangan PPH';
 $_['column_uang_makan']			 = 'Uang Makan';
-$_['column_date_added']			 = 'Date Added';
-$_['column_date_approved']		 = 'Date Approved';
+$_['column_date_start']			 = 'Mulai Bekerja';
+$_['column_date_added']			 = 'Tanggal Entry';
+$_['column_date_approved']		 = 'Disetujui';
 $_['column_gaji_dasar']			 = 'Gaji Dasar';
 $_['column_status']			 	 = 'Status';
 

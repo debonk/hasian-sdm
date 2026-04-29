@@ -51,11 +51,10 @@ class ModelPresenceSchedule extends Model
 		return $query->row['total'];
 	}
 
-	public function getScheduleCustomers($presence_period_id, $data = array())
+	private function implodeSql($data = [])
 	{
-		$sql = "SELECT DISTINCT s.customer_id, c.nip, c.firstname, c.name, c.date_start, c.date_end, c.date_added, c.customer_group_id, c.customer_group, c.customer_department_id, c.customer_department, c.location_id, c.location, c.payroll_include FROM " . DB_PREFIX . "schedule s LEFT JOIN " . DB_PREFIX . "v_customer c ON c.customer_id = s.customer_id WHERE c.language_id = '" . (int)$this->config->get('config_language_id') . "' AND s.presence_period_id = '" . (int)$presence_period_id . "'";
-
-		$implode = array();
+		$implodesql = '';
+		$implode = [];
 
 		if (!empty($data['filter']['name'])) {
 			$implode[] = "c.name LIKE '%" . $this->db->escape($data['filter']['name']) . "%'";
@@ -73,9 +72,26 @@ class ModelPresenceSchedule extends Model
 			$implode[] = "c.customer_department_id = '" . (int)$data['filter']['customer_department_id'] . "'";
 		}
 
-		if ($implode) {
-			$sql .= " AND " . implode(" AND ", $implode);
+		if (!empty($data['filter']['customer_department_ids'])) {
+			$implode[] = "customer_department_id IN (" . implode(',', array_map('intval', $data['filter']['customer_department_ids'])) . ")";
 		}
+
+		if (!empty($data['filter']['location_ids'])) {
+			$implode[] = "location_id IN (" . implode(',', array_map('intval', $data['filter']['location_ids'])) . ")";
+		}
+
+		if ($implode) {
+			$implodesql .= " AND " . implode(" AND ", $implode);
+		}
+
+		return $implodesql;
+	}
+
+	public function getScheduleCustomers($presence_period_id, $data = array())
+	{
+		$sql = "SELECT DISTINCT s.customer_id, c.nip, c.firstname, c.name, c.date_start, c.date_end, c.date_added, c.customer_group_id, c.customer_group, c.customer_department_id, c.customer_department, c.location_id, c.location, c.payroll_include FROM " . DB_PREFIX . "schedule s LEFT JOIN " . DB_PREFIX . "v_customer c ON c.customer_id = s.customer_id WHERE c.language_id = '" . (int)$this->config->get('config_language_id') . "' AND s.presence_period_id = '" . (int)$presence_period_id . "'";
+
+		$sql .= $this->implodeSql($data);
 
 		$sort_data = array(
 			'nip',
@@ -119,27 +135,7 @@ class ModelPresenceSchedule extends Model
 	{
 		$sql = "SELECT COUNT(DISTINCT s.customer_id) AS total FROM " . DB_PREFIX . "schedule s LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = s.customer_id) WHERE s.presence_period_id = '" . (int)$presence_period_id . "'";
 
-		$implode = array();
-
-		if (!empty($data['filter']['name'])) {
-			$implode[] = "c.name LIKE '%" . $this->db->escape($data['filter']['name']) . "%'";
-		}
-
-		if (!empty($data['filter']['customer_group_id'])) {
-			$implode[] = "c.customer_group_id = '" . (int)$data['filter']['customer_group_id'] . "'";
-		}
-
-		if (!empty($data['filter']['location_id'])) {
-			$implode[] = "c.location_id = '" . (int)$data['filter']['location_id'] . "'";
-		}
-
-		if (!empty($data['filter']['customer_department_id'])) {
-			$implode[] = "c.customer_department_id = '" . (int)$data['filter']['customer_department_id'] . "'";
-		}
-
-		if ($implode) {
-			$sql .= " AND " . implode(" AND ", $implode);
-		}
+		$sql .= $this->implodeSql($data);
 
 		$query = $this->db->query($sql);
 
