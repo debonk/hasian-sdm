@@ -60,19 +60,15 @@
             </label>
             <div class="col-sm-10">
               <select name="fund_account_id" id="input-fund-account" class="form-control">
-                <option value="0">
+                <option value="0" data-code="">
                   <?= $text_select ?>
                 </option>
                 <?php foreach ($fund_accounts as $fund_account) { ?>
-                <?php if ($fund_account['fund_account_id'] == $fund_account_id) { ?>
-                <option value="<?= $fund_account['fund_account_id']; ?>" selected="selected">
+                <option value="<?= $fund_account['fund_account_id']; ?>"
+                  data-code="<?= $fund_account['code']; ?>"
+                  <?=($fund_account['fund_account_id']==$fund_account_id) ? 'selected' : '' ; ?>>
                   <?= $fund_account['fund_account_text']; ?>
                 </option>
-                <?php } else { ?>
-                <option value="<?= $fund_account['fund_account_id']; ?>">
-                  <?= $fund_account['fund_account_text']; ?>
-                </option>
-                <?php } ?>
                 <?php } ?>
               </select>
               <?php if ($error_fund_account) { ?>
@@ -115,6 +111,9 @@
                   <?= $column_location; ?>
                 </td>
                 <td>
+                  <?= $column_email; ?>
+                </td>
+                <td>
                   <?= $column_payroll_method; ?>
                 </td>
                 <td>
@@ -142,7 +141,10 @@
                   <?= $free_transfer_customer['location']; ?>
                 </td>
                 <td>
-                  <?= $free_transfer_customer['payroll_method']; ?>
+                  <?= $free_transfer_customer['email']; ?>
+                </td>
+                <td>
+                  <?= $free_transfer_customer['payroll_method'] . ($free_transfer_customer['acc_no'] ? ' - ' . $free_transfer_customer['acc_no'] : ''); ?>
                 </td>
                 <td><input type="text"
                     name="free_transfer_customer[<?= $free_transfer_customer['customer_id']; ?>][note]"
@@ -180,7 +182,7 @@
   $('input[name=\'input_free_transfer_customer\']').autocomplete({
     'source': function (request, response) {
       $.ajax({
-        url: 'index.php?route=release/free_transfer/autocomplete&token=<?= $token; ?>&filter_name=' + encodeURIComponent(request),
+        url: 'index.php?route=release/free_transfer/autocomplete&token=<?= $token; ?>&filter_name=' + encodeURIComponent(request) + '&filter_code=' + $('select[name=\'fund_account_id\']').find(':selected').data('code'),
         dataType: 'json',
         success: function (json) {
           response($.map(json, function (item) {
@@ -190,6 +192,7 @@
               customer: item['name'],
               customer_group: item['customer_group'],
               location: item['location'],
+              email: item['email'],
               payroll_method: item['payroll_method']
             }
           }));
@@ -205,6 +208,7 @@
         html += '  <input type="hidden" name="free_transfer_customer[' + item['value'] + '][customer_id]" value="' + item['value'] + '" /></td>';
         html += '  <td>' + item['customer_group'] + '</td>';
         html += '  <td>' + item['location'] + '</td>';
+        html += '  <td>' + item['email'] + '</td>';
         html += '  <td>' + item['payroll_method'] + '</td>';
         html += '  <td><input type="text" name="free_transfer_customer[' + item['value'] + '][note]" class="form-control" value="" placeholder="<?= $entry_note; ?>" /></td>';
         html += '  <td class="text-right"><input type="text" name="free_transfer_customer[' + item['value'] + '][amount]" class="form-control" value="" placeholder="<?= $entry_amount; ?>" /></td>';

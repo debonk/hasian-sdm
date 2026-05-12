@@ -1,29 +1,36 @@
 <?php
 class ModelReleaseAllowance extends Model
 {
-	public function addAllowance($data)
+	public function addAllowance(array $data)
 	{
 		$this->db->query("INSERT INTO " . DB_PREFIX . "allowance SET allowance_period = STR_TO_DATE('" . $this->db->escape($data['allowance_period']) . "', '%e %b %Y'), fund_account_id = '" . (int)$data['fund_account_id'] . "', date_process = STR_TO_DATE('" . $this->db->escape($data['date_process']) . "', '%e %b %Y'), user_id = '" . (int)$this->user->getId() . "', date_modified = NOW()");
 
 		$allowance_id = $this->db->getLastId();
 
 		$this->load->model('common/payroll');
+		$this->load->model('release/fund_account');
 		$this->load->model('presence/presence');
 		$this->load->model('payroll/payroll_basic');
+
+		$filter = [];
 
 		$allowance_period = date('Y-m-d', strtotime($this->db->escape($data['allowance_period'])));
 
 		$presence_period = $this->model_common_payroll->getPeriodByDate($allowance_period);
 
+		$fund_account_info = $this->model_release_fund_account->getFundAccount($this->request->post['fund_account_id']);
+		$filter['payroll_method_code'] = $fund_account_info['code'] ?? null;
+		$filter['payroll_include'] = 1;
+
 		$allowance_components = $this->config->get('config_components');
 		$hke = $this->config->get('payroll_setting_default_hke');
 
 		$filter_data = array(
-			'filter_payroll_include' => 1,
-			'presence_period_id'	=> $presence_period['presence_period_id']
+			'presence_period_id'	=> $presence_period['presence_period_id'],
+			'filter' 				=> $filter,
 		);
 
-		$customers = $this->model_presence_presence->getCustomers($filter_data);
+		$customers = $this->model_presence_presence->getCustomersNew($filter_data);
 
 		$date_allowance = date_create($allowance_period);
 
@@ -65,20 +72,25 @@ class ModelReleaseAllowance extends Model
 		return $allowance_id;
 	}
 
-	public function editAllowance($allowance_id, $data)
+	public function editAllowance(int $allowance_id, array $data)
 	{
 		$this->db->query("UPDATE " . DB_PREFIX . "allowance SET date_process = STR_TO_DATE('" . $this->db->escape($data['date_process']) . "', '%e %b %Y'), fund_account_id = '" . (int)$data['fund_account_id'] . "', user_id = '" . (int)$this->user->getId() . "', date_modified = NOW() WHERE allowance_id = '" . (int)$allowance_id . "'");
 	}
 
-	public function deleteAllowance($allowance_id)
+	public function editAllowanceStatus(int $allowance_id, bool $status = true)
+	{
+		$this->db->query("UPDATE " . DB_PREFIX . "allowance SET status_process = '" . (int)$status . "', user_id = '" . (int)$this->user->getId() . "', date_modified = NOW() WHERE allowance_id = '" . (int)$allowance_id . "'");
+	}
+
+	public function deleteAllowance(int $allowance_id)
 	{
 		$this->db->query("DELETE FROM " . DB_PREFIX . "allowance_customer WHERE allowance_id = '" . (int)$allowance_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "allowance WHERE allowance_id = '" . (int)$allowance_id . "'");
 	}
 
-	public function getAllowance($allowance_id)
+	public function getAllowance(int $allowance_id)
 	{
-		$sql = "SELECT DISTINCT a.* , (SELECT username FROM " . DB_PREFIX . "user u WHERE u.user_id = a.user_id) AS username FROM " . DB_PREFIX . "allowance a WHERE a.allowance_id = '" . (int)$allowance_id . "'";
+		$sql = "SELECT DISTINCT a.*, fa.code AS payroll_method_code, u.username FROM " . DB_PREFIX . "allowance a LEFT JOIN " . DB_PREFIX . "v_fund_account fa ON fa.fund_account_id = a.fund_account_id LEFT JOIN " . DB_PREFIX . "user u ON u.user_id = a.user_id WHERE a.allowance_id = '" . (int)$allowance_id . "'";
 
 		$query = $this->db->query($sql);
 
@@ -124,7 +136,7 @@ class ModelReleaseAllowance extends Model
 		return $query->rows;
 	}
 
-	public function getAllowancesCount($data = array())
+	public function getAllowancesCount()
 	{
 		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "allowance";
 
@@ -133,7 +145,7 @@ class ModelReleaseAllowance extends Model
 		return $query->row['total'];
 	}
 
-	public function addAllowanceCustomer($allowance_id, $customer_id)
+	public function addAllowanceCustomer(int $allowance_id, int $customer_id)
 	{
 		$allowance_info = $this->getAllowance($allowance_id);
 
@@ -180,19 +192,19 @@ class ModelReleaseAllowance extends Model
 		$this->db->query("INSERT INTO " . DB_PREFIX . "allowance_customer SET allowance_id = '" . (int)$allowance_id . "', customer_id = '" . (int)$customer_id . "', amount = '" . (int)$amount . "'");
 	}
 
-	public function editAllowanceCustomer($allowance_id, $customer_id, $amount)
+	public function editAllowanceCustomer(int $allowance_id, int $customer_id, int $amount)
 	{
 		$this->db->query("UPDATE " . DB_PREFIX . "allowance_customer SET amount = '" . (int)$amount . "' WHERE allowance_id = '" . (int)$allowance_id . "' AND customer_id = '" . (int)$customer_id . "'");
 	}
 
-	public function deleteAllowanceCustomer($allowance_id, $customer_id)
+	public function deleteAllowanceCustomer(int $allowance_id, int $customer_id)
 	{
 		$this->db->query("DELETE FROM " . DB_PREFIX . "allowance_customer WHERE allowance_id = '" . (int)$allowance_id . "' AND customer_id = '" . (int)$customer_id . "'");
 	}
 
-	public function getAllowanceCustomers($allowance_id, $data = array())
+	public function getAllowanceCustomers(int $allowance_id, $data = array())
 	{
-		$sql = "SELECT DISTINCT ac.*, c.lastname, c.email, c.acc_no, c.date_start, pm.name AS payroll_method, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cgd.name AS customer_group FROM " . DB_PREFIX . "allowance_customer ac LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ac.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) WHERE pm.language_id = '" . (int)$this->config->get('config_language_id') . "' AND ac.allowance_id = '" . (int)$allowance_id . "'";
+		$sql = "SELECT DISTINCT ac.*, c.lastname, c.email, c.acc_no, c.date_start, c.payroll_method, c.payroll_method_code, c.name, c.customer_group, c.location FROM " . DB_PREFIX . "allowance_customer ac LEFT JOIN " . DB_PREFIX . "v_customer c ON (c.customer_id = ac.customer_id) WHERE ac.allowance_id = '" . (int)$allowance_id . "'";
 
 		$sql .= " ORDER BY c.firstname ASC";
 
@@ -213,7 +225,7 @@ class ModelReleaseAllowance extends Model
 		return $query->rows;
 	}
 
-	public function getAllowanceCustomersCount($allowance_id)
+	public function getAllowanceCustomersCount(int $allowance_id)
 	{
 		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "allowance_customer WHERE allowance_id = '" . (int)$allowance_id . "'";
 
@@ -222,7 +234,7 @@ class ModelReleaseAllowance extends Model
 		return $query->row['total'];
 	}
 
-	public function getAllowanceCustomersByMethod($allowance_id, $method)
+	public function getAllowanceCustomersByMethod(int $allowance_id, string $method)
 	{
 		$sql = "SELECT DISTINCT ac.*, c.lastname, c.email, c.acc_no, c.date_start, pm.name AS payroll_method, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cgd.name AS customer_group FROM " . DB_PREFIX . "allowance_customer ac LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ac.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) WHERE pm.language_id = '" . (int)$this->config->get('config_language_id') . "' AND ac.allowance_id = '" . (int)$allowance_id . "' AND ac.amount > 0";
 
@@ -235,7 +247,7 @@ class ModelReleaseAllowance extends Model
 		return $query->rows;
 	}
 
-	public function getAllowanceCustomerCountByMethod($allowance_id, $method)
+	public function getAllowanceCustomerCountByMethod(int $allowance_id, string $method)
 	{
 		$sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "allowance_customer ac";
 
@@ -252,7 +264,7 @@ class ModelReleaseAllowance extends Model
 		return $query->row['total'];
 	}
 
-	public function getAllowanceCustomerTotalByMethod($allowance_id, $method)
+	public function getAllowanceCustomerTotalByMethod(int $allowance_id, string $method)
 	{
 		$sql = "SELECT SUM(ac.amount) AS total FROM " . DB_PREFIX . "allowance_customer ac";
 
@@ -269,9 +281,9 @@ class ModelReleaseAllowance extends Model
 		return $query->row['total'];
 	}
 
-	public function checkAllowanceProcessed($allowance_id)
+	public function checkAllowanceProcessed(int $allowance_id)
 	{
-		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "allowance WHERE allowance_id = '" . (int)$allowance_id . "' AND date_process < CURDATE()";
+		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "allowance WHERE allowance_id = '" . (int)$allowance_id . "' AND status_process = 1";
 
 		$query = $this->db->query($sql);
 
@@ -282,7 +294,8 @@ class ModelReleaseAllowance extends Model
 		}
 	}
 
-	public function getBlankAllowanceCustomers($allowance_id) {
+	public function getBlankAllowanceCustomers(int $allowance_id)
+	{
 		$allowance_info = $this->getAllowance($allowance_id);
 
 		$this->load->model('common/payroll');
@@ -292,14 +305,14 @@ class ModelReleaseAllowance extends Model
 
 		$date_end = date($this->language->get('Y-m-d'), strtotime('-' . $availability . ' months', strtotime($period_info['date_start']))); // Customer still available in selection until this month of custoemr's date_end.
 
-		$sql = "SELECT c.customer_id, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cgd.name AS customer_group, l.name AS location FROM " . DB_PREFIX . "customer c LEFT JOIN (" . DB_PREFIX . "customer_group_description cgd, " . DB_PREFIX . "location l) ON (cgd.customer_group_id = c.customer_group_id AND l.location_id = c.location_id) LEFT JOIN " . DB_PREFIX . "allowance_customer ac ON (ac.customer_id = c.customer_id AND ac.allowance_id = '" . (int)$allowance_id . "') WHERE c.status = 1 AND c.payroll_include = 1 AND c.date_start <= '" . $this->db->escape($period_info['date_end']) . "' AND (date_end IS NULL OR date_end >= '" . $this->db->escape($date_end) . "') AND ac.allowance_id IS NULL";
+		$sql = "SELECT c.customer_id, c.name, customer_group, location FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "allowance_customer ac ON (ac.customer_id = c.customer_id AND ac.allowance_id = '" . (int)$allowance_id . "') WHERE c.status = 1 AND c.payroll_include = 1 AND c.date_start <= '" . $this->db->escape($period_info['date_end']) . "' AND (date_end IS NULL OR date_end >= '" . $this->db->escape($date_end) . "') AND c.payroll_method_code =  '" . $this->db->escape($allowance_info['payroll_method_code']) . "' AND ac.allowance_id IS NULL";
 
 		$query = $this->db->query($sql);
-		
+
 		return $query->rows;
 	}
 
-	public function getAllowanceByDate($date)
+	public function getAllowanceByDate(string $date)
 	{
 		$date = date('Y-m', strtotime($date));
 

@@ -47,7 +47,7 @@
 									</label>
 									<select name="customer_id" id="input-customer" class="form-control" <?= $disabled; ?>>
 										<option value="0">
-											<?= $text_customer_select ?>
+											<?= $text_select_customer ?>
 										</option>
 										<?php foreach ($customers as $customer) { ?>
 										<?php if ($customer['customer_id'] == $customer_id) { ?>

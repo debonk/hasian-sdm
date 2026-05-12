@@ -23,8 +23,8 @@ class ControllerReleaseAllowance extends Controller
 		$this->load->model('release/allowance');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$this->db->transaction(function () {
-				$allowance_id = $this->model_release_allowance->addAllowance($this->request->post);
+			$allowance_id = $this->db->transaction(function () {
+				return $this->model_release_allowance->addAllowance($this->request->post);
 			});
 
 			$this->session->data['success'] = $this->language->get('text_success');
@@ -43,7 +43,6 @@ class ControllerReleaseAllowance extends Controller
 				$url .= '&page=' . $this->request->get['page'];
 			}
 
-			// $this->response->redirect($this->url->link('release/allowance', 'token=' . $this->session->data['token'] . $url, true));
 			$this->response->redirect($this->url->link('release/allowance/edit', 'token=' . $this->session->data['token'] . '&allowance_id=' . $allowance_id . $url, true));
 		}
 
@@ -180,11 +179,21 @@ class ControllerReleaseAllowance extends Controller
 
 		$data['allowances'] = array();
 
-		$allowance_count = $this->model_release_allowance->getAllowancesCount($filter_data);
+		$allowance_count = $this->model_release_allowance->getAllowancesCount();
 
 		$results = $this->model_release_allowance->getAllowances($filter_data);
 
 		foreach ($results as $result) {
+			if ($result['status_process']) {
+				$status = $this->language->get('text_status_processed');
+			} else {
+				if ($result['date_process'] < date('Y-m-d')) {
+					$status = $this->language->get('text_status_expired');
+				} else {
+					$status = $this->language->get('text_status_draft');
+				}
+			}
+
 			$data['allowances'][] = array(
 				'allowance_id' 		=> $result['allowance_id'],
 				'allowance_period' 	=> $this->language->get('heading_title') . ' - ' . date($this->language->get('date_format_jMY'), strtotime($result['allowance_period'])),
@@ -192,6 +201,7 @@ class ControllerReleaseAllowance extends Controller
 				'fund_account' 		=> $result['acc_name'] . '</br> (' . $result['bank_name'] . ' - ' . $result['acc_no'] . ')',
 				'count' 			=> $result['count'],
 				'total' 			=> $this->currency->format($result['total'], $this->config->get('config_currency')),
+				'status' 			=> $status,
 				'date_modified' 	=> date($this->language->get('date_format_jMY'), strtotime($result['date_modified'])),
 				'username'    		=> $result['username'],
 				'edit'          	=> $this->url->link('release/allowance/edit', 'token=' . $this->session->data['token'] . '&allowance_id=' . $result['allowance_id'], true),
@@ -199,7 +209,6 @@ class ControllerReleaseAllowance extends Controller
 				'button_export_csv'	=> sprintf($this->language->get('button_export_csv'), $result['bank_name']),
 			);
 		}
-		// var_dump($results);
 
 		$language_items = array(
 			'heading_title',
@@ -210,6 +219,7 @@ class ControllerReleaseAllowance extends Controller
 			'column_date_process',
 			'column_fund_account',
 			'column_count',
+			'column_status',
 			'column_total',
 			'column_date_modified',
 			'column_username',
@@ -300,15 +310,17 @@ class ControllerReleaseAllowance extends Controller
 			'text_select',
 			'text_confirm',
 			'text_calculate',
-			'entry_allowance_period',
-			'entry_date_process',
-			'entry_fund_account',
 			'column_customer',
+			'column_customer_group',
+			'column_location',
 			'column_email',
-			'column_method',
+			'column_payroll_method',
 			'column_portion',
 			'column_amount',
 			'column_action',
+			'entry_allowance_period',
+			'entry_date_process',
+			'entry_fund_account',
 			'button_customer_add',
 			'button_save',
 			'button_cancel',
@@ -318,6 +330,8 @@ class ControllerReleaseAllowance extends Controller
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
 		}
+
+		$data['token'] = $this->session->data['token'];
 
 		$errors = array(
 			'warning',
@@ -423,31 +437,6 @@ class ControllerReleaseAllowance extends Controller
 			$data['date_process'] = date($this->language->get('date_format_jMY'), strtotime('today'));
 		}
 
-		// $components = [
-		// 	'gaji_pokok',
-		// 	'tunj_jabatan',
-		// 	'tunj_hadir',
-		// 	'tunj_pph',
-		// 	'uang_makan'
-		// ];
-
-		// $data['components'] = [];
-
-		// foreach ($components as $component) {
-		// 	$data['components'][] = [
-		// 		'value'	=> $component,
-		// 		'text'	=> $component == 'uang_makan' ? sprintf($this->language->get('text_' . $component), $this->config->get('payroll_setting_default_hke')) : $this->language->get('text_' . $component)
-		// 	];
-		// };
-
-		// if (isset($this->request->post['allowance_components'])) {
-		// 	$data['allowance_components'] = $this->request->post['allowance_components'];
-		// } elseif (!empty($allowance_info)) {
-		//    	$data['allowance_components'] = $allowance_info('allowance_components');
-		// } else {
-		// 	$data['allowance_components'] = ['gaji_pokok', 'tunj_jabatan', 'tunj_hadir', 'tunj_pph'];
-		// }
-
 		if (!empty($allowance_customers)) {
 			$date_allowance = date_create($allowance_info['allowance_period']);
 
@@ -466,9 +455,11 @@ class ControllerReleaseAllowance extends Controller
 
 				$data['allowance_customers'][] = array(
 					'customer_id' 		=> $allowance_customer['customer_id'],
-					'customer_text' 	=> $allowance_customer['name'] . ' - ' . $allowance_customer['customer_group'],
+					'name' 				=> $allowance_customer['name'],
+					'customer_group'	=> $allowance_customer['customer_group'],
+					'location'			=> $allowance_customer['location'],
 					'email' 			=> $allowance_customer['email'],
-					'method' 			=> $allowance_customer['payroll_method'] . ($allowance_customer['acc_no'] ? ' - ' . $allowance_customer['acc_no'] : ''),
+					'payroll_method' 	=> $allowance_customer['payroll_method'] . ($allowance_customer['acc_no'] ? ' - ' . $allowance_customer['acc_no'] : ''),
 					'portion' 			=> $portion,
 					'amount_value' 		=> $allowance_customer['amount'],
 					'amount' 			=> $this->currency->format($allowance_customer['amount'], $this->config->get('config_currency'))
@@ -486,8 +477,6 @@ class ControllerReleaseAllowance extends Controller
 				'fund_account_text'	=> $fund_account['acc_name'] . '; ' . $fund_account['bank_name'] . ' - ' .  $fund_account['acc_no']
 			);
 		}
-
-		$data['token'] = $this->session->data['token'];
 
 		if (isset($this->request->get['allowance_id'])) {
 			$allowance_id = $this->request->get['allowance_id'];
@@ -773,48 +762,84 @@ class ControllerReleaseAllowance extends Controller
 
 	protected function validateForm()
 	{
-		if (!$this->user->hasPermission('modify', 'release/allowance')) {
-			$this->error['warning'] = $this->language->get('error_permission');
-		}
+		do {
+			if (!$this->user->hasPermission('modify', 'release/allowance')) {
+				$this->error['warning'] = $this->language->get('error_permission');
 
-		if (!isset($this->request->get['allowance_id']) && empty(strtotime($this->request->post['allowance_period']))) {
-			$this->error['allowance_period'] = $this->language->get('error_allowance_period');
-		}
+				break;
+			}
 
-		$this->load->model('common/payroll');
+			if (isset($this->request->get['allowance_id'])) {
+				if ($this->model_release_allowance->checkAllowanceProcessed($this->request->get['allowance_id'])) {
+					$this->error['warning'] = $this->language->get('error_processed');
 
-		if (!$this->model_common_payroll->getPeriodByDate(date('Y-m-d', strtotime($this->db->escape($this->request->post['allowance_period']))))) {
-			$this->error['allowance_period'] = $this->language->get('error_presence_period');
-		}
+					break;
+				}
+			} else {
+				if (empty(strtotime($this->request->post['allowance_period']))) {
+					$this->error['allowance_period'] = $this->language->get('error_allowance_period');
+				} else {
+					$this->load->model('common/payroll');
 
-		if (empty($this->request->post['fund_account_id'])) {
-			$this->error['fund_account'] = $this->language->get('error_fund_account');
-		}
+					if (!$this->model_common_payroll->getPeriodByDate(date('Y-m-d', strtotime($this->db->escape($this->request->post['allowance_period']))))) {
+						$this->error['allowance_period'] = $this->language->get('error_presence_period');
+					}
+				}
+			}
 
-		if (empty($this->request->post['date_process']) || strtotime($this->request->post['date_process']) < strtotime('today')) {
-			$this->error['date_process'] = $this->language->get('error_date_process');
-		}
+			if (empty($this->request->post['fund_account_id'])) {
+				$this->error['fund_account'] = $this->language->get('error_fund_account');
+			}
 
-		if (isset($this->request->get['allowance_id']) && $this->model_release_allowance->checkAllowanceProcessed($this->request->get['allowance_id'])) {
-			$this->error['warning'] = $this->language->get('error_processed');
-		}
+			if (empty($this->request->post['date_process']) || strtotime($this->request->post['date_process']) < strtotime('today')) {
+				$this->error['date_process'] = $this->language->get('error_date_process');
+			}
 
-		if ($this->error && !isset($this->error['warning'])) {
-			$this->error['warning'] = $this->language->get('error_warning');
-		}
+			if ($this->error && !isset($this->error['warning'])) {
+				$this->error['warning'] = $this->language->get('error_warning');
+
+				break;
+			}
+
+			if (isset($this->request->get['allowance_id'])) {
+				$this->load->model('release/fund_account');
+
+				$fund_account_info = $this->model_release_fund_account->getFundAccount($this->request->post['fund_account_id']);
+
+				$payroll_method_code = $fund_account_info['code'] ?? null;
+
+				$allowance_customers = $this->model_release_allowance->getAllowanceCustomers($this->request->get['allowance_id']);
+
+				foreach ($allowance_customers as $allowance_customer) {
+					if ($allowance_customer['amount'] <= 0) {
+						$this->error['warning'] = $this->language->get('error_amount');
+
+						break 2;
+					}
+
+					if ($allowance_customer['payroll_method_code'] !== $payroll_method_code) {
+						$this->error['warning'] = $this->language->get('error_payroll_method');
+
+						break 2;
+					}
+				}
+			}
+		} while (false);
 
 		return !$this->error;
 	}
 
 	protected function validateDelete()
 	{
-		if (!$this->user->hasPermission('modify', 'release/allowance')) {
-			$this->error['warning'] = $this->language->get('error_permission');
+		if (!$this->user->hasPermission('approve', 'release/allowance')) {
+			$this->error['warning'] = $this->language->get('error_permission_approve');
 		}
 
 		foreach ($this->request->post['selected'] as $allowance_id) {
 			if ($this->model_release_allowance->checkAllowanceProcessed($allowance_id)) {
 				$this->error['warning'] = $this->language->get('error_processed');
+
+				break;
 			}
 		}
 
@@ -832,7 +857,11 @@ class ControllerReleaseAllowance extends Controller
 		$allowance_info = $this->model_release_allowance->getAllowance($allowance_id);
 
 		if (strtotime($allowance_info['date_process']) < strtotime('today')) {
-			// $this->error['warning'] = $this->language->get('error_date_process');
+			$this->error['warning'] = $this->language->get('error_date_process_expired');
+		}
+
+		if ($allowance_info['status_process']) {
+			$this->error['warning'] = $this->language->get('error_status');
 		}
 
 		return !$this->error;
@@ -877,11 +906,11 @@ class ControllerReleaseAllowance extends Controller
 			$this->response->redirect($this->url->link('release/allowance/edit', 'token=' . $this->session->data['token'] . '&allowance_id=' . $this->request->get['allowance_id'] . $url, true));
 		}
 
-		$data['text_form'] = $this->language->get('text_customer_add');
+		$data['text_form'] = $this->language->get('text_add_customer');
 
 		$language_items = array(
-			'text_customer_add',
-			'text_customer_select',
+			// 'text_add_customer',
+			'text_select_customer',
 			'heading_title',
 			'entry_name',
 			'button_save',

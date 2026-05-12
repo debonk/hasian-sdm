@@ -14,9 +14,22 @@ oc_user: hapus kolom customer_department_id
 
 === MODIFY CONFIG
 
-DAFTAR RS SUTOMO RONTGEN
 
-4.4.1
+
+
+4.4.2	12/05/2026
+Allowance: Menambah field status_process utk penanda data telah diexport
+Free Transfer: Menambah field status_process utk penanda data telah diexport
+Bug Fixed: Dashboard > Attention: karyawan yang sudah selesai kontrak tidak masuk lagi dlm perhitungan payroll basic yang butuh persetujuan.
+
+=== MODIFY DATABASE
+ALTER TABLE oc_free_transfer ADD status_process BOOL DEFAULT 1 NULL AFTER fund_account_id;
+ALTER TABLE oc_free_transfer MODIFY COLUMN status_process tinyint(1) NULL;
+ALTER TABLE oc_allowance ADD status_process BOOL DEFAULT 1 NULL AFTER date_process;
+ALTER TABLE oc_allowance MODIFY COLUMN status_process tinyint(1) NULL;
+ALTER TABLE `oc_payroll_method` ADD UNIQUE(`code`);
+
+4.4.1	29/04/2026
 Payroll Basic: Menambah kolom Date Start
 Bug Fixed: Finger Enroll: Enrollment gagal karena tidak bisa akses this->user
 

@@ -53,7 +53,7 @@ class ModelReportAttention extends Model
 
 	public function getUnapprovedPayrollBasicsCount()
 	{
-		$sql = "SELECT count(payroll_basic_id) AS total FROM " . DB_PREFIX . "payroll_basic WHERE date_approved IS NULL";
+		$sql = "SELECT count(pb.payroll_basic_id) AS total FROM " . DB_PREFIX . "payroll_basic pb LEFT JOIN " . DB_PREFIX . "customer c ON c.customer_id = pb.customer_id WHERE date_approved IS NULL AND (c.date_end IS NULL OR c.date_end >= CURDATE())";
 
 		$query = $this->db->query($sql);
 

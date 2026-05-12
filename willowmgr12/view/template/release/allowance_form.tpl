@@ -10,8 +10,8 @@
 				<?php } ?>
 				<button type="submit" form="form-allowance" data-toggle="tooltip" title="<?= $button_save; ?>"
 					class="btn btn-primary"><i class="fa fa-save"></i></button>
-				<a href="<?= $cancel; ?>" data-toggle="tooltip" title="<?= $button_cancel; ?>" class="btn btn-default"><i
-						class="fa fa-reply"></i></a>
+				<a href="<?= $cancel; ?>" data-toggle="tooltip" title="<?= $button_cancel; ?>"
+					class="btn btn-default"><i class="fa fa-reply"></i></a>
 			</div>
 			<h1>
 				<?= $heading_title; ?>
@@ -50,15 +50,16 @@
 						</label>
 						<div class="col-sm-10">
 							<?php if ($allowance_customers) { ?>
-							<input type="text" name="allowance_period" value="<?= $allowance_period; ?>" class="form-control"
-								readonly />
+							<input type="text" name="allowance_period" value="<?= $allowance_period; ?>"
+								class="form-control" readonly />
 							<?php } else { ?>
 							<div class="input-group date">
 								<input type="text" name="allowance_period" value="<?= $allowance_period; ?>"
-									placeholder="<?= $entry_allowance_period; ?>" id="input-allowance-period" class="form-control"
-									data-date-format="D MMM YYYY" />
+									placeholder="<?= $entry_allowance_period; ?>" id="input-allowance-period"
+									class="form-control" data-date-format="D MMM YYYY" />
 								<span class="input-group-btn">
-									<button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+									<button type="button" class="btn btn-default"><i
+											class="fa fa-calendar"></i></button>
 								</span>
 							</div>
 							<?php } ?>
@@ -104,10 +105,11 @@
 						<div class="col-sm-10">
 							<div class="input-group date">
 								<input type="text" name="date_process" value="<?= $date_process; ?>"
-									placeholder="<?= $entry_date_process; ?>" id="input-date-process" class="form-control"
-									data-date-format="D MMM YYYY" />
+									placeholder="<?= $entry_date_process; ?>" id="input-date-process"
+									class="form-control" data-date-format="D MMM YYYY" />
 								<span class="input-group-btn">
-									<button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+									<button type="button" class="btn btn-default"><i
+											class="fa fa-calendar"></i></button>
 								</span>
 							</div>
 							<?php if ($error_date_process) { ?>
@@ -121,16 +123,22 @@
 				<table id="allowance-customer" class="table table-bordered table-hover">
 					<thead>
 						<tr>
-							<td class="text-left">
+							<td>
 								<?= $column_customer; ?>
 							</td>
-							<td class="text-left">
+							<td>
+								<?= $column_customer_group; ?>
+							</td>
+							<td>
+								<?= $column_location; ?>
+							</td>
+							<td>
 								<?= $column_email; ?>
 							</td>
-							<td class="text-left">
-								<?= $column_method; ?>
+							<td>
+								<?= $column_payroll_method; ?>
 							</td>
-							<td class="text-left">
+							<td>
 								<?= $column_portion; ?>
 							</td>
 							<td class="text-right">
@@ -145,16 +153,22 @@
 						<?php if ($allowance_customers) { ?>
 						<?php foreach ($allowance_customers as $allowance_customer) { ?>
 						<tr>
-							<td class="text-left">
-								<?= $allowance_customer['customer_text']; ?>
+							<td>
+								<?= $allowance_customer['name']; ?>
 							</td>
-							<td class="text-left">
+							<td>
+								<?= $allowance_customer['customer_group']; ?>
+							</td>
+							<td>
+								<?= $allowance_customer['location']; ?>
+							</td>
+							<td>
 								<?= $allowance_customer['email']; ?>
 							</td>
-							<td class="text-left">
-								<?= $allowance_customer['method']; ?>
+							<td>
+								<?= $allowance_customer['payroll_method']; ?>
 							</td>
-							<td class="text-left">
+							<td>
 								<?= $allowance_customer['portion']; ?>
 							</td>
 							<td id="amount<?= $allowance_customer['customer_id']; ?>" class="text-right nowrap"
@@ -162,14 +176,17 @@
 								<?= $allowance_customer['amount']; ?>
 							</td>
 							<td class="text-right">
-								<button id="button-save-<?= $allowance_customer['customer_id']; ?>" class="btn btn-warning collapse"
-									type="button" value="<?= $allowance_customer['customer_id']; ?>" data-toggle="tooltip"
+								<button id="button-save-<?= $allowance_customer['customer_id']; ?>"
+									class="btn btn-warning collapse" type="button"
+									value="<?= $allowance_customer['customer_id']; ?>" data-toggle="tooltip"
 									title="<?= $button_save; ?>"><i class="fa fa-check"></i></button>
-								<button id="button-edit-<?= $allowance_customer['customer_id']; ?>" class="btn btn-primary"
-									type="button" value="<?= $allowance_customer['customer_id']; ?>" data-toggle="tooltip"
+								<button id="button-edit-<?= $allowance_customer['customer_id']; ?>"
+									class="btn btn-primary" type="button"
+									value="<?= $allowance_customer['customer_id']; ?>" data-toggle="tooltip"
 									title="<?= $button_edit; ?>"><i class="fa fa-pencil"></i></button>
-								<button id="button-delete<?= $allowance_customer['customer_id']; ?>" class="btn btn-danger"
-									type="button" value="<?= $allowance_customer['customer_id']; ?>" data-toggle="tooltip"
+								<button id="button-delete<?= $allowance_customer['customer_id']; ?>"
+									class="btn btn-danger" type="button"
+									value="<?= $allowance_customer['customer_id']; ?>" data-toggle="tooltip"
 									title="<?= $button_delete; ?>"><i class="fa fa-minus-circle"></i></button>
 							</td>
 						</tr>

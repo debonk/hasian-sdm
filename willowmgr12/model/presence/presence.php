@@ -28,6 +28,10 @@ class ModelPresencePresence extends Model
 			$implode[] = "payroll_include = '" . (int)$data['filter']['payroll_include'] . "'";
 		}
 
+		if (isset($data['filter']['payroll_method_code'])) {
+			$implode[] = "payroll_method_code = '" . $this->db->escape($data['filter']['payroll_method_code']) . "'";
+		}
+
 		if (isset($data['presence_period_id'])) {
 			$this->load->model('common/payroll');
 			$period_info = $this->model_common_payroll->getPeriod($data['presence_period_id']);
@@ -74,8 +78,8 @@ class ModelPresencePresence extends Model
 
 	public function getCustomersNew($data = array())
 	{
-		// $sql = "SELECT customer_id, nip, lastname, c.name, date_start, date_added, customer_department_id, customer_department, customer_group_id, customer_group, location_id, location, pm.name AS payroll_method FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE (c.language_id = '" . (int)$this->config->get('config_language_id') . "' OR c.language_id IS NULL) AND status = 1";
-		$sql = "SELECT customer_id, nip, lastname, c.name, date_start, date_added, customer_department_id, customer_department, customer_group_id, customer_group, location_id, location, pm.name AS payroll_method FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id)";
+		// $sql = "SELECT customer_id, nip, lastname, c.name, email, date_start, date_added, customer_department_id, customer_department, customer_group_id, customer_group, location_id, location, pm.name AS payroll_method, acc_no FROM " . DB_PREFIX . "v_customer c LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id)";
+		$sql = "SELECT customer_id, nip, lastname, c.name, email, date_start, date_added, customer_department_id, customer_department, customer_group_id, customer_group, location_id, location, payroll_method_code, payroll_method, acc_no FROM " . DB_PREFIX . "v_customer c";
 
 		$sql .= $this->implodeSql($data);
 
