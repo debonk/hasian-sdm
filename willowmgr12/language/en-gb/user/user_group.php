@@ -24,6 +24,6 @@ $_['entry_bypass']      = 'By Pass';
 $_['entry_users']     	= 'Active Users';
 
 // Error
-$_['error_permission']  = 'Warning: You do not have permission to modify user groups!';
+// $_['error_permission']  = 'Warning: You do not have permission to modify user groups!';
 $_['error_name']        = 'User Group Name must be between 3 and 64 characters!';
 $_['error_user']        = 'Warning: This user group cannot be deleted as it is currently assigned to %s users!';

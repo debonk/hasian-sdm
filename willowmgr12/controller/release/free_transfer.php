@@ -755,13 +755,13 @@ class ControllerReleaseFreeTransfer extends Controller
 			$filter['payroll_method_code'] = $this->request->get['filter_code'];
 			$filter['availability'] = true;
 
-			$this->load->model('common/payroll');
-			$period_info = $this->model_common_payroll->getPeriod();
+			// $this->load->model('common/payroll');
+			// $period_info = $this->model_common_payroll->getPeriod();
 
 			$this->load->model('presence/presence');
 
 			$filter_data = array(
-				'presence_period_id'	=> $period_info['presence_period_id'],
+				// 'presence_period_id'	=> $period_info['presence_period_id'],
 				'filter'				=> $filter,
 				'start'      			=> 0,
 				'limit'      			=> 15

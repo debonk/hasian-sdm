@@ -409,7 +409,7 @@ class ControllerUserUserPermission extends Controller
 
 			$permission = substr($controller, 0, strrpos($controller, '.'));
 
-			if (!in_array ($permission, $ignore)) {
+			if (!in_array($permission, $ignore)) {
 				$data['permissions'][] = $permission;
 			}
 		}

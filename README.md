@@ -15,7 +15,8 @@ oc_user: hapus kolom customer_department_id
 === MODIFY CONFIG
 
 
-
+4.4.3	05/06/2026
+Bug Fixed: Free Transfer > Autocomplete: Ada fungsi model_common_payroll->getPeriod() sehingga karyawan yang tidak aktif tidak dapat dipilih walaupun telah diset availability pada setting
 
 4.4.2	12/05/2026
 Allowance: Menambah field status_process utk penanda data telah diexport

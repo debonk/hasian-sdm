@@ -108,8 +108,8 @@ $_['entry_wa']                        = 'Whatsapp';//Bonk
 $_['entry_zone']                      = 'Region / State';
 
 // Help
-$_['help_account_mail']               = 'Send an email to the store owner when a new account is registered.';
 $_['help_account']                    = 'Forces people to agree to terms before an account can be created.';
+$_['help_account_mail']               = 'Send an email to the store owner when a new account is registered.';
 $_['help_admin_maintenance']          = 'Prevents user from browsing admin site. They will instead see a maintenance message. If logged in as user with setting permission, you will see the admin site as normal.';
 $_['help_api']                        = 'Default API user the admin should use.';
 $_['help_captcha']                    = 'Captcha to use for registration, login, contact and reviews.';

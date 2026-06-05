@@ -13,8 +13,14 @@ class ControllerCommonHeader extends Controller
 			$data['base'] = HTTP_SERVER;
 		}
 
+		if (is_file(DIR_IMAGE . 'favicon.ico')) {
+			$this->document->addLink(HTTP_CATALOG . 'image/favicon.ico', 'icon');
+		}
+
 		if ($this->registry->get('framework_load') == 'update') {
 			$data['text_framework_update'] = $this->language->get('text_framework_update');
+		} else {
+			$data['text_framework_update'] = '';
 		}
 
 		$data['description'] = $this->document->getDescription();
@@ -25,13 +31,18 @@ class ControllerCommonHeader extends Controller
 		$data['lang'] = $this->language->get('code');
 		$data['direction'] = $this->language->get('direction');
 
-		$data['heading_title'] = $this->language->get('heading_title');
+		$language_items = [
+			'heading_title',
+			'text_customer',
+			'text_online',
+			'text_store',
+			'text_logout',
+		];
+		foreach ($language_items as $language_item) {
+			$data[$language_item] = $this->language->get($language_item);
+		}
 
-		$data['text_customer'] = $this->language->get('text_customer');
-		$data['text_online'] = $this->language->get('text_online');
-		$data['text_store'] = $this->language->get('text_store');
 		$data['text_logged'] = sprintf($this->language->get('text_logged'), $this->user->getUserName());
-		$data['text_logout'] = $this->language->get('text_logout');
 
 		if (!isset($this->request->get['token']) || !isset($this->session->data['token']) || ($this->request->get['token'] != $this->session->data['token'])) {
 			$data['logged'] = '';
@@ -61,24 +72,6 @@ class ControllerCommonHeader extends Controller
 
 			// $data['customer_total'] = $customer_total;
 			// $data['customer_approval'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&filter_approved=0', true);
-
-			// Products
-			// $this->load->model('catalog/product');
-
-			// $product_total = $this->model_catalog_product->getTotalProducts(array('filter_quantity' => 0));
-
-			// $data['product_total'] = $product_total;
-
-			// $data['product'] = $this->url->link('catalog/product', 'token=' . $this->session->data['token'] . '&filter_quantity=0', true);
-
-			// Reviews
-			// $this->load->model('catalog/review');
-
-			// $review_total = $this->model_catalog_review->getTotalReviews(array('filter_status' => false));
-
-			// $data['review_total'] = $review_total;
-
-			// $data['review'] = $this->url->link('catalog/review', 'token=' . $this->session->data['token'] . '&filter_status=0', true);
 
 			$data['alerts'] = $data['online_total'];
 

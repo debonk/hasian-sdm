@@ -1,8 +1,10 @@
 <?php
-class ControllerSettingSetting extends Controller {
+class ControllerSettingSetting extends Controller
+{
 	private $error = array();
 
-	public function index() {
+	public function index()
+	{
 		$this->load->language('setting/setting');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -352,13 +354,13 @@ class ControllerSettingSetting extends Controller {
 
 		foreach ($extensions as $code) {
 			$this->load->language('theme/' . $code);
-			
+
 			$data['themes'][] = array(
 				'text'  => $this->language->get('heading_title'),
 				'value' => $code
 			);
 		}
-			
+
 		if (isset($this->request->post['config_layout_id'])) {
 			$data['config_layout_id'] = $this->request->post['config_layout_id'];
 		} else {
@@ -410,7 +412,7 @@ class ControllerSettingSetting extends Controller {
 		} else {
 			$data['config_fax'] = $this->config->get('config_fax');
 		}
-/* Bonk: Additional Contact */
+		/* Bonk: Additional Contact */
 		if (isset($this->request->post['config_wa'])) {
 			$data['config_wa'] = $this->request->post['config_wa'];
 		} else {
@@ -565,7 +567,7 @@ class ControllerSettingSetting extends Controller {
 		if (isset($this->request->post['config_components'])) {
 			$data['config_components'] = $this->request->post['config_components'];
 		} elseif ($this->config->has('config_components')) {
-		   	$data['config_components'] = $this->config->get('config_components');
+			$data['config_components'] = $this->config->get('config_components');
 		} else {
 			$data['config_components'] = ['gaji_pokok', 'tunj_jabatan', 'tunj_hadir', 'tunj_pph'];
 		}
@@ -643,7 +645,7 @@ class ControllerSettingSetting extends Controller {
 		if (isset($this->request->post['config_captcha_page'])) {
 			$data['config_captcha_page'] = $this->request->post['config_captcha_page'];
 		} elseif ($this->config->has('config_captcha_page')) {
-		   	$data['config_captcha_page'] = $this->config->get('config_captcha_page');
+			$data['config_captcha_page'] = $this->config->get('config_captcha_page');
 		} else {
 			$data['config_captcha_page'] = array();
 		}
@@ -654,12 +656,12 @@ class ControllerSettingSetting extends Controller {
 			'text'  => $this->language->get('text_register'),
 			'value' => 'register'
 		);
-		
+
 		$data['captcha_pages'][] = array(
 			'text'  => $this->language->get('text_guest'),
 			'value' => 'guest'
 		);
-		
+
 		$data['captcha_pages'][] = array(
 			'text'  => $this->language->get('text_contact'),
 			'value' => 'contact'
@@ -894,7 +896,8 @@ class ControllerSettingSetting extends Controller {
 		$this->response->setOutput($this->load->view('setting/setting', $data));
 	}
 
-	protected function validate() {
+	protected function validate()
+	{
 		if (!$this->user->hasPermission('modify', 'setting/setting')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
@@ -967,25 +970,26 @@ class ControllerSettingSetting extends Controller {
 
 		return !$this->error;
 	}
-	
-	public function theme() {
+
+	public function theme()
+	{
 		if ($this->request->server['HTTPS']) {
 			$server = HTTPS_CATALOG;
 		} else {
 			$server = HTTP_CATALOG;
 		}
-		
+
 		// This is only here for compatibility with old themes.
 		if ($this->request->get['theme'] == 'theme_default') {
 			$theme = $this->config->get('theme_default_directory');
 		} else {
 			$theme = basename($this->request->get['theme']);
 		}
-		
+
 		if (is_file(DIR_CATALOG . 'view/theme/' . $theme . '/image/' . $theme . '.png')) {
 			$this->response->setOutput($server . 'catalog/view/theme/' . $theme . '/image/' . $theme . '.png');
 		} else {
 			$this->response->setOutput($server . 'image/no_image.png');
 		}
-	}	
+	}
 }

@@ -169,33 +169,6 @@
               </div>
             </div>
           </div>
-          <!-- <div class="form-group">
-            <label class="col-sm-2 control-label">
-              <?= $entry_approve; ?>
-            </label>
-            <div class="col-sm-10">
-              <div class="well well-sm" style="height: 150px; overflow: auto;">
-                <?php foreach ($permissions as $permission) { ?>
-                <div class="checkbox">
-                  <label>
-                    <?php if (in_array($permission, $approve)) { ?>
-                    <input type="checkbox" name="permission[approve][]" value="<?= $permission; ?>" checked="checked" />
-                    <?= $permission; ?>
-                    <?php } else { ?>
-                    <input type="checkbox" name="permission[approve][]" value="<?= $permission; ?>" />
-                    <?= $permission; ?>
-                    <?php } ?>
-                  </label>
-                </div>
-                <?php } ?>
-              </div>
-              <a onclick="$(this).parent().find(':checkbox').prop('checked', true);">
-                <?= $text_select_all; ?>
-              </a> / <a onclick="$(this).parent().find(':checkbox').prop('checked', false);">
-                <?= $text_unselect_all; ?>
-              </a>
-            </div>
-          </div> -->
         </form>
       </div>
     </div>
