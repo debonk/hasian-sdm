@@ -492,153 +492,140 @@ class ControllerReleaseFreeTransfer extends Controller
 
 			$code = !empty($fund_account_info['code']) ? $fund_account_info['code'] : 'draft';
 
+			$customer_count = $this->model_release_free_transfer->getFreeTransferCustomerCountByMethod($free_transfer_id, $code);
+			$customer_total = $this->model_release_free_transfer->getFreeTransferCustomerTotalByMethod($free_transfer_id, $code);
+
+			$customers = $this->model_release_free_transfer->getFreeTransferCustomersByMethod($free_transfer_id, $code);
+
+			$export_data = [
+				'fund_account'		=> $fund_account_info,
+				'category_info'		=> $free_transfer_info,
+				'customers'			=> $customers,
+				'customer_count'	=> $customer_count,
+				'customer_total'	=> $customer_total,
+			];
+
+			$this->load->model('common/payroll_method');
+			$this->model_common_payroll_method->exportCsv($code, $export_data);
+
+			# Set status to complete
 			$this->model_release_free_transfer->editFreeTransferStatus($free_transfer_id, true);
-
-			$this->db->transaction(function () use ($code) {
-				switch ($code) {
-					// case 'draft':
-					// 	$this->exportDraft();
-
-					// 	break;
-
-					case 'cimb':
-						$this->exportCimb();
-
-						break;
-
-					case 'mandiri':
-						$this->exportMandiri();
-
-						break;
-
-					// case 'bri':
-					// 	$this->exportBri();
-
-					// 	break;
-
-					default:
-						$this->exportCimb();
-
-						break;
-				}
-			});
 		} else {
 			$this->index();
 		}
 	}
 
-	public function exportCimb()
-	{
-		$free_transfer_id = isset($this->request->get['free_transfer_id']) ? $this->request->get['free_transfer_id'] : 0;
+	// public function exportCimb()
+	// {
+	// 	$free_transfer_id = isset($this->request->get['free_transfer_id']) ? $this->request->get['free_transfer_id'] : 0;
 
-		$free_transfer_info = $this->model_release_free_transfer->getFreeTransfer($free_transfer_id);
+	// 	$free_transfer_info = $this->model_release_free_transfer->getFreeTransfer($free_transfer_id);
 
-		$free_transfer_info['description'] = str_replace([',', ' '], '_', $free_transfer_info['description']);
+	// 	$free_transfer_info['description'] = str_replace([',', ' '], '_', $free_transfer_info['description']);
 
-		$this->load->model('release/fund_account');
-		$fund_account_info = $this->model_release_fund_account->getFundAccount($free_transfer_info['fund_account_id']);
+	// 	$this->load->model('release/fund_account');
+	// 	$fund_account_info = $this->model_release_fund_account->getFundAccount($free_transfer_info['fund_account_id']);
 
-		$currency_code = $this->config->get('config_currency');
-		$date_process = date('Ymd', strtotime($free_transfer_info['date_process']));
+	// 	$currency_code = $this->config->get('config_currency');
+	// 	$date_process = date('Ymd', strtotime($free_transfer_info['date_process']));
 
-		$result_count = $this->model_release_free_transfer->getFreeTransferCustomerCountByMethod($free_transfer_id, 'cimb');
-		$result_total = $this->model_release_free_transfer->getFreeTransferCustomerTotalByMethod($free_transfer_id, 'cimb');
+	// 	$result_count = $this->model_release_free_transfer->getFreeTransferCustomerCountByMethod($free_transfer_id, 'cimb');
+	// 	$result_total = $this->model_release_free_transfer->getFreeTransferCustomerTotalByMethod($free_transfer_id, 'cimb');
 
-		$output = '';
-		$output .= $fund_account_info['acc_no'] . ',' . $fund_account_info['acc_name'] . ',' . $currency_code . ',' . $result_total . ',' . $free_transfer_info['description'] . ',' . $result_count . ',' . $date_process . ',' . $fund_account_info['email'];
+	// 	$output = '';
+	// 	$output .= $fund_account_info['acc_no'] . ',' . $fund_account_info['acc_name'] . ',' . $currency_code . ',' . $result_total . ',' . $free_transfer_info['description'] . ',' . $result_count . ',' . $date_process . ',' . $fund_account_info['email'];
 
-		$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
-		$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
-		$output = str_replace('\\', '\\\\', $output);
-		$output = str_replace('\'', '\\\'', $output);
-		$output = str_replace('\\\n', '\n', $output);
-		$output = str_replace('\\\r', '\r', $output);
-		$output = str_replace('\\\t', '\t', $output);
+	// 	$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
+	// 	$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
+	// 	$output = str_replace('\\', '\\\\', $output);
+	// 	$output = str_replace('\'', '\\\'', $output);
+	// 	$output = str_replace('\\\n', '\n', $output);
+	// 	$output = str_replace('\\\r', '\r', $output);
+	// 	$output = str_replace('\\\t', '\t', $output);
 
-		$results = $this->model_release_free_transfer->getFreeTransferCustomersByMethod($free_transfer_id, 'cimb');
+	// 	$results = $this->model_release_free_transfer->getFreeTransferCustomersByMethod($free_transfer_id, 'cimb');
 
-		foreach ($results as $result) {
-			$value = '';
-			$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $result['amount'] . ',' . $free_transfer_info['description'] . (!empty($result['note']) ? ': ' . str_replace([',', ' '], '_', $result['note']) : '') . ',' . $result['email'] . ',,';
+	// 	foreach ($results as $result) {
+	// 		$value = '';
+	// 		$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $result['amount'] . ',' . $free_transfer_info['description'] . (!empty($result['note']) ? ': ' . str_replace([',', ' '], '_', $result['note']) : '') . ',' . $result['email'] . ',,';
 
-			$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
-			$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
-			$value = str_replace('\\', '\\\\', $value);
-			$value = str_replace('\'', '\\\'', $value);
-			$value = str_replace('\\\n', '\n', $value);
-			$value = str_replace('\\\r', '\r', $value);
-			$value = str_replace('\\\t', '\t', $value);
+	// 		$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
+	// 		$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
+	// 		$value = str_replace('\\', '\\\\', $value);
+	// 		$value = str_replace('\'', '\\\'', $value);
+	// 		$value = str_replace('\\\n', '\n', $value);
+	// 		$value = str_replace('\\\r', '\r', $value);
+	// 		$value = str_replace('\\\t', '\t', $value);
 
-			$output .= "\n" . $value;
-		}
+	// 		$output .= "\n" . $value;
+	// 	}
 
-		$filename = $date_process . '_' . preg_replace('/[^a-zA-Z0-9_-]/s', '_', $free_transfer_info['description']);
+	// 	$filename = $date_process . '_' . preg_replace('/[^a-zA-Z0-9_-]/s', '_', $free_transfer_info['description']);
 
-		$this->response->addheader('Pragma: public');
-		$this->response->addheader('Expires: 0');
-		$this->response->addheader('Content-Description: File Transfer');
-		$this->response->addheader('Content-Type: application/octet-stream');
-		$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
-		$this->response->addheader('Content-Transfer-Encoding: binary');
-		$this->response->setOutput($output);
-	}
+	// 	$this->response->addheader('Pragma: public');
+	// 	$this->response->addheader('Expires: 0');
+	// 	$this->response->addheader('Content-Description: File Transfer');
+	// 	$this->response->addheader('Content-Type: application/octet-stream');
+	// 	$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
+	// 	$this->response->addheader('Content-Transfer-Encoding: binary');
+	// 	$this->response->setOutput($output);
+	// }
 
-	public function exportMandiri()
-	{
-		$output = '';
+	// public function exportMandiri()
+	// {
+	// 	$free_transfer_id = isset($this->request->get['free_transfer_id']) ? $this->request->get['free_transfer_id'] : 0;
 
-		$free_transfer_id = isset($this->request->get['free_transfer_id']) ? $this->request->get['free_transfer_id'] : 0;
+	// 	$free_transfer_info = $this->model_release_free_transfer->getFreeTransfer($free_transfer_id);
 
-		$free_transfer_info = $this->model_release_free_transfer->getFreeTransfer($free_transfer_id);
+	// 	$free_transfer_info['description'] = str_replace([',', ' '], '_', $free_transfer_info['description']);
 
-		$free_transfer_info['description'] = str_replace([',', ' '], '_', $free_transfer_info['description']);
+	// 	$currency_code = $this->config->get('config_currency');
+	// 	$date_process = date('Ymd', strtotime($free_transfer_info['date_process']));
 
-		$currency_code = $this->config->get('config_currency');
-		$date_process = date('Ymd', strtotime($free_transfer_info['date_process']));
+	// 	$result_count = $this->model_release_free_transfer->getFreeTransferCustomerCountByMethod($free_transfer_id, 'mandiri');
+	// 	$result_total = $this->model_release_free_transfer->getFreeTransferCustomerTotalByMethod($free_transfer_id, 'mandiri');
 
-		$result_count = $this->model_release_free_transfer->getFreeTransferCustomerCountByMethod($free_transfer_id, 'mandiri');
-		$result_total = $this->model_release_free_transfer->getFreeTransferCustomerTotalByMethod($free_transfer_id, 'mandiri');
+	// 	$fund_account_info = $this->model_release_fund_account->getFundAccount($free_transfer_info['fund_account_id']);
 
-		$fund_account_info = $this->model_release_fund_account->getFundAccount($free_transfer_info['fund_account_id']);
+	// 	$output = '';
+	// 	$output .= 'P' . ',' . $date_process . ',' . $fund_account_info['acc_no'] . ',' . $result_count . ',' . $result_total;
 
-		$output .= 'P' . ',' . $date_process . ',' . $fund_account_info['acc_no'] . ',' . $result_count . ',' . $result_total;
+	// 	$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
+	// 	$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
+	// 	$output = str_replace('\\', '\\\\',	$output);
+	// 	$output = str_replace('\'', '\\\'',	$output);
+	// 	$output = str_replace('\\\n', '\n',	$output);
+	// 	$output = str_replace('\\\r', '\r',	$output);
+	// 	$output = str_replace('\\\t', '\t',	$output);
 
-		$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
-		$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
-		$output = str_replace('\\', '\\\\',	$output);
-		$output = str_replace('\'', '\\\'',	$output);
-		$output = str_replace('\\\n', '\n',	$output);
-		$output = str_replace('\\\r', '\r',	$output);
-		$output = str_replace('\\\t', '\t',	$output);
+	// 	$results = $this->model_release_free_transfer->getFreeTransferCustomersByMethod($free_transfer_id, 'mandiri');
 
-		$results = $this->model_release_free_transfer->getFreeTransferCustomersByMethod($free_transfer_id, 'mandiri');
+	// 	foreach ($results as $result) {
+	// 		$value = '';
+	// 		$value .= $result['acc_no'] . ',' . $result['lastname'] . ',,,,' . $currency_code . ',' . $result['amount'] . ',' . $free_transfer_info['description'] . (!empty($result['note']) ? ': ' . str_replace([',', ' '], '_', $result['note']) : '') . ',,IBU,,,,,,,Y,' . $result['email'] . ',,,,,,,,,,,,,,,,,,,,,OUR,1,E,,,';
 
-		foreach ($results as $result) {
-			$value = '';
-			$value .= $result['acc_no'] . ',' . $result['lastname'] . ',,,,' . $currency_code . ',' . $result['amount'] . ',' . $free_transfer_info['description'] . (!empty($result['note']) ? ': ' . str_replace([',', ' '], '_', $result['note']) : '') . ',,IBU,,,,,,,Y,' . $result['email'] . ',,,,,,,,,,,,,,,,,,,,,OUR,1,E,,,';
+	// 		$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
+	// 		$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
+	// 		$value = str_replace('\\', '\\\\', $value);
+	// 		$value = str_replace('\'', '\\\'', $value);
+	// 		$value = str_replace('\\\n', '\n', $value);
+	// 		$value = str_replace('\\\r', '\r', $value);
+	// 		$value = str_replace('\\\t', '\t', $value);
 
-			$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
-			$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
-			$value = str_replace('\\', '\\\\', $value);
-			$value = str_replace('\'', '\\\'', $value);
-			$value = str_replace('\\\n', '\n', $value);
-			$value = str_replace('\\\r', '\r', $value);
-			$value = str_replace('\\\t', '\t', $value);
+	// 		$output .= "\n" . $value;
+	// 	}
 
-			$output .= "\n" . $value;
-		}
+	// 	$filename = $date_process . '_' . preg_replace('/[^a-zA-Z0-9_-]/s', '_', $free_transfer_info['description']);
 
-		$filename = $date_process . '_' . preg_replace('/[^a-zA-Z0-9_-]/s', '_', $free_transfer_info['description']);
-
-		$this->response->addheader('Pragma: public');
-		$this->response->addheader('Expires: 0');
-		$this->response->addheader('Content-Description: File Transfer');
-		$this->response->addheader('Content-Type: application/octet-stream');
-		$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
-		$this->response->addheader('Content-Transfer-Encoding: binary');
-		$this->response->setOutput($output);
-		// echo '<pre>' . print_r($output, 1);
-	}
+	// 	$this->response->addheader('Pragma: public');
+	// 	$this->response->addheader('Expires: 0');
+	// 	$this->response->addheader('Content-Description: File Transfer');
+	// 	$this->response->addheader('Content-Type: application/octet-stream');
+	// 	$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
+	// 	$this->response->addheader('Content-Transfer-Encoding: binary');
+	// 	$this->response->setOutput($output);
+	// 	// echo '<pre>' . print_r($output, 1);
+	// }
 
 	protected function validateForm()
 	{

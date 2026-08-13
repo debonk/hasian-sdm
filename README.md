@@ -7,12 +7,26 @@ MODUL: Customer > Presence Method
 
 User Group: ganti form ke list, trus ada kolom untuk centang access, modify, approval, print, bypass
 
-=== MODIFY DATABASE
+=== DATABASE
 oc_user: hapus kolom customer_department_id
 
-=== MODIFY DATABASE
+=== TABLE
 
-=== MODIFY CONFIG
+=== CONFIG
+
+4.4.5
+<!-- ALTER TABLE oc_presence_period DROP COLUMN fund_account_id; -->
+* CREATE INDEX code_item USING BTREE ON oc_payroll_component_value (code,item); [local]
+
+4.4.4	13/09/2026
+Payroll Method, Fund Account: Bank Danamon (Add data) [free_transfer,allowance,release]
+Release: Multi Fund Account
+
+=== TABLE
+ALTER TABLE oc_presence_period ADD fund_account_ids varchar(100) NULL AFTER fund_account_id; [all_done]
+Update data fund_account_ids. [all_done]
+* CREATE INDEX code_item USING BTREE ON oc_payroll_component_value (code,item); [local]
+* ALTER TABLE oc_presence_period DROP COLUMN fund_account_id; -- Lakukan di update berikutnya 
 
 
 4.4.3	05/06/2026

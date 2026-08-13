@@ -528,13 +528,12 @@ class ControllerReleaseAllowance extends Controller
 	{
 		$this->load->language('release/allowance');
 
-		// $this->document->setTitle($this->language->get('heading_title'));
-
 		$this->load->model('release/allowance');
 
 		$allowance_id = isset($this->request->get['allowance_id']) ? $this->request->get['allowance_id'] : 0;
 
 		$allowance_info = $this->model_release_allowance->getAllowance($allowance_id);
+		$allowance_info['description'] = $this->language->get('heading_title') . ' - ' . date($this->language->get('date_format_m_y'), strtotime($allowance_info['allowance_period']));
 
 		if (!empty($allowance_info) && $this->validateExport()) {
 			$this->load->model('release/fund_account');
@@ -542,223 +541,194 @@ class ControllerReleaseAllowance extends Controller
 
 			$code = !empty($fund_account_info['code']) ? $fund_account_info['code'] : 'draft';
 
-			$this->db->transaction(function () use ($code) {
-				switch ($code) {
-					// case 'draft':
-					// 	$this->exportDraft();
+			$customer_count = $this->model_release_allowance->getAllowanceCustomerCountByMethod($allowance_id, $code);
+			$customer_total = $this->model_release_allowance->getAllowanceCustomerTotalByMethod($allowance_id, $code);
 
-					// 	break;
+			$customers = $this->model_release_allowance->getAllowanceCustomersByMethod($allowance_id, $code);
 
-					case 'cimb':
-						$this->exportCimb();
+			$export_data = [
+				'fund_account'		=> $fund_account_info,
+				'category_info'		=> $allowance_info,
+				'customers'			=> $customers,
+				'customer_count'	=> $customer_count,
+				'customer_total'	=> $customer_total,
+			];
 
-						break;
+			$this->load->model('common/payroll_method');
+			$this->model_common_payroll_method->exportCsv($code, $export_data);
 
-					case 'mandiri':
-						$this->exportMandiri();
+			# Set status to complete
+			$this->model_release_allowance->editAllowanceStatus($allowance_id, true);
 
-						break;
-
-					// case 'bri':
-					// 	$this->exportBri();
-
-					// 	break;
-
-					default:
-						$this->exportCimb();
-
-						break;
-				}
-			});
 		} else {
 			$this->index();
 		}
 	}
 
-	public function exportCimb()
-	{
-		$allowance_id = isset($this->request->get['allowance_id']) ? $this->request->get['allowance_id'] : 0;
+	// public function exportDel()
+	// {
+	// 	$this->load->language('release/allowance');
 
-		$allowance_info = $this->model_release_allowance->getAllowance($allowance_id);
+	// 	// $this->document->setTitle($this->language->get('heading_title'));
 
-		$allowance_info['description'] = $this->language->get('heading_title') . ' - ' . date($this->language->get('date_format_m_y'), strtotime($allowance_info['allowance_period']));
+	// 	$this->load->model('release/allowance');
 
-		$this->load->model('release/fund_account');
-		$fund_account_info = $this->model_release_fund_account->getFundAccount($allowance_info['fund_account_id']);
+	// 	$allowance_id = isset($this->request->get['allowance_id']) ? $this->request->get['allowance_id'] : 0;
 
-		$currency_code = $this->config->get('config_currency');
-		$date_process = date('Ymd', strtotime($allowance_info['date_process']));
+	// 	$allowance_info = $this->model_release_allowance->getAllowance($allowance_id);
 
-		$result_count = $this->model_release_allowance->getAllowanceCustomerCountByMethod($allowance_id, 'cimb');
-		$result_total = $this->model_release_allowance->getAllowanceCustomerTotalByMethod($allowance_id, 'cimb');
+	// 	if (!empty($allowance_info) && $this->validateExport()) {
+	// 		$this->load->model('release/fund_account');
+	// 		$fund_account_info = $this->model_release_fund_account->getFundAccount($allowance_info['fund_account_id']);
 
-		$output = '';
-		$output .= $fund_account_info['acc_no'] . ',' . $fund_account_info['acc_name'] . ',' . $currency_code . ',' . $result_total . ',' . $allowance_info['description'] . ',' . $result_count . ',' . $date_process . ',' . $fund_account_info['email'];
+	// 		$code = !empty($fund_account_info['code']) ? $fund_account_info['code'] : 'draft';
 
-		$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
-		$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
-		$output = str_replace('\\', '\\\\', $output);
-		$output = str_replace('\'', '\\\'', $output);
-		$output = str_replace('\\\n', '\n', $output);
-		$output = str_replace('\\\r', '\r', $output);
-		$output = str_replace('\\\t', '\t', $output);
+	// 		$this->db->transaction(function () use ($code) {
+	// 			switch ($code) {
+	// 				// case 'draft':
+	// 				// 	$this->exportDraft();
 
-		$results = $this->model_release_allowance->getAllowanceCustomersByMethod($allowance_id, 'cimb');
+	// 				// 	break;
 
-		foreach ($results as $result) {
-			$value = '';
-			$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $result['amount'] . ',' . $allowance_info['description'] . (!empty($result['note']) ? ': ' . str_replace([',', ' '], '_', $result['note']) : '') . ',' . $result['email'] . ',,';
+	// 				case 'cimb':
+	// 					$this->exportCimb();
 
-			$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
-			$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
-			$value = str_replace('\\', '\\\\', $value);
-			$value = str_replace('\'', '\\\'', $value);
-			$value = str_replace('\\\n', '\n', $value);
-			$value = str_replace('\\\r', '\r', $value);
-			$value = str_replace('\\\t', '\t', $value);
+	// 					break;
 
-			$output .= "\n" . $value;
-		}
+	// 				case 'mandiri':
+	// 					$this->exportMandiri();
 
-		$filename = $date_process . '_' . preg_replace('/[^a-zA-Z0-9_-]/s', '_', $allowance_info['description']);
+	// 					break;
 
-		$this->response->addheader('Pragma: public');
-		$this->response->addheader('Expires: 0');
-		$this->response->addheader('Content-Description: File Transfer');
-		$this->response->addheader('Content-Type: application/octet-stream');
-		$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
-		$this->response->addheader('Content-Transfer-Encoding: binary');
-		$this->response->setOutput($output);
-		// echo '<pre>' . print_r($output, 1);
-	}
+	// 				// case 'bri':
+	// 				// 	$this->exportBri();
 
-	public function exportMandiri()
-	{
-		$output = '';
+	// 				// 	break;
 
-		$allowance_id = isset($this->request->get['allowance_id']) ? $this->request->get['allowance_id'] : 0;
+	// 				default:
+	// 					$this->exportCimb();
 
-		$allowance_info = $this->model_release_allowance->getAllowance($allowance_id);
+	// 					break;
+	// 			}
+	// 		});
+	// 	} else {
+	// 		$this->index();
+	// 	}
+	// }
 
-		$allowance_info['description'] = $this->language->get('heading_title') . ' - ' . date($this->language->get('date_format_m_y'), strtotime($allowance_info['allowance_period']));
+	// public function exportCimb()
+	// {
+	// 	$allowance_id = isset($this->request->get['allowance_id']) ? $this->request->get['allowance_id'] : 0;
 
-		$currency_code = $this->config->get('config_currency');
-		$date_process = date('Ymd', strtotime($allowance_info['date_process']));
+	// 	$allowance_info = $this->model_release_allowance->getAllowance($allowance_id);
 
-		$result_count = $this->model_release_allowance->getAllowanceCustomerCountByMethod($allowance_id, 'mandiri');
-		$result_total = $this->model_release_allowance->getAllowanceCustomerTotalByMethod($allowance_id, 'mandiri');
+	// 	$allowance_info['description'] = $this->language->get('heading_title') . ' - ' . date($this->language->get('date_format_m_y'), strtotime($allowance_info['allowance_period']));
 
-		$fund_account_info = $this->model_release_fund_account->getFundAccount($allowance_info['fund_account_id']);
+	// 	$this->load->model('release/fund_account');
+	// 	$fund_account_info = $this->model_release_fund_account->getFundAccount($allowance_info['fund_account_id']);
 
-		$output .= 'P' . ',' . $date_process . ',' . $fund_account_info['acc_no'] . ',' . $result_count . ',' . $result_total;
+	// 	$currency_code = $this->config->get('config_currency');
+	// 	$date_process = date('Ymd', strtotime($allowance_info['date_process']));
 
-		$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
-		$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
-		$output = str_replace('\\', '\\\\',	$output);
-		$output = str_replace('\'', '\\\'',	$output);
-		$output = str_replace('\\\n', '\n',	$output);
-		$output = str_replace('\\\r', '\r',	$output);
-		$output = str_replace('\\\t', '\t',	$output);
+	// 	$result_count = $this->model_release_allowance->getAllowanceCustomerCountByMethod($allowance_id, 'cimb');
+	// 	$result_total = $this->model_release_allowance->getAllowanceCustomerTotalByMethod($allowance_id, 'cimb');
 
-		$results = $this->model_release_allowance->getAllowanceCustomersByMethod($allowance_id, 'mandiri');
+	// 	$output = '';
+	// 	$output .= $fund_account_info['acc_no'] . ',' . $fund_account_info['acc_name'] . ',' . $currency_code . ',' . $result_total . ',' . $allowance_info['description'] . ',' . $result_count . ',' . $date_process . ',' . $fund_account_info['email'];
 
-		foreach ($results as $result) {
-			$value = '';
-			$value .= $result['acc_no'] . ',' . $result['lastname'] . ',,,,' . $currency_code . ',' . $result['amount'] . ',' . $allowance_info['description'] . (!empty($result['note']) ? ': ' . str_replace([',', ' '], '_', $result['note']) : '') . ',,IBU,,,,,,,Y,' . $result['email'] . ',,,,,,,,,,,,,,,,,,,,,OUR,1,E,,,';
+	// 	$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
+	// 	$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
+	// 	$output = str_replace('\\', '\\\\', $output);
+	// 	$output = str_replace('\'', '\\\'', $output);
+	// 	$output = str_replace('\\\n', '\n', $output);
+	// 	$output = str_replace('\\\r', '\r', $output);
+	// 	$output = str_replace('\\\t', '\t', $output);
 
-			$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
-			$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
-			$value = str_replace('\\', '\\\\', $value);
-			$value = str_replace('\'', '\\\'', $value);
-			$value = str_replace('\\\n', '\n', $value);
-			$value = str_replace('\\\r', '\r', $value);
-			$value = str_replace('\\\t', '\t', $value);
+	// 	$results = $this->model_release_allowance->getAllowanceCustomersByMethod($allowance_id, 'cimb');
 
-			$output .= "\n" . $value;
-		}
+	// 	foreach ($results as $result) {
+	// 		$value = '';
+	// 		$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $result['amount'] . ',' . $allowance_info['description'] . (!empty($result['note']) ? ': ' . str_replace([',', ' '], '_', $result['note']) : '') . ',' . $result['email'] . ',,';
 
-		$filename = $date_process . '_' . preg_replace('/[^a-zA-Z0-9_-]/s', '_', $allowance_info['description']);
+	// 		$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
+	// 		$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
+	// 		$value = str_replace('\\', '\\\\', $value);
+	// 		$value = str_replace('\'', '\\\'', $value);
+	// 		$value = str_replace('\\\n', '\n', $value);
+	// 		$value = str_replace('\\\r', '\r', $value);
+	// 		$value = str_replace('\\\t', '\t', $value);
 
-		$this->response->addheader('Pragma: public');
-		$this->response->addheader('Expires: 0');
-		$this->response->addheader('Content-Description: File Transfer');
-		$this->response->addheader('Content-Type: application/octet-stream');
-		$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
-		$this->response->addheader('Content-Transfer-Encoding: binary');
-		$this->response->setOutput($output);
-		// echo '<pre>' . print_r($output, 1);
-	}
+	// 		$output .= "\n" . $value;
+	// 	}
 
+	// 	$filename = $date_process . '_' . preg_replace('/[^a-zA-Z0-9_-]/s', '_', $allowance_info['description']);
 
-	public function exportCsvDel()
-	{
-		$this->load->language('release/allowance');
+	// 	$this->response->addheader('Pragma: public');
+	// 	$this->response->addheader('Expires: 0');
+	// 	$this->response->addheader('Content-Description: File Transfer');
+	// 	$this->response->addheader('Content-Type: application/octet-stream');
+	// 	$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
+	// 	$this->response->addheader('Content-Transfer-Encoding: binary');
+	// 	$this->response->setOutput($output);
+	// 	// echo '<pre>' . print_r($output, 1);
+	// }
 
-		$this->load->model('release/allowance');
+	// public function exportMandiri()
+	// {
+	// 	$output = '';
 
-		if (isset($this->request->get['allowance_id'])) {
-			$allowance_id = $this->request->get['allowance_id'];
-		} else {
-			$allowance_id = 0;
-		}
+	// 	$allowance_id = isset($this->request->get['allowance_id']) ? $this->request->get['allowance_id'] : 0;
 
-		$allowance_info = $this->model_release_allowance->getAllowance($allowance_id);
+	// 	$allowance_info = $this->model_release_allowance->getAllowance($allowance_id);
 
-		if (!empty($allowance_info) && $this->validateExport()) {
-			$this->load->model('release/fund_account');
-			$fund_account_info = $this->model_release_fund_account->getFundAccount($allowance_info['fund_account_id']);
+	// 	$allowance_info['description'] = $this->language->get('heading_title') . ' - ' . date($this->language->get('date_format_m_y'), strtotime($allowance_info['allowance_period']));
 
-			$currency_code = $this->config->get('config_currency');
-			$date_process = date('Ymd', strtotime($allowance_info['date_process']));
+	// 	$currency_code = $this->config->get('config_currency');
+	// 	$date_process = date('Ymd', strtotime($allowance_info['date_process']));
 
-			$description = $this->language->get('heading_title') . ' - ' . date($this->language->get('date_format_m_y'), strtotime($allowance_info['allowance_period']));
+	// 	$result_count = $this->model_release_allowance->getAllowanceCustomerCountByMethod($allowance_id, 'mandiri');
+	// 	$result_total = $this->model_release_allowance->getAllowanceCustomerTotalByMethod($allowance_id, 'mandiri');
 
-			$result_count = $this->model_release_allowance->getAllowanceCustomerCountByMethod($allowance_id, 'CIMB');
-			$result_total = $this->model_release_allowance->getAllowanceCustomerTotalByMethod($allowance_id, 'CIMB');
+	// 	$fund_account_info = $this->model_release_fund_account->getFundAccount($allowance_info['fund_account_id']);
 
-			$output = '';
-			$output .= $fund_account_info['acc_no'] . ',' . $fund_account_info['acc_name'] . ',' . $currency_code . ',' . $result_total . ',' . $description . ',' . $result_count . ',' . $date_process . ',' . $fund_account_info['email'];
+	// 	$output .= 'P' . ',' . $date_process . ',' . $fund_account_info['acc_no'] . ',' . $result_count . ',' . $result_total;
 
-			$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
-			$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
-			$output = str_replace('\\', '\\\\', $output);
-			$output = str_replace('\'', '\\\'', $output);
-			$output = str_replace('\\\n', '\n', $output);
-			$output = str_replace('\\\r', '\r', $output);
-			$output = str_replace('\\\t', '\t', $output);
+	// 	$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
+	// 	$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
+	// 	$output = str_replace('\\', '\\\\',	$output);
+	// 	$output = str_replace('\'', '\\\'',	$output);
+	// 	$output = str_replace('\\\n', '\n',	$output);
+	// 	$output = str_replace('\\\r', '\r',	$output);
+	// 	$output = str_replace('\\\t', '\t',	$output);
 
-			$results = $this->model_release_allowance->getAllowanceCustomersByMethod($allowance_id, 'CIMB');
+	// 	$results = $this->model_release_allowance->getAllowanceCustomersByMethod($allowance_id, 'mandiri');
 
-			foreach ($results as $result) {
-				$value = '';
-				$value .= $result['acc_no'] . ',' . $result['lastname'] . ',' . $currency_code . ',' . $result['amount'] . ',' . $description . ',' . $result['email'] . ',,';
+	// 	foreach ($results as $result) {
+	// 		$value = '';
+	// 		$value .= $result['acc_no'] . ',' . $result['lastname'] . ',,,,' . $currency_code . ',' . $result['amount'] . ',' . $allowance_info['description'] . (!empty($result['note']) ? ': ' . str_replace([',', ' '], '_', $result['note']) : '') . ',,IBU,,,,,,,Y,' . $result['email'] . ',,,,,,,,,,,,,,,,,,,,,OUR,1,E,,,';
 
-				$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
-				$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
-				$value = str_replace('\\', '\\\\', $value);
-				$value = str_replace('\'', '\\\'', $value);
-				$value = str_replace('\\\n', '\n', $value);
-				$value = str_replace('\\\r', '\r', $value);
-				$value = str_replace('\\\t', '\t', $value);
+	// 		$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
+	// 		$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
+	// 		$value = str_replace('\\', '\\\\', $value);
+	// 		$value = str_replace('\'', '\\\'', $value);
+	// 		$value = str_replace('\\\n', '\n', $value);
+	// 		$value = str_replace('\\\r', '\r', $value);
+	// 		$value = str_replace('\\\t', '\t', $value);
 
-				$output .= "\n" . $value;
-			}
+	// 		$output .= "\n" . $value;
+	// 	}
 
-			$filename = str_replace(' ', '_', $description . '_' . $allowance_info['date_process']);
+	// 	$filename = $date_process . '_' . preg_replace('/[^a-zA-Z0-9_-]/s', '_', $allowance_info['description']);
 
-			$this->response->addheader('Pragma: public');
-			$this->response->addheader('Expires: 0');
-			$this->response->addheader('Content-Description: File Transfer');
-			$this->response->addheader('Content-Type: application/octet-stream');
-			$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
-			$this->response->addheader('Content-Transfer-Encoding: binary');
-			$this->response->setOutput($output);
-			// echo $output;
-		} else {
-
-			$this->index();
-		}
-	}
+	// 	$this->response->addheader('Pragma: public');
+	// 	$this->response->addheader('Expires: 0');
+	// 	$this->response->addheader('Content-Description: File Transfer');
+	// 	$this->response->addheader('Content-Type: application/octet-stream');
+	// 	$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.csv');
+	// 	$this->response->addheader('Content-Transfer-Encoding: binary');
+	// 	$this->response->setOutput($output);
+	// 	// echo '<pre>' . print_r($output, 1);
+	// }
 
 	protected function validateForm()
 	{

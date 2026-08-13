@@ -103,7 +103,8 @@ class ModelCommonPayroll extends Model
 					break;
 				case "released":
 					if ($this->checkPeriodStatus($presence_period_id, 'approved, released')) {
-						$sql .= ", fund_account_id = '" . (int)$data['fund_account_id'] . "', date_release = STR_TO_DATE('" . $this->db->escape($data['date_release']) . "', '%d %b %Y')";
+						// $sql .= ", fund_account_id = '" . (int)$data['fund_account_id'] . "', date_release = STR_TO_DATE('" . $this->db->escape($data['date_release']) . "', '%d %b %Y')";
+						$sql .= ", fund_account_ids = '" . json_encode((array_map('intval', $data['fund_account_ids']))) . "', date_release = STR_TO_DATE('" . $this->db->escape($data['date_release']) . "', '%d %b %Y')";
 					}
 
 					break;

@@ -307,7 +307,7 @@ class ModelPayrollPayrollRelease extends Model
 			$sql .= " AND " . implode(" AND ", $implode);
 		}
 
-		$sql .= 'GROUP BY payroll_method_id';
+		$sql .= 'GROUP BY payroll_method';
 
 		$query = $this->db->query($sql);
 
@@ -420,7 +420,7 @@ class ModelPayrollPayrollRelease extends Model
 
 			// echo $subject;
 			// echo '<pre>' . print_r($message, 1); die(' ---breakpoint--- ');
-			
+
 			$mail = new Mail();
 			$mail->protocol = $this->config->get('config_mail_protocol');
 			$mail->parameter = $this->config->get('config_mail_parameter');
@@ -461,11 +461,12 @@ class ModelPayrollPayrollRelease extends Model
 				break;
 
 			case 'released':
-				$sql = "UPDATE " . DB_PREFIX . "payroll SET status_released = '" . $this->db->escape($status) . "', date_released = '" . $this->db->escape($data['date_released']) . "', release_payroll_method_id = '" .(int)$data['release_payroll_method_id'] . "', release_acc_no = '" . $this->db->escape($data['release_acc_no']) . "' WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'";
+				$sql = "UPDATE " . DB_PREFIX . "payroll SET status_released = '" . $this->db->escape($status) . "', date_released = '" . $this->db->escape($data['date_released']) . "', release_payroll_method_id = '" . (int)$data['release_payroll_method_id'] . "', release_acc_no = '" . $this->db->escape($data['release_acc_no']) . "' WHERE presence_period_id = '" . (int)$presence_period_id . "' AND customer_id = '" . (int)$customer_id . "'";
 
 				break;
 
 			default:
+				$sql = '';
 				break;
 		}
 

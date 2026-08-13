@@ -95,7 +95,7 @@ class ModelReleaseFreeTransfer extends Model {
 	}
 
 	public function getFreeTransferCustomersByMethod(int $free_transfer_id, string $method) {
-		$sql = "SELECT DISTINCT ftc.*, c.lastname, c.email, c.acc_no, pm.name AS payroll_method FROM " . DB_PREFIX . "free_transfer_customer ftc LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ftc.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE pm.language_id = '" . (int)$this->config->get('config_language_id') . "' AND ftc.free_transfer_id = '" . (int)$free_transfer_id . "'";
+		$sql = "SELECT DISTINCT ftc.*, c.lastname, c.nip, c.email, c.acc_no, pm.name AS payroll_method FROM " . DB_PREFIX . "free_transfer_customer ftc LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ftc.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) WHERE pm.language_id = '" . (int)$this->config->get('config_language_id') . "' AND ftc.free_transfer_id = '" . (int)$free_transfer_id . "'";
 
 		if ($method) {
 			$sql .= " AND pm.code = '" . $this->db->escape($method) . "' AND c.acc_no <> ''";

@@ -193,7 +193,7 @@
 						<?php } ?>
 						<?php } else { ?>
 						<tr>
-							<td colspan="6" class="text-center">
+							<td colspan="8" class="text-center">
 								<?= $text_calculate; ?></button>
 							</td>
 						</tr>

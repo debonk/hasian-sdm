@@ -236,7 +236,7 @@ class ModelReleaseAllowance extends Model
 
 	public function getAllowanceCustomersByMethod(int $allowance_id, string $method)
 	{
-		$sql = "SELECT DISTINCT ac.*, c.lastname, c.email, c.acc_no, c.date_start, pm.name AS payroll_method, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cgd.name AS customer_group FROM " . DB_PREFIX . "allowance_customer ac LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ac.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) WHERE pm.language_id = '" . (int)$this->config->get('config_language_id') . "' AND ac.allowance_id = '" . (int)$allowance_id . "' AND ac.amount > 0";
+		$sql = "SELECT DISTINCT ac.*, c.lastname, c.nip, c.email, c.acc_no, c.date_start, pm.name AS payroll_method, CONCAT(c.firstname, ' [', c.lastname, ']') AS name, cgd.name AS customer_group FROM " . DB_PREFIX . "allowance_customer ac LEFT JOIN " . DB_PREFIX . "customer c ON (c.customer_id = ac.customer_id) LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = c.payroll_method_id) LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cgd.customer_group_id = c.customer_group_id) WHERE pm.language_id = '" . (int)$this->config->get('config_language_id') . "' AND ac.allowance_id = '" . (int)$allowance_id . "' AND ac.amount > 0";
 
 		$sql .= " AND pm.name = '" . $this->db->escape($method) . "' AND c.acc_no <> ''";
 

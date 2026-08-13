@@ -57,18 +57,19 @@ final class MySQLi {
 	}
 	
 	public function beginTransaction() {
-		$this->connection->begin_transaction();
 		$this->connection->autocommit(false);
+		$this->connection->begin_transaction();
 	}
 	
 	public function commit() {
 		$this->connection->commit();
+		$this->connection->autocommit(true);
 	}
 	
 	public function rollback() {
 		$this->connection->rollback();
+		$this->connection->autocommit(true);
 	}
-	
 	public function connected() {
 		return $this->connection->connected();
 	}

@@ -348,7 +348,7 @@
                     <?= $payroll_release['acc_no']; ?>
                   </td>
                   <td class="text-right">
-                    <?= $payroll_release['grandtotal']; ?>
+                    <?= $payroll_release['amount']; ?>
                   </td>
                   <td>
                     <?= $payroll_release['date_released']; ?>
@@ -402,7 +402,7 @@
                     <?= $payroll_release['acc_no']; ?>
                   </td>
                   <td class="text-right">
-                    <?= $payroll_release['grandtotal']; ?>
+                    <?= $payroll_release['amount']; ?>
                   </td>
                   <td>
                     <?= $payroll_release['date_released']; ?>
