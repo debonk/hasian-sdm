@@ -19,7 +19,7 @@ oc_user: hapus kolom customer_department_id
 === TABLE
 <!-- ALTER TABLE oc_presence_period DROP COLUMN fund_account_id; -->
 
-4.4.5	29/08/2026
+4.4.5a	29/08/2026
 NEW MODULE: Batch: Mass entry schedule and absence.
 Batch: Add validateForm, validateDelete: error jika telah lewat tanggal, error jika telah ada entry pada tanggal tersebut
 Bug Fixed: Schedule Type: pagination count tidak sesuai

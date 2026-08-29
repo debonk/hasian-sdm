@@ -429,7 +429,7 @@ class ControllerApiFinger extends Controller
 				$name = $this->config->get('payroll_setting_presence_card') != 'lastname' ? $customer_info['firstname'] : $customer_info['lastname'];
 
 				# validasi karyawan hanya boleh input sidik jari di device finger yang sesuai dengan lokasi kerjanya
-				if ($location_id && !in_array($location_id, json_decode($customer_info['working_locations'], 1))) {
+				if ($location_id && !is_null($customer_info['working_locations']) && !in_array($location_id, json_decode($customer_info['working_locations'], 1))) {
 					$json = sprintf($this->language->get('error_location_mismatch'), $name);
 
 					break;
