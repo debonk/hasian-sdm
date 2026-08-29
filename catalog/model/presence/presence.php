@@ -2,6 +2,11 @@
 class ModelPresencePresence extends Model
 {
 	private $finger_indexes = ['thumbs', 'index', 'middle', 'ring', 'pinkie'];
+	private $filter_type_labels = array(
+		1 => 'location',
+		2 => 'customer_group',
+		3 => 'customer_department',
+	);
 
 	public function getPeriod($presence_period_id = 0)
 	{
@@ -26,7 +31,7 @@ class ModelPresencePresence extends Model
 	public function getCustomer($customer_id, $data = [])
 	{
 		// $query = $this->db->query("SELECT DISTINCT c.customer_id, c.firstname, c.lastname, c.location_id, cad.working_locations FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON cad.customer_id = c.customer_id WHERE c.customer_id = '" . (int)$customer_id . "' AND status = 1 AND date_start <= CURDATE() AND (date_end >= CURDATE() OR date_end IS NULL)");
-		$sql = "SELECT DISTINCT c.customer_id, c.firstname, c.lastname, c.customer_department_id, c.location_id, cad.working_locations FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON cad.customer_id = c.customer_id WHERE c.customer_id = '" . (int)$customer_id . "' AND status = 1 AND (date_end >= CURDATE() OR date_end IS NULL)";
+		$sql = "SELECT DISTINCT c.customer_id, c.firstname, c.lastname, c.customer_department_id, c.customer_group_id, c.location_id, cad.working_locations FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_add_data cad ON cad.customer_id = c.customer_id WHERE c.customer_id = '" . (int)$customer_id . "' AND status = 1 AND (date_end >= CURDATE() OR date_end IS NULL)";
 
 		if (empty($data['no_date_start'])) {
 			$sql .= " AND date_start <= CURDATE()";
@@ -195,6 +200,85 @@ class ModelPresencePresence extends Model
 		return $query->row;
 	}
 
+	public function getBatchByDate($customer_id, $date)
+	{
+		$sql = "SELECT DISTINCT * FROM " . DB_PREFIX . "v_batch WHERE date = '" . $this->db->escape($date) . "'";
+
+		$query = $this->db->query($sql);
+
+		if ($query->num_rows) {
+			$batch_rules = $this->getBatchRules($query->row['batch_id']);
+
+			$decoded_rules = [];
+
+			foreach ($this->filter_type_labels as $ft) {
+				$decoded_rules[$ft] = [];
+			}
+
+			foreach ($batch_rules as $rule) {
+				$key = $this->filter_type_labels[$rule['filter_type']] ?? null;
+				if ($key) {
+					$decoded = json_decode($rule['filter_ids'], true);
+					if (is_array($decoded)) {
+						$decoded_rules[$key] = array_map('intval', $decoded);
+					}
+				}
+			}
+
+			if ($this->customerMatchesRules($customer_id, $decoded_rules)) {
+				return $query->row;
+			}
+		}
+
+		return;
+	}
+
+	public function getBatchRules(int $batch_id)
+	{
+		$query = $this->db->query("
+            SELECT * FROM " . DB_PREFIX . "batch_rule
+            WHERE batch_id = '" . (int)$batch_id . "'
+        ");
+
+		return $query->rows;
+	}
+
+	public function customerMatchesRules(int $customer_id, array $rules)
+	{
+		if (
+			empty($rules['location'])
+			&& empty($rules['customer_group'])
+			&& empty($rules['customer_department'])
+		) {
+			return true;
+		}
+
+		$customer = $this->getCustomer($customer_id);
+		if (!$customer) {
+			return false;
+		}
+
+		if (!empty($rules['location'])) {
+			if (!in_array((int)$customer['location_id'], $rules['location'])) {
+				return false;
+			}
+		}
+
+		if (!empty($rules['customer_group'])) {
+			if (!in_array((int)$customer['customer_group_id'], $rules['customer_group'])) {
+				return false;
+			}
+		}
+
+		if (!empty($rules['customer_department'])) {
+			if (!in_array((int)$customer['customer_department_id'], $rules['customer_department'])) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public function getScheduleByDate($customer_id, $date)
 	{
 		$sql = "SELECT DISTINCT s.customer_id, s.date, s.schedule_type_id, st.code, st.time_start, st.time_end FROM " . DB_PREFIX . "schedule s LEFT JOIN " . DB_PREFIX . "schedule_type st ON (st.schedule_type_id = s.schedule_type_id) WHERE s.customer_id = '" . (int)$customer_id . "' AND s.date = '" . $this->db->escape($date) . "'";
@@ -276,6 +360,23 @@ class ModelPresencePresence extends Model
 							'note'				=> $exchange_info['description']
 						);
 					}
+
+					break;
+				}
+
+				$batch_info = $this->getBatchByDate($customer_id, $date);
+
+				if ($batch_info) {
+					$applied_schedule = array(
+						'applied'				=> 'batch',
+						'schedule_type_id'		=> $batch_info['schedule_type_id'],
+						'schedule_type'			=> $batch_info['schedule_type_code'] ?: '-',
+						'time_in'				=> $batch_info['time_start'],
+						'time_out'				=> $batch_info['time_end'],
+						'presence_status_id'	=> $batch_info['presence_status_id'],
+						'presence_status'		=> $batch_info['presence_status'],
+						'note'					=> $batch_info['name']
+					);
 
 					break;
 				}

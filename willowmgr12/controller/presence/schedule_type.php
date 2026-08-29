@@ -263,8 +263,6 @@ class ControllerPresenceScheduleType extends Controller
 
 			if ($period_info) {
 				$period_schedule_type_count = $this->model_presence_schedule->getFinalSchedulesCountByScheduleTypeId($result['schedule_type_id'], $range_date);
-
-				// $period_schedule_type_count = $this->model_presence_schedule->getSchedulesCountByScheduleTypeId($result['schedule_type_id'], $period_info['presence_period_id']);
 			}
 
 			$data['schedule_types'][] = array(

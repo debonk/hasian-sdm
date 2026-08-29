@@ -5,7 +5,7 @@ MODUL: APP > Account: Login by location (Trial & Progress)
 MODUL: Customer > Presence Method
 
 
-User Group: ganti form ke list, trus ada kolom untuk centang access, modify, approval, print, bypass
+
 
 === DATABASE
 oc_user: hapus kolom customer_department_id
@@ -14,23 +14,60 @@ oc_user: hapus kolom customer_department_id
 
 === CONFIG
 
-4.4.5
-<!-- ALTER TABLE oc_presence_period DROP COLUMN fund_account_id; -->
-* CREATE INDEX code_item USING BTREE ON oc_payroll_component_value (code,item); [local]
+4.4.6
 
-4.4.4	13/09/2026
+=== TABLE
+<!-- ALTER TABLE oc_presence_period DROP COLUMN fund_account_id; -->
+
+4.4.5	29/08/2026
+NEW MODULE: Batch: Mass entry schedule and absence.
+Batch: Add validateForm, validateDelete: error jika telah lewat tanggal, error jika telah ada entry pada tanggal tersebut
+Bug Fixed: Schedule Type: pagination count tidak sesuai
+
+4.4.4	13/08/2026
 Payroll Method, Fund Account: Bank Danamon (Add data) [free_transfer,allowance,release]
 Release: Multi Fund Account
 
 === TABLE
 ALTER TABLE oc_presence_period ADD fund_account_ids varchar(100) NULL AFTER fund_account_id; [all_done]
 Update data fund_account_ids. [all_done]
-* CREATE INDEX code_item USING BTREE ON oc_payroll_component_value (code,item); [local]
+CREATE INDEX code_item USING BTREE ON oc_payroll_component_value (code,item); [all_done]
 * ALTER TABLE oc_presence_period DROP COLUMN fund_account_id; -- Lakukan di update berikutnya 
-
 
 4.4.3	05/06/2026
 Bug Fixed: Free Transfer > Autocomplete: Ada fungsi model_common_payroll->getPeriod() sehingga karyawan yang tidak aktif tidak dapat dipilih walaupun telah diset availability pada setting
+
+=== TABLE
+-- oc_batch definition
+CREATE TABLE `oc_batch` (
+  `batch_id` int(11) NOT NULL AUTO_INCREMENT,
+  `batch_type` tinyint(3) NOT NULL DEFAULT 1 COMMENT '1=schedule',
+  `name` varchar(255) NOT NULL,
+  `date` date NOT NULL,
+  `presence_status_id` int(11) DEFAULT NULL COMMENT 'For schedule type: e.g. 8=cuti, 1=off',
+  `schedule_type_id` int(11) DEFAULT NULL COMMENT 'For schedule type: 0=off, or shift type id',
+  `description` varchar(255) DEFAULT NULL,
+  `approved` tinyint(1) NOT NULL DEFAULT 1,
+  `user_id` int(11) NOT NULL,
+  `date_added` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`batch_id`),
+  KEY `idx_batch_type` (`batch_type`),
+  KEY `idx_batch_date` (`date`),
+  KEY `idx_batch_approved` (`approved`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- oc_batch_rule definition
+CREATE TABLE `oc_batch_rule` (
+  `batch_rule_id` int(11) NOT NULL AUTO_INCREMENT,
+  `batch_id` int(11) NOT NULL,
+  `filter_type` tinyint(3) NOT NULL DEFAULT 1 COMMENT '1=location, 2=customer_group, 3=customer_department',
+  `filter_ids` text NOT NULL COMMENT 'JSON array of IDs, e.g. ["1","3","5"]',
+  PRIMARY KEY (`batch_rule_id`),
+  KEY `idx_rule_batch` (`batch_id`),
+  KEY `idx_rule_filter` (`filter_type`),
+  CONSTRAINT `fk_batch_rule_batch` FOREIGN KEY (`batch_id`) REFERENCES `oc_batch` (`batch_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
 
 4.4.2	12/05/2026
 Allowance: Menambah field status_process utk penanda data telah diexport

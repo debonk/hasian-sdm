@@ -114,24 +114,24 @@ class ModelPresenceScheduleType extends Model
 
 		$implode = array();
 
-		if (!empty($data['filter_name'])) {
-			$implode[] = "name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		if (!empty($data['filter']['name'])) {
+			$implode[] = "name LIKE '%" . $this->db->escape($data['filter']['name']) . "%'";
 		}
 
-		if (!empty($data['filter_code'])) {
-			$implode[] = "code LIKE '%" . $this->db->escape($data['filter_code']) . "%'";
+		if (!empty($data['filter']['customer_group_id'])) {
+			$implode[] = "customer_group_ids LIKE '%" . $this->db->escape('"' . (int)$data['filter']['customer_group_id'] . '"') . "%'";
 		}
 
-		if (!empty($data['filter_customer_group_id'])) {
-			$implode[] = "customer_group_ids LIKE '%" . $this->db->escape('"' . (int)$data['filter_customer_group_id'] . '"') . "%'";
+		if (!empty($data['filter']['location_id'])) {
+			$implode[] = "location_ids LIKE '%" . $this->db->escape('"' . (int)$data['filter']['location_id'] . '"') . "%'";
 		}
 
-		if (!empty($data['filter_location_id'])) {
-			$implode[] = "location_ids LIKE '%" . $this->db->escape('"' . (int)$data['filter_location_id'] . '"') . "%'";
+		if (!empty($data['filter']['code'])) {
+			$implode[] = "code LIKE '%" . $this->db->escape($data['filter']['code']) . "%'";
 		}
 
-		if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
-			$implode[] = "status = '" . (int)$data['filter_status'] . "'";
+		if (isset($data['filter']['status']) && !is_null($data['filter']['status'])) {
+			$implode[] = "status = '" . (int)$data['filter']['status'] . "'";
 		}
 
 		if ($implode) {

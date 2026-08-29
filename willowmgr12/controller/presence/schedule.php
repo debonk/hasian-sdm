@@ -1767,12 +1767,14 @@ class ControllerPresenceSchedule extends Controller
 
 			$schedules_data = $this->model_presence_schedule->getFinalSchedules($presence_period_id, $customer_id, $range_date);
 
+			$schedules_data_check = in_array('schedule', array_column($schedules_data, 'applied'));
+
 			$period_pending_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'pending');
 			$period_processing_check = $this->model_common_payroll->checkPeriodStatus($presence_period_id, 'processing');
 			// $period_pending_check = 0;
 			// $period_processing_check = 0;
 
-			if ($period_pending_check || ($period_processing_check && empty($schedules_data))) {
+			if ($period_pending_check || ($period_processing_check && empty($schedules_data_check))) {
 				$locked_all = 0;
 			} else {
 				$locked_all = $this->config->get('payroll_setting_schedule_lock');
@@ -1958,8 +1960,6 @@ class ControllerPresenceSchedule extends Controller
 		if ($this->request->post['hke'] < 1) {
 			$this->error['warning'] = $this->language->get('error_hke');
 		}
-		// var_dump($this->error);
-		// die(' ---breakpoint--- ');
 
 		# Validasi jika periode belum berakhir
 		// $period_info = $this->model_common_payroll->getPeriod($this->request->get['presence_period_id']);

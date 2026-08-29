@@ -35,6 +35,7 @@ class ControllerCommonMenu extends Controller
 				'presence/schedule',
 				'presence/exchange',
 				'presence/absence',
+				'presence/batch',
 				'presence/presence',
 				'option'		=> ['presence/schedule_type', 'localisation/presence_status']
 			],

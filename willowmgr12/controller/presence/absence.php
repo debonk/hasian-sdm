@@ -20,7 +20,7 @@ class ControllerPresenceAbsence extends Controller
 
 		foreach ($this->filter_items as $filter_item) {
 			if (isset($this->request->get['filter_' . $filter_item])) {
-				$url_filter .= '&filter_' . $filter_item . '=' . $this->request->get['filter_' . $filter_item];
+                $url_filter .= '&filter_' . $filter_item . '=' . urlencode(html_entity_decode($this->request->get['filter_' . $filter_item], ENT_QUOTES, 'UTF-8'));
 			}
 		}
 
@@ -28,7 +28,6 @@ class ControllerPresenceAbsence extends Controller
 			if (isset($this->request->get['sort'])) {
 				$url_filter .= '&sort=' . $this->request->get['sort'];
 			}
-
 			if (isset($this->request->get['order'])) {
 				$url_filter .= '&order=' . $this->request->get['order'];
 			}
@@ -162,7 +161,7 @@ class ControllerPresenceAbsence extends Controller
 			$data[$language_item] = $this->language->get($language_item);
 		}
 
-		$filter = [];
+        $filter = array();
 
 		foreach ($this->filter_items as $filter_item) {
 			if (isset($this->request->get['filter_' . $filter_item])) {
@@ -172,23 +171,9 @@ class ControllerPresenceAbsence extends Controller
 			}
 		}
 
-		if (isset($this->request->get['sort'])) {
-			$sort = $this->request->get['sort'];
-		} else {
-			$sort = 'date';
-		}
-
-		if (isset($this->request->get['order'])) {
-			$order = $this->request->get['order'];
-		} else {
-			$order = 'DESC';
-		}
-
-		if (isset($this->request->get['page'])) {
-			$page = $this->request->get['page'];
-		} else {
-			$page = 1;
-		}
+		$sort = isset($this->request->get['sort']) ? $this->request->get['sort'] : 'date';
+		$order = isset($this->request->get['order']) ? $this->request->get['order'] : 'DESC';
+		$page = isset($this->request->get['page']) ? $this->request->get['page'] : 1;
 
 		$url = $this->urlFilter();
 
@@ -264,12 +249,7 @@ class ControllerPresenceAbsence extends Controller
 		}
 
 		$url = $this->urlFilter('sort');
-
-		if ($order == 'ASC') {
-			$url .= '&order=DESC';
-		} else {
-			$url .= '&order=ASC';
-		}
+		$url .= ($order == 'ASC') ? '&order=DESC' : '&order=ASC';
 
 		$data['sort_date'] = $this->url->link('presence/absence', 'token=' . $this->session->data['token'] . '&sort=date' . $url, true);
 		$data['sort_name'] = $this->url->link('presence/absence', 'token=' . $this->session->data['token'] . '&sort=name' . $url, true);
@@ -346,11 +326,7 @@ class ControllerPresenceAbsence extends Controller
 			'description'
 		);
 		foreach ($errors as $error) {
-			if (isset($this->error[$error])) {
-				$data['error_' . $error] = $this->error[$error];
-			} else {
-				$data['error_' . $error] = '';
-			}
+            $data['error_' . $error] = isset($this->error[$error]) ? $this->error[$error] : '';
 		}
 
 		$url = $this->urlFilter();
@@ -359,12 +335,12 @@ class ControllerPresenceAbsence extends Controller
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], true)
+			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], true),
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('presence/absence', 'token=' . $this->session->data['token'] . $url, true)
+			'href' => $this->url->link('presence/absence', 'token=' . $this->session->data['token'] . $url, true),
 		);
 
 		if (!isset($this->request->get['absence_id'])) {

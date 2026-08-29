@@ -14,6 +14,7 @@ class ControllerStartupDbView extends Controller
 		'v_customer_finger',
 		'v_payroll',
 		'v_fund_account',
+		'v_batch',
 		// 'v_release'
 	];
 
@@ -92,6 +93,11 @@ class ControllerStartupDbView extends Controller
 
 			case 'v_fund_account':
 				$view_sql = "SELECT fa.*, pm.name AS bank_name, pm.code, u.username FROM " . DB_PREFIX . "fund_account fa LEFT JOIN " . DB_PREFIX . "payroll_method pm ON (pm.payroll_method_id = fa.payroll_method_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = fa.user_id)";
+
+				break;
+
+			case 'v_batch':
+				$view_sql = "SELECT b.*, ps.name AS presence_status, ps.code AS presence_code, st.name AS schedule_type, st.code AS schedule_type_code, st.time_start, st.time_end, u.username FROM " . DB_PREFIX . "batch b LEFT JOIN " . DB_PREFIX . "presence_status ps USING (presence_status_id) LEFT JOIN " . DB_PREFIX . "schedule_type st USING (schedule_type_id) LEFT JOIN " . DB_PREFIX . "user u USING (user_id)";
 
 				break;
 

@@ -1,6 +1,7 @@
 <?php
 // Text
 $_['text_absence']					   = 'Absences';
+$_['text_batch']					   = 'Batch Entries';
 $_['text_allowance']				   = 'Allowances';
 $_['text_api']						   = 'API';
 $_['text_backup']					   = 'Backup / Restore';

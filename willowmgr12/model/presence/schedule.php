@@ -327,7 +327,68 @@ class ModelPresenceSchedule extends Model
 			}
 		}
 
-		// Apply Overtime
+		// Apply Batch Entries (Libur Nasional / Cuti Bersama)
+		$this->load->model('presence/batch');
+		$batch_entries = $this->model_presence_batch->getBatchEntriesByPeriod($range_date['start'], $range_date['end']);
+
+		$presences_data = [];
+
+		foreach ($batch_entries as $batch) {
+			$batch_date = $batch['date'];
+
+			// Skip if exchange already resolved this date
+			if (isset($schedules_data[$batch_date]) && $schedules_data[$batch_date]['applied'] === 'exchange') {
+				continue;
+			}
+
+			// Check if customer matches batch rules
+			if (!$this->model_presence_batch->customerMatchesRules($customer_id, $batch['rules'])) {
+				continue;
+			}
+
+			// schedule_type_id > 0: override schedule (Libur Nasional)
+			if ($batch['schedule_type_id'] > 0) {
+				$time_in  = $batch_date . ' ' . $batch['time_start'];
+				$time_out = $batch_date . ' ' . $batch['time_end'];
+
+				if ($batch['time_start'] >= $batch['time_end']) {
+					$time_out = date('Y-m-d H:i:s', strtotime('+1 day', strtotime($time_out)));
+				}
+
+				$schedules_data[$batch_date] = array(
+					'applied'          => 'batch',
+					'schedule_type_id' => (int)$batch['schedule_type_id'],
+					'schedule_type'    => $batch['schedule_type_code'] ?: '-',
+					'time_in'          => $time_in,
+					'time_out'         => $time_out,
+					'note'             => $batch['name'] . ' (Batch)',
+					'schedule_bg'      => 0,
+					'bg_class'         => 'primary'
+				);
+			} else {
+				$schedules_data[$batch_date] = array(
+					'applied'          => 'batch',
+					'schedule_type_id' => (int)0,
+					'schedule_type'    => null,
+					'time_in'          => null,
+					'time_out'         => null,
+					'note'             => $batch['name'] . ' (Batch)',
+					'schedule_bg'      => 0,
+					'bg_class'         => 'primary'
+				);
+			}
+
+			// presence_status_id > 0: override presence (Cuti Bersama)
+			if ($batch['presence_status_id'] > 0) {
+				$presences_data[$batch_date] = array(
+					'presence_status_id'	=> (int)$batch['presence_status_id'],
+					'presence_status'		=> $batch['presence_status'] ?: '-',
+					'note'					=> $batch['name'],
+					'locked'				=> 1,
+				);
+			}
+		}
+
 		$overtimes_info = $this->model_overtime_overtime->getOvertimesByCustomerDate($customer_id, $range_date);
 
 		foreach ($overtimes_info as $overtime_info) {
@@ -414,7 +475,7 @@ class ModelPresenceSchedule extends Model
 		}
 
 		$customer_info = $this->model_common_payroll->getCustomer($customer_id);
-
+		
 		foreach ($schedules_data as $date => $schedule_data) {
 			if ($schedule_data['time_in'] != null && strtotime($date) <= strtotime('today')) {
 				if (isset($schedule_data['time_login'])) {

@@ -379,7 +379,7 @@ class ModelPresencePresence extends Model
 		foreach ($presences_info as $presence_info) {
 			$presences_data[$presence_info['date_presence']] = array(
 				'presence_status_id'	=> $presence_info['presence_status_id'],
-				'presence_status'		=> $presence_status_data[$presence_info['presence_status_id']]['name'],
+				'presence_status'		=> $presence_status_data[$presence_info['presence_status_id']]['name'] ?? null,
 				'note'					=> '',
 				'locked'				=> 0
 			);

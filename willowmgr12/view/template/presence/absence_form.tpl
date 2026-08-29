@@ -49,7 +49,8 @@
 										<?= $entry_name; ?>
 									</label>
 									<input type="text" name="name" value="<?= $name; ?>"
-										placeholder="<?= $entry_name; ?>" id="input-name" class="form-control" <?= $disabled ? 'disabled' : ''; ?> />
+										placeholder="<?= $entry_name; ?>" id="input-name" class="form-control"
+										<?=$disabled ? 'disabled' : '' ; ?> />
 									<input type="hidden" name="customer_id" value="<?= $customer_id; ?>"
 										id="input-customer-id" />
 								</div>
@@ -177,7 +178,7 @@
 			$('#customer-info').load('index.php?route=common/customer_info&token=<?= $token; ?>&customer_id=' + item['value']);
 		}
 	});
-	
+
 	let customer_id = encodeURIComponent($('input[name=\'customer_id\']').val());
 
 	$('#customer-info').load('index.php?route=common/customer_info&token=<?= $token; ?>&customer_id=' + customer_id);
