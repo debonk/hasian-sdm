@@ -1853,9 +1853,13 @@ class ControllerPayrollPayrollRelease extends Controller
 				break;
 			}
 
-			$fund_account_info = $this->model_common_payroll->getPeriod($this->request->get['presence_period_id']);
+			$period_info = $this->model_common_payroll->getPeriod($this->request->get['presence_period_id']);
+			$fund_account_ids = json_decode($period_info['fund_account_ids']);
 
-			if (!in_array($this->request->get['payroll_method_id'], json_decode($fund_account_info['fund_account_ids']))) {
+			$this->load->model('release/fund_account');
+			$fund_accounts = $this->model_release_fund_account->getFundAccounts(['fund_account_ids' => $fund_account_ids]);
+
+			if (!in_array($this->request->get['payroll_method_id'], array_column($fund_accounts, 'payroll_method_id'))) {
 				$this->error['warning'] = $this->language->get('error_fund_account');
 				break;
 			}
