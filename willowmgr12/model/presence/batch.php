@@ -88,10 +88,9 @@ class ModelPresenceBatch extends Model
 
 	public function getBatch(int $batch_id)
 	{
-		$sql = "SELECT b.*, u.username
-                FROM " . DB_PREFIX . "batch b
-                LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = b.user_id)
-                WHERE b.batch_id = '" . (int)$batch_id . "'";
+		$sql = "SELECT *
+                FROM " . DB_PREFIX . "v_batch
+                WHERE batch_id = '" . (int)$batch_id . "'";
 
 		$query = $this->db->query($sql);
 
@@ -246,9 +245,9 @@ class ModelPresenceBatch extends Model
 			$batch_id = (int)$batch['batch_id'];
 			$decoded_rules = [];
 
-			foreach ($this->filter_type_labels as $ft) {
-				$decoded_rules[$ft] = [];
-			}
+			// foreach ($this->filter_type_labels as $ft) {
+			// 	$decoded_rules[$ft] = [];
+			// }
 
 			if (isset($rules_map[$batch_id])) {
 				foreach ($rules_map[$batch_id] as $rule) {
@@ -292,6 +291,84 @@ class ModelPresenceBatch extends Model
 		return $query->row;
 	}
 
+	public function getBatchEntryByPresenceStatus(int $presence_status_id, string $year)
+	{
+		$sql = "SELECT *
+		        FROM " . DB_PREFIX . "v_batch
+		        WHERE presence_status_id = '" . (int)$presence_status_id . "'
+		        AND YEAR(date) = '" . (int)$year . "'";
+
+		$query = $this->db->query($sql);
+
+		return $query->rows;
+	}
+	
+	/**
+	 * Get batch vacation entries (Cuti Bersama) for a customer in a given year.
+	 * Returns entries from oc_batch where presence_status_id = payroll_setting_id_c
+	 * and the customer matches the batch rules.
+	 */
+	public function getBatchVacationEntries(int $customer_id, $year = 0)
+	{
+		if (empty($year)) {
+			$year = date('Y');
+		}
+
+		$vacation_status_id = $this->config->get('payroll_setting_id_c');
+		if (!$vacation_status_id) {
+			return [];
+		}
+
+		// Get customer info for rule matching
+		$customer_info = $this->getCustomerInfo($customer_id);
+
+		if (!$customer_info) {
+			return [];
+		}
+
+		// Get batch entries with vacation status for the year
+		$batchEntries = $this->getBatchEntryByPresenceStatus($vacation_status_id, $year);
+
+		$result = [];
+		foreach ($batchEntries as $entry) {
+			// Load rules for this batch entry
+			$rules = $this->getBatchRules($entry['batch_id']);
+
+			// Decode rules into filter arrays
+			$decoded_rules = [];
+
+			foreach ($rules as $rule) {
+				$key = $this->filter_type_labels[$rule['filter_type']] ?? null;
+
+				if ($key) {
+					$decoded = json_decode($rule['filter_ids'], true);
+					if (is_array($decoded)) {
+						$decoded_rules[$key] = array_map('intval', $decoded);
+					}
+				}
+			}
+
+			// Check if customer matches rules
+			if (!$this->customerMatchesRules($customer_info, $decoded_rules)) {
+				continue;
+			}
+
+			$result[] = [
+				'absence_id'			=> 0,
+				'customer_id'			=> $customer_id,
+				'date'           		=> $entry['date'],
+				'presence_status_id'	=> $entry['presence_status_id'] ?: '-',
+				'description'    		=> $entry['name'],
+				'note'           		=> '(Batch)',
+				// 'presence_status'		=> $entry['presence_status'] ?: '-',
+				// 'presence_code'  		=> $entry['presence_code'] ?: '',
+				// 'applied'        		=> 'batch',
+			];
+		}
+
+		return $result;
+	}
+
 	//============================================================
 	// Rule matching
 	//============================================================
@@ -300,34 +377,27 @@ class ModelPresenceBatch extends Model
 	 * Check if a customer matches a set of batch rules.
 	 * Empty rules = match all. Non-empty rules = ALL must match (AND).
 	 */
-	public function customerMatchesRules(int $customer_id, array $rules)
+	public function customerMatchesRules(array $customer_data, array $rules)
 	{
-		if (empty($rules['location'])
-			&& empty($rules['customer_group'])
-			&& empty($rules['customer_department'])
-		) {
+
+		if (empty($rules)) {
 			return true;
 		}
 
-		$customer = $this->getCustomerInfo($customer_id);
-		if (!$customer) {
-			return false;
-		}
-
 		if (!empty($rules['location'])) {
-			if (!in_array((int)$customer['location_id'], $rules['location'])) {
+			if (!in_array((int)$customer_data['location_id'], $rules['location'])) {
 				return false;
 			}
 		}
 
 		if (!empty($rules['customer_group'])) {
-			if (!in_array((int)$customer['customer_group_id'], $rules['customer_group'])) {
+			if (!in_array((int)$customer_data['customer_group_id'], $rules['customer_group'])) {
 				return false;
 			}
 		}
 
 		if (!empty($rules['customer_department'])) {
-			if (!in_array((int)$customer['customer_department_id'], $rules['customer_department'])) {
+			if (!in_array((int)$customer_data['customer_department_id'], $rules['customer_department'])) {
 				return false;
 			}
 		}

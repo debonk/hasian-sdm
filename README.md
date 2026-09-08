@@ -19,6 +19,9 @@ oc_user: hapus kolom customer_department_id
 === TABLE
 <!-- ALTER TABLE oc_presence_period DROP COLUMN fund_account_id; -->
 
+4.4.5c	08/09/2026
+Batch: Penerapan pada Front > Schedule, Vacation
+
 4.4.5b	29/08/2026
 Bug Fixed: Release: validateForm error karena pemilihan akun sumber dana tidak match.
 

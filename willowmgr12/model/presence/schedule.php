@@ -333,6 +333,8 @@ class ModelPresenceSchedule extends Model
 
 		$presences_data = [];
 
+		$customer_info = $this->model_common_payroll->getCustomer($customer_id);
+
 		foreach ($batch_entries as $batch) {
 			$batch_date = $batch['date'];
 
@@ -342,7 +344,7 @@ class ModelPresenceSchedule extends Model
 			}
 
 			// Check if customer matches batch rules
-			if (!$this->model_presence_batch->customerMatchesRules($customer_id, $batch['rules'])) {
+			if (!$this->model_presence_batch->customerMatchesRules($customer_info, $batch['rules'])) {
 				continue;
 			}
 
@@ -474,8 +476,8 @@ class ModelPresenceSchedule extends Model
 			$presences_data = $this->model_presence_presence->getFinalPresences($customer_id, $range_date);
 		}
 
-		$customer_info = $this->model_common_payroll->getCustomer($customer_id);
-		
+		// $customer_info = $this->model_common_payroll->getCustomer($customer_id);
+
 		foreach ($schedules_data as $date => $schedule_data) {
 			if ($schedule_data['time_in'] != null && strtotime($date) <= strtotime('today')) {
 				if (isset($schedule_data['time_login'])) {

@@ -206,14 +206,16 @@ class ModelPresencePresence extends Model
 
 		$query = $this->db->query($sql);
 
+		$customer_info = $this->getCustomerInfo($customer_id);
+
+		if (!$customer_info) {
+			return [];
+		}
+
 		if ($query->num_rows) {
 			$batch_rules = $this->getBatchRules($query->row['batch_id']);
 
 			$decoded_rules = [];
-
-			foreach ($this->filter_type_labels as $ft) {
-				$decoded_rules[$ft] = [];
-			}
 
 			foreach ($batch_rules as $rule) {
 				$key = $this->filter_type_labels[$rule['filter_type']] ?? null;
@@ -225,7 +227,7 @@ class ModelPresencePresence extends Model
 				}
 			}
 
-			if ($this->customerMatchesRules($customer_id, $decoded_rules)) {
+			if ($this->customerMatchesRules($customer_info, $decoded_rules)) {
 				return $query->row;
 			}
 		}
@@ -243,35 +245,36 @@ class ModelPresencePresence extends Model
 		return $query->rows;
 	}
 
-	public function customerMatchesRules(int $customer_id, array $rules)
+	public function getCustomerInfo(int $customer_id)
 	{
-		if (
-			empty($rules['location'])
-			&& empty($rules['customer_group'])
-			&& empty($rules['customer_department'])
-		) {
+		$sql = "SELECT customer_id, location_id, customer_group_id, customer_department_id
+		         FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "'";
+
+		$query = $this->db->query($sql);
+
+		return $query->row ?: null;
+	}
+
+	public function customerMatchesRules(array $customer_data, array $rules)
+	{
+		if (empty($rules)) {
 			return true;
 		}
 
-		$customer = $this->getCustomer($customer_id);
-		if (!$customer) {
-			return false;
-		}
-
 		if (!empty($rules['location'])) {
-			if (!in_array((int)$customer['location_id'], $rules['location'])) {
+			if (!in_array((int)$customer_data['location_id'], $rules['location'])) {
 				return false;
 			}
 		}
 
 		if (!empty($rules['customer_group'])) {
-			if (!in_array((int)$customer['customer_group_id'], $rules['customer_group'])) {
+			if (!in_array((int)$customer_data['customer_group_id'], $rules['customer_group'])) {
 				return false;
 			}
 		}
 
 		if (!empty($rules['customer_department'])) {
-			if (!in_array((int)$customer['customer_department_id'], $rules['customer_department'])) {
+			if (!in_array((int)$customer_data['customer_department_id'], $rules['customer_department'])) {
 				return false;
 			}
 		}

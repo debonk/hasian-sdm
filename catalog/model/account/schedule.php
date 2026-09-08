@@ -1,6 +1,12 @@
 <?php
 class ModelAccountSchedule extends Model
 {
+	private $filter_type_labels = array(
+		1 => 'location',
+		2 => 'customer_group',
+		3 => 'customer_department',
+	);
+
 	public function getExchangesByCustomerDate($customer_id, $date = array())
 	{
 		$sql = "SELECT e.*, st.code, st.time_start, st.time_end, st.bg_idx, u.username FROM " . DB_PREFIX . "exchange e LEFT JOIN " . DB_PREFIX . "schedule_type st ON (st.schedule_type_id = e.schedule_type_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = e.user_id) WHERE customer_id = '" . (int)$customer_id . "' AND ((e.date_from >= '" . $this->db->escape($date['start']) . "' AND e.date_from <= '" . $this->db->escape($date['end']) . "') OR (e.date_to >= '" . $this->db->escape($date['start']) . "' AND e.date_to <= '" . $this->db->escape($date['end']) . "')) ORDER BY e.date_from ASC";
@@ -51,75 +57,47 @@ class ModelAccountSchedule extends Model
 		return $query->rows;
 	}
 
-	// public function getPresenceStatuses()
-	// {
-	// 	$presence_status_data = $this->cache->get('presence_status');
-
-	// 	if (!$presence_status_data) {
-	// 		$query = $this->db->query("SELECT presence_status_id, code, name FROM " . DB_PREFIX . "presence_status ORDER BY presence_status_id");
-
-	// 		$presence_status_data = $query->rows;
-
-	// 		$this->cache->set('presence_status', $presence_status_data);
-	// 	}
-
-	// 	return $presence_status_data;
-	// }
-
-	// public function getPresenceStatusIdList()
-	// {
-	// 	$presence_status_data = [];
-
-	// 	$presence_statuses = $this->getPresenceStatuses();
-	// 	foreach ($presence_statuses as $presence_status) {
-	// 		$presence_status_data[$presence_status['presence_status_id']] = [
-	// 			'code'	=> $presence_status['code'],
-	// 			'name'	=> $presence_status['name']
-	// 		];
-	// 	}
-
-	// 	return $presence_status_data;
-	// }
-
-	public function calculatePresence($time_in, $time_login) {
+	public function calculatePresence($time_in, $time_login)
+	{
 		if (empty($time_login) || $time_login == null) {
 			$presence_status_id = $this->config->get('payroll_setting_id_a');
 			// $presence_code = 'a';
-			
+
 		} else {
 			$time_in_obj = strtotime($this->db->escape($time_in));
 			$time_login_obj = strtotime($this->db->escape($time_login));
-			
+
 			$late = floor(($time_login_obj - $time_in_obj) / 60) - max(0, $this->config->get('payroll_setting_late_tolerance'));
 			// $late = floor(($time_login_obj - $time_in_obj)/60);
-		
+
 			switch (true) {
-				case ($late > 30): 
+				case ($late > 30):
 					$presence_status_id = $this->config->get('payroll_setting_id_t3');
 					// $presence_code = 't3';
 					break;
-					
-				case ($late > 15): 
+
+				case ($late > 15):
 					$presence_status_id = $this->config->get('payroll_setting_id_t2');
 					// $presence_code = 't2';
 					break;
-					
-				case ($late > 0): 
+
+				case ($late > 0):
 					$presence_status_id = $this->config->get('payroll_setting_id_t1');
 					// $presence_code = 't1';
 					break;
-					
+
 				default:
 					$presence_status_id = $this->config->get('payroll_setting_id_h');
 					// $presence_code = 'h';
 			}
 		}
-		
+
 		return $presence_status_id;
 		// return $presence_code;
 	}
 
-	public function getAbsencesByCustomerDate($customer_id, $date = array()) {
+	public function getAbsencesByCustomerDate($customer_id, $date = array())
+	{
 		$sql = "SELECT a.*, ps.code as presence_code, ps.name as presence_status, u.username FROM " . DB_PREFIX . "absence a LEFT JOIN " . DB_PREFIX . "presence_status ps ON (ps.presence_status_id = a.presence_status_id) LEFT JOIN " . DB_PREFIX . "user u ON (u.user_id = a.user_id) WHERE customer_id = '" . (int)$customer_id . "' AND a.date >= '" . $this->db->escape($date['start']) . "' AND a.date <= '" . $this->db->escape($date['end']) . "' ORDER BY a.date ASC";
 
 		$query = $this->db->query($sql);
@@ -127,7 +105,7 @@ class ModelAccountSchedule extends Model
 		return $query->rows;
 	}
 
-	
+
 	public function getFinalSchedules($presence_period_id, $customer_id, $range_date)
 	{
 		$schedules_data = [];
@@ -142,15 +120,6 @@ class ModelAccountSchedule extends Model
 				'end'	=> $period_info['date_end']
 			);
 		}
-
-		// $customer_info = $this->model_account_customer->getCustomer($customer_id);
-
-
-		// $range_date['start'] = max($range_date['start'], $customer_info['date_start']);
-
-		// if ($customer_info['date_end']) {
-		// 	$range_date['end'] = min($range_date['end'], $customer_info['date_end']);
-		// }
 
 		if ($range_date['start'] > $range_date['end']) {
 			return $schedules_data;
@@ -193,6 +162,25 @@ class ModelAccountSchedule extends Model
 						'bg_class'			=> 'primary'
 					);
 				}
+			}
+		}
+
+		// Apply Batch Entries (Libur Nasional / Cuti Bersama)
+		$this->load->model('presence/batch');
+		$batch_info = $this->model_presence_batch->getBatchEntriesByCustomerDate($customer_id, $range_date);
+
+		foreach ($batch_info['schedule'] as $date => $schedule) {
+			if (!isset($schedules_data[$date])) {
+				$schedules_data[$date] = array(
+					'applied'			=> 'batch',
+					'schedule_type_id'	=> $schedule['schedule_type_id'],
+					'schedule_type'		=> $schedule['schedule_type'],
+					'time_in'			=> $schedule['time_in'],
+					'time_out'			=> $schedule['time_out'],
+					'note'				=> $schedule['note'],
+					'schedule_bg'		=> 0,
+					'bg_class'			=> $schedule['bg_class']
+				);
 			}
 		}
 
@@ -307,6 +295,22 @@ class ModelAccountSchedule extends Model
 			$presences_data = $this->model_presence_presence->getFinalPresences($customer_id, $range_date);
 		}
 
+		$presences_data = $presences_data ?? [];
+
+		// Apply Batch Presence (Cuti Bersama) BEFORE calc loop
+		// Mirrors backend: batch sets presence in $presences_data, so absences can override it
+		if (!empty($batch_info['presence'])) {
+			foreach ($batch_info['presence'] as $batch_date => $presence) {
+				$presences_data[$batch_date] = array(
+					'presence_status_id' => $presence['presence_status_id'],
+					'presence_status'   => $presence['presence_status'],
+					'presence_code'    => $presence['presence_code'],
+					'note'             => $presence['note'],
+					'locked'           => 1,
+				);
+			}
+		}
+
 		$customer_info = $this->model_account_customer->getCustomer($customer_id);
 
 		foreach ($schedules_data as $date => $schedule_data) {
@@ -362,8 +366,6 @@ class ModelAccountSchedule extends Model
 				'bg_class'				=> $schedule_data['bg_class']
 			);
 		}
-
-		// var_dump($schedules_data);
 
 		//Apply Absences
 		$absences_info = $this->getAbsencesByCustomerDate($customer_id, $range_date);
