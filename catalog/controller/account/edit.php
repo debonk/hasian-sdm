@@ -35,12 +35,15 @@ class ControllerAccountEdit extends Controller
 		$language_items = [
 			'heading_title',
 			'text_basic_info',
+			'text_address',
 			'text_contract',
 			'text_placement',
+			'entry_nip',
 			'entry_firstname',
 			'entry_lastname',
 			'entry_email',
 			'entry_telephone',
+			'entry_payroll_method',
 			'entry_acc_no',
 			'entry_contract_status',
 			'entry_contract_type',
@@ -49,7 +52,12 @@ class ControllerAccountEdit extends Controller
 			'entry_date_end',
 			'entry_date_start',
 			'entry_location',
+			'entry_health_insurance_id',
+			'entry_employment_insurance_id',
+			'entry_address',
+			'entry_address_id_card',
 			'button_back',
+			'note_report',
 		];
 		foreach ($language_items as $language_item) {
 			$data[$language_item] = $this->language->get($language_item);
@@ -58,20 +66,38 @@ class ControllerAccountEdit extends Controller
 		$customer_info = $this->model_account_customer->getCustomer($this->customer->getId());
 
 		$field_items = array(
+			'nip',
 			'firstname',
 			'lastname',
 			'email',
 			'telephone',
+			'payroll_method',
 			'acc_no',
 			'customer_group',
 			'customer_department',
 			'location',
+			'health_insurance_id',
+			'employment_insurance_id',
 		);
 		foreach ($field_items as $field) {
 			$data[$field] = $customer_info[$field];
 		}
 
 		$data['date_start'] = date($this->language->get('date_format_jMY'), strtotime($customer_info['date_start']));
+
+		$address = $this->model_account_customer->getAddress($customer_info['address_id']);
+		if ($address) {
+			$data['address'] = $address['address_1'] . ($address['address_2'] ? ', ' . $address['address_2'] : '') . ', ' . $address['city_name'] . ', ' . $address['zone'] . ', ' . $address['country'] . ($address['postcode'] ? ', ' . $address['postcode'] : '');
+		} else {
+			$data['address'] = '-';
+		}
+
+		$address_id_card = $this->model_account_customer->getAddress($customer_info['id_card_address_id']);
+		if ($address_id_card) {
+			$data['address_id_card'] = $address_id_card['address_id_card_1'] . ($address_id_card['address_id_card_2'] ? ', ' . $address_id_card['address_id_card_2'] : '') . ', ' . $address_id_card['city_name'] . ', ' . $address_id_card['zone'] . ', ' . $address_id_card['country'] . ($address_id_card['postcode'] ? ', ' . $address_id_card['postcode'] : '');
+		} else {
+			$data['address_id_card'] = '-';
+		}
 
 		$contract_info = $this->model_account_customer->getCustomerContract($this->customer->getId());
 

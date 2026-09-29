@@ -8,19 +8,19 @@ MODUL: Customer > Presence Method
 
 
 === DATABASE
-oc_user: hapus kolom customer_department_id
+* oc_user: hapus kolom customer_department_id
 
 === TABLE
+* ALTER TABLE oc_presence_period DROP COLUMN fund_account_id;
 
 === CONFIG
 
-4.4.6
-
-=== TABLE
-<!-- ALTER TABLE oc_presence_period DROP COLUMN fund_account_id; -->
+4.4.6	29/09/2026
+Payroll Method, Fund Account: Bank BCA (Add data) [free_transfer,allowance,release]
+FRONT: Apply informasi BPJS karyawan
 
 4.4.5c	08/09/2026
-Batch: Penerapan pada Front > Schedule, Vacation
+Batch: Penerapan pada Front > Schedule, Vacation	[wsdm,gkhr]
 
 4.4.5b	29/08/2026
 Bug Fixed: Release: validateForm error karena pemilihan akun sumber dana tidak match.

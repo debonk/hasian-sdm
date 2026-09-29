@@ -113,7 +113,7 @@ class ModelAccountCustomer extends Model {
 	}
 
 	public function getCustomer($customer_id) {
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "v_customer WHERE customer_id = '" . (int)$customer_id . "'");
+		$query = $this->db->query("SELECT firstname, lastname, nip, date_start, date_end, email, telephone, payroll_method, acc_no, customer_group, customer_department, location, health_insurance_id, employment_insurance_id, address_id, id_card_address_id, custom_field FROM " . DB_PREFIX . "v_customer WHERE customer_id = '" . (int)$customer_id . "'");
 
 		return $query->row;
 	}
@@ -155,6 +155,65 @@ class ModelAccountCustomer extends Model {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "customer_ip` WHERE customer_id = '" . (int)$customer_id . "'");
 
 		return $query->rows;
+	}
+
+	public function getAddress($address_id)
+	{
+		$address_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "address WHERE address_id = '" . (int)$address_id . "'");
+
+		if ($address_query->num_rows) {
+			$country_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "country` WHERE country_id = '" . (int)$address_query->row['country_id'] . "'");
+
+			if ($country_query->num_rows) {
+				$country = $country_query->row['name'];
+				$iso_code_2 = $country_query->row['iso_code_2'];
+				$iso_code_3 = $country_query->row['iso_code_3'];
+				$address_format = $country_query->row['address_format'];
+			} else {
+				$country = '';
+				$iso_code_2 = '';
+				$iso_code_3 = '';
+				$address_format = '';
+			}
+
+			$zone_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "zone` WHERE zone_id = '" . (int)$address_query->row['zone_id'] . "'");
+
+			if ($zone_query->num_rows) {
+				$zone = $zone_query->row['name'];
+				$zone_code = $zone_query->row['code'];
+			} else {
+				$zone = '';
+				$zone_code = '';
+			}
+
+			// Bonk
+			$city_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "city` WHERE city = '" . (int)$address_query->row['city'] . "'");
+
+			if ($city_query->num_rows) {
+				$city_name = $city_query->row['name'];
+			} else {
+				$city_name = '';
+			}
+
+			return array(
+				'address_id'     => $address_query->row['address_id'],
+				'customer_id'    => $address_query->row['customer_id'],
+				'address_1'      => $address_query->row['address_1'],
+				'address_2'      => $address_query->row['address_2'],
+				'postcode'       => $address_query->row['postcode'],
+				'city'           => $address_query->row['city'],
+				'city_name'      => $city_name, // Bonk
+				'zone_id'        => $address_query->row['zone_id'],
+				'zone'           => $zone,
+				'zone_code'      => $zone_code,
+				'country_id'     => $address_query->row['country_id'],
+				'country'        => $country,
+				'iso_code_2'     => $iso_code_2,
+				'iso_code_3'     => $iso_code_3,
+				'address_format' => $address_format,
+				'custom_field'   => json_decode($address_query->row['custom_field'], true)
+			);
+		}
 	}
 
 	public function addLoginAttempt($email) {

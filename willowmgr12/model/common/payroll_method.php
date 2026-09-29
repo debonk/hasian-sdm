@@ -20,10 +20,10 @@ class ModelCommonPayrollMethod extends Model
 
 					break;
 
-				// case 'bri':
-				// 	$this->exportBri();
+				case 'bca':
+					$this->exportBca($data);
 
-				// 	break;
+					break;
 
 				default:
 					// $this->exportCimb($data);
@@ -31,6 +31,86 @@ class ModelCommonPayrollMethod extends Model
 					break;
 			}
 		});
+	}
+
+	protected function exportBca(array $data)
+	{
+		$category_info = $data['category_info'];
+		$fund_account_info = $data['fund_account'];
+		$customers = $data['customers'];
+		$customer_count = $data['customer_count'];
+		// $customer_total = $data['customer_total'];
+
+		// $date_process = date('Ymd', strtotime($category_info['date_process']));
+		$date_process = $category_info['date_process'];
+		$time_process = '07';
+
+		list($acc_name, $corp_code) = explode('|', $fund_account_info['acc_name']);
+		$corp_code = explode('/', $corp_code);
+		$corp_code_text = $corp_code[0] . (int)$corp_code[1];
+
+		// $currency_code = $this->config->get('config_currency');
+
+		$output = '';
+		$header_data = [];
+		$header_data[] = '0|PY';
+		$header_data[] = $acc_name;
+		$header_data[] = $corp_code_text;
+		$header_data[] = date('mdis');
+		$header_data[] = $date_process;
+		$header_data[] = $time_process;
+		$header_data[] = $fund_account_info['acc_no'];
+		$header_data[] = str_pad($customer_count, 5, 0, STR_PAD_LEFT);
+		$header_data[] = '|' . $category_info['description'] . '|';
+
+		$output .= implode('|', $header_data);
+
+		$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
+		$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);
+		$output = str_replace('\\', '\\\\', $output);
+		$output = str_replace('\'', '\\\'', $output);
+		$output = str_replace('\\\n', '\n', $output);
+		$output = str_replace('\\\r', '\r', $output);
+		$output = str_replace('\\\t', '\t', $output);
+
+		foreach ($customers as $customer) {
+			$value = '';
+			$customer_data = [];
+			$customer_data[] = '1';
+			$customer_data[] = str_pad(date('ymdis') . $customer['customer_id'], 18, 0, STR_PAD_LEFT);
+			$customer_data[] = 'BCA';
+			$customer_data[] = '';
+			$customer_data[] = $customer['acc_no'];
+			$customer_data[] = $customer['lastname'];
+			$customer_data[] = sprintf("%.2f", $customer['amount']);
+			$customer_data[] = '';
+			$customer_data[] = $category_info['description'] . (!empty($customer['note']) ? ': ' . str_replace([',', ' '], '_', $customer['note']) : '');
+			$customer_data[] = $customer['email'];
+			$customer_data[] = '||';
+
+			$value .= implode('|', $customer_data);
+
+			$value = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $value);
+			$value = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $value);
+			$value = str_replace('\\', '\\\\', $value);
+			$value = str_replace('\'', '\\\'', $value);
+			$value = str_replace('\\\n', '\n', $value);
+			$value = str_replace('\\\r', '\r', $value);
+			$value = str_replace('\\\t', '\t', $value);
+
+			$output .= "\n" . $value;
+		}
+
+		$filename = $fund_account_info['bank_name'] . '_' . $date_process . '_' . preg_replace('/[^a-zA-Z0-9_-]/s', '_', $category_info['description']);
+
+		$this->response->addheader('Pragma: public');
+		$this->response->addheader('Expires: 0');
+		$this->response->addheader('Content-Description: File Transfer');
+		$this->response->addheader('Content-Type: application/octet-stream');
+		$this->response->addheader('Content-Disposition: attachment; filename=' . $filename . '.txt');
+		$this->response->addheader('Content-Transfer-Encoding: binary');
+		$this->response->setOutput($output);
+		// echo '<pre>' . print_r($output, 1);
 	}
 
 	protected function exportCimb(array $data)
@@ -41,7 +121,8 @@ class ModelCommonPayrollMethod extends Model
 		$customer_count = $data['customer_count'];
 		$customer_total = $data['customer_total'];
 
-		$date_process = date('Ymd', strtotime($category_info['date_process']));
+		// $date_process = date('Ymd', strtotime($category_info['date_process']));
+		$date_process = $category_info['date_process'];
 
 		$currency_code = $this->config->get('config_currency');
 
@@ -91,7 +172,8 @@ class ModelCommonPayrollMethod extends Model
 		$customer_count = $data['customer_count'];
 		$customer_total = $data['customer_total'];
 
-		$date_process = date('Ymd', strtotime($category_info['date_process']));
+		// $date_process = date('Ymd', strtotime($category_info['date_process']));
+		$date_process = $category_info['date_process'];
 
 		$currency_code = $this->config->get('config_currency');
 
@@ -138,7 +220,8 @@ class ModelCommonPayrollMethod extends Model
 		$fund_account_info = $data['fund_account'];
 		$customers = $data['customers'];
 
-		$date_process = date('Ymd', strtotime($category_info['date_process']));
+		// $date_process = date('Ymd', strtotime($category_info['date_process']));
+		$date_process = $category_info['date_process'];
 		$date_expired = date('Ymd', strtotime($category_info['date_process'] . ' + 2 day'));
 
 		$output = '';

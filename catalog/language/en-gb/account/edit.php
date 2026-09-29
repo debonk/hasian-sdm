@@ -4,6 +4,7 @@ $_['heading_title']		= 'Informasi Karyawan';
 
 // Text
 $_['text_account']				= 'Account';
+$_['text_address']				= 'Alamat';
 $_['text_basic_info']			= 'Informasi Dasar';
 $_['text_contract']				= 'Kontrak Kerja';
 $_['text_placement']			= 'Penempatan';
@@ -19,15 +20,24 @@ $_['text_contract_expired']		= 'Kontrak Selesai';
 $_['text_contract_active']		= 'Aktif';
 
 // Entry
-$_['entry_firstname']			= 'Nama';
-$_['entry_lastname'] 			= 'Nama Lengkap';
-$_['entry_email']    			= 'E-Mail';
-$_['entry_telephone']			= 'Telepon';
-$_['entry_acc_no']				= 'No Rekening';
-$_['entry_contract_status']		= 'Status Kontrak';
-$_['entry_contract_type']		= 'Kontrak Kerja';
-$_['entry_date_end']			= 'Akhir Kontrak';
-$_['entry_date_start']			= 'Mulai Bekerja';
-$_['entry_customer_group']		= 'Jabatan';
-$_['entry_customer_department']	= 'Divisi';
-$_['entry_location']			= 'Lokasi Kerja';
+$_['entry_nip']						= 'NIP';
+$_['entry_firstname']				= 'Nama';
+$_['entry_lastname'] 				= 'Nama Lengkap';
+$_['entry_email']    				= 'E-Mail';
+$_['entry_telephone']				= 'Telepon';
+$_['entry_payroll_method']			= 'Metode Penggajian';
+$_['entry_acc_no']					= 'No Rekening';
+$_['entry_contract_status']			= 'Status Kontrak';
+$_['entry_contract_type']			= 'Kontrak Kerja';
+$_['entry_date_end']				= 'Akhir Kontrak';
+$_['entry_date_start']				= 'Mulai Bekerja';
+$_['entry_customer_group']			= 'Jabatan';
+$_['entry_customer_department']		= 'Divisi';
+$_['entry_location']				= 'Lokasi Kerja';
+$_['entry_health_insurance_id']		= 'No. BPJS Kesehatan';
+$_['entry_employment_insurance_id']	= 'No. BPJS Ketenagakerjaan';
+$_['entry_address']					= 'Alamat Domisili';
+$_['entry_address_id_card']			= 'Alamat Sesuai KTP';
+
+// Note
+$_['note_report']			= 'Segera hubungi HRD jika terdapat kesalahan data maupun alamat!';
