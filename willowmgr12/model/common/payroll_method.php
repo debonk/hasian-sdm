@@ -41,8 +41,8 @@ class ModelCommonPayrollMethod extends Model
 		$customer_count = $data['customer_count'];
 		// $customer_total = $data['customer_total'];
 
-		// $date_process = date('Ymd', strtotime($category_info['date_process']));
-		$date_process = $category_info['date_process'];
+		$date_process = date('Ymd', strtotime($category_info['date_process']));
+		// $date_process = $category_info['date_process'];
 		$time_process = '07';
 
 		list($acc_name, $corp_code) = explode('|', $fund_account_info['acc_name']);
@@ -121,8 +121,8 @@ class ModelCommonPayrollMethod extends Model
 		$customer_count = $data['customer_count'];
 		$customer_total = $data['customer_total'];
 
-		// $date_process = date('Ymd', strtotime($category_info['date_process']));
-		$date_process = $category_info['date_process'];
+		$date_process = date('Ymd', strtotime($category_info['date_process']));
+		// $date_process = $category_info['date_process'];
 
 		$currency_code = $this->config->get('config_currency');
 
@@ -172,8 +172,8 @@ class ModelCommonPayrollMethod extends Model
 		$customer_count = $data['customer_count'];
 		$customer_total = $data['customer_total'];
 
-		// $date_process = date('Ymd', strtotime($category_info['date_process']));
-		$date_process = $category_info['date_process'];
+		$date_process = date('Ymd', strtotime($category_info['date_process']));
+		// $date_process = $category_info['date_process'];
 
 		$currency_code = $this->config->get('config_currency');
 
@@ -220,8 +220,8 @@ class ModelCommonPayrollMethod extends Model
 		$fund_account_info = $data['fund_account'];
 		$customers = $data['customers'];
 
-		// $date_process = date('Ymd', strtotime($category_info['date_process']));
-		$date_process = $category_info['date_process'];
+		$date_process = date('Ymd', strtotime($category_info['date_process']));
+		// $date_process = $category_info['date_process'];
 		$date_expired = date('Ymd', strtotime($category_info['date_process'] . ' + 2 day'));
 
 		$output = '';

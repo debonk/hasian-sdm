@@ -15,6 +15,20 @@ MODUL: Customer > Presence Method
 
 === CONFIG
 
+4.4.7
+Payroll Method: Availability for multiple methods with same bank.
+<!-- FRONT: Apply informasi BPJS karyawan (menu masih turun ke bawah) -->
+<!-- Bug: Payroll Method: duplicate code show error -->
+<!-- Fund Account: Help Name utk format BCA -->
+<!-- Release: Lengkapi export draft dan export tunai -->
+
+=== TABLE
+ALTER TABLE oc_payroll_method DROP INDEX code;
+CREATE INDEX code USING BTREE ON oc_payroll_method (code);
+
+4.4.6b	03/10/2026
+Bug Fixed: Export CSV: Format tanggal berubah sehingga upload gagal.
+
 4.4.6	29/09/2026
 Payroll Method, Fund Account: Bank BCA (Add data) [free_transfer,allowance,release]
 FRONT: Apply informasi BPJS karyawan
