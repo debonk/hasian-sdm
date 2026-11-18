@@ -142,6 +142,21 @@ class ModelPresenceSchedule extends Model
 		return $query->row['total'];
 	}
 
+	public function getScheduleCustomerIds($presence_period_id)
+	{
+		$sql = "SELECT DISTINCT customer_id FROM " . DB_PREFIX . "schedule WHERE presence_period_id = '" . (int)$presence_period_id . "'";
+
+		$query = $this->db->query($sql);
+
+		$customer_ids = array();
+
+		foreach ($query->rows as $row) {
+			$customer_ids[(int)$row['customer_id']] = true;
+		}
+
+		return $customer_ids;
+	}
+
 	public function getScheduleDateTitles($date)
 	{
 		$date_titles = array();

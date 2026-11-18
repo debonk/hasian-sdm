@@ -11,20 +11,28 @@ MODUL: Customer > Presence Method
 * oc_user: hapus kolom customer_department_id
 
 === TABLE
-* ALTER TABLE oc_presence_period DROP COLUMN fund_account_id;
 
 === CONFIG
 
-4.4.7
-Payroll Method: Availability for multiple methods with same bank.
-<!-- FRONT: Apply informasi BPJS karyawan (menu masih turun ke bawah) -->
-<!-- Bug: Payroll Method: duplicate code show error -->
-<!-- Fund Account: Help Name utk format BCA -->
+4.4.8
+<!-- ⦁	Batch Entry: Status kehadiran harus mengecek batas waktu entry sesuai setting. -->
+<!-- ⦁	Karyawan resign, set payroll basic = 0. -->
+<!-- ⦁	Schedule: Status pending dibatasi bbrp hari saja. set di setting -->
 <!-- Release: Lengkapi export draft dan export tunai -->
 
+
+4.4.7	16/11/2026
+Payroll Method: Availability for multiple methods with same bank.
+Export Danamon: Jam pencairan diganti ke 1600
+Export BCA: Limit Deskripsi (+ Catatan) hanya 18 karakter.
+Upload: Add Delete Old Records feature. Delete records and files older than 1 month. 
+Payroll: Generate Payroll will not generate unscheduled customer
+Payroll Release > List: Memperbaiki field Bank SUmber Dana dan No. Rekening utk multiple akun
+
 === TABLE
-ALTER TABLE oc_payroll_method DROP INDEX code;
-CREATE INDEX code USING BTREE ON oc_payroll_method (code);
+ALTER TABLE oc_presence_period DROP COLUMN fund_account_id; [all]
+ALTER TABLE oc_payroll_method DROP INDEX code; [all]
+ALTER TABLE oc_upload ADD user_id int(11) NULL;	[all]
 
 4.4.6b	03/10/2026
 Bug Fixed: Export CSV: Format tanggal berubah sehingga upload gagal.

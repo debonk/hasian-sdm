@@ -93,8 +93,9 @@ class ControllerAccountEdit extends Controller
 		}
 
 		$address_id_card = $this->model_account_customer->getAddress($customer_info['id_card_address_id']);
+
 		if ($address_id_card) {
-			$data['address_id_card'] = $address_id_card['address_id_card_1'] . ($address_id_card['address_id_card_2'] ? ', ' . $address_id_card['address_id_card_2'] : '') . ', ' . $address_id_card['city_name'] . ', ' . $address_id_card['zone'] . ', ' . $address_id_card['country'] . ($address_id_card['postcode'] ? ', ' . $address_id_card['postcode'] : '');
+			$data['address_id_card'] = $address_id_card['address_1'] . ($address_id_card['address_2'] ? ', ' . $address_id_card['address_2'] : '') . ', ' . $address_id_card['city_name'] . ', ' . $address_id_card['zone'] . ', ' . $address_id_card['country'] . ($address_id_card['postcode'] ? ', ' . $address_id_card['postcode'] : '');
 		} else {
 			$data['address_id_card'] = '-';
 		}

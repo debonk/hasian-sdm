@@ -43,7 +43,7 @@ class ModelCommonPayrollMethod extends Model
 
 		$date_process = date('Ymd', strtotime($category_info['date_process']));
 		// $date_process = $category_info['date_process'];
-		$time_process = '07';
+		$time_process = '16';
 
 		list($acc_name, $corp_code) = explode('|', $fund_account_info['acc_name']);
 		$corp_code = explode('/', $corp_code);
@@ -61,7 +61,7 @@ class ModelCommonPayrollMethod extends Model
 		$header_data[] = $time_process;
 		$header_data[] = $fund_account_info['acc_no'];
 		$header_data[] = str_pad($customer_count, 5, 0, STR_PAD_LEFT);
-		$header_data[] = '|' . $category_info['description'] . '|';
+		$header_data[] = '|' . utf8_substr($category_info['description'], 0, 18) . '|';
 
 		$output .= implode('|', $header_data);
 
@@ -84,7 +84,7 @@ class ModelCommonPayrollMethod extends Model
 			$customer_data[] = $customer['lastname'];
 			$customer_data[] = sprintf("%.2f", $customer['amount']);
 			$customer_data[] = '';
-			$customer_data[] = $category_info['description'] . (!empty($customer['note']) ? ': ' . str_replace([',', ' '], '_', $customer['note']) : '');
+			$customer_data[] = utf8_substr($category_info['description'] . (!empty($customer['note']) ? ': ' . str_replace([',', ' '], '_', $customer['note']) : ''), 0, 18);
 			$customer_data[] = $customer['email'];
 			$customer_data[] = '||';
 
@@ -225,7 +225,7 @@ class ModelCommonPayrollMethod extends Model
 		$date_expired = date('Ymd', strtotime($category_info['date_process'] . ' + 2 day'));
 
 		$output = '';
-		$output .= 'H,' . $fund_account_info['acc_no'] . ',' . $category_info['description'] . ',S,Y,,' . $date_process . ',0700,' . $date_expired;
+		$output .= 'H,' . $fund_account_info['acc_no'] . ',' . $category_info['description'] . ',S,Y,,' . $date_process . ',1600,' . $date_expired;
 
 		$output = str_replace(array("\x00", "\x0a", "\x0d", "\x1a"), array('\0', '\n', '\r', '\Z'), $output);
 		$output = str_replace(array("\n", "\r", "\t"), array('\n', '\r', '\t'), $output);

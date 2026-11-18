@@ -1,11 +1,5 @@
 <?php
 class ModelLocalisationPayrollMethod extends Model {
-	public function getPayrollMethod($payroll_method_id) { //Used by payroll_release
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "payroll_method WHERE payroll_method_id = '" . (int)$payroll_method_id . "' AND language_id = '" . (int)$this->config->get('config_language_id') . "'");
-
-		return $query->row;
-	}
-
 	public function addPayrollMethod($data) {
 		foreach ($data['payroll_method'] as $language_id => $value) {
 			if (isset($payroll_method_id)) {
@@ -36,6 +30,12 @@ class ModelLocalisationPayrollMethod extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "payroll_method WHERE payroll_method_id = '" . (int)$payroll_method_id . "'");
 
 		$this->cache->delete('payroll_method');
+	}
+
+	public function getPayrollMethod($payroll_method_id) { //Used by payroll_release
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "payroll_method WHERE payroll_method_id = '" . (int)$payroll_method_id . "' AND language_id = '" . (int)$this->config->get('config_language_id') . "'");
+
+		return $query->row;
 	}
 
 	public function getPayrollMethods($data = array()) {
@@ -90,6 +90,12 @@ class ModelLocalisationPayrollMethod extends Model {
 		}
 
 		return $payroll_method_data;
+	}
+
+	public function getPayrollMethodByCode(string $code) { //Used by payroll_release
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "payroll_method WHERE payroll_method_id = '" . (int)$payroll_method_id . "' AND language_id = '" . (int)$this->config->get('config_language_id') . "'");
+
+		return $query->row;
 	}
 
 	public function getTotalPayrollMethods() {

@@ -344,6 +344,13 @@ class ControllerLocalisationPayrollMethod extends Controller
 			$this->error['code'] = $this->language->get('error_code');
 		}
 
+		# this block need if code should be unique.
+		// $payroll_method_info = $this->model_localisation_payroll_method->getPayrollMethodByCode($this->request->post['code']);
+
+		// if ($payroll_method_info && (!isset($this->request->get['payroll_method_id']) || (isset($this->request->get['payroll_method_id']) && $payroll_method_info['payroll_method_id'] != $this->request->get['payroll_method_id']))) {
+		// 	$this->error['date'] = $this->language->get('error_payroll_method_exist');
+		// }
+
 		return !$this->error;
 	}
 

@@ -49,6 +49,7 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		$this->load->model('common/payroll');
 		$this->load->model('payroll/payroll_release');
+		$this->load->model('release/fund_account');
 
 		$this->getPeriod();
 	}
@@ -179,13 +180,22 @@ class ControllerPayrollPayrollRelease extends Controller
 			'limit'           		=> $this->config->get('config_limit_admin')
 		);
 
-		$data['payroll_periods'] = array();
+		$fund_account_data = [];
+
+		$fund_accounts = $this->model_release_fund_account->getFundAccounts();
+		foreach ($fund_accounts as $fund_account) {
+			$fund_account_data[$fund_account['fund_account_id']] = $fund_account;
+		}
 
 		$payroll_period_total = $this->model_payroll_payroll_release->getTotalPayrollPeriods($filter_data);
 
 		$results = $this->model_payroll_payroll_release->getPayrollPeriods($filter_data);
 
+		$data['payroll_periods'] = array();
+		
 		foreach ($results as $result) {
+			$fund_accounts = [];
+			
 			# Period Status Check
 			$release_status_check = $this->model_common_payroll->checkPeriodStatus($result['presence_period_id'], 'approved, released');
 			$view_status_check = $this->model_common_payroll->checkPeriodStatus($result['presence_period_id'], 'released, completed');
@@ -197,12 +207,18 @@ class ControllerPayrollPayrollRelease extends Controller
 				$date_release = '';
 			}
 
+			$fund_account_ids = json_decode($result['fund_account_ids']);
+			foreach ($fund_account_ids as $fund_account_id) {
+				$fund_accounts[$fund_account_id] = $fund_account_data[$fund_account_id];
+				$fund_accounts[$fund_account_id]['acc_no_text'] = $fund_account_data[$fund_account_id]['acc_no'] . ' [' . $fund_account_data[$fund_account_id]['acc_name'] . ']';
+			}
+
 			$data['payroll_periods'][] = array(
 				'presence_period_id' => $result['presence_period_id'],
 				'period'        	=> date($this->language->get('date_format_m_y'), strtotime($result['period'])),
 				'payroll_status' 	=> $result['payroll_status'],
-				'fund_acc_name' 	=> $result['acc_name'],
-				'fund_acc_no' 		=> $result['bank_name'] . ' - ' . $result['acc_no'],
+				'fund_acc_name' 	=> implode('<br>', array_column($fund_accounts, 'bank_name')),
+				'fund_acc_no' 		=> implode('<br>', array_column($fund_accounts, 'acc_no_text')),
 				'total_payroll' 	=> $this->currency->format($result['total_payroll'], $this->config->get('config_currency')),
 				'date_release' 		=> $date_release,
 				'release_check' 	=> $release_status_check,
@@ -625,22 +641,11 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		if (isset($this->request->post['fund_account_ids'])) {
 			$data['fund_account_ids'] = $this->request->post['fund_account_ids'];
-		} elseif (!empty($payroll_info)) {
+		} elseif (!empty($payroll_info['fund_account_ids'])) {
 			$data['fund_account_ids'] = json_decode($payroll_info['fund_account_ids']);
 		} else {
 			$data['fund_account_ids'] = [];
 		}
-
-		// if (isset($this->request->post['fund_account_id'])) {
-		// 	$data['fund_account_id'] = $this->request->post['fund_account_id'];
-		// } elseif (!empty($payroll_info)) {
-		// 	$data['fund_account_id'] = $payroll_info['fund_account_id'];
-		// } else {
-		// 	$data['fund_account_id'] = 0;
-		// }
-
-		// var_dump($this->request->post);
-		// die(' ---breakpoint--- ');
 
 		if (isset($this->request->post['date_release'])) {
 			$data['date_release'] = $this->request->post['date_release'];
@@ -652,17 +657,9 @@ class ControllerPayrollPayrollRelease extends Controller
 
 		$data['fund_accounts'] = [];
 
-		// $this->load->model('release/fund_account');
-		// $fund_accounts = $this->model_release_fund_account->getFundAccounts();
-		// foreach ($fund_accounts as $fund_account) {
-		// 	$data['fund_accounts'][] = array(
-		// 		'fund_account_id'	=> $fund_account['fund_account_id'],
-		// 		'fund_account_text'	=> $fund_account['bank_name'] . ' - ' .  $fund_account['acc_no'] . '; ' . $fund_account['acc_name']
-		// 	);
-		// }
-
 		$this->load->model('release/fund_account');
 		$fund_accounts = $this->model_release_fund_account->getFundAccounts();
+
 		foreach ($fund_accounts as $fund_account) {
 			if (!isset($data['fund_accounts'][$fund_account['payroll_method_id']])) {
 				$data['fund_accounts'][$fund_account['payroll_method_id']]['text'] = $fund_account['bank_name'];
@@ -673,14 +670,6 @@ class ControllerPayrollPayrollRelease extends Controller
 				'fund_account_text'	=> $fund_account['bank_name'] . ' - ' .  $fund_account['acc_no'] . '; ' . $fund_account['acc_name']
 			);
 		}
-
-		// $this->load->model('localisation/payroll_method');
-		// $payroll_methods = $this->model_localisation_payroll_method->getPayrollMethods();
-
-		// var_dump($fund_accounts);
-		// var_dump($data['fund_accounts']);
-		// var_dump($data['fund_account_ids']);
-		// die(' ---breakpoint--- ');
 
 		$data['presence_period_id'] = $presence_period_id;
 
@@ -1358,10 +1347,6 @@ class ControllerPayrollPayrollRelease extends Controller
 		if (!$this->model_common_payroll->checkPeriodStatus($this->request->get['presence_period_id'], 'approved, released')) {
 			$this->error['warning'] = $this->language->get('error_status');
 		}
-
-		// if (empty($this->request->post['fund_account_id'])) {
-		// 	$this->error['fund_account'] = $this->language->get('error_fund_account');
-		// }
 
 		if (empty($this->request->post['date_release']) || strtotime($this->request->post['date_release']) < strtotime('today')) {
 			$this->error['date_release'] = $this->language->get('error_date_release');

@@ -224,8 +224,8 @@
             <tr>
                 <td class="uk-text-left"><?php echo $text_magic_quotes;?></td>
                 <td><?php echo $text_off; ?></td>
-                <td><?php echo (ini_get('magic_quotes_gpc') || get_magic_quotes_gpc()) ? '<span class="uk-badge uk-badge-danger">'.$text_on.'</span>' : $text_off; ?></td>
-                <td><?php echo (!ini_get('magic_quotes_gpc') || !get_magic_quotes_gpc()) ? '<i class="uk-icon-check uk-icon-small uk-text-success"></i>' : '<i class="uk-icon-times uk-icon-small uk-text-danger"></i>'; ?></td>
+                <td><?php echo (ini_get('magic_quotes_gpc')) ? '<span class="uk-badge uk-badge-danger">'.$text_on.'</span>' : $text_off; ?></td>
+                <td><?php echo (!ini_get('magic_quotes_gpc')) ? '<i class="uk-icon-check uk-icon-small uk-text-success"></i>' : '<i class="uk-icon-times uk-icon-small uk-text-danger"></i>'; ?></td>
             </tr>
             <tr>
                 <td class="uk-text-left"><?php echo $text_session_start;?></td>
@@ -242,8 +242,8 @@
             <tr>
                 <td class="uk-text-left"><?php echo $text_mcrypt;?></td>
                 <td><?php echo $text_on; ?></td>
-                <td><?php echo extension_loaded('mcrypt') || function_exists('mcrypt_encrypt') ? $text_on : '<span class="uk-badge uk-badge-danger">'.$text_off.'</span>'; ?></td>
-                <td><?php echo extension_loaded('mcrypt') || function_exists('mcrypt_encrypt') ? '<i class="uk-icon-check uk-icon-small uk-text-success"></i>' : '<i class="uk-icon-times uk-icon-small uk-text-danger"></i>'; ?></td>
+                <td><?php echo extension_loaded('mcrypt') ? $text_on : '<span class="uk-badge uk-badge-danger">'.$text_off.'</span>'; ?></td>
+                <td><?php echo extension_loaded('mcrypt') ? '<i class="uk-icon-check uk-icon-small uk-text-success"></i>' : '<i class="uk-icon-times uk-icon-small uk-text-danger"></i>'; ?></td>
             </tr>
             <tr>
                 <td class="uk-text-left"><?php echo $text_file_uploads;?></td>

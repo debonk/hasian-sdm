@@ -74,7 +74,8 @@
 									<?= $fund_account['text']; ?>
 								</label>
 								<div class="col-sm-9">
-									<select name="fund_account_ids[]" id="input-fund-account-<?= $payroll_method_id; ?>" class="form-control">
+									<select name="fund_account_ids[]" id="input-fund-account-<?= $payroll_method_id; ?>"
+										class="form-control">
 										<option value="0">
 											<?= $text_select ?>
 										</option>

@@ -403,6 +403,7 @@ class ControllerPayrollPayroll extends Controller
 		$this->load->model('common/payroll');
 		$this->load->model('payroll/payroll');
 		$this->load->model('presence/presence');
+		$this->load->model('presence/schedule');
 
 		$json = array();
 
@@ -432,9 +433,17 @@ class ControllerPayrollPayroll extends Controller
 
 				$result_total = $this->model_presence_presence->getTotalCustomers($filter_data);
 
+				# Customers without any schedule for this presence period are excluded from generation,
+				# but can still be added manually.
+				$schedule_customer_ids = $this->model_presence_schedule->getScheduleCustomerIds($presence_period_id);
+
 				$count = 0;
 
 				foreach ($results as $result) {
+					if (!isset($schedule_customer_ids[(int)$result['customer_id']])) {
+						continue;
+					}
+
 					$payroll_calculation = $this->model_payroll_payroll->getPayrollDetail($presence_period_id, $result['customer_id']);
 
 					if ($payroll_calculation['payroll_basic'] && $payroll_calculation['presence_summary']) {
